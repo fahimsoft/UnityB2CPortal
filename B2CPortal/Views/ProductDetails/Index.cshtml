@@ -1,0 +1,258 @@
+﻿@model List<B2CPortal.Models.CommentAndRatingVM>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<!-- pages-title-start -->
+@*<div class="pages-title section-padding">
+    <div class="container">
+    <div class="row">
+    <div class="col-xs-12">
+    <div class="pages-title-text text-center">
+    <h2>men’s white t-shirt</h2> </div>
+    </div>
+    </div>
+    </div>
+    </div>*@
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Product Details</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="product-details pages ">
+    <div class="container">
+        <div class="row" id="quick-view"> </div> <div class="row">
+            <div class="col-xs-12">
+                <div class="reviews padding60 margin-top">
+                    <ul class="reviews-tab clearfix">
+                        <li><a data-toggle="tab" href="#moreinfo">more info</a></li>
+                        <li class="active"><a data-toggle="tab" href="#reviews">Reviews</a></li>
+                        @*<li><a data-toggle="tab" href="#tags">tags</a></li>*@
+                    </ul>
+                    <div class="tab-content">
+                        <div class="info-reviews moreinfo tab-pane fade in" id="moreinfo">
+                            <p>The most culturally eaten bread on every dining table in Pakistan are the fresh and soft roti or chapati. With Sunridge’s wide range of products, enriched with Iron, Zinc, Vitamin B12 and Folic Acid every roti will be nutrition rich</p>
+                        </div>
+                        <div class="info-reviews review-text tab-pane fade in active" id="reviews">
+                            <div class="about-author" id="commentAndRating"> </div>
+                        </div>
+                        <hr /> <div class="your-rating log-title">
+                            <h3>leave your review</h3>
+                            <h5>Your rating</h5>
+                            <div class="rating clearfix">
+                                <ul>
+                                    <li>
+                                        <a href="javascript:void(0)" class="product-rating" rating="1" onclick="(this)">
+                                            <i class="mdi mdi-star-outline"></i>
+                                        </a>
+                                        <span>|</span>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" class="product-rating" rating="2" onclick="(this)">
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                        </a>
+                                        <span>|</span>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" class="product-rating" rating="3" onclick="(this)">
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                        </a>
+                                        <span>|</span>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" class="product-rating" rating="4" onclick="(this)">
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                        </a>
+                                        <span>|</span>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)" class="product-rating" rating="5" onclick="(this)">
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                            <i class="mdi mdi-star-outline"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="custom-input">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="input-mail">
+                                        <input type="hidden" name="UserId" id="UserId" value="@Session["UserId"]" />
+                                        <input type="text" name="name" id="txtName" value="@Session["UserName"]" placeholder="Your Name" />
+                                        <label id="lblName" style="color:red"></label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="input-mail">
+                                        <input type="text" name="email" id="txtEmail" value="@Session["UserEmail"]" placeholder="Your Email" />
+                                        <label id="lblEmail" style="color:red"></label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="custom-mess">
+<textarea name="message" id="txtMessage" placeholder="Your Review" rows="2" required></textarea>
+                                        <label id="lblMessage" value="" style="color:red"></label>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <div class="submit-text">
+                                        <button type="button" id="btnSave">submit review</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready(function () { GetProductId();
+GetProductCommentAndRating(); $('.product-rating').click(function (elem) { rating = $(this).attr('rating');
+})
+}); function GetProductId() { let urlstr = location.href;
+let url = new URL(urlstr);
+let searchparams = url.searchParams; var productId = searchparams.get('productId');
+var html = '', htmlProductList = '', htmlProductGrid = ''; if (productId != null && productId != undefined) { $.ajax({
+url: '@Url.Action("GetProductbyId", "Product")',
+type: "Get",
+data: { Id: productId },
+success: function (result) {
+var html = '';
+var index = 1;
+var fade = 1;
+var productPrice = 0;
+var htmlProductDetail = '';
+var htmlProductPriceDetail='', htmlProductSize = ''; var item = JSON.parse(result.data);
+$(item.ProductPrices).each(function (PriceIndex, PriceValue) { productPrice = PriceValue.Price;
+productDiscount = PriceValue.Discount;
+});
+$(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) { if (ProductDetailsIndex == 1) {
+htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+}
+else {
+htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+}
+index += 1;
+});
+$(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) { if (ProductPDIndex == 0) {
+htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+<div class="pro-type">
+<span>new</span>
+</div>
+<a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+</div>`
+}
+else {
+htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+<div class="pro-type">
+<span>new</span>
+</div>
+<a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+</div>`
+} fade += 1;
+});
+$(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) { htmlProductSize += `${ProductSizeValue.UOM}`
+});
+html = `
+<div class="col-xs-12">
+<div class="d-table">
+<div class="d-tablecell">
+<div class="">
+<div class="main-view">
+<div class="modal-footer" data-dismiss="modal">
+<span></span>
+</div>
+<div class="row">
+<div class="col-xs-12 col-sm-5 col-md-4">
+<div class="quick-image">
+<div class="single-quick-image text-center">
+<div class="list-img">
+<div class="product-img tab-content">
+${htmlProductPriceDetail}
+</div>
+</div>
+</div>
+<div class="quick-thumb">
+<ul class="product-slider">${htmlProductDetail} </ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 col-sm-7 col-md-8">
+<div class="quick-right">
+<div class="list-text">
+<h3>${item.Name}  ${htmlProductSize} </h3>
+<span>${item.ShortDescription}</span>
+<div class="ratting floatright">
+<p>( 27 Rating )</p>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star-half"></i>
+<i class="mdi mdi-star-outline"></i>
+</div>
+<h5><del>${productPrice} PKR</del> <labal style="color:gray">-${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} PKR</h5>
+<p>${item.LongDescription}</p>
+<div class="all-choose">
+<div class="s-shoose"> </div>
+<div class="s-shoose">
+<h5>size</h5> <div class="size-drop">
+<h5> ${htmlProductSize}</h5> </div>
+</div>
+</div>
+            <div class="plus-minus">
+            <a class="dec qtybuttonquickview qtybutton">-</a>
+            <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+            <a class="inc qtybuttonquickview qtybutton">+</a>
+            </div>
+            PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
+
+<div class="list-btn">
+<a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}>wishlist</a>
+</div>
+<div class="share-tag clearfix">
+<ul class="blog-share floatleft">
+<li><h5>share </h5></li>
+<li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+<li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+<li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+<li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+<li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+<li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+`; $('#quick-view').html(html);
+},
+error: function (errorMessage) {
+alert(errorMessage.responseText);
+}
+}); } }
+</script>
+

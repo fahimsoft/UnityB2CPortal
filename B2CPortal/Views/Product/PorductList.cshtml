@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "GetPorductList";
+}   
+<script src="@Url.Content("~/Scripts/jquery-3.4.1.min.js")"></script>
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Product List View</h2>
+                    <ul class="text-left">
+                        <li><a href="index.html">Home </a></li>
+                        <li><span> // </span>Shop</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<section class="collection-area collection-area2 section-padding">
+</section>*@
+<!-- pages-title-end -->
+<!-- collection section start -->
+<!-- collection section end -->
+<!-- product-list-view content section start -->
+<section class="pages products-page">`
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-4 col-md-3 main-filter-container">
+
+                @*@{Html.RenderAction("GetSidebar");}*@
+                @Html.Partial("_Sidebar")
+
+            </div>
+            <div class="col-xs-12 col-sm-8 col-md-9">
+                <div class="right-products">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="section-title clearfix">
+                                <ul>
+                                    <li>
+                                        <ul class="nav-view">
+                                            <li><a data-toggle="tab" href="#grid"> <i class="mdi mdi-view-module"></i> </a></li>
+                                            <li class="active"><a data-toggle="tab" href="#list"> <i class="mdi mdi-view-list"></i> </a></li>
+                                            <li>
+
+                                                <button type="button" id="btnSearch" onclick="loadProductListByName()"><i class="mdi mdi-magnify"></i></button>
+                                                <input type="text" id="textProductName" onchange="loadProductListByName()" style="margin-top: 14px; border: 0; width: 492px;" placeholder="Search within these results...">
+
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                    <li class="sort-by floatright">
+                                        <label id="lblTotalCount"></label>
+
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="tab-content grid-content" id="htmlListAndGrid">
+
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- product-list-view content section end -->
+<!-- quick view start -->
+<div class="product-details quick-view modal animated zoomInUp" id="quick-view">
+
+
+
+
+</div>
+<!-- quick view end -->
+
+
+<script>
+
+    //LoadProductList
+
+    $(document).ready(function () {
+
+        loadProductList();
+
+    });
+
+
+</script>

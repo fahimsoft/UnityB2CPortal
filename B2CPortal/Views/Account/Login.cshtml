@@ -1,0 +1,370 @@
+﻿@model B2C_Models.Models.customer
+@{
+    ViewBag.Title = "Login";
+}
+
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Register</h2>
+                    <ul class="text-left">
+                        <li><a href="/Home/Index">Home </a></li>
+                        <li><span> // </span>Register</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- pages-title-end -->
+
+<section class="pages login-page section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="main-input padding60">
+                    <div class="log-title">
+                        <h3><strong>registered customers</strong></h3>
+                    </div>
+                    <div class="login-text">
+                        <div class="custom-input">
+                            <p>If you have an account with us, Please log in!</p>
+                            <form id="login">
+                                @*action="mail.php" method="post"*@
+                                @*<input type="text" name="email" placeholder="Email" />*@
+                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "form-control" } })
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password:", @class = "form-control", Type = "Password" } })
+
+                                @*<input type="password" name="password" placeholder="Password" />*@
+                                <a class="forget" href="#">Forget your password?</a>
+                                <div class="submit-text">
+                                    @*<a href="my-account.html">login</a>*@
+                                    <button type="button" class="btn btn-success" id="loginbtn">Sign in</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-sm-6">
+                <div class="main-input padding60 new-customer">
+                    <div class="log-title">
+                        <h3><strong>new customers</strong></h3>
+                    </div>
+                    <div class="custom-input">
+                        <form id="register">
+                            @*action="mail.php" method="post*@
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNo, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", Type = "date" } })
+                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+
+                            @{
+                                if (Model.Id > 0)
+                                {
+                                    @Html.EditorFor(model => model.Gender, new { htmlAttributes = new { @placeholder = "Gender:", @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Gender, "", new { @class = "text-danger" })
+                                }
+                                else
+                                {
+                                    <select class="form-control dropdown " name="Gender" id="Gender">
+                                        <option value="Select">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+
+                                    </select>
+                                }
+
+
+                            }
+
+                        <br />
+
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
+                            @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
+
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password:", @class = "Password form-control", Type = "Password" } })
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+
+                            <input class="form-control" type="password" name="ConfirmPassword" placeholder="Confirm Password" />
+
+
+
+                            @*<label class="first-child">
+                                    <input type="radio" name="rememberme" value="forever">
+                                    Sign up for our newsletter!
+                                </label>*@
+                            <div class="submit-text coupon">
+                                @*<a href="my-account.html">Register</a>*@
+                                <button type="button" class="btn btn-success" id="btnAddSale">Sign up</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+  
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var email;
+            $('.email').change(function () {
+          
+                 email = $(this).val();
+         
+
+                let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
+                var Email = $('.email').val();
+               // alert(Email);
+                let result = false;
+                $.ajax({
+                    url: emailOrgName,
+                    data: JSON.stringify(Email),
+
+                    success: function (data) {
+
+                        toastr.success(data.msg);
+                   
+
+                        //if (data.data.email === 1) {
+                        //    //alert(data.data.Email + ': This email already exists.');
+                        //    console.log(data.data.Email + ': This email exists.');
+                        //    result = false;
+                        //} else {
+                        //    toastr.success("Email Available.");
+                        //    //alert(data.data.Email + ': Email Available.');
+                        //    console.log(data.data.Email + ': This email does not exist.');
+                        //    result = true;
+                        //}
+                    },
+                    async: false
+                });
+                console.log(result);
+                return result;
+            });
+            
+        })
+  
+
+
+        //var response;
+        //$.validator.addMethod(
+        //    "uniqueEmail",
+        //    function (value, element) {
+        //        var email = ('#EmailId').val();
+        //        alert(email);
+        //        $.ajax({
+        //            type: "POST",
+        //            url: "/Account/CheckEmail",
+        //            data: email,
+
+        //            success: function (msg) {
+        //                //If username exists, set response to true
+        //                response = (msg == 'true') ? true : false;
+        //            }
+        //        });
+        //        return response;
+        //    },
+        //    "Email is Already Taken"
+        //);
+
+        //$("#register").validate({
+        //    EmailId: {
+        //        required: true
+        //    },
+        //    messages: {
+        //        EmailId: {
+        //            required: "Email is required",
+        //            uniqueUserName: "This Email is taken already"
+        //        }
+        //    }
+        //});
+
+        jQuery('#register').validate({
+            rules: {
+                FirstName: {
+                    required: true,
+
+                    maxlength: 50
+                },
+                LastName: {
+                    required: true
+
+                }, EmailId: {
+                    required: true,
+                    email: true
+
+                }, PhoneNo: {
+                    required: true
+                }, DateOfBirth: {
+                    required: true
+                }, Gender: {
+                    required: true
+
+                }
+                , Password: {
+                    required: true
+
+                }, ConfirmPassword: {
+                    required: true,
+                    equalTo: "#Password"
+
+                }
+
+            },
+            messages: {
+                FirstName: {
+                    required: "First Name Is Required"
+                }, LastName: {
+                    required: "Last Name Is Required"
+                }, EmailId: {
+                    required: "Email Is Required"
+                }, DateOfBirth: {
+                    required: "DOB Is Required"
+                }, Gender: {
+                    required: "Gender Is Required"
+                }, Password: {
+                    required: "Password Is Required"
+                }, ConfirmPassword: {
+                    required: "Confirm Password Is Required",
+                    equalTo: "Confirm Password must be equal to Password"
+                }, PhoneNo: {
+                    required: "Phone No Is Required"
+                }
+
+            }
+        });
+
+        $('input[name="ConfirmPassword"]').keypress(function (e) {
+            if (e.which == 13) {
+                $('#btnAddSale').click();
+                //$('form#login').submit();
+                return false;    //<---- Add this line
+            }
+        });
+
+        // Registeration Submit Button
+        $("#btnAddSale").click(function (e) {
+            e.preventDefault();
+            var form = $("#register");
+
+            var datatosend = {
+                customer: {
+                    /*    idx: $('#idx').val(),*/
+                    FirstName: $('#FirstName').val(),
+                    LastName: $('#LastName').val(),
+                    PhoneNo: $('#PhoneNo').val(),
+                    DateOfBirth: $('#DateOfBirth').val(),
+                    Gender: $('#Gender').val(),
+                    EmailId: $('.email').val(),
+                    Password: $('.Password').val()
+
+                }
+            }
+            console.log(JSON.stringify(datatosend));
+            //  var form = $("#purchaseform");
+            console.log(datatosend)
+            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+            $.validator.unobtrusive.parse($(this));//add the form validation
+            $.validator.unobtrusive.parse(form);
+            //if ($(form).valid()) // using not operator for a time being
+            if ($(form)) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddUpdate",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+
+                    success: function (data) {
+                        ;
+                       // alert(data);
+                        console.log(data);
+                        if (data.isSuccessful == true) {
+                            toastr.success("Registered successfully.");
+                            window.location.href = "/Account/Login";
+                        }
+                        else if (data.isSuccessful == false) {
+                            toastr.error("Registration Failed.");
+                        }
+                    },
+                    failure: function (res) {
+                        console.log(res);
+                    },
+                    err: function (res) {
+                        console.log(res);
+                    }
+                })
+            }
+            else {
+                return false;
+            }
+        });
+
+        $('#Password, #EmailId').keypress(function (e) {
+            if (e.which == 13) {
+                $('#loginbtn').click();
+                //$('form#login').submit();
+                return false;    //<---- Add this line
+            }
+        });
+
+        // Login Submit button
+        $('#loginbtn').click(function (e) {
+            e.preventDefault();
+            var form = $("#login");
+
+            $.validator.unobtrusive.parse(form);
+            if ($(form).valid()) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/Login",
+                    data: $(form).serialize(),
+                    //cache : false,
+                    //processData: false,
+                    success: function (data) {
+                        if (data.isSuccessful == true /*&& res.count > 0*/) {
+                            toastr.success("Login successfully.");
+                            window.location.href = "/Home/Index";
+                        }
+                        else if (data.isSuccessful == false) {
+                            //alert("Login Failed");
+                            toastr.error("Login Failed.");
+                        }
+                    },
+                    failure: function (res) {
+                        console.log(res);
+                    },
+                    err: function (res) {
+                        console.log(res);
+                    }
+                })
+            }
+            else {
+                return false;
+            }
+        });
+
+
+    </script>
+}
+

@@ -1,0 +1,352 @@
+﻿
+    <header class="header-one">
+        <div class="container-fluid text-center">
+            <div class="row">
+                <div class="col-sm-2">
+                    <div class="logo">
+                        <a href="/Home/Index"><img src="~/Content/Asset/img/unity-logo.gif" alt="Sellshop" style="max-height:149px;" /></a>
+                    </div>
+                </div>
+                <div class="col-sm-8">
+                    <div class="header-middel">
+                        <div class="middel-top clearfix">
+                            <div class="left floatleft">
+                                <p><i class="mdi mdi-clock"></i> @DateTime.Now.ToString("dd-MMM-yyyy hh:mm")
+                                </p>
+                            </div>
+                            <div class="center floatleft">
+                                <form action="#" method="get">
+                                    <button type="submit"><i class="mdi mdi-magnify"></i></button>
+                                    <input type="text" placeholder="Search within these results..." />
+                                </form>
+                            </div>
+                            <div class="right floatleft">
+                                <ul class="clearfix">
+                                    @{
+                                        if (Session["UserId"] != null)
+                                        {
+
+
+                                                                        <li id="logedin">
+                                                                            <i style="font-size: 1.73em; margin-top: 10px;" class="mdi mdi-account"></i> <br>
+                                                                            <b style="font-size:14px">Hi, @Session["UserName"].ToString()</b>
+                                                                            <ul>
+
+
+                                                                                <li><a href="/Account/MyAccount">My Account</a></li>
+                                                                                <li><a href="/Account/LogOut">Logout</a></li>
+
+
+
+
+                                                                            </ul>
+
+
+                                                                        </li>
+                                        }
+                                        else
+                                        {
+                                            <li id="register">
+                                                <a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
+
+                                                <ul class="log">
+                                                    <li ><a href="/Account/Login">Login</a></li>
+                                                    <li ><a href="/Account/Login">Registar</a></li>
+                                                    @*<li><a href="/Account/Login">My account</a></li>*@
+                                                </ul>
+                                            </li>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
+                                        }
+                                    }
+
+
+
+
+                                    @*<li>
+            <a href="#"><i class="mdi mdi-account"></i></a>
+            <ul>
+                <li><a href="/Account/Login">Login</a></li>
+                <li><a href="/Account/Login">Registar</a></li>
+                <li><a href="my-account.html">My account</a></li>
+            </ul>
+        </li>*@
+                                    <li>
+                                        <a href="#"><i class="mdi mdi-settings"></i></a>
+                                        <ul>
+                                            @*<li><a href="my-account.html">My account</a></li>*@
+                                            <li><a href="@Url.Action("AddToCart","Product")">My cart</a></li>
+                                            <li><a href="@Url.Action("Wishlist","Product")">My wishlist</a></li>
+                                            <li><a href="@Url.Action("Checkout","Orders")">Check out</a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mainmenu">
+                            <nav>
+                                <ul>
+                                    <li>
+                                        <a href="/Home/Index">Home</a>
+                                        @*<ul class="dropdown">
+                <li><a href="index.html">Home version one</a></li>
+                <li><a href="index-2.html">Home version two</a></li>
+            </ul>*@
+                                    </li>
+                                    <li>
+                                        @*<a href="shop.html">Shop</a>*@
+                                        @Html.ActionLink("Shop", "PorductList", "Product")
+                                        <ul class="magamenu">
+                                            <li class="banner"><a href="shop.html"><img src="~/Content/Asset/img/u1.png" alt="" /></a></li>
+                                            <li>
+                                                <h5>Unity Foods</h5>
+                                                <ul>
+                                                    <li><a href="#">DASTAK</a></li>
+                                                    <li><a href="#">EHTIMAM</a></li>
+                                                    <li><a href="#">LAGAN</a></li>
+                                                    <li><a href="#">ZAUQEEN</a></li>
+                                                    <li><a href="#">UNITY OIL </a></li>
+                                                    <li><a href="#">PURE</a></li>
+                                                    <li><a href="#">SPECIALTY FATS</a></li>
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <h5>Sunridge Foods</h5>
+                                                <ul>
+                                                    <li><a href="#">Sunridge Fortified</a></li>
+                                                    <li><a href="#">Sunridge Wheat Chakki</a></li>
+                                                    <li><a href="#">Sunridge High Fiber </a></li>
+                                                    <li><a href="#">Sunridge White Chakki </a></li>
+                                                    <li><a href="#">Sunridge Super Fine </a></li>
+                                                    <li><a href="#">Sunridge Premium Maida</a></li>
+                                                </ul>
+                                            </li>
+                                            <li class="banner"><a href="shop.html"><img src="~/content/asset/img/u2.jpg" alt="" /></a></li>
+                                        </ul>
+                                    </li>
+                                    <li style="display:none">
+                                        <a href="#">Pages</a>
+                                        <ul class="dropdown">
+                                            <li><a href="wishlist.html">Wishlist</a></li>
+                                            <li><a href="checkout.html">Checkout</a></li>
+                                            <li><a href="cart.html">Cart</a></li>
+                                            <li><a href="product-grid.html">Product Grid View</a></li>
+                                            <li><a href="product-list.html">Product List View</a></li>
+                                            <li><a href="single-product.html">Single Product</a></li>
+                                            @*<li><a href="error-404.html">404 page</a></li>*@
+                                        </ul>
+                                    </li>
+                                    @*<li>
+            <a href="blog.html">Blog</a>
+            <ul class="dropdown">
+                <li><a href="blog-style-1.html">Blog Style One</a></li>
+                <li><a href="blog-style-2.html">Blog Style Two</a></li>
+                <li><a href="single-blog.html">Single Blog</a></li>
+            </ul>
+        </li>*@
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="@Url.Action("ContactUs","Contact")">Contact</a></li>
+
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- mobile menu start -->
+                        <div class="mobile-menu-area">
+                            <div class="mobile-menu">
+                                <nav id="dropdown">
+                                    <ul>
+                                        <li>
+                                            <a href="/Home/Index">Home</a>
+                                            @*<ul class="dropdown">
+                                                <li><a href="index.html">Home version one</a></li>
+                                                <li><a href="index-2.html">Home version two</a></li>
+                                            </ul>*@
+                                        </li>
+                                        <li>
+                                            <a href="shop.html">Shop</a>
+                                            <ul>
+                                                <li>
+                                                    <h5>Unity Foods</h5>
+                                                    <ul>
+                                                        <li><a href="#">DASTAK</a></li>
+                                                        <li><a href="#">EHTIMAM</a></li>
+                                                        <li><a href="#">LAGAN</a></li>
+                                                        <li><a href="#">ZAUQEEN</a></li>
+                                                        <li><a href="#">UNITY OIL </a></li>
+                                                        <li><a href="#">PURE</a></li>
+                                                        <li><a href="#">SPECIALTY FATS</a></li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <h5>Sunridge Foods</h5>
+                                                    <ul>
+                                                        <li><a href="#">Sunridge Fortified</a></li>
+                                                        <li><a href="#">Sunridge Wheat Chakki</a></li>
+                                                        <li><a href="#">Sunridge High Fiber </a></li>
+                                                        <li><a href="#">Sunridge White Chakki </a></li>
+                                                        <li><a href="#">Sunridge Super Fine </a></li>
+                                                        <li><a href="#">Sunridge Premium Maida</a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li style="display:none">
+                                            <a href="#">Pages</a>
+                                            <ul>
+                                                <li><a href="wishlist.html">Wishlist</a></li>
+                                                <li><a href="checkout.html">Checkout</a></li>
+                                                <li><a href="cart.html">Cart</a></li>
+                                                <li><a href="product-grid.html">Product Grid View</a></li>
+                                                <li><a href="product-list.html">Product List View</a></li>
+                                                <li><a href="single-product.html">Single Product</a></li>
+                                                <li><a href="error-404.html">404 page</a></li>
+                                            </ul>
+                                        </li>
+                                        <li style="display:none">
+                                            <a href="blog.html">Blog</a>
+                                            <ul>
+                                                <li><a href="blog-style-1.html">Blog Style One</a></li>
+                                                <li><a href="blog-style-2.html">Blog Style Two</a></li>
+                                                <li><a href="single-blog.html">Single Blog</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="about.html">About</a></li>
+                                        <li><a href="contact.html">Contact</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-2" id="hovercartlist">
+                    <div class="cart-itmes">
+                        <a class="cart-itme-a" href="@Url.Action("AddToCart","Product")">
+                            <i class="mdi mdi-cart"></i>
+                            <b id="productaddtocart"> </b> Items : <small style="text-transform: capitalize;">PKR</small>.  <strong id="totalprice"></strong>
+                        </a>
+                        <div class="cartdrop" id="cartdrop">
+
+                            @*<div class="sin-itme clearfix">
+                <i class="mdi mdi-close"></i>
+                <a class="cart-img" href="cart.html"><img src="~/Content/Asset/img/cart/2.png" alt="" /></a>
+                <div class="menu-cart-text">
+                    <a href="#"><h5>men’s black t-shirt</h5></a>
+                    <span>Color :  Black</span>
+                    <span>Size :     SL</span>
+                    <strong>$132.00</strong>
+                </div>
+            </div>*@
+                            <div class="total">
+                                <span>total <strong>= $306.00</strong></span>
+                            </div>
+                            <a class="goto" href="cart.html">go to cart</a>
+                            <a class="out-menu" href="checkout.html">Check out</a>
+                        </div>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+@*<script>
+
+
+    $(document).ready(function () {
+        //alert("Done");
+    });
+    $('ul.log li').click(function () {
+       
+        var pathname = window.location.pathname; // Returns path only (/path/example.html)
+        var address = window.location.href;     // Returns full URL (https://example.com/path/example.html)
+        var origin = window.location.origin;   // Returns base URL (https://example.com)
+        $.ajax({
+            url: "/Account/Login?address=" + address,
+            data: JSON.stringify(address),
+            success: function (data) {
+                ;
+               
+                if (data.isSuccessful == true) {
+                    alert("Done");
+                   // toastr.success("L.");
+                    //window.location.href = "/Account/Login";
+                }
+                else if (data.isSuccessful == false) {
+                    //toastr.error("Registration Failed.");
+                    alert("Failed");
+                }
+            },
+            failure: function (res) {
+                console.log(res);
+            },
+            err: function (res) {
+                console.log(res);
+            }
+
+
+        
+    });
+    })
+    
+</script>*@
+
+
+<script>
+
+    window.localStorage;
+
+    function SetLocalStorage(elem) {
+
+        if (localStorage.Id != undefined)
+            var id = JSON.parse(localStorage.Id);
+
+        var isDuplicate = true;
+        if (localStorage.Id != undefined) {
+
+            for (var i = 0; i < id.length; i++) {
+
+                if (id[i] == $(elem).attr("productid")) {
+                    isDuplicate = false;
+                    return false;
+                }
+
+            }
+        }
+
+
+        // do something with `item` (or `this` is also `item` if you like)
+        if (isDuplicate) {
+
+            var productId = $(elem).attr("productid");
+            var productIdHistory = JSON.parse(localStorage.getItem("Id")) || [];
+            productIdHistory.push(productId);
+
+            var productName = $(elem).attr("productName");
+            var productNameHistory = JSON.parse(localStorage.getItem("Name")) || [];
+            productNameHistory.push(productName);
+
+            var productImg = $(elem).attr("productImg");
+            var productImgHistory = JSON.parse(localStorage.getItem("Img")) || [];
+            productImgHistory.push(productImg);
+
+
+
+            if (productIdHistory.length > 4) {
+
+                productIdHistory.shift()
+                productNameHistory.shift()
+                productImgHistory.shift()
+
+            }
+
+
+            localStorage.setItem("Id", JSON.stringify(productIdHistory));
+            localStorage.setItem("Name", JSON.stringify(productNameHistory));
+            localStorage.setItem("Img", JSON.stringify(productImgHistory));
+        }
+
+    }
+
+</script>

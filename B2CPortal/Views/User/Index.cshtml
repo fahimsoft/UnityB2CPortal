@@ -1,0 +1,84 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+<script src="~/Scripts/jquery-3.4.1.js"></script>
+@Html.ActionLink("Add New Record", "AddUser", "User")
+<table class="table table-bordered table-hover">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+
+            <th>
+                Phone No
+            </th>
+        </tr>
+    </thead>
+    <tbody class="tbody">
+    </tbody>
+</table>
+
+
+<script>
+    $(document).ready(function () {
+        
+        loadUserData();
+    });
+
+    //Load Data function
+    function loadUserData() {
+        $.ajax({
+            url: "/User/GetUser",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                var html = '';
+                var data = JSON.parse(result.data);
+                
+                $.each(data, function (key, item) {
+
+                    html += `<tr><td>${item.ID}</td><td>${item.Name}</td><td>${item.PhoneNo}</td><td><a href="#" onclick="return getbyID(${item.ID})">Edit</a> | <a href="#" onclick="Delele(${item.ID})">Delete</a></td></tr>`;
+
+                });
+                $('.tbody').html(html);
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+    }
+
+
+    function Delele(ID) {
+
+        var obj = {
+            Id: ID
+        };
+
+
+        $.ajax({
+            url: "/User/DeleteUser/",
+            type: "POST",
+            data: JSON.stringify(obj),
+            contentType: "application/json;charset=UTF-8",
+            dataType: "json",
+            success: function (result) {
+
+                loadUserData();
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+
+    }
+
+</script>

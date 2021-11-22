@@ -1,0 +1,346 @@
+﻿@model B2CPortal.Models.OrderVM
+@{
+    ViewBag.Title = "Checkout";
+}
+
+
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Chcekout</h2>
+                    <ul class="text-left">
+                        <li><a href="/Home/Index">Home </a></li>
+                        <li><span> // </span>Chcekout</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- pages-title-end -->
+<!-- Checkout content section start -->
+<section class="pages checkout section-padding">
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="main-input single-cart-form padding60">
+                    <div class="log-title">
+                        <h3><strong>billing details</strong></h3>
+                    </div>
+                    <div class="custom-input">
+                        <form id="billing">
+                            @Html.HiddenFor(m => m.FK_Customer)
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control" } })
+                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+
+                            @if (Model.FK_Customer > 0)
+                            {
+                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
+
+                            }
+                            else
+                            {
+                                <div class="custom-select">
+                                    <select id="Country" class="form-control">
+                                        <option value="Select"> Country</option>
+                                        <option value="Pakistan"> Pakistan </option>
+                                        <option value="United States"> United States </option>
+                                        <option value="United Kingdom"> United Kingdom </option>
+                                        <option value="Canada"> Canada </option>
+                                        <option value="Malaysia"> Malaysia </option>
+                                        <option value="United Arab Emirates"> United Arab Emirates </option>
+                                    </select>
+                                </div>
+
+                                <div class="custom-select">
+                                    <select id="City" class="form-control">
+                                        <option value="Select"> Town / City</option>
+                                        <option value="Karachi"> Karachi </option>
+                                        <option value="Lahore"> Lahore </option>
+                                        <option value="Islamabad"> Islamabad </option>
+                                        <option value="Peshawar"> Peshawar </option>
+                                        <option value="Quetta"> Quetta </option>
+                                    </select>
+                                </div>
+                            }
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+
+
+                            <div class="row">
+                                <label class="switch">
+                                    <input class="shipto" id="shipto" type="checkbox" onclick="toggle('.myClass', this)">
+                                    <span style="position:center" class=" slider round">
+
+                                    </span>
+                                </label>
+
+                            </div>
+                            SHIP TO DIFFERENT ADDRESS.
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="display:none" class="myClass col-sm-6">
+                <div class="main-input single-cart-form padding60">
+                    <div class="log-title">
+                        <h3><strong>ship to different address</strong></h3>
+                    </div>
+                    <div class="custom-input">
+                        <form id="shipping">
+                            @Html.HiddenFor(m => m.FK_Customer)
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control" } })
+                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+
+                            @if (Model.FK_Customer > 0)
+                            {
+                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
+
+                            }
+                            else
+                            {
+                                <div class="custom-select">
+                                    <select id="Country" class="form-control">
+                                        <option value="Select"> Country</option>
+                                        <option value="Pakistan"> Pakistan </option>
+                                        <option value="United States"> United States </option>
+                                        <option value="United Kingdom"> United Kingdom </option>
+                                        <option value="Canada"> Canada </option>
+                                        <option value="Malaysia"> Malaysia </option>
+                                        <option value="United Arab Emirates"> United Arab Emirates </option>
+                                    </select>
+                                </div>
+
+                                <div class="custom-select">
+                                    <select id="City" class="form-control">
+                                        <option value="Select"> Town / City</option>
+                                        <option value="Karachi"> Karachi </option>
+                                        <option value="Lahore"> Lahore </option>
+                                        <option value="Islamabad"> Islamabad </option>
+                                        <option value="Peshawar"> Peshawar </option>
+                                        <option value="Quetta"> Quetta </option>
+                                    </select>
+                                </div>
+                            }
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        @*<div class="row">
+            <label class="switch">
+                <input class="shipto" id="shipto" type="checkbox" onclick="toggle('.myClass', this)">
+                <span style="position:center" class=" slider round">
+
+                </span>
+            </label>
+
+        </div>
+        SHIP TO DIFFERENT ADDRESS.*@
+
+
+
+
+        <div class="row margin-top">
+            <div class="col-xs-12 col-sm-6">
+                <div class="padding60">
+                    <div class="log-title">
+                        <h3><strong>Our order</strong></h3>
+                    </div>
+                    <div class="cart-form-text pay-details table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <td>Total</td>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @if (Model.orderVMs != null)
+                                {
+                                    foreach (var item in Model.orderVMs)
+                                    {
+                                        <tr>
+                                            <th>@item.Name  x @item.Quantity</th>
+                                            <td>@item.TotalPrice</td>
+                                        </tr>
+                                    }
+                                }
+
+                                <tr>
+                                    <th>Cart Subtotal</th>
+                                    <td>PKR. @Model.CartSubTotal</td>
+
+                                </tr>
+                                <tr>
+                                    <th>Total Discount</th>
+                                    <td>@Model.CartSubTotalDiscount %</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Shipping and Handing</th>
+                                    <td>$00.00</td>
+                                </tr>
+                                <tr>
+                                    <th>Vat</th>
+                                    <td>$00.00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Order total</th>
+                                    <td>PKR. @Model.OrderTotal</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-xs-12 col-sm-6">
+                <div class="padding60">
+                    <div class="log-title">
+                        <h3><strong>Payment method</strong></h3>
+                    </div>
+                    <div class="categories">
+                        <ul id="accordion" class="panel-group clearfix">
+                            <li class="panel">
+                                <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                    <div class="medium-a">
+                                        direct bank transfer
+                                    </div>
+                                </div>
+                                <div class="panel-collapse collapse in" id="collapse1">
+                                    <div class="normal-a">
+                                        <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="panel">
+                                <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                    <div class="medium-a">
+                                        cheque payment
+                                    </div>
+                                </div>
+                                <div class="paypal-dsc panel-collapse collapse" id="collapse2">
+                                    <div class="normal-a">
+                                        <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="panel">
+                                <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                    <div class="medium-a">
+                                        paypal
+                                    </div>
+                                </div>
+                                <div class="paypal-dsc panel-collapse collapse" id="collapse3">
+                                    <div class="normal-a">
+                                        <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="submit-text">
+                            <a class="order">place order</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+<!-- Checkout content section end -->
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+
+        $('.order').click(function () {
+            // Both Form Data
+            if ($('input.shipto').is(':checked')) {
+                alert("ok");
+
+            }
+            // Only Billing Form Data
+            // alert("No");
+
+            var form = $("#billing");
+            var datatosend = {
+                Billing: {
+                    /*Id: $('#Id').val(),*/
+                    PhoneNo: $('#PhoneNo').val(),
+                    EmailId: $('#EmailId').val(),
+                    Country: $('#Country').val(),
+                    City: $('#City').val(),
+                    BillingAddress: $('#Address').val()
+
+                }
+            }
+
+            console.log(JSON.stringify(datatosend));
+            console.log(datatosend);
+
+
+            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+            $.validator.unobtrusive.parse($(this));//add the form validation
+            $.validator.unobtrusive.parse(form);
+            //if ($(form).valid()) // using not operator for a time being
+            if ($(form.valid())) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Orders/AddBillingDetails",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.isSuccessful == true) {
+                            toastr.success("Billing Added Success");
+                            // window.location.href = "/Account/MyAccount";
+                        }
+                        else if (data.isSuccessful == false) {
+                            toastr.error("Failed.");
+                        }
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    },
+                    err: function (data) {
+                        console.log(data);
+                    }
+                })
+            }
+            else {
+                return false;
+            }
+
+
+        });
+
+
+    </script>
+}

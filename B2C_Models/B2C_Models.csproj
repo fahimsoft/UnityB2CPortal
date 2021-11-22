@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8889AC82-6264-4455-909A-A1B9121BDCF7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>B2C_Models</RootNamespace>
+    <AssemblyName>B2C_Models</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+    <Compile Include="Models\B2CEntities.cs" />
+    <Compile Include="Models\B2CModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>B2CModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\B2CModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\B2CModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>B2CModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Cart.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\City.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\CommentAndRating.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\customer.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrderDetail.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrderMaster.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductBrand.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductCategory.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductDetail.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductMaster.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductPackSize.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductPrice.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\ProductVariant.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sysdiagram.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Test.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\User.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Userinfo.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\WishlistVM.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <EntityDeploy Include="Models\B2CModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>B2CModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Models\B2CModel.edmx.diagram">
+      <DependentUpon>B2CModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Models\B2CModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>B2CModel.edmx</DependentUpon>
+      <LastGenOutput>B2CModel.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\B2CModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>B2CModel.edmx</DependentUpon>
+      <LastGenOutput>B2CModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\API_Base\API_Base.csproj">
+      <Project>{dbbcca8c-f0da-471e-814b-9787c0594081}</Project>
+      <Name>API_Base</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

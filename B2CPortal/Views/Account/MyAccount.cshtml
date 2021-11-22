@@ -1,0 +1,443 @@
+﻿@model B2C_Models.Models.customer
+@{
+    ViewBag.Title = "MyAccount";
+}
+
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>My Account</h2>
+                    <ul class="text-left">
+                        <li><a href="/Home/Index">Home </a></li>
+                        <li><span> // </span>My Account</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- pages-title-end -->
+
+
+<!-- My account content section start -->
+<section class="pages my-account-page section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="padding60">
+                    <div class="log-title">
+                        <h3><strong>My Account</strong></h3>
+                    </div>
+                    <div class="prament-area main-input">
+                        <ul class="panel-group" id="accordion">
+                            <li class="panel">
+                                <div class="account-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                    <label>
+                                        <input type="radio" checked value="forever" name="rememberme" />
+                                        add my frist address
+                                    </label>
+                                </div>
+                                <div id="collapse1" class="panel-collapse collapse in">
+                                    <div class="single-log-info">
+                                        <div class="bulling-title">
+                                            <h5>Billing Address</h5>
+                                            <p>To add a new address, please fill out the form below.</p>
+                                        </div>
+                                        <div class="custom-input">
+                                            <form id="billing" @*action="mail.php" method="post"*@>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        @Html.HiddenFor(m => m.Id)
+                                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+
+                                                        @*<input type="text" name="name" placeholder="First Name" />*@
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+
+                                                        @*<input type="text" name="name" placeholder="Last Name" />*@
+                                                    </div>
+                                                </div>
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control" } })
+                                                @if (Model.Id > 0)
+                                                {
+                                                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
+
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="custom-select">
+                                                        <select id="Country" class="form-control">
+                                                            <option value="Select"> Country</option>
+                                                            <option value="Pakistan"> Pakistan </option>
+                                                            <option value="United States"> United States </option>
+                                                            <option value="United Kingdom"> United Kingdom </option>
+                                                            <option value="Canada"> Canada </option>
+                                                            <option value="Malaysia"> Malaysia </option>
+                                                            <option value="United Arab Emirates"> United Arab Emirates </option>
+                                                        </select>
+                                                    </div>
+                                                }
+                                                @*<input type="text" name="email" placeholder="Email Address" />*@
+
+                                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+
+                                                @if (Model.Id > 0)
+                                                {
+                                                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
+
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="custom-select">
+                                                        <select id="City" class="form-control">
+                                                            <option value="Select"> Town / City</option>
+                                                            <option value="Karachi"> Karachi </option>
+                                                            <option value="Lahore"> Lahore </option>
+                                                            <option value="Islamabad"> Islamabad </option>
+                                                            <option value="Peshawar"> Peshawar </option>
+                                                            <option value="Quetta"> Quetta </option>
+                                                        </select>
+                                                    </div>}
+
+                                                <p class="red-color">** You must register at least one phone number.</p>
+                                                @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+
+                                                @*<input type="text" name="text" placeholder="Mobile Phone" />*@
+                                                @*<div class="custom-mess">
+            <textarea rows="2" placeholder="Order Notes" name="message"></textarea>
+        </div>
+        <label>Please assign an address title for future reference.<sup>*</sup></label>
+        <div class="input-text">
+            <input type="text" name="refrence" value="" />
+        </div>*@
+                                                <div class="submit-text">
+                                                    <button type="button" class="btn btn-success" id="save">Save</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="panel panelimg">
+                                <div class="account-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                    <label>
+                                        <input type="radio" value="forever" name="rememberme" />
+                                        My credit slips
+                                    </label>
+                                </div>
+                                <div id="collapse2" class="paypal-dsc panel-collapse collapse">
+                                    <div class="prayment-dsc">
+                                        <div class="bulling-title">
+                                            <h5>Order history</h5>
+                                        </div>
+                                        <p>Here are the orders you've placed since your account was created.</p>
+                                        <span>You have not placed any orders.</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="panel panelimg">
+                                <div class="account-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                    <label>
+                                        <input type="radio" value="forever" name="rememberme" />
+                                        my address
+                                    </label>
+                                </div>
+                                <div id="collapse3" class="paypal-dsc panel-collapse collapse">
+                                    <div class="prayment-dsc">
+                                        <div class="bulling-title">
+                                            <h5>Order history</h5>
+                                        </div>
+                                        <p>Here are the orders you've placed since your account was created.</p>
+                                        <span>You have not placed any orders.</span>
+                                    </div>
+                                </div>
+                            </li>
+
+
+                            <li class="panel">
+                                <div class="account-title" data-toggle="collapse" data-parent="#accordion" data-target="#collapse4">
+                                    <label>
+                                        <input type="radio" value="forever" name="rememberme" />
+                                        My personal information
+                                    </label>
+                                </div>
+                                <div id="collapse4" class="panel-collapse collapse">
+                                    <div class="single-log-info">
+                                        <div class="bulling-title">
+                                            <h5>Your personal information</h5>
+                                            <p>Please be sure to update your personal information if it has changed</p>
+                                        </div>
+                                        @*<div class="mr-mrs">
+                                                <label class="social-label">
+                                                    <sup>*</sup> Social title
+                                                </label>
+                                                <label>
+                                                    <input type="radio" value="forever" name="rememberme" />
+                                                    Mr.
+                                                </label>
+                                                <label>
+                                                    <input type="radio" value="forever" name="rememberme" />
+                                                    Msr.
+                                                </label>
+                                            </div>*@
+                                        <div class="custom-input">
+                                            <form id="settings" @*action="mail.php" method="post"*@>
+                                                @Html.HiddenFor(m => m.Id, new { htmlAttributes = new {  @class = "form-control" } })
+
+                                                @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                                                @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                                                @Html.EditorFor(m => m.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+                                                @Html.EditorFor(m => m.DateOfBirth, new { htmlAttributes = new { @placeholder = "Date Of Birth:", @class = "form-control", @type = "date" } })
+                                                @Html.EditorFor(m => m.Gender, new { htmlAttributes = new { @placeholder = "Gender:", @class = "form-control" } })
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
+                                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Current Password:", @class = "form-control", @type = "Password" } })
+                                                <input class="form-control" type="password" id="NewPassword" name="NewPassword" placeholder="New Password" />
+                                                <input class="form-control" type="password" id="ConfirmPassword" name="ConfirmPassword" placeholder="Confirm Password" />
+
+
+                                                <div class="submit-text text-left">
+                                                    <button id="UpdateBtn" type="submit" value="submit form">Update</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="my-right-side">
+                    <a href="~/Product/Wishlist">My wishlists</a>
+                    <a href="~/Product/AddToCart">Order history and details</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- my account content section end -->
+
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
+    <script type="text/javascript">
+
+        $.validator.addMethod("uniqueEmail", function (value, element) {
+
+            let emailOrgName = "/Account/uniqueEmailCheck?email=" + value;
+            var email = $('.email').val();
+            alert(email);
+            let result = false;
+            $.ajax({
+                url: emailOrgName,
+                data: JSON.stringify(email),
+
+                success: function (data) {
+                    if (data.data.email === 1) {
+                        alert(data.data.email + ': This email already exists.');
+                        console.log(data.data.email + ': This email exists.');
+                        result = false;
+                    } else {
+                        alert(data.data.email + ': Email Available.');
+                        console.log(data.data.email + ': This email does not exist.');
+                        result = true;
+                    }
+                },
+                async: false
+            });
+            console.log(result);
+            return result;
+        });
+
+
+        jQuery('#settings').validate({
+            rules: {
+                FirstName: {
+                    required: true,
+
+                    maxlength: 50
+                },
+                LastName: {
+                    required: true
+
+                }, EmailId: {
+                    required: true,
+                    email: true
+
+                }, PhoneNo: {
+                    required: true
+                }, DateOfBirth: {
+                    required: true
+                }, Gender: {
+                    required: true
+
+                }
+                , Password: {
+                    required: true
+
+                }, NewPassword: {
+                    required: true
+
+                }, ConfirmPassword: {
+                    required: true,
+                    equalTo: "#NewPassword"
+
+                }
+
+            },
+            messages: {
+                FirstName: {
+                    required: "First Name Is Required"
+                }, LastName: {
+                    required: "Last Name Is Required"
+                }, EmailId: {
+                    required: "Email Is Required",
+                    uniqueEmail: "Your Email address is already registered on our system."
+                }, DateOfBirth: {
+                    required: "DOB Is Required"
+                }, Gender: {
+                    required: "Gender Is Required"
+                }, Password: {
+                    required: "Password Is Required"
+                }, NewPassword: {
+                    required: "New Password Is Required"
+                }, ConfirmPassword: {
+                    required: "Confirm Password Is Required",
+                    equalTo: "Confirm Password must be equal to Password"
+                }, PhoneNo: {
+                    required: "Phone No Is Required"
+                }
+
+            }
+        });
+
+
+        // Registeration Update Button
+        $("#UpdateBtn").click(function (e) {
+            e.preventDefault();
+            var form = $("#settings");
+
+            var datatosend = {
+                customer: {
+                    /*    idx: $('#idx').val(),*/
+                    Id: $('#Id').val(),
+                    FirstName: $('#FirstName').val(),
+                    LastName: $('#LastName').val(),
+                    PhoneNo: $('#PhoneNo').val(),
+                    DateOfBirth: $('#DateOfBirth').val(),
+                    Gender: $('#Gender').val(),
+                    EmailId: $('#EmailId').val(),
+                    Password: $('#NewPassword').val()
+
+                }
+            }
+            console.log(JSON.stringify(datatosend));
+            //  var form = $("#purchaseform");
+            console.log(datatosend)
+            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+             $.validator.unobtrusive.parse($(this));//add the form validation
+            $.validator.unobtrusive.parse(form);
+            //if ($(form).valid()) // using not operator for a time being
+            if ($(form.valid())) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddUpdate",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.isSuccessful == true) {
+                            toastr.success("Updated successfully.");
+                           // window.location.href = "/Account/MyAccount";
+                        }
+                        else if (data.isSuccessful == false ) {
+                            toastr.error("Updation Failed.");
+                        }
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    },
+                    err: function (data) {
+                        console.log(data);
+                    }
+                })
+            }
+            else {
+                return false;
+            }
+        });
+
+        // save button 
+        $("#save").click(function (e) {
+            e.preventDefault();
+            var form = $("#billing");
+
+            var datatosend = {
+                customer: {
+                    /*    idx: $('#idx').val(),*/
+                    Id: $('#Id').val(),
+                    FirstName: $('#FirstName').val(),
+                    LastName: $('#LastName').val(),
+                    PhoneNo: $('#PhoneNo').val(),
+                    EmailId: $('#EmailId').val(),
+                    Country: $('#Country').val(),
+                    Address: $('#Address').val(),
+                    City: $('#City').val(),
+
+
+                }
+            }
+            console.log(JSON.stringify(datatosend));
+            //  var form = $("#purchaseform");
+            console.log(datatosend)
+            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+            $.validator.unobtrusive.parse($(this));//add the form validation
+            $.validator.unobtrusive.parse(form);
+            //if ($(form).valid()) // using not operator for a time being
+            if ($(form.valid())) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/AddUpdateBilling",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                        if (data.isSuccessful == true) {
+                            toastr.success("Billing Address Updated successfully.");
+                           // window.location.href = "/Account/MyAccount";
+                        }
+                        else if (data.isSuccessful == false) {
+                            toastr.error("Updation Failed.");
+                        }
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    },
+                    err: function (data) {
+                        console.log(data);
+                    }
+                })
+            }
+            else {
+                return false;
+            }
+        });
+
+      
+    </script>
+}
+
+

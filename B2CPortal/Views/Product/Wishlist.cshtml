@@ -1,0 +1,348 @@
+﻿@model List<B2C_Models.Models.WishlistVM>
+@{
+    ViewBag.Title = "Wishlist";
+}
+
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Wishlist</h2>
+                    <ul class="text-left">
+                        <li><a href="/Home/Index">Home </a></li>
+                        <li><span> // </span>Wishlist</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- pages-title-end -->
+<!-- wishlist content section start -->
+<section class="pages wishlist-page section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="table-responsive padding60">
+                    <table id="wishList" class="wishlist-table text-center">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Discount %</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Sub Total</th>
+                                <th>Total</th>
+
+                                <th>Add To Cart</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                            <tr data-id="@item.Id">
+
+                                <td class="td-img text-left">
+                                    <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
+                                    <div class="items-dsc">
+                                        <h5><a href="#">@item.Name</a></h5>
+                                    </div>
+                                </td>
+                                <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
+                                <td>@item.Price</td>
+
+                                <td>
+                                    <div class="plus-minus">
+                                        <a class="dec qtybutton">-</a>
+                                        <input type="number" value="@item.TotalQuantity" name="qtybutton" class="plus-minus-box">
+                                        <a class="inc qtybutton">+</a>
+                                    </div>
+                                </td>
+
+                                <td class="totalpricecol">
+                                    <del> @item.ActualPrice.ToString("#,##0")  </del>
+                                </td>
+
+                                <td><strong> @item.TotalPrice </strong></td>
+
+                                <td style="display:none">@item.FK_ProductMaster</td>
+
+                                <td style="display:none">@item.Id</td>
+                                <td>
+
+                                    <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
+                                    @*<a href="cart.html">Add to cart</a>*@
+
+                                </td>
+                                <td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>
+
+                            </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <h4>
+                                            The Wishlist is Empty
+                                        </h4>
+                                    </td>
+                                </tr>
+                            }
+
+
+                        </tbody>
+                    </table>
+
+                    <div class="text-right">
+                        @if (Model == null || Model.Count() <= 0)
+                        {
+
+
+                            <button type="button" id="updatewishlist" disabled="true" class="btn btn-primary">Update Wishlist</button>
+                        }
+                        else
+                        {
+                    <button type="button" id="updatewishlist" class="btn btn-primary">Update Wishlist</button>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row margin-top">
+           
+            <div class="col-sm-12">
+                <div class="single-cart-form padding60">
+                    <div class="log-title">
+                        <h3><strong>payment details</strong></h3>
+                    </div>
+                    <div class="cart-form-text pay-details table-responsive">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>Cart Subtotal</th>
+                                    <td>PKR @Model.Select(x => x.CartSubTotal).FirstOrDefault().ToString("#,##0")</td>
+                                </tr>
+                                <tr>
+                                    <th>Total Discount</th>
+                                    <td>@Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault().ToString("#,##0")%</td>
+                                </tr>
+                                <tr>
+                                    <th>Shipping and Handing</th>
+                                    <td> PKR.  @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
+                                </tr>
+                                <tr>
+                                    <th>Vat</th>
+                                    <td> PKR. @Model.Select(x => x.VatTax).FirstOrDefault()</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th class="tfoot-padd">Order total</th>
+                                    <td class="tfoot-padd"> PKR. @Model.Select(x => x.OrderTotal).FirstOrDefault().ToString("#,##0")</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<!-- wishlist content section end -->
+
+
+
+<script>
+    //Plus and minus quentiry------------>
+    //jQuery('.plus-minus-box').keyup(function () {
+    //    this.value = this.value.replace(/[^0-9\.]/g, '');
+    //});
+    //$(".qtybutton").on("click", function () {
+    //    
+    //    var $button = $(this);
+    //    var oldValue = $button.parent().find("input").val();
+    //    oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+    //    if ($button.text() == "+") {
+    //        oldValue = Number(oldValue) + Number(1);
+    //        var newVal = oldValue;
+    //    } else {
+    //        // Don't allow decrementing below zero
+    //        if (oldValue > 0) {
+    //            oldValue = Number(oldValue) - Number(1);
+    //            var newVal = oldValue;
+    //            newVal = newVal == 0 ? 1 : newVal;
+    //        } else {
+    //            newVal = 1;
+    //        }
+    //    }
+
+    //    var row = $(this).closest("tr");
+    //    var price = parseInt($(row).find('td')[2].textContent);
+    //    let totalvalue = (price * newVal);
+    //    $(row).find('td')[5].textContent = totalvalue;
+
+
+
+    //    $button.parent().find("input").val(newVal);
+    //});
+
+
+    // Add To Cart Update button
+    $(".addtocart").click(function () {
+
+
+        var datatosend;
+        var $row = $(this).closest("tr"),
+            $tds = $row.find("td:nth-child(2)");
+        var table = $("#wishList tbody");
+        $(this).closest('tr').each(function (i) {
+            var $tds = $(this).find('td'),
+                cartid = $tds.eq(7).text(),
+                productid = $tds.eq(6).text(),
+                qty = $(this).find("td:eq(3) input[type='number']").val();
+            total = $tds.eq(6).text(),
+
+             datatosend = {
+                Id: cartid,
+                FK_ProductMaster: productid,
+                Quantity: qty,
+                TotalQuantity : qty,
+                TotalPrice: total
+            };
+
+        });
+
+        console.log(datatosend);
+        $.ajax({
+            type: "POST",
+            url: "/Product/UpdateToCart",
+            data: { obj :datatosend },
+            //contentType: 'application/json',
+            //dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    toastr.success(data.msg);
+
+                    ShowCartProducts();
+
+                }
+                else if (data.success == false) {
+                    toastr.error(data.msg);
+                }
+                $($row).remove();
+
+            },
+            failure: function (data) {
+                console.log(data);
+            },
+            err: function (data) {
+                console.log(data);
+            }
+
+        })
+    });
+
+    // Remove from Wishlist
+    $(".delete").click(function () {
+
+        var id;
+        var $row = $(this).closest("tr"),        // Finds the closest row <tr>
+            $tds = $row.find("td:nth-child(2)");
+        //console.log($tds);
+        $(this).closest('tr').each(function (i) {
+            
+            var $tds = $(this).find('td'),
+                cartid = $tds.eq(7).text();
+                id = cartid
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/Product/DeleteFromCart",
+            data: { Id:id },
+            //contentType: 'application/json',
+            //dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    toastr.success(data.msg);
+
+                }
+                else if (data.success == false) {
+                    toastr.error(data.msg);
+                }
+                //var p = o.parentNode.parentNode;
+
+                //p.parentNode.removeChild(p);
+                $($row).remove();
+                return false;
+            },
+            failure: function (data) {
+                console.log(data);
+            },
+            err: function (data) {
+                console.log(data);
+            }
+
+        })
+
+    });
+
+    // Update Wishlist
+     $("#updatewishlist").click(function () {
+        
+        var wishlistids = [];
+        var wishlistquentites = [];
+        var array = $.makeArray($('tbody tr[id]').map(function () {
+            return this.id;
+        }));
+        //$('#myTable').on('click', 'tbody tr', function (event, it) {
+        //    console.log(it.length);
+        //});
+         var tb = $("#wishList tbody");//.closest("tr");
+        var size = tb.find("tr").length;
+        tb.find("tr").each(function (index, element) {
+            wishlistids.push(element.dataset["id"]);
+            $(element).find('td').each(function (index, element) {
+                if (parseInt($(element).find('input').val()) > 0) {
+                    wishlistquentites.push($(element).find('input').val());
+                }
+            });
+        });
+         console.log("Number of rows : " + wishlistquentites);
+         console.log("Number of  : " + wishlistids);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UpdateWishList", "Product")', //"/Product/DeleteCart",
+            data: {
+                wishlistquentites: wishlistquentites,
+                wishlistids: wishlistids
+            },
+            success: function (data) {
+                if (!data.success) {
+                    toastr.success(data.msg);
+                    //ShowCartProducts();
+                } else {
+                    toastr.error(data.msg);
+
+                }
+
+            }
+        });
+     });
+
+</script>
+
+
+
+

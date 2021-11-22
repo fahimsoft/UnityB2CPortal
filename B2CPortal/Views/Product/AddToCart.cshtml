@@ -1,0 +1,26 @@
+﻿@{
+    ViewBag.Title = "AddToCart";
+}
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Cart</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="CartTable">
+
+</div>
+<script>
+$(document).ready(function(){
+$("#CartTable").load('@Url.Action("GetCartList", "Product")')
+});
+
+
+</script>
+<!-- pages-title-end -->

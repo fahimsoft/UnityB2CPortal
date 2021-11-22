@@ -1,0 +1,178 @@
+﻿@model B2C_Models.Models.ProductMaster
+
+@{
+    ViewBag.Title = "Sidebar";
+
+}
+<script src="@Url.Content("~/Scripts/jquery-3.4.1.min.js")">
+</script>
+<div class="sidebar left-sidebar">
+    <div class="s-side-text" id="categorySidebarId">
+        <div class="sidebar-title clearfix">
+            <h4 class="floatleft">Categories</h4>
+            <h5 class="floatright"><a href="#"></a></h5>
+        </div>
+
+        <div class="categories left-right-p" id="sidebarList">
+            <ul id="accordion" class="panel-group clearfix">
+
+                <li class="panel">
+
+                    <div class="panel-collapse collapse in" id="collapse1" data-target="#collapse2">
+                        <div id="category-checkboxes">
+
+                            @*<input type="checkbox" class="filter" categoryId="1" name="Dastak" value="Dastak" id="Dastak">
+                                <label for="Dastak">&nbsp;Dastak</label><br>
+                                <input type="checkbox" class="filter" categoryId="2" name="Ehtimam" value="Ehtimam">
+                                <label for="Ehtimam">&nbsp;Ehtimam</label><br>
+                                <input type="checkbox" class="filter" categoryId="3" name="Lagan" value="Lagan">
+                                <label for="Lagan">&nbsp;Lagan</label><br>*@
+
+                        </div>
+                    </div>
+
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="s-side-text" >
+        <div class="sidebar-title clearfix">
+            <h4 class="floatleft">Brand</h4>
+            <h5 class="floatright"><a href="#"></a></h5>
+        </div>
+
+        <div class="categories left-right-p" id="sidebarList">
+            <ul id="accordion" class="panel-group clearfix">
+
+                <li class="panel">
+
+                    <div class="panel-collapse collapse in" id="collapse1" data-target="#collapse2">
+                        <div id="brand-checkboxes">
+
+                            @*<input type="checkbox" class="filter" categoryId="1" name="Dastak" value="Dastak" id="Dastak">
+                                <label for="Dastak">&nbsp;Dastak</label><br>
+                                <input type="checkbox" class="filter" categoryId="2" name="Ehtimam" value="Ehtimam">
+                                <label for="Ehtimam">&nbsp;Ehtimam</label><br>
+                                <input type="checkbox" class="filter" categoryId="3" name="Lagan" value="Lagan">
+                                <label for="Lagan">&nbsp;Lagan</label><br>*@
+
+                        </div>
+                    </div>
+
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+
+
+    <div class="s-side-text">
+        <div class="sidebar-title">
+            <h4>price</h4>
+        </div>
+        <div class="range-slider clearfix">
+            <form action="#" method="get">
+                <label><span>You range</span> <input type="text" id="amount" readonly /></label>
+                <div id="slider-range"></div>
+            </form>
+        </div>
+    </div>
+    <div class="s-side-text">
+        <div class="sidebar-title clearfix">
+            <h4 class="floatleft">size</h4>
+            <h5 class="floatright"><a href="#">All</a></h5>
+        </div>
+        <div class="size-select clearfix">
+            <a href="#">m</a>
+            <a href="#">s</a>
+            <a href="#">l</a>
+            <a href="#">sl</a>
+            <a href="#">xl</a>
+        </div>
+    </div>
+
+    <div class="s-side-text">
+        <div class="sidebar-title clearfix">
+            <h4 class="floatleft">brands</h4>
+            <h5 class="floatright"><a href="#">All</a></h5>
+        </div>
+        <div class="brands-select clearfix">
+            <ul>
+                <li>
+                    <a href="#">Sunridge</a>
+                    <a href="#">Dastak</a>
+                    <a href="#">Lagan</a>
+
+                </li>
+                <li>
+                    <a href="#">Unity Food</a>
+                    <a href="#">Zaukeen</a>
+                    <a href="#">Sunridge</a>
+
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+
+
+
+
+    $(document).ready(function () {
+       LoadSidebar();
+
+    });
+
+    //Load Sidebar List
+    function LoadSidebar() {
+        var html = '', htmlPBrand='', htmlPCategory='', pVariant = '';
+        var count = 0;
+        //$('#categorySidebarId').html('');
+        $.ajax({
+            url: "/Product/GetSidebar",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                
+                var data = JSON.parse(result.data);
+                //console.log(data);
+
+                $.each(data.Category, function (key, item) {
+
+                    htmlPCategory += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" categoryId="${item.Id}" myfilter="Category" categoryName="${item.Name}" value="Dastak" id="${item.Id}">
+                          &nbsp;&nbsp;<label for="${item.Id}">&nbsp;${item.Name}</label></a><br>`;
+
+                });
+
+                $.each(data.Brand, function (key, item) {
+
+                    htmlPBrand += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" categoryId="${item.Id}" myfilter="Brand" categoryName="${item.Name}" value="Dastak" id="${item.Id}">
+                          &nbsp;&nbsp;<label for="${item.Id}">&nbsp;${item.Name}</label></a><br>`;
+
+                    //htmlPBrand += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" brandId="${item.Id}" myfilter="Brand" brandName="${item.Name}" value="Dastak" id="${item.Id}">
+                    //      &nbsp;&nbsp;<label for="${item.Id}">&nbsp;${item.Name}</label></a><br>`;
+
+                });
+
+                $('#category-checkboxes').html('<div class="normal-a">' + htmlPCategory + '</div>');
+                $('#brand-checkboxes').html('<div class="normal-a">' + htmlPBrand + '</div>');
+
+                /*$('#categorySidebarId').html(html);*/
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+    }
+
+
+</script>
