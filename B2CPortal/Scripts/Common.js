@@ -9,6 +9,7 @@ $(document).ready(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
 
+//test
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
