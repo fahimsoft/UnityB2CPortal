@@ -34,8 +34,6 @@ namespace B2CPortal.Controllers
         {
             try
             {
-
-                //Session["UrlToBeDirectedAfterLogin"] = address;
                 customer customer = new customer();
                 
                 return View(customer);
