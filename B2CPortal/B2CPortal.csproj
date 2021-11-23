@@ -406,6 +406,8 @@
     <Content Include="Views\Orders\Checkout.cshtml" />
     <Content Include="Views\Contact\ContactUs.cshtml" />
     <Content Include="Views\Product\_CartListPartialView.cshtml" />
+    <Content Include="Views\Orders\Index.cshtml" />
+    <Content Include="Views\Orders\_OrderListPartialView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

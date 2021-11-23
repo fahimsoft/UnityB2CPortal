@@ -42,6 +42,10 @@ namespace B2CPortal.Services
                     Current.IsActive = true;
                     Current.TotalPrice = (int)Billing.OrderTotal;
                     Current.TotalQuantity = Billing.TotalQuantity;
+                    Current.OrderNo= Billing.OrderNo;
+                    Current.Status= Billing.Status;
+                    
+                    
 
                 }
                 else
@@ -58,6 +62,12 @@ namespace B2CPortal.Services
                 throw ex;
             }
 
+        }
+
+        public async Task<IEnumerable<OrderMaster>> GetOrderList()
+        {
+            //return await _dxcontext.OrderMasters.Include(x=> x.OrderDetails).ToListAsync();
+            return await _dxcontext.OrderMasters.ToListAsync();
         }
     }
 }

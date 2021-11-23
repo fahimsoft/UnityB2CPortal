@@ -26,7 +26,7 @@ namespace B2C_Models.Models
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<bool> IsActive { get; set; }
     
-        public virtual OrderMaster OrderMaster { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }
+        public virtual OrderMaster OrderMaster { get; set; }
     }
 }

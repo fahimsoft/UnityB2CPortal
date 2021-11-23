@@ -19,6 +19,7 @@ namespace B2CPortal.Models
         public string ShippingAddress { get; set; }
         public string BillingAddress { get; set; }
         public string PhoneNo { get; set; }
+        public string Status { get; set; }
         public string EmailId { get; set; }
         public string Gender { get; set; }
         public Nullable<System.DateTime> DateOfBirth { get; set; }
@@ -44,5 +45,6 @@ namespace B2CPortal.Models
         public int VatTax { get; internal set; }
         public CartViewModel CartViewModel { get; set; }
         public List<OrderVM> orderVMs { get; set; }
+       
     }
 }

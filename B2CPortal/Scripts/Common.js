@@ -68,6 +68,163 @@ function removequickviewvalues(id) {
 
     $('#quentityvalue').val("");
 }
+function Handleorderdetail(id) {
+    $.ajax({
+        url: '/Orders/GetOrderDetailsById/',
+        type: "GET",
+        data: {
+            id : id
+        },
+        //contentType: "application/json;charset=utf-8",
+        //dataType: "json",
+        success: function (result) {
+            debugger
+            var html = '';
+            var index = 1;
+            var fade = 1;
+            var productPrice = 0;
+            var htmlProductDetail = '';
+            var htmlProductPriceDetail = '', htmlProductSize = '';
+            var item = result.data;
+
+            $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
+
+                productPrice = PriceValue.Price;
+                productDiscount = PriceValue.Discount;
+            });
+
+            $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
+
+                if (ProductDetailsIndex == 1) {
+                    htmlProductDetail += `<li class="active"><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+                }
+                else {
+                    htmlProductDetail += `<li><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+                }
+
+
+                index += 1;
+            });
+
+            $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
+
+                if (ProductPDIndex == 0) {
+                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                            <span id="discountedvalue">${productDiscount} </span>%
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                                                        </div>`
+                }
+                else {
+                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                            <span>new</span>
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                                                        </div>`
+                }
+
+                fade += 1;
+            });
+
+            $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
+
+                htmlProductSize += `<option value="${ProductSizeValue.Id}">${ProductSizeValue.UOM}</option>`
+
+
+            });
+
+
+            html = `<div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="d-table">
+                    <div class="d-tablecell">
+                        <div class="modal-dialog">
+                            <div class="main-view modal-content">
+                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
+                                    <span>x</span>
+                                </div>
+                                <div class="row">
+
+
+                                    <div class="col-xs-12 col-sm-5 col-md-4">
+                                        <div class="quick-image">
+                                            <div class="single-quick-image text-center">
+                                                <div class="list-img">
+                                                    <div class="product-img tab-content">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="quick-thumb">
+                                                <ul class="product-slider">
+                    < li > <a data-toggle="tab" href="#sin-1"> <img src="/" alt="quick view" /> </a></li >
+
+
+                                              </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-7 col-md-8">
+                                        <div class="quick-right">
+                                            <div class="list-text">
+                                                <h3>$Test test test </h3>
+                                                <span>des </span>
+                                                <div class="ratting floatright">
+                                                    <p>( 27 Rating )</p>
+                                                    <i class="mdi mdi-star"></i>
+                                                    <i class="mdi mdi-star"></i>
+                                                    <i class="mdi mdi-star"></i>
+                                                    <i class="mdi mdi-star-half"></i>
+                                                    <i class="mdi mdi-star-outline"></i>
+                                                </div>
+                                                <h5> <del>10 PKR</del> <b id="discoountedprice"> 1000 </b> PKR </h5>
+                                                <p>LongDescription LongDescription LongDescriptionLongDescriptionLongDescriptionLongDescription</p>
+                                                 <div class="plus-minus">
+                                                <a class="dec qtybuttonquickview qtybutton">-</a>
+                                                <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+                                                <a class="inc qtybuttonquickview qtybutton">+</a> 
+                                            </div>
+                                                PKR. <labal id="labalprice"> 100</labal>
+                                                </div>
+                                                <div class="list-btn">
+                                                    <a href="#"   onclick="HandleAddtocart(this)" productIdList=2 >add to cart</a>
+                                                    <a onclick="HandleAddtoWishList(this)" productIdList=4 href="#">wishlist</a>
+                                                    
+                                                </div>
+                                                <div class="share-tag clearfix">
+                                                    <ul class="blog-share floatleft">
+                                                        <li><h5>share </h5></li>
+                                                        <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+                                                        <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+                                                        <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+                                                        <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+                                                        <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+                                                        <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+
+            $('#quick-view').html(html);
+            //SetLocalStorage(elem);
+        },
+        error: function (errorMessage) {
+            alert(errorMessage.responseText);
+        }
+    });
+}
 //=====================On hover cart list========================
 function ShowCartProducts() {
     $.ajax({

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using B2CPortal.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -52,5 +54,33 @@ namespace API_Base.Common
         {
             return obj == null ? new List<T>() : obj.ToList();
         }
+        public static object CopyPropertiesTo(object fromObject, object toObject)
+        {
+            PropertyInfo[] toObjectProperties = toObject.GetType().GetProperties();
+            foreach (PropertyInfo propTo in toObjectProperties)
+            {
+                PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
+                if (propFrom != null && propFrom.CanWrite)
+                    propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
+            }
+            return toObject;
+        }
+        public static int GenerateRandomNo()
+        {
+            int _min = 100000;
+            int _max = 999999;
+            Random _rdm = new Random();
+            return _rdm.Next(_min, _max);
+        }
+
+    }
+    public enum OrderStatus
+    {
+        Pending = 1,
+        Confirmed = 2,
+        InProcess = 3,
+        Delivered = 4,
+        Cancelled = 5,
+        Rejected = 6,
     }
 }

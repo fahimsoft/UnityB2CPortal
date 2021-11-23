@@ -1,9 +1,11 @@
 ﻿using API_Base.Base;
+using API_Base.Common;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -24,7 +26,28 @@ namespace B2CPortal.Controllers
             _orders = orders;
             _ordersDetail = orderDetail;
         }
+        public ActionResult Index()
+        {
+            return View();
+        }
+        public async Task<JsonResult> GetOrderDetailsById(int id)
+        {
+           var detailslist =  await _ordersDetail.GetOrderDetailsById(id);
+            return Json(new { data = detailslist },JsonRequestBehavior.AllowGet);
+        }
+        public async Task<ActionResult> GetOrderList()
+        {
+            List<OrderVM> list = new List<OrderVM>();
 
+            var orderlist = await _orders.GetOrderList();
+
+            foreach (var item in orderlist)
+            {
+                var dd = HelperFunctions.CopyPropertiesTo(item, new OrderVM());
+                list.Add((OrderVM)dd);
+            }
+           return PartialView("_OrderListPartialView", list);
+        }
         #endregion
         // GET: Orders
         [HttpGet]
@@ -153,6 +176,8 @@ namespace B2CPortal.Controllers
                             Billing.CartSubTotal = subTotal;
                             Billing.OrderTotal = OrderTotal;
                             Billing.TotalQuantity = tQuantity;
+                            Billing.OrderNo = HelperFunctions.GenerateRandomNo().ToString();
+                            Billing.Status = OrderStatus.Pending.ToString();
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);

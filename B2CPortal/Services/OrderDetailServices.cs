@@ -45,5 +45,10 @@ namespace B2CPortal.Services
             }
 
         }
+
+        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsById(int id)
+        {
+           return await _dxcontext.OrderDetails.Where(x => x.FK_OrderMaster == id).ToListAsync();
+        }
     }
 }

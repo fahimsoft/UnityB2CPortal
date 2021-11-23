@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="B2CPortal">
+      <HintPath>..\B2CPortal\bin\B2CPortal.dll</HintPath>
+    </Reference>
     <Reference Include="B2C_Models">
       <HintPath>..\B2C_Models\bin\Debug\B2C_Models.dll</HintPath>
     </Reference>
