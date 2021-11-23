@@ -27,6 +27,8 @@ namespace B2CPortal.Models
         public string City { get; set; }
         public string Country { get; set; }
         public string Address { get; set; }
+        public string MasterImageUrl { get; set; }
+        public string Date { get; set; }
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public Nullable<int> CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedOn { get; set; }

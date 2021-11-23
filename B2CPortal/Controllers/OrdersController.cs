@@ -28,17 +28,38 @@ namespace B2CPortal.Controllers
         }
         public ActionResult Index()
         {
+            if (Convert.ToInt32(HttpContext.Session["UserId"]) <= 0)
+            {
+                return RedirectToAction("Login", "Account");
+            }
             return View();
         }
         public async Task<JsonResult> GetOrderDetailsById(int id)
         {
+            List<OrderVM> orderdetailslist = new List<OrderVM>();
            var detailslist =  await _ordersDetail.GetOrderDetailsById(id);
-            return Json(new { data = detailslist },JsonRequestBehavior.AllowGet);
+            foreach (var item in detailslist)
+            {
+                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                string name = productmasetr.Name;
+                string MasterImageUrl = productmasetr.MasterImageUrl;
+                var detailsobj = new OrderVM
+                {
+                    Name = name,
+                    Price = item.Price,
+                    Quantity = item.Quantity,
+                    Discount = item.Discount,
+                    MasterImageUrl = MasterImageUrl,
+                    Date = item.CreatedOn.ToString()
+                };
+                orderdetailslist.Add(detailsobj);
+            }
+            return Json(new { data = orderdetailslist },JsonRequestBehavior.AllowGet);
         }
         public async Task<ActionResult> GetOrderList()
         {
+        
             List<OrderVM> list = new List<OrderVM>();
-
             var orderlist = await _orders.GetOrderList();
 
             foreach (var item in orderlist)

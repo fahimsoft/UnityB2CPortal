@@ -1,149 +1,156 @@
 ﻿@model List<B2CPortal.Models.OrderVM>
 
 <!-- cart content section start -->
-
-<section class="pages cart-page section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="table-responsive padding60">
-                    <table class="wishlist-table text-center" id="myTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Email</th>
-                                <th>Phone No.</th>
-                                <th>Gender</th>
-                                <th> DOB</th>
-                                <th>CNIC</th>
-                                <th>Date</th>
-                                <th>Shipping</th>
-                                <th>Billing</th>
-                                <th>Description</th>
-                                <th>Quantity</th>
-                                <th> Price</th>
-                                <th> Status</th>
-                                <th> Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null && Model.Count > 0)
-                            {
-                                foreach (var item in Model)
-                                {
-                            <tr data-id="@item.Id">
-                                <td class="td-img text-left">
-                                    @item.OrderNo
-                                    @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
-                                    <!--<div class="items-dsc">
-            <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
-                                    @*<p class="itemcolor">Color : <span>Blue</span></p>*@
-                                    @*<p class="itemcolor">Size   : <span>SL</span></p>*@
-                                    <!--</div>-->
-                                </td>
-                                <td class="pricecol">
-                                    @item.EmailId
-                                </td>
-                                <td class="pricecol">
-                                    @item.PhoneNo
-                                </td>
-                                <td>
-                                    @item.Gender
-                                </td>
-                                <td>
-                                    @item.DateOfBirth
-                                </td>
-
-                                <td>
-                                    @item.CNIC
-                                </td>
-                                <td>
-                                    @item.CreatedOn
-                                </td>
-                                <td>
-                                    @item.ShippingAddress
-                                </td>
-
-                                <td>
-                                    @item.BillingAddress
-                                </td>
-                                <td>
-                                    @item.OrderDescription
-                                </td>
-                                <td>
-                                    @item.TotalQuantity
-                                </td>
-
-                                <td>
-                                    @item.TotalPrice
-                                </td>
-                                <td style="color:rebeccapurple">
-                                    @item.Status
-                                </td>
-
-                                <td>
-                                    @*<a href="#" data-toggle="modal" id="19" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>*@
-                                    <a data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
-                                </td>
-
-                                @*<td>
-            <div class="plus-minus">
-                <a class="dec qtybutton">-</a>
-                <input type="number" value="@item.Quantity" name="qtybutton" class="plus-minus-box">
-                <a class="inc qtybutton">+</a>
-            </div>
-        </td>
-        <td class="totalpricecol" style="text-decoration:line-through;">
-            @item.ShipingAndHostring
-        </td>
-        <td class="totalpricecol">
-             @item.ShippingAddress
-
-        </td>
-        <td class="totalpricecol">
-            <b style="font-weight:bolder;">@item.TotalPrice</b>
-        </td>*@
-                                <td>@*<i class="mdi mdi-close removecartbtn" title="Remove this product"></i>*@</td>
-                            </tr>
-                                }
+@{ 
+    Layout = null;
+}
 
 
+<div class="quickviewdialog">
+</div>
 
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="6">
-                                        <h4>
-                                            Your Order History is Empity
-                                        </h4>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                    @*<div class="text-right">
-                        @if (Model == null || Model.Count() <= 0)
-                        {
+        <section class="pages cart-page section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="table-responsive padding60">
+                            <table class="wishlist-table text-center" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Email</th>
+                                        <th>Phone No.</th>
+                                        <th>Gender</th>
+                                        <th> DOB</th>
+                                        <th>CNIC</th>
+                                        <th>Date</th>
+                                        <th>Shipping</th>
+                                        <th>Billing</th>
+                                        <th>Description</th>
+                                        <th>Quantity</th>
+                                        <th> Price</th>
+                                        <th> Status</th>
+                                        <th> Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model != null && Model.Count > 0)
+                                    {
+                                        foreach (var item in Model)
+                                        {
+                                            <tr data-id="@item.Id">
+                                                <td class="td-img text-left">
+                                                    Ord-@item.Id
+                                                    @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
+                                                    <!--<div class="items-dsc">
+                                                    <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
+                                                    @*<p class="itemcolor">Color : <span>Blue</span></p>*@
+                                                    @*<p class="itemcolor">Size   : <span>SL</span></p>*@
+                                                    <!--</div>-->
+                                                </td>
+                                                <td class="pricecol">
+                                                    @item.EmailId
+                                                </td>
+                                                <td class="pricecol">
+                                                    @item.PhoneNo
+                                                </td>
+                                                <td>
+                                                    @item.Gender
+                                                </td>
+                                                <td>
+                                                    @item.DateOfBirth
+                                                </td>
+
+                                                <td>
+                                                    @item.CNIC
+                                                </td>
+                                                <td>
+                                                    @item.CreatedOn
+                                                </td>
+                                                <td>
+                                                    @item.ShippingAddress
+                                                </td>
+
+                                                <td>
+                                                    @item.BillingAddress
+                                                </td>
+                                                <td>
+                                                    @item.OrderDescription
+                                                </td>
+                                                <td>
+                                                    @item.TotalQuantity
+                                                </td>
+
+                                                <td>
+                                                    @item.TotalPrice
+                                                </td>
+                                                <td style="color:rebeccapurple">
+                                                    @item.Status
+                                                </td>
+
+                                                <td>
+                                                    @*<a href="#" data-toggle="modal" id="19" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>*@
+                                                    <a  href="#" data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
+                                                </td>
+
+                                                @*<td>
+                                                        <div class="plus-minus">
+                                                            <a class="dec qtybutton">-</a>
+                                                            <input type="number" value="@item.Quantity" name="qtybutton" class="plus-minus-box">
+                                                            <a class="inc qtybutton">+</a>
+                                                        </div>
+                                                    </td>
+                                                    <td class="totalpricecol" style="text-decoration:line-through;">
+                                                        @item.ShipingAndHostring
+                                                    </td>
+                                                    <td class="totalpricecol">
+                                                         @item.ShippingAddress
+
+                                                    </td>
+                                                    <td class="totalpricecol">
+                                                        <b style="font-weight:bolder;">@item.TotalPrice</b>
+                                                    </td>*@
+                                                <td>@*<i class="mdi mdi-close removecartbtn" title="Remove this product"></i>*@</td>
+                                            </tr>
+                                        }
 
 
-                            <button type="button" id="updatecart" disabled="true" class="btn btn-primary">Update Cart</button>
-                        }
-                        else
-                        {
-                            <button type="button" id="updatecart" class="btn btn-primary">Update Cart</button>
-                        }
-                    </div>*@
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td colspan="6">
+                                                <h4>
+                                                    Your Order History is Empity
+                                                </h4>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                            @*<div class="text-right">
+                                    @if (Model == null || Model.Count() <= 0)
+                                    {
+
+
+                                        <button type="button" id="updatecart" disabled="true" class="btn btn-primary">Update Cart</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" id="updatecart" class="btn btn-primary">Update Cart</button>
+                                    }
+                                </div>*@
+                        </div>
+
+                    </div>
                 </div>
-
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
 
 
-<script>
+        <script>
     $(document).ready(function () {
         jQuery('.plus-minus-box').keyup(function () {
             this.value = this.value.replace(/[^0-9\.]/g, '');
@@ -218,4 +225,4 @@
         });
     });
 
-</script>
+        </script>
