@@ -65,6 +65,23 @@ namespace API_Base.Common
             }
             return toObject;
         }
+        public static string GenrateOrderNumber(string num)
+        {
+            string num2 = num;
+            for (int i = 8; i > num.Length; i--)
+            {
+                if (i > num.Length)
+                {
+                    num2 = "0" + num2;
+                }
+                else
+                {
+                    break;
+                }
+
+            }
+            return num2;
+        }
         public static int GenerateRandomNo()
         {
             int _min = 100000;

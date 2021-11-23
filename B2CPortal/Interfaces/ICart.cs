@@ -28,6 +28,7 @@ namespace B2CPortal.Interfaces
         Task<Cart> UpdateToCart(Cart wishlistVM);
         Task<Cart> UpdateWishList(int cartId);
         Task<bool> DeleteFromCart(int Id);
+        Task<bool> DisableCart(int customerId, string guid);
 
     }
 }

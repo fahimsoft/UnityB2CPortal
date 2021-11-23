@@ -66,8 +66,8 @@ $(document).ready(function () {
 });
 function removequickviewvalues(id) {
 
-    $('#quentityvalue').val("");
-    document.getElementById("quick-view").remove();
+    //$('#quentityvalue').val("");
+    document.getElementsByClassName("main-view modal-content").remove();
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
@@ -160,17 +160,9 @@ function Handleorderdetail(id) {
         //contentType: "application/json;charset=utf-8",
         //dataType: "json",
         success: function (result) {
-
             var html = '';
-            var htmlProductDetail = '';
             var htmlProductPriceDetail = '', htmlProductSize = '';
             var data = result.data;
-            htmlProductDetail = `
-<div class="product-details quick-view modal animated zoomInUp in" id="quick-view" style="display: block; padding-left: 22px;">
-    </div>`;
-            $('.quickviewdialog').html(htmlProductDetail);
-
-
             $(data).each(function (index, item) {
                 htmlProductPriceDetail += ` <tr data-id="58">
                                         <td class="td-img text-left">
@@ -186,11 +178,21 @@ function Handleorderdetail(id) {
                                            ${item.Discount}
                                         </td>
                                         <td>
-                                           ${item.Quantity}
-                                        </td>
-                                        <td>
                                            ${item.Price}
                                         </td>
+                                        <td>
+                                           ${item.Quantity}
+                                        </td>
+                                         <td>
+                                           ${item.SubTotalPrice}
+                                        </td>
+                                            <td>
+                                           ${item.DiscountAmount}
+                                        </td>
+                                            <td>
+                                           ${item.TotalPrice}
+                                        </td>
+
                                         <td>
                                            ${item.Date}
                                         </td>
@@ -219,9 +221,12 @@ function Handleorderdetail(id) {
                             <tr>
                                 <th>Product Name</th>
                                 <th>Discount %</th>
-                                <th>Quantity</th>
                                 <th>Price</th>
-                                <th>Date</th>
+                                <th>Quantity</th>
+                                <th>Sub Total</th>
+                                <th>Discounted Amount</th>
+                                <th>Total</th>
+                                <th>Ordered Date </th>
                             </tr>
                         </thead>
                         <tbody>

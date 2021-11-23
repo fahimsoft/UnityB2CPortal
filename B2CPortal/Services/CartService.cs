@@ -37,7 +37,7 @@ namespace B2CPortal.Services
                     Current.FK_Customer = cart.FK_Customer;
                 }
                 Current.Quantity = cart.Quantity + (Current.Quantity == null ? 0 : Current.Quantity);
-                Current.TotalPrice = ( cart.TotalPrice * Current.Quantity);
+                Current.TotalPrice = (cart.TotalPrice * Current.Quantity);
                 Current.FK_ProductMaster = cart.FK_ProductMaster;
                 Current.IsActive = cart.IsActive;
                 Current.TotalQuantity = Current.Quantity;
@@ -124,7 +124,7 @@ namespace B2CPortal.Services
             List<Cart> cartlist = new List<Cart>();
             _dxcontext.Configuration.LazyLoadingEnabled = false;
             cartlist = await _dxcontext.Carts.Where(x => (x.Guid == guid && x.IsWishlist == false && x.IsActive == true)
-            || 
+            ||
             (x.IsWishlist == false && x.IsActive == true && x.FK_Customer == customerid)).ToListAsync();
             return cartlist;
         }
@@ -218,14 +218,14 @@ namespace B2CPortal.Services
         //work by ahsan---------
         public async Task<IEnumerable<Cart>> GetWishListProducts(string guid, int customerId)
         {
-            var wishlist = await _dxcontext.Carts.Where(x => 
-                (x.Guid == guid && x.IsWishlist == true 
-                && x.IsActive == true )
-                || 
-                (x.IsWishlist == true 
-                && x.IsActive == true 
+            var wishlist = await _dxcontext.Carts.Where(x =>
+                (x.Guid == guid && x.IsWishlist == true
+                && x.IsActive == true)
+                ||
+                (x.IsWishlist == true
+                && x.IsActive == true
                 && x.FK_Customer == customerId)
-            
+
             ).ToListAsync();// GetAll();
             return wishlist;
         }
@@ -299,31 +299,31 @@ namespace B2CPortal.Services
 
                 if (wishlistVM.IsWishlist == true)
                 {
-                        Current = await _dxcontext.Carts.Where(x =>
-                        (x.Guid == wishlistVM.Guid && x.IsWishlist == true
-                        && x.IsActive == true)
-                        ||
-                        (x.IsWishlist == true
-                        && x.IsActive == true
-                        && x.FK_Customer == wishlistVM.FK_Customer)
+                    Current = await _dxcontext.Carts.Where(x =>
+                    (x.Guid == wishlistVM.Guid && x.IsWishlist == true
+                    && x.IsActive == true)
+                    ||
+                    (x.IsWishlist == true
+                    && x.IsActive == true
+                    && x.FK_Customer == wishlistVM.FK_Customer)
 
-                    ).FirstOrDefaultAsync();
+                ).FirstOrDefaultAsync();
 
-                } 
+                }
                 else
                 {
-                        Current = await _dxcontext.Carts.Where(x =>
-                        (x.Guid == wishlistVM.Guid && x.IsWishlist == false
-                        && x.IsActive == true)
-                        ||
-                        (x.IsWishlist == false
-                        && x.IsActive == true
-                        && x.FK_Customer == wishlistVM.FK_Customer)
+                    Current = await _dxcontext.Carts.Where(x =>
+                    (x.Guid == wishlistVM.Guid && x.IsWishlist == false
+                    && x.IsActive == true)
+                    ||
+                    (x.IsWishlist == false
+                    && x.IsActive == true
+                    && x.FK_Customer == wishlistVM.FK_Customer)
 
-                    ).FirstOrDefaultAsync();
+                ).FirstOrDefaultAsync();
                 }
 
-                
+
                 if (Current != null)
                 {
                     PrimaryKeyValue = Current.Id;
@@ -377,7 +377,35 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
-
+        public async Task<bool> DisableCart(int customerId, string guid)
+        {
+            try
+            {
+                // return await _dxcontext.Carts.Where(x => x.IsActive == true && x.IsWishlist == false).ToListAsync();
+                var db = await _dxcontext.Carts.Where(x => (x.FK_Customer == customerId && x.IsActive == true && x.IsWishlist == false)
+                ||
+                (x.Guid == guid && x.IsWishlist == false && x.IsActive == true))
+                .ToListAsync();
+                if (db != null)
+                {
+                    foreach (var item in db)
+                    {
+                        PrimaryKeyValue = item.Id;
+                        item.IsActive = false;
+                        Current = item;
+                    }
+                    Save();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -29,8 +30,11 @@ namespace B2CPortal.Models
         public string Address { get; set; }
         public string MasterImageUrl { get; set; }
         public string Date { get; set; }
+        public  decimal bTotal { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MMM-yyyy}")]
         public Nullable<System.DateTime> CreatedOn { get; set; }
         public Nullable<int> CreatedBy { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MMM-yyyy}")]
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<bool> IsActive { get; set; }
@@ -47,6 +51,7 @@ namespace B2CPortal.Models
         public int VatTax { get; internal set; }
         public CartViewModel CartViewModel { get; set; }
         public List<OrderVM> orderVMs { get; set; }
-       
+        public decimal? SubTotalPrice { get; internal set; }
+        public decimal? DiscountAmount { get; internal set; }
     }
 }

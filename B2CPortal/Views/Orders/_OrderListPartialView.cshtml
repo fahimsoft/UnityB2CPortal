@@ -8,6 +8,9 @@
 
 <div class="quickviewdialog">
 </div>
+<div class="product-details quick-view modal animated zoomInUp" id="quick-view">
+
+</div>
 
         <section class="pages cart-page section-padding">
             <div class="container">
@@ -17,13 +20,13 @@
                             <table class="wishlist-table text-center" id="myTable">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Email</th>
-                                        <th>Phone No.</th>
-                                        <th>Gender</th>
-                                        <th> DOB</th>
-                                        <th>CNIC</th>
-                                        <th>Date</th>
+                                        <th>Order No.</th>
+                                        @*<th>Email</th>*@
+                                        @*<th>Phone No.</th>*@
+                                        @*<th>Gender</th>*@
+                                        @*<th> DOB</th>*@
+                                        @*<th>CNIC</th>*@
+                                        <th>Order Date</th>
                                         <th>Shipping</th>
                                         <th>Billing</th>
                                         <th>Description</th>
@@ -40,15 +43,15 @@
                                         {
                                             <tr data-id="@item.Id">
                                                 <td class="td-img text-left">
-                                                    Ord-@item.Id
+                                                    @item.OrderNo
                                                     @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
                                                     <!--<div class="items-dsc">
-                                                    <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
+    <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
                                                     @*<p class="itemcolor">Color : <span>Blue</span></p>*@
                                                     @*<p class="itemcolor">Size   : <span>SL</span></p>*@
                                                     <!--</div>-->
                                                 </td>
-                                                <td class="pricecol">
+                                                @*<td class="pricecol">
                                                     @item.EmailId
                                                 </td>
                                                 <td class="pricecol">
@@ -59,13 +62,14 @@
                                                 </td>
                                                 <td>
                                                     @item.DateOfBirth
-                                                </td>
+                                                </td>*@
 
-                                                <td>
+                                                @*<td>
                                                     @item.CNIC
-                                                </td>
+                                                </td>*@
                                                 <td>
-                                                    @item.CreatedOn
+                                                    @*@item.CreatedOn*@
+                                                    @Html.DisplayFor(i=> item.CreatedOn)
                                                 </td>
                                                 <td>
                                                     @item.ShippingAddress

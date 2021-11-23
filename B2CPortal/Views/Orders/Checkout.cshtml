@@ -72,7 +72,6 @@
                             }
                             @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
 
-
                             <div class="row">
                                 <label class="switch">
                                     <input class="shipto" id="shipto" type="checkbox" onclick="toggle('.myClass', this)">
@@ -83,12 +82,14 @@
 
                             </div>
                             SHIP TO DIFFERENT ADDRESS.
-
                         </form>
                     </div>
                 </div>
 
             </div>
+
+
+
 
             <div style="display:none" class="myClass col-sm-6">
                 <div class="main-input single-cart-form padding60">
@@ -134,7 +135,7 @@
                                     </select>
                                 </div>
                             }
-                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = "SAddress form-control" } })
 
                         </form>
                     </div>
@@ -143,16 +144,7 @@
         </div>
 
 
-        @*<div class="row">
-            <label class="switch">
-                <input class="shipto" id="shipto" type="checkbox" onclick="toggle('.myClass', this)">
-                <span style="position:center" class=" slider round">
 
-                </span>
-            </label>
-
-        </div>
-        SHIP TO DIFFERENT ADDRESS.*@
 
 
 
@@ -192,7 +184,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td>@Model.CartSubTotalDiscount %</td>
+                                    <td>@Model.CartSubTotalDiscount </td>
                                 </tr>
 
                                 <tr>
@@ -278,11 +270,61 @@
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script>
+        jQuery('#billing').validate({
+            rules: {
+                FirstName: {
+                    required: true,
+
+                    maxlength: 50
+                },
+                LastName: {
+                    required: true
+
+                }, EmailId: {
+                    required: true,
+                    email: true
+
+                }, PhoneNo: {
+                    required: true
+                }, Country: {
+                    required: true
+                }, City: {
+                    required: true
+
+                }
+                , Address: {
+                    required: true
+
+                }
+
+            },
+            messages: {
+                FirstName: {
+                    required: "First Name Is Required"
+                }, LastName: {
+                    required: "Last Name Is Required"
+                }, EmailId: {
+                    required: "Email Is Required",
+                    uniqueEmail: "Your Email address is already registered on our system."
+                }, Country: {
+                    required: "Country Is Required"
+                }, City: {
+                    required: "City Is Required"
+                }, Address: {
+                    required: "Address Is Required"
+                }, PhoneNo: {
+                    required: "Phone No Is Required"
+                }
+
+            }
+        });
+
+
 
         $('.order').click(function () {
             // Both Form Data
             if ($('input.shipto').is(':checked')) {
-                alert("ok");
+                //alert("ok");
 
             }
             // Only Billing Form Data
@@ -296,7 +338,8 @@
                     EmailId: $('#EmailId').val(),
                     Country: $('#Country').val(),
                     City: $('#City').val(),
-                    BillingAddress: $('#Address').val()
+                    BillingAddress: $('#Address').val(),
+                    ShippingAddress: $('.SAddress').val()
 
                 }
             }
@@ -310,6 +353,7 @@
             $.validator.unobtrusive.parse(form);
             //if ($(form).valid()) // using not operator for a time being
             if ($(form.valid())) {
+
                 $.ajax({
                     type: "POST",
                     url: "/Orders/AddBillingDetails",
@@ -317,12 +361,13 @@
                     contentType: 'application/json',
                     dataType: 'json',
                     success: function (data) {
+                        debugger;
                         console.log(data);
-                        if (data.isSuccessful == true) {
-                            toastr.success("Billing Added Success");
-                            // window.location.href = "/Account/MyAccount";
+                        if (data.success == true) {
+                            toastr.success(data.msg);
+                            window.location.reload();
                         }
-                        else if (data.isSuccessful == false) {
+                        else if (data.success == false) {
                             toastr.error("Failed.");
                         }
                     },
