@@ -9,7 +9,7 @@ $(document).ready(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
 
-//test
+    //test
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
@@ -32,7 +32,7 @@ $(document).ready(function () {
 
     });
     $(document).on('click', '.qtybutton', function () {
-    //$(".qtybutton").on("click", function () {
+        //$(".qtybutton").on("click", function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
@@ -58,117 +58,16 @@ $(document).ready(function () {
         DiscountAmount = actualTotal - totalvalue;
 
         $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-        $(row).find('td')[5].textContent = '- '+DiscountAmount.toLocaleString();
+        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
         $(row).find('td')[6].textContent = totalvalue.toLocaleString();
 
         $button.parent().find("input").val(newVal);
     });
 });
 function removequickviewvalues(id) {
-    debugger
+
     $('#quentityvalue').val("");
     document.getElementById("quick-view").remove();
-}
-function Handleorderdetail(id) {
-    $.ajax({
-        url: '/Orders/GetOrderDetailsById/',
-        type: "GET",
-        data: {
-            id : id
-        },
-        //contentType: "application/json;charset=utf-8",
-        //dataType: "json",
-        success: function (result) {
-            debugger
-            var html = '';
-            var index = 1;
-            var fade = 1;
-            var productPrice = 0;
-            var htmlProductDetail = '';
-            var htmlProductPriceDetail = '', htmlProductSize = '';
-            var data = result.data;
-            htmlProductDetail = `
-<div class="product-details quick-view modal animated zoomInUp in" id="quick-view" style="display: block; padding-left: 22px;">
-    </div>`;
-            $('.quickviewdialog').html(htmlProductDetail);
-
-
-            $(data).each(function (index, item) {
-                htmlProductPriceDetail += ` <tr data-id="58">
-                                        <td class="td-img text-left">
-                                            <a href="/ProductDetails?productId=58"><img src="${item.MasterImageUrl}" alt="Add Product"></a>
-                                            <div class="items-dsc">
-                                                <h5><a href="/ProductDetails?productId=58"> ${item.Name}
-                                                 </a></h5>
-
-                                            </div>
-                                        </td>
-                            
-                                        <td class="pricecol">
-                                           ${item.Discount}
-                                        </td>
-                                        <td>
-                                           ${item.Quantity}
-                                        </td>
-                                        <td>
-                                           ${item.Price}
-                                        </td>
-                                        <td>
-                                           ${item.Date}
-                                        </td>
-                                    </tr>`
-
-                fade += 1;
-            });
-
-       
-
-
-            html = `
-<div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="d-table">
-                    <div class="d-tablecell">
-                        <div class="modal-dialog">
-                            <div class="main-view modal-content">
-                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
-                                    <span>x</span>
-                                </div>
-                                <div class="row">
-
-<table class="wishlist-table text-center" id="myTable">
-                        <thead>
-                            <tr>
-                                <th>Product Name</th>
-                                <th>Discount %</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                                <th>Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            ${ htmlProductPriceDetail}
-  
-                        </tbody>
-                    </table>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>`;
-
-
-            $('#quick-view').html(html);
-            //SetLocalStorage(elem);
-        },
-        error: function (errorMessage) {
-            alert(errorMessage.responseText);
-        }
-    });
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
@@ -250,6 +149,103 @@ function HandleAddtocart(id) {
         }
     });
 
+}
+function Handleorderdetail(id) {
+    $.ajax({
+        url: '/Orders/GetOrderDetailsById/',
+        type: "GET",
+        data: {
+            id: id
+        },
+        //contentType: "application/json;charset=utf-8",
+        //dataType: "json",
+        success: function (result) {
+
+            var html = '';
+            var htmlProductDetail = '';
+            var htmlProductPriceDetail = '', htmlProductSize = '';
+            var data = result.data;
+            htmlProductDetail = `
+<div class="product-details quick-view modal animated zoomInUp in" id="quick-view" style="display: block; padding-left: 22px;">
+    </div>`;
+            $('.quickviewdialog').html(htmlProductDetail);
+
+
+            $(data).each(function (index, item) {
+                htmlProductPriceDetail += ` <tr data-id="58">
+                                        <td class="td-img text-left">
+                                            <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><img src="${item.MasterImageUrl}" alt="Add Product"></a>
+                                            <div class="items-dsc">
+                                                <h5><a href="/ProductDetails?productId=${item.FK_ProductMaster}"> ${item.Name}
+                                                 </a></h5>
+
+                                            </div>
+                                        </td>
+                            
+                                        <td class="pricecol">
+                                           ${item.Discount}
+                                        </td>
+                                        <td>
+                                           ${item.Quantity}
+                                        </td>
+                                        <td>
+                                           ${item.Price}
+                                        </td>
+                                        <td>
+                                           ${item.Date}
+                                        </td>
+                                    </tr>`
+
+            });
+
+
+
+
+            html = `
+<div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="d-table">
+                    <div class="d-tablecell">
+                        <div class="modal-dialog">
+                            <div class="main-view modal-content">
+                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
+                                    <span>x</span>
+                                </div>
+                                <div class="row">
+
+                         <table class="wishlist-table text-center" id="myTable">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Discount %</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            ${htmlProductPriceDetail}
+  
+                        </tbody>
+                    </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
+
+
+            $('#quick-view').html(html);
+            //SetLocalStorage(elem);
+        },
+        error: function (errorMessage) {
+            alert(errorMessage.responseText);
+        }
+    });
 }
 //Plus and minus quentiry------------>
 //---------------cart count and hover list----------------]
@@ -539,7 +535,7 @@ function loadProductListByName() {
     var productName = $('#textProductName').val();
 
     if (productName != null && productName != undefined && productName != '') {
-        
+
         $.ajax({
             url: "/Product/GetProductbyName",
             data: { productName: productName },
@@ -547,7 +543,7 @@ function loadProductListByName() {
             contentType: "application/json;charset=utf-8",
             dataType: "json",
             success: function (result) {
-                debugger;
+
                 var html = '', htmlProductList = '', htmlProductGrid = '';
                 var data = JSON.parse(result.data);
                 $('#lblTotalCount').text('Total Records: ' + data.length);
@@ -664,7 +660,7 @@ function loadProductListById(filterList) {
             dataType: "json",
             traditional: true,
             success: function (result) {
-                debugger
+
                 var data = JSON.parse(result.data);
                 $('#lblTotalCount').text('Total Records: ' + data.length);
                 $.each(data, function (key, item) {
@@ -1079,7 +1075,7 @@ function GetProductCommentAndRating() {
 
 
                     htlmRating = '';
-                    debugger
+
                     var rating = item[index].CustomerRate;
                     var remainingRating = 5 - item[index].CustomerRate;
 
@@ -1120,8 +1116,6 @@ ${htlmRating}
 
 </div>`;
                 });
-
-
 
                 $('#commentAndRating').html(html);
 

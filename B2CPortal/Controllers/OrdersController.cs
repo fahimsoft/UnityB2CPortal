@@ -43,6 +43,7 @@ namespace B2CPortal.Controllers
                 var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                 string name = productmasetr.Name;
                 string MasterImageUrl = productmasetr.MasterImageUrl;
+
                 var detailsobj = new OrderVM
                 {
                     Name = name,
@@ -50,7 +51,8 @@ namespace B2CPortal.Controllers
                     Quantity = item.Quantity,
                     Discount = item.Discount,
                     MasterImageUrl = MasterImageUrl,
-                    Date = item.CreatedOn.ToString()
+                    Date = item.CreatedOn.ToString(),
+                    FK_ProductMaster = item.FK_ProductMaster
                 };
                 orderdetailslist.Add(detailsobj);
             }
