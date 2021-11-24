@@ -37,6 +37,10 @@ namespace B2C_Models.Models
         public string City { get; set; }
         public string Country { get; set; }
         public string Address { get; set; }
+        public string Guid { get; set; }
+        public Nullable<bool> IsWebUser { get; set; }
+        public Nullable<bool> IsAppUser { get; set; }
+        public string RegisteredFrom { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }

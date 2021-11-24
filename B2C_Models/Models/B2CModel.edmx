@@ -74,6 +74,10 @@
           <Property Name="City" Type="nvarchar" MaxLength="50" />
           <Property Name="Country" Type="nvarchar" MaxLength="50" />
           <Property Name="Address" Type="nvarchar" MaxLength="50" />
+          <Property Name="Guid" Type="nvarchar(max)" />
+          <Property Name="IsWebUser" Type="bit" />
+          <Property Name="IsAppUser" Type="bit" />
+          <Property Name="RegisteredFrom" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -789,6 +793,10 @@
           <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_Customer" FromRole="customer" ToRole="Cart" />
           <NavigationProperty Name="OrderMasters" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="customer" ToRole="OrderMaster" />
+          <Property Name="Guid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsWebUser" Type="Boolean" />
+          <Property Name="IsAppUser" Type="Boolean" />
+          <Property Name="RegisteredFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Cart">
           <Key>
@@ -1112,6 +1120,10 @@
           <EntitySetMapping Name="customers">
             <EntityTypeMapping TypeName="B2CModel.customer">
               <MappingFragment StoreEntitySet="customer">
+                <ScalarProperty Name="RegisteredFrom" ColumnName="RegisteredFrom" />
+                <ScalarProperty Name="IsAppUser" ColumnName="IsAppUser" />
+                <ScalarProperty Name="IsWebUser" ColumnName="IsWebUser" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
                 <ScalarProperty Name="Address" ColumnName="Address" />
                 <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="City" ColumnName="City" />
