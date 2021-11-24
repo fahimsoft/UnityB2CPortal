@@ -1,7 +1,5 @@
 ﻿@model B2CPortal.Models.OrderVM
-@{
-    ViewBag.Title = "Checkout";
-}
+@{ ViewBag.Title = "Checkout"; }
 
 
 <!-- pages-title-start -->
@@ -42,9 +40,7 @@
                             @if (Model.FK_Customer > 0)
                             {
                                 @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
-                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
-
-                            }
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } }) }
                             else
                             {
                                 <div class="custom-select">
@@ -68,8 +64,7 @@
                                         <option value="Peshawar"> Peshawar </option>
                                         <option value="Quetta"> Quetta </option>
                                     </select>
-                                </div>
-                            }
+                                </div>}
                             @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
 
                             <div class="row">
@@ -107,9 +102,7 @@
                             @if (Model.FK_Customer > 0)
                             {
                                 @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
-                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
-
-                            }
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } }) }
                             else
                             {
                                 <div class="custom-select">
@@ -133,8 +126,7 @@
                                         <option value="Peshawar"> Peshawar </option>
                                         <option value="Quetta"> Quetta </option>
                                     </select>
-                                </div>
-                            }
+                                </div>}
                             @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = "SAddress form-control" } })
 
                         </form>
@@ -174,7 +166,7 @@
                                             <th>@item.Name  x @item.Quantity</th>
                                             <td>@item.TotalPrice</td>
                                         </tr>
-                                    }
+}
                                 }
 
                                 <tr>
@@ -252,9 +244,17 @@
                                 </div>
                             </li>
                         </ul>
-                        <div class="submit-text">
-                            <a class="order">place order</a>
-                        </div>
+                        @if (Model.OrderTotal > 0)
+                        {
+                            <div class="submit-text">
+                                <a class="order">place order</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
+                        }
+
                     </div>
                 </div>
             </div>
@@ -267,6 +267,8 @@
 
 @section scripts
 {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script>
@@ -347,41 +349,60 @@
             console.log(JSON.stringify(datatosend));
             console.log(datatosend);
 
+            $.confirm({
 
-            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-            $.validator.unobtrusive.parse($(this));//add the form validation
-            $.validator.unobtrusive.parse(form);
-            //if ($(form).valid()) // using not operator for a time being
-            if ($(form.valid())) {
+                title: 'Confirm!',
+                content: `<div style="width: 300px" class="row"><b style="margin-left: 15px"> Order Total</b><b style="margin-left: 150px">@Model.OrderTotal</b></div>`,
+                buttons: {
+                    confirm: function () {
+                        //$.alert('Confirmed!');
 
-                $.ajax({
-                    type: "POST",
-                    url: "/Orders/AddBillingDetails",
-                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    success: function (data) {
-                        debugger;
-                        console.log(data);
-                        if (data.success == true) {
-                            toastr.success(data.msg);
-                            window.location.reload();
+
+                        debugger
+                        $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+                        $.validator.unobtrusive.parse($(this));//add the form validation
+                        $.validator.unobtrusive.parse(form);
+                        //if ($(form).valid()) // using not operator for a time being
+                        if ($(form.valid())) {
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/Orders/AddBillingDetails",
+                                data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (data) {
+                                    debugger;
+                                    console.log(data);
+                                    if (data.success == true) {
+                                        toastr.success(data.msg);
+                                        window.location.reload();
+                                    }
+                                    else if (data.success == false) {
+                                        toastr.error("Failed.");
+                                    }
+                                },
+                                failure: function (data) {
+                                    console.log(data);
+                                },
+                                err: function (data) {
+                                    console.log(data);
+                                }
+                            })
                         }
-                        else if (data.success == false) {
-                            toastr.error("Failed.");
+                        else {
+                            return false;
                         }
+
                     },
-                    failure: function (data) {
-                        console.log(data);
-                    },
-                    err: function (data) {
-                        console.log(data);
+                    cancel: function () {
+                       // $.alert('Canceled!');
                     }
-                })
-            }
-            else {
-                return false;
-            }
+
+                }
+            });
+
+
 
 
         });

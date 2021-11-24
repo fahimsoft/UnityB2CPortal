@@ -7,34 +7,36 @@ var NextClickValue = 10;
 
 $(document).ready(function () {
     ShowCartProducts();
-    //$("#handlesearch").autocomplete(
-    //    {
-    //        source: function (request, response) {
-    //            $.ajax({
-    //                url: '/Product/SearchProductList',
-    //                type: "POST",
-    //                dataType: "json",
-    //                data: { Prefix: request.term },
-    //                success: function (data) {
-    //                    response($.map(data, function (item) {
-    //                        return {
-    //                            label: item.Name,
-    //                        }
-    //                    }));
-    //                }
-    //            });
-    //        },
-    //        open: (event) => {
-    //            $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
-    //                let imagePath = element.innerHTML;
-    //                $(element).html('');
-    //                var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
-    //                    imagePath + '"></div>';
-    //                $(element).append(inner_html);
-    //            });
-    //        }
+    $("#handlesearch").autocomplete(
+        {
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Product/SearchProductList',
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                label: item.Name,
+                                value: item.Name,
+                            }
+                        }));
+                    }
+                });
+            },
+            open: (event) => {
+                $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
+                    let imagePath = element.innerHTML;
+                    $(element).html('');
+                    var inner_html = '<div class="list_item_container"><div class="image"><p>' + imagePath + '</p></div>';
+                    //var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
+                    //    imagePath + '"></div>';
+                    $(element).append(inner_html);
+                });
+            }
         
-    //    });
+        });
     jQuery('.plus-minus-box').keyup(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });

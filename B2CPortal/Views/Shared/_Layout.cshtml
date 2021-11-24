@@ -41,11 +41,6 @@
     <link data-require="toastr" data-semver="2.1.2" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.2/toastr.min.css" />
     <script data-require="toastr" data-semver="2.1.2" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.2/toastr.min.js"></script>
     <script data-require="jquery@2.2.0" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-
-
     <style>
         .list-btn > a:hover {
             cursor: pointer;
@@ -59,16 +54,34 @@
             overflow: auto;
             height: 500px;
         }
+        /*======================autocomplete css=========================*/
+
+        /*
+        .ui-autocomplete-row {
+            padding: 8px;
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ccc;
+            font-weight: bold;
+        }*/
+
+        .ui-autocomplete-row:hover {
+            background-color: #ddd;
+        }
+
+        #ui-id-1 {
+            width: 80px;
+            background-color: white;
+        }
 
         .list_item_container {
             width: 300px;
             height: 60px;
             padding: 5px 0;
-            background-color: aliceblue;
+            background-color: #ddd;
         }
 
         .image {
-            width: 60px;
+            width: 200px;
             height: 60px;
             margin-right: 10px;
             float: left;
@@ -106,34 +119,35 @@
     <!-- jquery latest version -->
     <script src="@Url.Content("~/Content/Asset/js/vendor/jquery-1.12.3.min.js")"></script>
     <!-- bootstrap js -->
-    @*<script src="@Url.Content("~/Content/Asset/js/bootstrap.min.js")"></script>*@
+    <script src="@Url.Content("~/Content/Asset/js/bootstrap.min.js")"></script>
     <!-- owl.carousel js -->
     <script src="@Url.Content("~/Content/Asset/js/owl.carousel.min.js")"></script>
-     @*meanmenu js*@ 
+    @*meanmenu js*@
     <script src="@Url.Content("~/Content/Asset/js/jquery.meanmenu.js")"></script>
-     @*countdown JS*@ 
+    @*countdown JS*@
     <script src="@Url.Content("~/Content/Asset/js/countdown.js")"></script>
-     @*nivo.slider JS*@ 
+    @*nivo.slider JS*@
     <script src="@Url.Content("~/Content/Asset/js/jquery.nivo.slider.pack.js")"></script>
-     @*simpleLens JS*@ 
+    @*simpleLens JS*@
     <script src="@Url.Content("~/Content/Asset/js/jquery.simpleLens.min.js")"></script>
-     @*jquery-ui js*@ 
+    @*jquery-ui js*@
     <script src="@Url.Content("~/Content/Asset/js/jquery-ui.min.js")"></script>
-     @*load-more js*@ 
+    @*load-more js*@
     <script src="@Url.Content("~/Content/Asset/js/load-more.js")"></script>
-     @*plugins js*@ 
+    @*plugins js*@
     <script src="@Url.Content("~/Content/Asset/js/plugins.js")"></script>
-     @*main js*@ 
+    @*main js*@
     <script src="@Url.Content("~/Content/Asset/js/main.js")"></script>
 
     <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
     <script src="@Url.Content("~/Scripts/Common.js")"></script>
 
-
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/lib")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @*@Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @Scripts.Render("~/bundles/lib")*@
     @RenderSection("scripts", required: false)
 
 </body>
