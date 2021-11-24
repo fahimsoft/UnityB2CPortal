@@ -19,8 +19,8 @@ namespace B2CPortal.Services
             try
             {
 
-                string checkGuid = HelperFunctions.GetCookie(HelperFunctions.commentguid);
-                string userId = Convert.ToString(HttpContext.Current.Session["UserId"]);
+                string checkGuid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                string userId = Convert.ToString(System.Web.HttpContext.Current.Session["UserId"]);
 
 
                 int? uId = null;
@@ -55,14 +55,14 @@ namespace B2CPortal.Services
                     if (String.IsNullOrEmpty(userId) && String.IsNullOrEmpty(checkGuid))
                     {
                         Current.IsAnonymousUser = true;
-                        HelperFunctions.SetCookie(HelperFunctions.commentguid, Guid.NewGuid().ToString(), 365);
-                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.commentguid);
+                        HelperFunctions.SetCookie(HelperFunctions.cartguid, Guid.NewGuid().ToString(), 365);
+                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
 
                     }
                     else
                     {
                         Current.CustomerId = uId;
-                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.commentguid);
+                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                     }
 
 
@@ -96,8 +96,29 @@ namespace B2CPortal.Services
         {
             try
             {
+                var obj = await _dxcontext.CommentAndRatings.Include(x => x.ProductMaster).OrderBy(x => x.CreatedOn).Where(x => x.FK_ProductMaster == Id).ToListAsync();
+                //var obj = await _dxcontext.CommentAndRatings.Include(x => x.ProductMaster).OrderBy(x => x.CreatedOn).Skip(0).Take(10).Where(x => x.FK_ProductMaster == Id).ToListAsync();
 
-                var obj = await _dxcontext.CommentAndRatings.Include(x => x.ProductMaster).Where(x => x.FK_ProductMaster == Id).ToListAsync();
+                return obj;
+
+                //return  new {
+                //    obj = obj,
+                //totalComment= totalComment
+
+                //};
+            }
+            catch (Exception Ex)
+            {
+
+                throw Ex;
+            }
+        }
+        public async Task<IEnumerable<CommentAndRating>> GetProductCommentWithPaggination(long Id)
+        {
+            try
+            {
+
+                var obj = await _dxcontext.CommentAndRatings.Include(x => x.ProductMaster).OrderBy(X => X.CreatedOn).Where(x => x.FK_ProductMaster == Id).ToListAsync();
 
 
                 return obj;
@@ -125,6 +146,7 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+
 
 
         //public async Task<IEnumerable<ProductDetail>> GetProduct()

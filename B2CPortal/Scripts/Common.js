@@ -1,45 +1,43 @@
 
-//---------------cart count and hover list----------------
 var rating = 0;
+var rating = 0;
+var totalComment = 0;
+var PrevClickValue = 0;
+var NextClickValue = 10;
+
 $(document).ready(function () {
     ShowCartProducts();
-    $("#handlesearch").autocomplete(
-        {
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Product/SearchProductList',
-                    type: "POST",
-                    dataType: "json",
-                    data: { Prefix: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                item // label: item.MasterImageUrl, value: item.MasterImageUrl, MasterImageUrl: item.Name
-                            }
-                        }));
-                    }
-                });
-            },
-            open: (event) => {
-                $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
-                    let imagePath = element.innerHTML;
-                    $(element).html('');
-                    var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
-                        imagePath + '"></div>';
-                    $(element).append(inner_html);
-                });
-            }
+    //$("#handlesearch").autocomplete(
+    //    {
+    //        source: function (request, response) {
+    //            $.ajax({
+    //                url: '/Product/SearchProductList',
+    //                type: "POST",
+    //                dataType: "json",
+    //                data: { Prefix: request.term },
+    //                success: function (data) {
+    //                    response($.map(data, function (item) {
+    //                        return {
+    //                            label: item.Name,
+    //                        }
+    //                    }));
+    //                }
+    //            });
+    //        },
+    //        open: (event) => {
+    //            $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
+    //                let imagePath = element.innerHTML;
+    //                $(element).html('');
+    //                var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
+    //                    imagePath + '"></div>';
+    //                $(element).append(inner_html);
+    //            });
+    //        }
         
-        });
-
-    //jQuery('#handlesearch').keyup(function () {
-    //    var searchtext = $(this).val();
-        
-    //});
+    //    });
     jQuery('.plus-minus-box').keyup(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
-
     //test
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
@@ -94,7 +92,13 @@ $(document).ready(function () {
 
         $button.parent().find("input").val(newVal);
     });
+    //----------------
+    $('.nav-view').on('click', '.my-list-grid-btn', function () {
+        localStorage.removeItem('my-list-grid-btn');
+        localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
+    });
 });
+
 function removequickviewvalues(id) {
 
     //$('#quentityvalue').val("");
@@ -563,11 +567,10 @@ function LoadQuickView(elem) {
         }
     });
 }
-
-//Load Product List by Name
-
+//Load Product List by Id
+// filer Change Event
 function loadProductListByName() {
-
+    debugger
     var productName = $('#textProductName').val();
 
     if (productName != null && productName != undefined && productName != '') {
@@ -580,7 +583,7 @@ function loadProductListByName() {
             dataType: "json",
             success: function (result) {
 
-                var html = '', htmlProductList = '', htmlProductGrid = '';
+                var htmldata = '', htmlProductList = '', htmlProductGrid = '';
                 var data = JSON.parse(result.data);
                 $('#lblTotalCount').text('Total Records: ' + data.length);
                 $.each(data, function (key, item) {
@@ -624,16 +627,12 @@ function loadProductListByName() {
                                 </div>
                              </div >
                            </div >`;
-                    });
-
-                    //Grid Html
-                    $(item.ProductPrices).each(function (productPricesGIndex, productPricesGValue) {
 
                         htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="single-product">
                                                     <div class="product-img">
                                                         <div class="pro-type">
-                                                      <span>${productPricesGValue.Discount}%</span>
+                                                      <span>${productPricesValue.Discount}%</span>
                                                         </div>
                                                         <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                                         <div class="actions-btn">
@@ -651,23 +650,40 @@ function loadProductListByName() {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${productPricesGValue.Price} PKR</del>&nbsp${productPricesGValue.Price * (1 - (productPricesGValue.Discount / 100))} PKR</span>
+                                                        <span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
                                                     </div>
                                                 </div>
                                             </div>`;
 
                     });
+                });
 
-                    html = `<div class="tab-pane fade in text-center" id="grid">
+                var gl1 = ""; var gl2 = "";
+
+                var activeclassfor = localStorage.getItem("my-list-grid-btn");
+                switch (activeclassfor) {
+                    case "list":
+                        gl1 = "active";
+                        gl2 = "";
+                        break;
+                    case "grid":
+                        gl1 = "";
+                        gl2 = "active";
+                        break;
+                    default:
+                        gl1 = "active";
+                        gl2 = "";
+                        break;
+                }
+
+                htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
                                   ${htmlProductGrid}
                                   </div>
-                                  <div class="tab-pane fade active in" id="list">
+                                  <div class="tab-pane fade in ${gl1}" id="list">
                                       ${htmlProductList}
                                   </div>`;
 
-                });
-
-                $('#htmlListAndGrid').html(html);
+                $('#htmlListAndGrid').html(htmldata);
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -680,7 +696,8 @@ function loadProductListByName() {
 }
 //Load Product List by Id
 function loadProductListById(filterList) {
-    var html = '', htmlProductList = '', htmlProductGrid = '';
+
+    var htmldata = ''; var htmlProductList = ''; var htmlProductGrid = '';
 
     if (filterList != null && filterList != undefined && filterList != '') {
 
@@ -740,16 +757,12 @@ function loadProductListById(filterList) {
                                 </div>
                              </div >
                            </div >`;
-                    });
-
-                    //Grid Html
-                    $(item.ProductPrices).each(function (productPricesGIndex, productPricesGValue) {
 
                         htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="single-product">
                                                     <div class="product-img">
                                                         <div class="pro-type">
-                                                      <span>${productPricesGValue.Discount}%</span>
+                                                      <span>${productPricesValue.Discount}%</span>
                                                         </div>
                                                         <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                                         <div class="actions-btn">
@@ -767,23 +780,44 @@ function loadProductListById(filterList) {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${productPricesGValue.Price} PKR</del>&nbsp${productPricesGValue.Price * (1 - (productPricesGValue.Discount / 100))} PKR</span>
+                                                        <span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
                                                     </div>
                                                 </div>
                                             </div>`;
-
                     });
 
-                    html = `<div class="tab-pane fade in text-center" id="grid">
-                                  ${htmlProductGrid}
-                                  </div>
-                                  <div class="tab-pane fade active in" id="list">
-                                      ${htmlProductList}
-                                  </div>`;
+
+
 
                 });
 
-                $('#htmlListAndGrid').html(html);
+                var gl1 = ""; var gl2 = "";
+
+                var activeclassfor = localStorage.getItem("my-list-grid-btn");
+                switch (activeclassfor) {
+                    case "list":
+                        gl1 = "active";
+                        gl2 = "";
+                        break;
+                    case "grid":
+                        gl1 = "";
+                        gl2 = "active";
+                        break;
+                    default:
+                        gl1 = "active";
+                        gl2 = "";
+                        break;
+                }
+
+                htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
+                                  ${htmlProductGrid}
+                                  </div>
+                                  <div class="tab-pane fade in ${gl1}" id="list">
+                                      ${htmlProductList}
+                                  </div>`;
+
+
+                $('#htmlListAndGrid').html(htmldata);
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -794,56 +828,20 @@ function loadProductListById(filterList) {
         loadProductList();
     }
 }
-// filer Change Event
-
 $('.main-filter-container').on("change", ".filter", function () {
-
-    //var filterList = new Array();
-
     let filterList = [];
 
     if ($(this).prop("checked")) {
 
-        //var brandId = $(this).attr('brandId');
+        var slides = document.getElementsByClassName("filter");
+        for (var i = 0; i < slides.length; i++) {
+
+            if ($(slides.item(i)).prop("checked")) {
+                filterList.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
+            }
+        }
 
         var Count = 0;
-        $('.filter').each(function (i, v) {
-
-
-            //if ($(this).attr('brandId') != undefined) {
-
-            //    if ($(this).prop("checked")) {
-
-            //        filterList[Count] = parseInt($(this).attr('brandId'));
-            //        Count += 1;
-            //    }
-
-            //}
-
-            //if ($(this).attr('Category') != undefined) {
-
-            if ($(this).prop("checked")) {
-
-                //filterList[Count] = parseInt($(this).attr('brandId'));
-                //Count += 1;
-
-                filterList.push({ "Name": $(this).attr('myfilter'), "ID": parseInt($(this).attr('categoryId')) });
-
-
-            }
-
-            //}
-
-            //if ($(this).attr('categoryId') != undefined) {
-
-            //    if ($(this).prop("checked")) {
-
-            //        filterList[Count] = parseInt($(this).attr('categoryId'));
-            //        Count += 1;
-            //    }
-            //}
-
-        });
 
         loadProductListById(filterList);
 
@@ -851,26 +849,22 @@ $('.main-filter-container').on("change", ".filter", function () {
 
         var ifPresent = false;
 
-        $('.filter').each(function (i, v) {
-            if ($(this).prop("checked")) {
+        var slides = document.getElementsByClassName("filter");
+
+        let filterList_Dummy = [];
+
+        var Count = 0;
+
+        for (var i = 0; i < slides.length; i++) {
+
+            if ($(slides.item(i)).prop("checked")) {
                 ifPresent = true;
-                return false;
+                filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
             }
-        });
+        }
+
 
         if (ifPresent) {
-
-            let filterList_Dummy = [];
-
-            var Count = 0;
-            $('.filter').each(function (i, v) {
-
-                if ($(this).prop("checked")) {
-
-                    filterList_Dummy.push({ "Name": $(this).attr('myfilter'), "ID": parseInt($(this).attr('categoryId')) });
-                }
-
-            });
 
             loadProductListById(filterList_Dummy);
         }
@@ -881,7 +875,6 @@ $('.main-filter-container').on("change", ".filter", function () {
 });
 
 //Load Data function
-
 function loadFeatureProduct() {
     $.ajax({
         url: "/Product/GetFeaturedProduct",
@@ -988,11 +981,11 @@ function toggle(className, obj) {
     if (obj.checked) $(className).show();
     else $(className).hide();
 }
-
 // Comment And Rating Work ------------------
-
-
-
+//------------------------------------------------------------------------
+//------------------------------------------------------------------------
+// Wasiq Code Start
+// Comment Save btn
 $("#btnSave").click(function (e) {
 
     // if (validateFileds()) {
@@ -1056,29 +1049,163 @@ $("#btnSave").click(function (e) {
     });
     // }
 });
+//Get Product by ID
 
+function GetProductId() {
 
+    var productId = GetProductIdFromURL();
 
-// validate Comment Section
-//function validateFileds() {
+    if (productId != null && productId != undefined) {
+        $.ajax({
+            url: "/Product/GetProductbyId",
+            type: "Get",
+            data: {
+                Id: productId
+            },
+            success: function (result) {
+                var html = '';
+                var index = 1;
+                var fade = 1;
+                var productPrice = 0;
+                var htmlProductDetail = '';
+                var htmlProductPriceDetail = '',
+                    htmlProductSize = '';
+                var item = JSON.parse(result.data);
+                $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
+                    productPrice = PriceValue.Price;
+                    productDiscount = PriceValue.Discount;
+                });
 
+                $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
+                    if (ProductDetailsIndex == 1) {
+                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+                    } else {
+                        htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+                    }
+                    index += 1;
+                });
+                $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
+                    if (ProductPDIndex == 0) {
+                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                        <span>new</span>
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                        </div>`
+                    } else {
+                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                        <span>new</span>
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                        </div>`
+                    }
+                    fade += 1;
+                });
+                $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
+                    htmlProductSize += `${ProductSizeValue.UOM}`
+                });
+                html = `
+                       <div class="col-xs-12">
+                       <div class="d-table">
+                       <div class="d-tablecell">
+                       <div class="">
+                       <div class="main-view">
+                       <div class="modal-footer" data-dismiss="modal">
+                       <span></span>
+                       </div>
+                       <div class="row">
+                       <div class="col-xs-12 col-sm-5 col-md-4">
+                       <div class="quick-image">
+                       <div class="single-quick-image text-center">
+                       <div class="list-img">
+                       <div class="product-img tab-content">
+                       ${htmlProductPriceDetail}
+                       </div>
+                       </div>
+                       </div>
+                       <div class="quick-thumb">
+                       <ul class="product-slider">${htmlProductDetail} </ul>
+                       </div>
+                       </div>
+                       </div>
+                       <div class="col-xs-12 col-sm-7 col-md-8">
+                       <div class="quick-right">
+                       <div class="list-text">
+                       <h3>${item.Name} ${htmlProductSize }</h3>
+                       <span>${item.ShortDescription}</span>
+                       <div class="ratting floatright">
+                       <p>( 27 Rating )</p>
+                       <i class="mdi mdi-star"></i>
+                       <i class="mdi mdi-star"></i>
+                       <i class="mdi mdi-star"></i>
+                       <i class="mdi mdi-star-half"></i>
+                       <i class="mdi mdi-star-outline"></i>
+                       </div>
+                       <h5><del>${productPrice} PKR</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} PKR</h5>
+                       <p>${item.LongDescription}</p>
+                       <div class="all-choose">
+                       <div class="s-shoose"> </div>
+                       <div class="s-shoose">
+                       <h5>size</h5> <div class="size-drop">
+                       <h5> ${htmlProductSize}</h5> </div>
+                       </div>
+                       </div>
+                                   <div class="plus-minus">
+                                   <a class="dec qtybuttonquickview qtybutton">-</a>
+                                   <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+                                   <a class="inc qtybuttonquickview qtybutton">+</a>
+                                   </div>
+                                   PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
 
+                       <div class="list-btn">
+                       <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+                       <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}>wishlist</a>
+                       </div>
+                       <div class="share-tag clearfix">
+                       <ul class="blog-share floatleft">
+                       <li><h5>share </h5></li>
+                       <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+                       </ul>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       `;
+                $('#quick-view').html(html);
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+    }
+}
 
-// if ($('#txtMessage').val() != null || $('#txtMessage').val() != undefined || $('#txtMessage').val() != '') {
-// $('#lblMessage').text('Please Insert a Review.')
-// return false;
-// }
-// else {
-// $('#lblMessage').text('');
-// return true;
-// }
+function SetLocalStorageCommentSection(nextPage, prevPage) {
 
+    let localvalues = [];
+    let ProductId = [];
 
+    localvalues.push(nextPage);
+    localvalues.push(prevPage);
+    ProductId.push(GetProductIdFromURL());
 
-//}
+    SetLocalStorageInSingleKey("CurrentProductId", ProductId);
+    SetLocalStorageInSingleKey("CommentSection", localvalues);
+}
 
-
-
+// Get Product Comment And Rating Default Record 0 to 10
 function GetProductCommentAndRating() {
 
 
@@ -1094,7 +1221,13 @@ function GetProductCommentAndRating() {
 
 
     if (productId != null && productId != undefined) {
-        var html = ''; htlmRating = '';
+
+        var html = '';
+        var htlmRating = '';
+        var htmlbtn = '';
+        var countBtn = 1;
+        var htmlPrevButton = '';
+        var htmlNextButton = '';
 
         $.ajax({
             url: '/ProductDetails/GetProductCommentbyId',
@@ -1105,17 +1238,18 @@ function GetProductCommentAndRating() {
 
 
                 var item = JSON.parse(result.data);
+                totalComment = item.length;
 
                 $(item).each(function (index, value) {
 
+                    var nextPage = 10;
+                    var prevPage = 0;
 
-
+                    htmlbtn = '';
                     htlmRating = '';
 
                     var rating = item[index].CustomerRate;
                     var remainingRating = 5 - item[index].CustomerRate;
-
-
 
                     for (var i = 0; i < rating; i++) {
 
@@ -1123,33 +1257,51 @@ function GetProductCommentAndRating() {
                     }
                     for (var i = 0; i < remainingRating; i++) {
 
-
-
                         htlmRating += `<i class="mdi mdi-star-outline"></i>`;
                     }
 
 
+                    totalComment = item[index].totalComment;
+                    if (totalComment <= 10 || totalComment == undefined) {
+                        countBtn = 1;
+                    } else {
+                        countBtn = totalComment / 10;
+                        countBtn = Math.ceil(countBtn);
+                    }
 
+                    htmlPrevButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Previous" geclass="btn-paggination" /></span>`;
+                    htmlNextButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Next" class="btn-paggination" /></span>`;
+                    let prevCount = 0;
+                    for (var i = 1; i <= countBtn; i++) {
+                        debugger
+                        prevPage = parseInt(prevCount) * 10;
+                        if (i == 1)
+                            htmlbtn += `<span> <input type="button"  value="${i}" class="btn-paggination applyActiveBtn" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
+                        else
+                            htmlbtn += `<span> <input type="button" value="${i}" class="btn-paggination" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
 
+                        prevCount += 1;
+                    }
 
                     html += `<hr/><div class="autohr-text">
-<img src="#" alt="" />
+                        <img src="#" alt="" />
 
+                        <div class="author-des">
+                        <h4><a href="#">${item[index].CustomerName == null ? 'Anonymous' : item[index].CustomerName}</a></h4>
+                        <span class="floatright ratting" id="assign-rating">
+                        ${htlmRating}
+                        </span>
+                        <span>${moment(item[index].CommentDate).format('MMMM Do YYYY, h:mm A')}</span>
+                        <p>${item[index].CustomerComment}</p>
+                        </div>
 
-
-<div class="author-des">
-<h4><a href="#">${item[index].CustomerName == null ? 'Anonymous' : item[index].CustomerName}</a></h4>
-<span class="floatright ratting" id="assign-rating">
-${htlmRating}
-</span>
-<span>${moment(item[index].CommentDate).format('MMMM Do YYYY, h:mm A')}</span>
-<p>${item[index].CustomerComment}</p>
-</div>
-
-</div>`;
+                        </div>`;
                 });
 
+                var htmlPaggination = htmlPrevButton + htmlbtn + htmlNextButton;
+
                 $('#commentAndRating').html(html);
+                $('#div-paggination').html(htmlPaggination);
 
             },
             error: function (errorMessage) {
@@ -1164,3 +1316,166 @@ ${htlmRating}
 
 
 }
+
+// Get Product Comment And Rating with Paggination
+function GetProductCommentWithPaggination(nextPage, prevPage) {
+
+    debugger
+    var htmlPrevButton = '';
+    var htmlNextButton = '';
+    let urlstr = location.href;
+    let url = new URL(urlstr);
+    let searchparams = url.searchParams;
+
+    var productId = searchparams.get('productId');
+
+
+
+    if (productId != null && productId != undefined) {
+
+        var html = '';
+        var htlmRating = '';
+
+        $.ajax({
+            url: '/ProductDetails/GetProductCommentWithPaggination',
+            type: "POST",
+            data: { id: productId, nextPage: nextPage, prevPage: prevPage },
+            success: function (result) {
+
+
+                var item = JSON.parse(result.data);
+
+                $(item).each(function (index, value) {
+
+
+                    htmlbtn = '';
+                    htlmRating = '';
+                    var nextPage = 10;
+                    var prevPage = 0;
+
+
+                    var rating = item[index].CustomerRate;
+                    var remainingRating = 5 - item[index].CustomerRate;
+
+                    for (var i = 0; i < rating; i++) {
+
+                        htlmRating += ` <i class="mdi mdi-star"></i>`;
+                    }
+                    for (var i = 0; i < remainingRating; i++) {
+
+                        htlmRating += `<i class="mdi mdi-star-outline"></i>`;
+                    }
+
+
+                    totalComment = item[index].totalComment;
+                    if (totalComment <= 10 || totalComment == undefined) {
+
+                        countBtn = 1;
+                    } else {
+
+                        countBtn = totalComment / 10;
+                        countBtn = Math.ceil(countBtn);
+                    }
+
+                    htmlPrevButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Previous" geclass="btn-paggination" /></span>`;
+                    htmlNextButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Next" class="btn-paggination" /></span>`;
+                    let prevCount = 0;
+                    for (i = 1; i <= countBtn; i++) {
+
+                        prevPage = parseInt(prevCount) * 10;
+                        htmlbtn += `<span> <input type="button" value="${i}" class="btn-paggination" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
+                        //prevPage += 1;
+                        prevCount += 1;
+
+                    }
+
+                    html += `<hr/><div class="autohr-text">
+                        <img src="#" alt="" />
+
+                        <div class="author-des">
+                        <h4><a href="#">${item[index].CustomerName == null ? 'Anonymous' : item[index].CustomerName}</a></h4>
+                        <span class="floatright ratting" id="assign-rating">
+                        ${htlmRating}
+                        </span>
+                        <span>${moment(item[index].CommentDate).format('MMMM Do YYYY, h:mm A')}</span>
+                        <p>${item[index].CustomerComment}</p>
+                        </div>
+
+                        </div>`;
+                });
+                var htmlPaggination = htmlPrevButton + htmlbtn + htmlNextButton;
+                $('#commentAndRating').html(html);
+
+                $('#div-paggination').html(htmlPaggination);
+
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+
+
+
+    }
+
+
+
+}
+
+// Set Local Storage (Array) Generalize Fn
+function SetLocalStorageInArray(key, value) {
+
+    var keyValue = JSON.parse(localStorage.getItem(key)) || [];
+    var ParamValue = JSON.parse(localStorage.getItem(value)) || [];
+
+    if (keyValue != undefined) {
+
+        for (var i = 0; i < keyValue.length; i++) {
+
+            if (keyValue[i] == key && ParamValue[i] == value) {
+
+                //Duplicate Error
+            } else {
+
+                keyValue[i].push(key);
+                Paramvalue[i].push(value);
+            }
+
+
+        }
+    } else {
+        keyValue.push(key);
+        Paramvalue.push(value);
+    }
+}
+
+// Set Local Storage--- Store Multiple values on Single Key ( Generalize Fn)
+function SetLocalStorageInSingleKey(key, value) {
+    debugger
+    if (key != undefined) {
+        var pushValue = [];
+        for (var i = 0; i < value.length; i++) {
+
+            pushValue.push(value[i]);
+
+        }
+        localStorage.setItem(key, pushValue);
+        //localStorage.setItem(key, JSON.stringify(pushValue));
+    }
+
+}
+
+
+//Get Product Id From URL
+function GetProductIdFromURL() {
+
+    let urlstr = location.href;
+    let url = new URL(urlstr);
+    let searchparams = url.searchParams;
+
+    var productId = searchparams.get('productId');
+
+    return productId;
+}
+
+// Wasiq Code End

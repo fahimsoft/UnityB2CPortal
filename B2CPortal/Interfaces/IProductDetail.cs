@@ -12,6 +12,7 @@ namespace B2CPortal.Interfaces
         Task<CommentAndRating> SaveComment(CommentAndRating commentAndRating);
         Task<IEnumerable<CommentAndRating>> GetProductCommentbyId(long Id);
         Task<bool> DeleteComment(long Id);
+        Task<IEnumerable<CommentAndRating>> GetProductCommentWithPaggination(long Id);
 
     }
 }

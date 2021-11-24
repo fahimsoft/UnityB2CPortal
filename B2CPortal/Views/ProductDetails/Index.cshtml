@@ -1,5 +1,4 @@
 ﻿@model List<B2CPortal.Models.CommentAndRatingVM>
-<script src="~/Scripts/jquery-3.4.1.min.js"></script>
 <!-- pages-title-start -->
 @*<div class="pages-title section-padding">
     <div class="container">
@@ -124,135 +123,99 @@
     </div>
 </div>
 <script>
-$(document).ready(function () { GetProductId();
-GetProductCommentAndRating(); $('.product-rating').click(function (elem) { rating = $(this).attr('rating');
-})
-}); function GetProductId() { let urlstr = location.href;
-let url = new URL(urlstr);
-let searchparams = url.searchParams; var productId = searchparams.get('productId');
-var html = '', htmlProductList = '', htmlProductGrid = ''; if (productId != null && productId != undefined) { $.ajax({
-url: '@Url.Action("GetProductbyId", "Product")',
-type: "Get",
-data: { Id: productId },
-success: function (result) {
-var html = '';
-var index = 1;
-var fade = 1;
-var productPrice = 0;
-var htmlProductDetail = '';
-var htmlProductPriceDetail='', htmlProductSize = ''; var item = JSON.parse(result.data);
-$(item.ProductPrices).each(function (PriceIndex, PriceValue) { productPrice = PriceValue.Price;
-productDiscount = PriceValue.Discount;
-});
-$(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) { if (ProductDetailsIndex == 1) {
-htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-}
-else {
-htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-}
-index += 1;
-});
-$(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) { if (ProductPDIndex == 0) {
-htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
-<div class="pro-type">
-<span>new</span>
-</div>
-<a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-</div>`
-}
-else {
-htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
-<div class="pro-type">
-<span>new</span>
-</div>
-<a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-</div>`
-} fade += 1;
-});
-$(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) { htmlProductSize += `${ProductSizeValue.UOM}`
-});
-html = `
-<div class="col-xs-12">
-<div class="d-table">
-<div class="d-tablecell">
-<div class="">
-<div class="main-view">
-<div class="modal-footer" data-dismiss="modal">
-<span></span>
-</div>
-<div class="row">
-<div class="col-xs-12 col-sm-5 col-md-4">
-<div class="quick-image">
-<div class="single-quick-image text-center">
-<div class="list-img">
-<div class="product-img tab-content">
-${htmlProductPriceDetail}
-</div>
-</div>
-</div>
-<div class="quick-thumb">
-<ul class="product-slider">${htmlProductDetail} </ul>
-</div>
-</div>
-</div>
-<div class="col-xs-12 col-sm-7 col-md-8">
-<div class="quick-right">
-<div class="list-text">
-<h3>${item.Name}  ${htmlProductSize} </h3>
-<span>${item.ShortDescription}</span>
-<div class="ratting floatright">
-<p>( 27 Rating )</p>
-<i class="mdi mdi-star"></i>
-<i class="mdi mdi-star"></i>
-<i class="mdi mdi-star"></i>
-<i class="mdi mdi-star-half"></i>
-<i class="mdi mdi-star-outline"></i>
-</div>
-<h5><del>${productPrice} PKR</del> <labal style="color:gray">-${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} PKR</h5>
-<p>${item.LongDescription}</p>
-<div class="all-choose">
-<div class="s-shoose"> </div>
-<div class="s-shoose">
-<h5>size</h5> <div class="size-drop">
-<h5> ${htmlProductSize}</h5> </div>
-</div>
-</div>
-            <div class="plus-minus">
-            <a class="dec qtybuttonquickview qtybutton">-</a>
-            <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
-            <a class="inc qtybuttonquickview qtybutton">+</a>
-            </div>
-            PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
+    $(document).ready(function () {
 
-<div class="list-btn">
-<a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}>wishlist</a>
-</div>
-<div class="share-tag clearfix">
-<ul class="blog-share floatleft">
-<li><h5>share </h5></li>
-<li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
-<li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
-<li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
-<li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
-<li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
-<li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-`; $('#quick-view').html(html);
-},
-error: function (errorMessage) {
-alert(errorMessage.responseText);
-}
-}); } }
+        GetProductId();
+        debugger
+        let CurrentProductId = localStorage.getItem('CurrentProductId');
+        if (CurrentProductId != GetProductIdFromURL()) {
+
+            localStorage.removeItem('CurrentProductId');
+            localStorage.removeItem('CommentSection');
+        }
+
+
+        debugger
+        let commentArray = [];
+        let commentStorage = localStorage.getItem('CommentSection');
+
+        if (commentStorage != null)
+            commentArray = commentStorage.split(',');
+
+        if (commentArray.length > 0)
+            GetProductCommentWithPaggination(commentArray[0], commentArray[1]);
+        else
+            GetProductCommentAndRating();
+
+
+        $('.product-rating').click(function (elem) {
+            rating = $(this).attr('rating');
+        });
+
+        // Paggination Button ,1,2,3..
+        $('#div-paggination').on('click', '.btn-paggination', function () {
+
+            //var localvalues = [];
+            //var ProductId = [];
+            var nextPage = $(this).attr('next-page');
+            var prevPage = $(this).attr('prev-page');
+
+            PrevClickValue = prevPage;
+            NextClickValue = nextPage;
+
+            $('#div-paggination').find('.btn-paggination').removeClass('applyActiveBtn');
+            $(this).addClass('applyActiveBtn');
+
+            SetLocalStorageCommentSection(nextPage, prevPage);
+            GetProductCommentWithPaggination(nextPage, prevPage);
+
+        });
+
+        // Prev and Next Button
+        $('#div-paggination').on('click', '.btn-PrevAndNext', function () {
+
+            let value = $(this).attr('value')
+
+
+            debugger
+            if (value == "Previous") {
+
+                if (PrevClickValue == 0)
+                    PrevClickValue = commentArray[1];
+
+                if (PrevClickValue > 0) {
+
+                    PrevClickValue = parseInt(PrevClickValue) - 10;
+                    SetLocalStorageCommentSection(NextClickValue, PrevClickValue)
+                }
+                else
+                    return false;
+            }
+
+
+            if (value == "Next") {
+
+                if (PrevClickValue == 0)
+                    PrevClickValue = commentArray[1];
+
+                if ((parseInt(totalComment) - 10) > PrevClickValue) {
+
+                    PrevClickValue = parseInt(PrevClickValue) + 10;
+                    SetLocalStorageCommentSection(NextClickValue, PrevClickValue)
+                } else {
+                    return false;
+                }
+
+            }
+
+            var currentBtnIndex = (((NextClickValue + PrevClickValue) / NextClickValue) - 1);
+
+            $('#div-paggination').find('.btn-paggination').removeClass('applyActiveBtn');
+            $('#div-paggination').find('.btn-paggination').eq(currentBtnIndex).addClass('applyActiveBtn');
+
+            GetProductCommentWithPaggination(NextClickValue, PrevClickValue);
+        });
+    });
+
 </script>
 

@@ -2,7 +2,7 @@
 @{
     ViewBag.Title = "GetPorductList";
 }   
-<script src="@Url.Content("~/Scripts/jquery-3.4.1.min.js")"></script>
+@*<script src="@Url.Content("~/Scripts/jquery-3.4.1.min.js")"></script>*@
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
@@ -42,8 +42,8 @@
                                 <ul>
                                     <li>
                                         <ul class="nav-view">
-                                            <li><a data-toggle="tab" href="#grid"> <i class="mdi mdi-view-module"></i> </a></li>
-                                            <li class="active"><a data-toggle="tab" href="#list"> <i class="mdi mdi-view-list"></i> </a></li>
+                                            <li class="my-list-grid-btn" mylistgridbtn="grid"><a  data-toggle="tab" href="#grid"> <i class="mdi mdi-view-module"></i> </a></li>
+                                            <li class="my-list-grid-btn active" mylistgridbtn="list"> <a data-toggle="tab" href="#list"> <i class="mdi mdi-view-list"></i> </a></li>
                                             <li>
 
                                                 <button type="button" id="btnSearch" onclick="loadProductListByName()"><i class="mdi mdi-magnify"></i></button>
@@ -87,11 +87,8 @@
 <script>
 
     //LoadProductList
-
     $(document).ready(function () {
-
         loadProductList();
-
     });
 
 
