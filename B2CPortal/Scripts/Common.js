@@ -194,7 +194,7 @@ function Handleorderdetail(id) {
                                         </td>
 
                                         <td>
-                                           ${item.Date}
+${moment(item.Date).format('MMMM Do YYYY')}
                                         </td>
                                     </tr>`
 
@@ -1114,10 +1114,6 @@ ${htlmRating}
 <span>${moment(item[index].CommentDate).format('MMMM Do YYYY, h:mm A')}</span>
 <p>${item[index].CustomerComment}</p>
 </div>
-
-
-
-
 
 </div>`;
                 });
