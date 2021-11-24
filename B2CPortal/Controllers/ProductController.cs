@@ -63,6 +63,8 @@ namespace B2CPortal.Controllers
         }
         public ActionResult PorductList()
         {
+            string CurrentURL = Request.Url.AbsoluteUri;
+            TempData["returnurl"] = CurrentURL;
             return View();
         }
 
@@ -414,10 +416,78 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-        public async Task<ActionResult> Wishlist()
+        //public async Task<ActionResult> Wishlist()
+        //{
+        //    try
+        //    {
+        //        var customerId = 0;
+        //        if (Session["UserId"] != null)
+        //        {
+        //            customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+        //        }
+        //        // WishlistVM wish = new WishlistVM();
+        //        List<WishlistVM> wishlistVMs = new List<WishlistVM>();
+        //        HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
+        //        if (cookie != null || customerId > 0)
+        //        {
+
+        //            Cart cart = new Cart();
+        //            var ProductIds = await _cart.GetWishListProducts(cookie.Value, customerId);
+        //            foreach (var item in ProductIds)
+        //            {
+        //                var productmaster = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+        //                var Name = productmaster.Name;
+        //                var mainImg = productmaster.MasterImageUrl;
+        //                //var priceobj = productmaster.ProductPrices.Select(x => x.)
+
+        //                var price = productmaster.ProductPrices.Select(x => x.Price).FirstOrDefault();
+        //                var discount = productmaster.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+        //                var DiscountedPrice = price * (1 - (discount / 100));
+        //                var Total = item.TotalPrice;
+        //                var Quantity = item.TotalQuantity;
+        //                var CartId = item.Id;
+        //                var productId = item.FK_ProductMaster;
+        //                var wishlistVM = new WishlistVM
+        //                {
+        //                    Id = CartId,
+        //                    FK_ProductMaster = productId,
+        //                    Name = Name,
+        //                    MasterImageUrl = mainImg,
+        //                    Price = price,
+        //                    Discount = discount,
+        //                    DiscountedPrice = DiscountedPrice,
+        //                    ActualPrice = (decimal)(price * Quantity),
+        //                    TotalPrice = (DiscountedPrice * Quantity),
+        //                    TotalQuantity = Quantity,
+        //                };
+        //                wishlistVMs.Add(wishlistVM);
+        //                wishlistVMs.Select(c => { c.CartSubTotal += (decimal)(price * item.Quantity); return c; }).ToList();
+        //                wishlistVMs.Select(c => { c.CartSubTotalDiscount += (decimal)(discount); return c; }).ToList();
+        //                wishlistVMs.Select(c => { c.OrderTotal += (decimal)item.TotalPrice; return c; }).ToList();
+        //            }
+
+
+        //            return View(wishlistVMs);
+        //        }
+        //        else
+        //        {
+        //            return View(wishlistVMs);
+        //            //return Json(new { data = "", msg = "Add Something To WishList", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadResponse(ex);
+        //    }
+
+        //}
+        public async Task<ActionResult> WishlistTable()
         {
             try
             {
+
+
+
                 var customerId = 0;
                 if (Session["UserId"] != null)
                 {
@@ -429,6 +499,8 @@ namespace B2CPortal.Controllers
                 if (cookie != null || customerId > 0)
                 {
 
+
+
                     Cart cart = new Cart();
                     var ProductIds = await _cart.GetWishListProducts(cookie.Value, customerId);
                     foreach (var item in ProductIds)
@@ -437,6 +509,8 @@ namespace B2CPortal.Controllers
                         var Name = productmaster.Name;
                         var mainImg = productmaster.MasterImageUrl;
                         //var priceobj = productmaster.ProductPrices.Select(x => x.)
+
+
 
                         var price = productmaster.ProductPrices.Select(x => x.Price).FirstOrDefault();
                         var discount = productmaster.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -456,27 +530,46 @@ namespace B2CPortal.Controllers
                             DiscountedPrice = DiscountedPrice,
                             ActualPrice = (decimal)(price * Quantity),
                             TotalPrice = (DiscountedPrice * Quantity),
+                            DiscountAmount = ((decimal)(price * item.Quantity) - (item.TotalPrice == null ? 0 : (decimal)item.TotalPrice)),
+                            ShipingAndHostring = 0,
+                            VatTax = 0,
                             TotalQuantity = Quantity,
                         };
                         wishlistVMs.Add(wishlistVM);
                         wishlistVMs.Select(c => { c.CartSubTotal += (decimal)(price * item.Quantity); return c; }).ToList();
-                        wishlistVMs.Select(c => { c.CartSubTotalDiscount += (decimal)(discount); return c; }).ToList();
+                        wishlistVMs.Select(c => { c.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)item.TotalPrice); return c; }).ToList();
+
+
+
+                        //wishlistVMs.Select(c => { c.CartSubTotalDiscount += (decimal)(discount); return c; }).ToList();
                         wishlistVMs.Select(c => { c.OrderTotal += (decimal)item.TotalPrice; return c; }).ToList();
                     }
 
 
-                    return View(wishlistVMs);
+
                 }
-                else
-                {
-                    return View(wishlistVMs);
-                    //return Json(new { data = "", msg = "Add Something To WishList", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
-                }
+
+
+
+                return PartialView(wishlistVMs);
             }
             catch (Exception ex)
             {
                 return BadResponse(ex);
             }
+        }
+        public async Task<ActionResult> Wishlist()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception ex)
+            {
+                return BadResponse(ex);
+            }
+
+
 
         }
         [HttpPost]

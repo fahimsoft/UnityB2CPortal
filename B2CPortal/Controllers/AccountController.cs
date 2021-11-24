@@ -48,12 +48,13 @@ namespace B2CPortal.Controllers
 
         // Login json response
         [HttpPost]
-        public async Task<JsonResult> Login(customer customer)
+        public async Task<ActionResult> Login(customer customer)
         {
             try
             {
+                string Current = "/Home/Index";
                 var res = await _account.SelectByIdPassword(customer);
-                if ( res != null)
+                if (res != null)
                 {
                     //string Uri = Request.Url.AbsoluteUri;
                     //string url = HttpContext.Current.Request.Url.AbsoluteUri;
@@ -84,14 +85,24 @@ namespace B2CPortal.Controllers
                                 _cart.UpdateToCart(x);
                             }
                         });
-                       var duplicatelist = cartlsit.GroupBy(x => x).Where(y => y.Count() > 1).Select(z => z).ToList();
+                        var duplicatelist = cartlsit.GroupBy(x => x).Where(y => y.Count() > 1).Select(z => z).ToList();
+
+
 
                     }
+                    if (TempData["returnurl"] != null)
+                    {
+                        Current = TempData["returnurl"].ToString();
+                    }
+                    return Json(new { data = Current, msg = "Login Successfull", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
 
-                    return SuccessResponse("true");
 
-                    
-                    //return Json(new { data = res, msg = "Login Successfull", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+
+                    //return SuccessResponse("true");
+
+
+
+
                 }
                 else
                 {
@@ -99,13 +110,14 @@ namespace B2CPortal.Controllers
                     //return Json(new { data = "", msg = "Login Failed", success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
                 }
 
+
+
             }
             catch (Exception ex)
             {
                 return BadResponse(ex);
             }
         }
-
         public async Task<ActionResult> MyAccount()
         {
             try
@@ -146,8 +158,34 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                var result = HelperFunctions.fBrowserIsMobile();
+                if (result == false)
+                {
+                    customer.RegisteredFrom = "Web";
+                    customer.IsWebUser = true;
+                    customer.IsAppUser = false;
+                }
+                else
+                {
+                    customer.RegisteredFrom = "App";
+                    customer.IsAppUser = true;
+                    customer.IsWebUser = false;
+                }
+                string cookie = string.Empty;
+                if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+                {
+                    cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                }
+                else
+                {
+                    cookie = Guid.NewGuid().ToString();
+                    HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
+                }
+                customer.Guid = cookie;
                 var res = await _account.CreateCustomer(customer);
                 return SuccessResponse("true");
+
+
 
             }
             catch (Exception ex)

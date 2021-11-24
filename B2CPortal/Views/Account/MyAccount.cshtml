@@ -259,7 +259,84 @@
             console.log(result);
             return result;
         });
+        jQuery('#billing').validate({
+            rules: {
+                FirstName: {
+                    required: true,
 
+
+
+                    maxlength: 50
+                },
+                LastName: {
+                    required: true
+
+
+
+                }, EmailId: {
+                    required: true,
+                    email: true
+
+
+
+                }, PhoneNo: {
+                    required: true
+                }, DateOfBirth: {
+                    required: true
+                }, Gender: {
+                    required: true
+
+
+
+                }
+                , Password: {
+                    required: true
+
+
+
+                }, NewPassword: {
+                    required: true
+
+
+
+                }, ConfirmPassword: {
+                    required: true,
+                    equalTo: "#NewPassword"
+
+
+
+                }
+
+
+
+            },
+            messages: {
+                FirstName: {
+                    required: "First Name Is Required"
+                }, LastName: {
+                    required: "Last Name Is Required"
+                }, EmailId: {
+                    required: "Email Is Required",
+                    uniqueEmail: "Your Email address is already registered on our system."
+                }, DateOfBirth: {
+                    required: "DOB Is Required"
+                }, Gender: {
+                    required: "Gender Is Required"
+                }, Password: {
+                    required: "Password Is Required"
+                }, NewPassword: {
+                    required: "New Password Is Required"
+                }, ConfirmPassword: {
+                    required: "Confirm Password Is Required",
+                    equalTo: "Confirm Password must be equal to Password"
+                }, PhoneNo: {
+                    required: "Phone No Is Required"
+                }
+
+
+
+            }
+        });
 
         jQuery('#settings').validate({
             rules: {

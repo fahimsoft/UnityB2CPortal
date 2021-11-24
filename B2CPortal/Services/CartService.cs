@@ -291,13 +291,63 @@ namespace B2CPortal.Services
             ).FirstOrDefaultAsync();
             return cartData;
         }
+        //public async Task<Cart> UpdateToCart(Cart wishlistVM)
+        //{
+        //    try
+        //    {
+        //        _dxcontext.Configuration.LazyLoadingEnabled = false;
+
+        //        if (wishlistVM.IsWishlist == true)
+        //        {
+        //            Current = await _dxcontext.Carts.Where(x =>
+        //            (x.Guid == wishlistVM.Guid && x.IsWishlist == true
+        //            && x.IsActive == true)
+        //            ||
+        //            (x.IsWishlist == true
+        //            && x.IsActive == true
+        //            && x.FK_Customer == wishlistVM.FK_Customer)
+
+        //        ).FirstOrDefaultAsync();
+
+        //        }
+        //        else
+        //        {
+        //            Current = await _dxcontext.Carts.Where(x =>
+        //            (x.Guid == wishlistVM.Guid && x.IsWishlist == false
+        //            && x.IsActive == true)
+        //            ||
+        //            (x.IsWishlist == false
+        //            && x.IsActive == true
+        //            && x.FK_Customer == wishlistVM.FK_Customer)
+
+        //        ).FirstOrDefaultAsync();
+        //        }
+
+
+        //        if (Current != null)
+        //        {
+        //            PrimaryKeyValue = Current.Id;
+        //            Current.FK_Customer = wishlistVM?.FK_Customer;
+        //            Current.Guid = wishlistVM?.Guid;
+        //            Current.ModifiedOn = DateTime.Now;
+        //            Current.Quantity = (Current.Quantity + wishlistVM.Quantity);
+        //            Current.TotalQuantity = (Current.TotalQuantity + wishlistVM.TotalQuantity);
+        //            Current.TotalPrice = (Current.TotalPrice + wishlistVM.TotalPrice);
+        //            Current.IsWishlist = wishlistVM.IsWishlist == true ? true : false;
+        //        }
+        //        Save();
+        //        return Current;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
         public async Task<Cart> UpdateToCart(Cart wishlistVM)
         {
             try
             {
-                _dxcontext.Configuration.LazyLoadingEnabled = false;
-
-                if (wishlistVM.IsWishlist == true)
+                _dxcontext.Configuration.LazyLoadingEnabled = false; if (wishlistVM.IsWishlist == true)
                 {
                     Current = await _dxcontext.Carts.Where(x =>
                     (x.Guid == wishlistVM.Guid && x.IsWishlist == true
@@ -305,34 +355,27 @@ namespace B2CPortal.Services
                     ||
                     (x.IsWishlist == true
                     && x.IsActive == true
-                    && x.FK_Customer == wishlistVM.FK_Customer)
-
-                ).FirstOrDefaultAsync();
-
+                    && x.FK_Customer == wishlistVM.FK_Customer)).FirstOrDefaultAsync();
                 }
                 else
                 {
                     Current = await _dxcontext.Carts.Where(x =>
                     (x.Guid == wishlistVM.Guid && x.IsWishlist == false
-                    && x.IsActive == true)
+                    && x.IsActive == true && x.FK_ProductMaster == wishlistVM.FK_ProductMaster)
                     ||
                     (x.IsWishlist == false
                     && x.IsActive == true
-                    && x.FK_Customer == wishlistVM.FK_Customer)
-
-                ).FirstOrDefaultAsync();
+                    && x.FK_Customer == wishlistVM.FK_Customer && x.FK_ProductMaster == wishlistVM.FK_ProductMaster)).FirstOrDefaultAsync();
                 }
-
-
                 if (Current != null)
                 {
                     PrimaryKeyValue = Current.Id;
                     Current.FK_Customer = wishlistVM?.FK_Customer;
                     Current.Guid = wishlistVM?.Guid;
                     Current.ModifiedOn = DateTime.Now;
-                    Current.Quantity = (Current.Quantity + wishlistVM.Quantity);
-                    Current.TotalQuantity = (Current.TotalQuantity + wishlistVM.TotalQuantity);
-                    Current.TotalPrice = (Current.TotalPrice + wishlistVM.TotalPrice);
+                    Current.Quantity = wishlistVM.Quantity;
+                    Current.TotalQuantity = wishlistVM.TotalQuantity;
+                    Current.TotalPrice = (wishlistVM.TotalPrice * Current.TotalQuantity);
                     Current.IsWishlist = wishlistVM.IsWishlist == true ? true : false;
                 }
                 Save();
@@ -343,6 +386,8 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
+
+
         public async Task<Cart> UpdateWishList(int cartId)
         {
             try

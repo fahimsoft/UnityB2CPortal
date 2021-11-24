@@ -26,10 +26,12 @@ namespace B2CPortal.Controllers
             _orders = orders;
             _ordersDetail = orderDetail;
         }
-        public ActionResult Index()
+        public ActionResult Index() 
         {
             if (Convert.ToInt32(HttpContext.Session["UserId"]) <= 0)
             {
+                string CurrentURL = Request.Url.AbsoluteUri;
+                TempData["returnurl"] = CurrentURL;
                 return RedirectToAction("Login", "Account");
             }
             return View();

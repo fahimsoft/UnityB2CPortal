@@ -28,6 +28,9 @@ namespace B2C_Models.Models
         public Nullable<decimal> Price { get; set; }
         public Nullable<decimal> Discount { get; set; }
         public Nullable<decimal> DiscountedPrice { get; set; }
+public decimal DiscountAmount { get; set; }
+
+
         //  public List<WishlistVM> wishlistVMs { get; set; }
 
         public decimal CartSubTotal { get;  set; }
@@ -37,8 +40,6 @@ namespace B2C_Models.Models
         public decimal OrderTotal { get;  set; }
         public int VatTax { get;  set; }
         public decimal ActualPrice { get; set; }
-
-
         public virtual customer customer { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }
     }

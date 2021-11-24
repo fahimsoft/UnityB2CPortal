@@ -342,9 +342,9 @@
                     //cache : false,
                     //processData: false,
                     success: function (data) {
-                        if (data.isSuccessful == true /*&& res.count > 0*/) {
+                        if (data.success == true /*&& res.count > 0*/) {
                             toastr.success("Login successfully.");
-                            window.location.href = "/Home/Index";
+                            window.location = data.data;// "/Home/Index";
                         }
                         else if (data.isSuccessful == false) {
                             //alert("Login Failed");

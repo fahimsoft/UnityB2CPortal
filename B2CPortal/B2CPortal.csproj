@@ -408,6 +408,7 @@
     <Content Include="Views\Product\_CartListPartialView.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
     <Content Include="Views\Orders\_OrderListPartialView.cshtml" />
+    <Content Include="Views\Product\WishlistTable.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -22,6 +22,10 @@ namespace B2CPortal.Services
                 {
                     New();
                     Current.CreatedOn = DateTime.Now;
+                    Current.IsWebUser = customer.IsWebUser;
+                    Current.IsAppUser = customer.IsAppUser;
+                    Current.Guid = customer.Guid;
+                    Current.RegisteredFrom = customer.RegisteredFrom;
                 }
                 else
                 {
