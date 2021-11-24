@@ -249,6 +249,21 @@ namespace B2CPortal.Services
             }
         }
 
+        public async Task<IEnumerable<ProductMaster>> SearchProducts(string name)
+        {
+            try
+            {
+                var obj = await _dxcontext.ProductMasters
+                    .Where(x => x.Name.Contains(name)).OrderByDescending(a => a.Id).AsNoTracking().ToListAsync();//  GetAll();
+                return obj;
+            }
+            catch (Exception Ex)
+            {
+
+                throw Ex;
+            }
+        }
+
         //public async Task<ProductMaster> AddUser(ProductMaster obj)
         //{
         //    try

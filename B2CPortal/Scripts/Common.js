@@ -1,10 +1,41 @@
 
 //---------------cart count and hover list----------------
 var rating = 0;
-
-
 $(document).ready(function () {
     ShowCartProducts();
+    $("#handlesearch").autocomplete(
+        {
+            source: function (request, response) {
+                $.ajax({
+                    url: '/Product/SearchProductList',
+                    type: "POST",
+                    dataType: "json",
+                    data: { Prefix: request.term },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            return {
+                                item // label: item.MasterImageUrl, value: item.MasterImageUrl, MasterImageUrl: item.Name
+                            }
+                        }));
+                    }
+                });
+            },
+            open: (event) => {
+                $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
+                    let imagePath = element.innerHTML;
+                    $(element).html('');
+                    var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
+                        imagePath + '"></div>';
+                    $(element).append(inner_html);
+                });
+            }
+        
+        });
+
+    //jQuery('#handlesearch').keyup(function () {
+    //    var searchtext = $(this).val();
+        
+    //});
     jQuery('.plus-minus-box').keyup(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });

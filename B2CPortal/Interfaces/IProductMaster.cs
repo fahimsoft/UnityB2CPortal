@@ -19,6 +19,7 @@ namespace B2CPortal.Interfaces
 
         Task<ProductMaster> GetProductById(long Id);
         Task<IEnumerable<ProductMaster>> GetProductByName(string name);
+        Task<IEnumerable<ProductMaster>> SearchProducts(string name);
 
         Task<ProductMaster> GetDataForWishList(int id);
 

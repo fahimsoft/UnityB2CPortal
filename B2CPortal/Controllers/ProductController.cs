@@ -83,6 +83,13 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
+      [HttpPost]
+        public async Task<JsonResult> SearchProductList(string Prefix)
+        {
+            var productmasetr = await _IProductMaster.SearchProducts(Prefix);
+
+            return Json(productmasetr, JsonRequestBehavior.AllowGet);
+        }
         public async Task<JsonResult> GetCartCount()
         {
             string cartguid = string.Empty;
