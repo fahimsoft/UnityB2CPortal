@@ -278,19 +278,35 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
+        //public async Task<Cart> GetCartData(string guid, int customerId, int productId)
+        //{
+        //    var cartData = await _dxcontext.Carts.Where(x =>
+        //        (x.Guid == guid && x.IsWishlist == false
+        //        && x.IsActive == true)
+        //        ||
+        //        (x.IsWishlist == false
+        //        && x.IsActive == true
+        //        && x.FK_Customer == customerId)
+
+        //    ).FirstOrDefaultAsync();
+        //    return cartData;
+        //}
         public async Task<Cart> GetCartData(string guid, int customerId, int productId)
         {
             var cartData = await _dxcontext.Carts.Where(x =>
-                (x.Guid == guid && x.IsWishlist == false
-                && x.IsActive == true)
-                ||
-                (x.IsWishlist == false
-                && x.IsActive == true
-                && x.FK_Customer == customerId)
+            (x.Guid == guid && x.IsWishlist == false
+            && x.IsActive == true && x.FK_ProductMaster == productId)
+            ||
+            (x.IsWishlist == false
+            && x.IsActive == true
+            && x.FK_Customer == customerId && x.FK_ProductMaster == productId)
+
+
 
             ).FirstOrDefaultAsync();
             return cartData;
         }
+
         //public async Task<Cart> UpdateToCart(Cart wishlistVM)
         //{
         //    try

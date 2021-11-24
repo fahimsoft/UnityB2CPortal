@@ -578,13 +578,18 @@ namespace B2CPortal.Controllers
             try
             {
                 var cartId = obj.Id;
+                var productId = obj.FK_ProductMaster;
                 var customerId = 0;
+                decimal DiscountedPrice = 0;
+                var Quantity = obj.Quantity;
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                 }
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
-                var productId = obj.FK_ProductMaster;
+
+
+
                 if (cookie != null || customerId > 0)
                 {
                     var cartData = await _cart.GetCartData(cookie.Value, customerId, productId);
@@ -592,9 +597,22 @@ namespace B2CPortal.Controllers
                     {
                         try
                         {
-                            if(customerId > 0)
-                            cartData.FK_Customer = customerId;
-                            cartData.Guid= cookie.Value;
+                            if (customerId > 0)
+                                cartData.FK_Customer = customerId;
+                            cartData.Guid = cookie.Value;
+                            var productData = await _IProductMaster.GetProductById(productId);
+                            if (productData != null)
+                            {
+                                var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                                var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                                DiscountedPrice = (decimal)(price * (1 - (discount / 100)));
+                                //Total = (decimal)(DiscountedPrice * Quantity);
+                            }
+                            cartData.TotalPrice = DiscountedPrice;
+                            cartData.Quantity = (cartData.Quantity + Quantity);
+                            cartData.TotalQuantity = (cartData.TotalQuantity + Quantity);
+
+
 
                             var updated = await _cart.UpdateToCart(cartData);
                             var res = await _cart.UpdateWishList(cartId);
@@ -619,6 +637,8 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                         cart.IsWishlist = false;
                         cart.IsActive = true;
                         cart.TotalPrice = obj.TotalPrice;
@@ -640,7 +660,11 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                     }
+
+
 
 
 
@@ -651,6 +675,8 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                 }
             }
             catch (Exception ex)
@@ -658,8 +684,10 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
 
+
+
         }
-           [HttpPost]
+        [HttpPost]
         public async Task<JsonResult> DeleteFromCart(int Id)
         {
             try
