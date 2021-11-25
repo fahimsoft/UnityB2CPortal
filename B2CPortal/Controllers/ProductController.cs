@@ -88,7 +88,7 @@ namespace B2CPortal.Controllers
         {
             var productmasetr = await _IProductMaster.SearchProducts(Prefix);
 
-            return Json(productmasetr, JsonRequestBehavior.AllowGet);
+            return Json(productmasetr.Take(8), JsonRequestBehavior.AllowGet);
         }
         public async Task<JsonResult> GetCartCount()
         {

@@ -47,9 +47,25 @@ namespace API_Base.Base
         {
             return this.CreateResponse(data, "Ok");
         }
+        //protected JsonResult BadResponse(object data)
+        //{
+        //    return this.CreateResponse(data, "Not Found");
+        //}
         protected JsonResult BadResponse(object data)
         {
-            return this.CreateResponse(data, "Not Found");
+            //return this.CreateResponse(data, "Not Found");
+
+            DTO result = new DTO();
+            var objresult = Newtonsoft.Json.JsonConvert.SerializeObject(data,
+                            Formatting.None,
+                             new Newtonsoft.Json.JsonSerializerSettings
+                             {
+                                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                             });
+
+            result.data = objresult;
+            result.isSuccessful = true;
+            return Json(result, JsonRequestBehavior.AllowGet);
         }
 
         //private JsonResult CreateResponse(object data)

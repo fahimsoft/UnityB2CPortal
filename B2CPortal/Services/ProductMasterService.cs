@@ -249,13 +249,38 @@ namespace B2CPortal.Services
             }
         }
 
-        public async Task<IEnumerable<ProductMaster>> SearchProducts(string name)
+        public async Task<List<ProductsVM>> SearchProducts(string name)
         {
             try
             {
-                var obj = await _dxcontext.ProductMasters
-                    .Where(x => x.Name.Contains(name)).OrderByDescending(a => a.Id).AsNoTracking().ToListAsync();//  GetAll();
-                return obj;
+
+                var obj = from PM in _dxcontext.ProductMasters
+                          join PP in _dxcontext.ProductPrices on PM.Id equals PP.FK_ProductMaster
+                          join PD in _dxcontext.ProductDetails on PM.Id equals PD.FK_ProductMaster
+                          where PM.Name.Contains(name)
+                          select new { PM.Id, PM.Name, PM.ShortDescription, PM.LongDescription, PM.MasterImageUrl, PP.Price, PD.ImageUrl };
+                var obj2 = await obj. ToListAsync().ConfigureAwait(false);
+                var dd = await obj.Select(x => new ProductsVM()
+
+                {
+
+                    Id = x.Id,
+
+                    Name = x.Name,
+
+                    Price = x.Price,
+
+                    MasterImageUrl = x.MasterImageUrl,
+
+                    ShortDescription = x.ShortDescription,
+
+                    LongDescription = x.LongDescription
+
+                }).ToListAsync();
+
+                return dd;
+                //var obj = await _dxcontext.ProductMasters.Where(x => x.Name.Contains(name)).Include(x => x.ProductPrices).AsNoTracking().ToListAsync();//  GetAll();
+                //return obj;                                                                                                         // return obj;
             }
             catch (Exception Ex)
             {

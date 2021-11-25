@@ -1,6 +1,6 @@
 /* Normal desktop :992px. */
 @media (min-width: 1200px) and (max-width: 1666px) {
-.middel-top .center input{width:350px;}
+.middel-top .center input{width:450px;}
 /* slider */
 .slide-text h1 {font-size: 50px;}
 .nivo-caption .slider-right {right: 8%;}
@@ -30,7 +30,7 @@
 }
 /* Normal desktop :992px. */
 @media (min-width: 1170px) and (max-width: 1200px) {
-.middel-top .center input{width:350px;}
+.middel-top .center input{width:450px;}
 /* slider */
 .slide-text h1 {font-size: 50px;}
 .nivo-caption .slider-right {right: 0;}

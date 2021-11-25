@@ -7,40 +7,13 @@ var NextClickValue = 10;
 
 $(document).ready(function () {
     ShowCartProducts();
-    //$("#handlesearch").autocomplete(
-    //    {
-    //        source: function (request, response) {
-    //            $.ajax({
-    //                url: '/Product/SearchProductList',
-    //                type: "POST",
-    //                dataType: "json",
-    //                data: { Prefix: request.term },
-    //                success: function (data) {
-    //                    response($.map(data, function (item) {
-    //                        return {
-    //                            label: item.Name,
-    //                            value: item.Name,
-    //                        }
-    //                    }));
-    //                }
-    //            });
-    //        },
-    //        open: (event) => {
-    //            $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
-    //                let imagePath = element.innerHTML;
-    //                $(element).html('');
-    //                var inner_html = '<div class="list_item_container"><div class="image"><p>' + imagePath + '</p></div>';
-    //                //var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
-    //                //    imagePath + '"></div>';
-    //                $(element).append(inner_html);
-    //            });
-    //        }
-        
-    //    });
     jQuery('.plus-minus-box').keyup(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
     //test
+    $(document).on('click', 'input[type=hidden]', function () {
+        alert( $(this).val());
+    });
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
@@ -100,6 +73,117 @@ $(document).ready(function () {
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
     });
 });
+///========================search with autocomplete========================================
+function autocomplete(inp, arr) {
+    var currentFocus;
+    inp.addEventListener("input", function (e) {
+        var a, b, i, val = this.value;
+        /*close any already open lists of autocompleted values*/
+        closeAllLists();
+        if (!val) { return false; }
+        currentFocus = -1;
+        /*create a DIV element that will contain the items (values):*/
+        a = document.createElement("DIV");
+        a.setAttribute("id", this.id + "autocomplete-list");
+        a.setAttribute("class", "autocomplete-items");
+        /*append the DIV element as a child of the autocomplete container:*/
+        this.parentNode.appendChild(a);
+        //***********************************************************
+        $.ajax({
+            url: '/Product/SearchProductList',
+            type: "POST",
+            dataType: "json",
+            data: { Prefix: val },
+            success: function (data) {
+                if (data.length <= 0) {
+                    $('#handlesearchautocomplete-list').remove();
+                    return false;
+                }
+                $(data).map((index, item) => {
+                    b = document.createElement("DIV");
+                    /*make the matching letters bold:*/
+                    b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
+                    b.innerHTML += "<strong>" + item.Name + "</strong>";
+                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " PKR</strong>";
+                    //b.innerHTML += item.;
+                    /*insert a input field that will hold the current array item's value:*/
+                    b.innerHTML += "<input onclick='handlesearchclick(" + item.id + ")' type='hidden' value='" + item.Id + "'>";
+                    /*execute a function when someone clicks on the item value (DIV element):*/
+                    b.addEventListener("click", function (e) {
+                        debugger
+                        var id = $('input[type = hidden]').val();
+                        window.location.href = '/ProductDetails?productId=' + id + ''
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                    });
+                    a.appendChild(b);
+                    //}
+                    //}
+                });
+            }
+        });
+        //***********************************************************
+    });
+    inp.addEventListener("keydown", function (e) {
+        var x = document.getElementById(this.id + "autocomplete-list");
+        if (x) x = x.getElementsByTagName("div");
+        if (e.keyCode == 40) {
+            /*If the arrow DOWN key is pressed,
+            increase the currentFocus variable:*/
+            currentFocus++;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 38) { //up
+            /*If the arrow UP key is pressed,
+            decrease the currentFocus variable:*/
+            currentFocus--;
+            /*and and make the current item more visible:*/
+            addActive(x);
+        } else if (e.keyCode == 13) {
+            /*If the ENTER key is pressed, prevent the form from being submitted,*/
+            e.preventDefault();
+            if (currentFocus > -1) {
+                /*and simulate a click on the "active" item:*/
+                if (x) x[currentFocus].click();
+            }
+        }
+    });
+    function addActive(x) {
+        /*a function to classify an item as "active":*/
+        if (!x) return false;
+        /*start by removing the "active" class on all items:*/
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (x.length - 1);
+        /*add class "autocomplete-active":*/
+        x[currentFocus].classList.add("autocomplete-active");
+    }
+    function removeActive(x) {
+        /*a function to remove the "active" class from all autocomplete items:*/
+        for (var i = 0; i < x.length; i++) {
+            x[i].classList.remove("autocomplete-active");
+        }
+    }
+    function closeAllLists(elmnt) {
+        /*close all autocomplete lists in the document,
+            except the one passed as an argument:*/
+        var x = document.getElementsByClassName("autocomplete-items");
+        for (var i = 0; i < x.length; i++) {
+            if (elmnt != x[i] && elmnt != inp) {
+                x[i].parentNode.removeChild(x[i]);
+            }
+        }
+    }
+    /*execute a function when someone clicks in the document:*/
+    document.addEventListener("click", function (e) {
+        closeAllLists(e.target);
+    });
+}
+autocomplete(document.getElementById("handlesearch"), "");
+///========================search with autocomplete=========================================
 
 function removequickviewvalues(id) {
 
@@ -453,111 +537,6 @@ ${htmlProductList}
         }
     });
 }
-//function loadProductList() {
-//    var html = '', htmlProductList = '', htmlProductGrid = '';
-//    $.ajax({
-//        url: "/Product/GetProduct",
-//        type: "GET",
-//        contentType: "application/json;charset=utf-8",
-//        dataType: "json",
-//        success: function (result) {
-//            var data = JSON.parse(result.data);
-
-//            $('#lblTotalCount').text('Total Records: ' + data.length);
-
-//            $.each(data, function (key, item) {
-
-//                //List Html
-//                $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
-
-//                    htmlProductList += `<div class="col - xs - 12">
-//                            <div class="single-list-view">
-//                                <div class="row">
-//                                    <div class="col-xs-12 col-md-4">
-//                                        <div class="list-img">
-//                                            <div class="product-img">
-//                                                <div class="pro-type sell">
-//                                                    <span>${productPricesValue.Discount}%</span>
-//                                                </div>
-//                                                <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-//                                            </div>
-//                                        </div>
-//                                    </div>
-//                                    <div class="col-xs-12 col-md-8">
-//                                        <div class="list-text">
-//                                            <h3>${item.Name}</h3>
-//                                            <span>${item.ShortDescription}</span>
-//                                            <div class="ratting floatright">
-//                                                <p>( 27 Rating )</p>
-//                                                <i class="mdi mdi-star"></i>
-//                                                <i class="mdi mdi-star"></i>
-//                                                <i class="mdi mdi-star"></i>
-//                                                <i class="mdi mdi-star-half"></i>
-//                                                <i class="mdi mdi-star-outline"></i>
-//                                            </div>
-//                                            <h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
-//                                            <p>${item.LongDescription}</p>
-//                                            <div class="list-btn">
-//                                                <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
-//                                                <a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
-//                                            </div>
-//                                        </div>
-//                                    </div>
-//                                </div>
-//                             </div >
-//                           </div >`;
-//                });
-
-//                //Grid Html
-//                $(item.ProductPrices).each(function (productPricesGIndex, productPricesGValue) {
-
-//                    htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
-//                                                <div class="single-product">
-//                                                    <div class="product-img">
-//                                                        <div class="pro-type">
-//                                                      <span>${productPricesGValue.Discount}%</span>
-//                                                        </div>
-//                                                        <a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="SetLocalStorage(this)"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-//                                                        <div class="actions-btn">
-//                                                            <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-//                                                            <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-//                                                            <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-//                                                        </div>
-//                                                    </div>
-//                                                    <div class="product-dsc">
-//                                                        <p><a href="#">${item.Name}</a></p>
-//                                                        <div class="ratting">
-//                                                            <i class="mdi mdi-star"></i>
-//                                                            <i class="mdi mdi-star"></i>
-//                                                            <i class="mdi mdi-star"></i>
-//                                                            <i class="mdi mdi-star-half"></i>
-//                                                            <i class="mdi mdi-star-outline"></i>
-//                                                        </div>
-//                                                        <span><del style='color:silver'>${productPricesGValue.Price} PKR</del>&nbsp${productPricesGValue.Price * (1 - (productPricesGValue.Discount / 100))} PKR</span>
-//                                                    </div>
-//                                                </div>
-//                                            </div>`;
-
-//                });
-
-//                html = `<div class="tab-pane fade in text-center" id="grid">
-//                                  ${htmlProductGrid}
-//                                  </div>
-//                                  <div class="tab-pane fade active in" id="list">
-//                                      ${htmlProductList}
-//                                  </div>`;
-
-//            });
-
-//            $('#htmlListAndGrid').html(html);
-//        },
-//        error: function (errorMessage) {
-//            alert(errorMessage.responseText);
-//        }
-//    });
-//}
-
-//Load Product Quick View
 function LoadQuickView(elem) {
     var Id = elem.id;
     $.ajax({
@@ -1274,7 +1253,7 @@ function GetProductId() {
                        <div class="col-xs-12 col-sm-7 col-md-8">
                        <div class="quick-right">
                        <div class="list-text">
-                       <h3>${item.Name} ${htmlProductSize }</h3>
+                       <h3>${item.Name} ${htmlProductSize}</h3>
                        <span>${item.ShortDescription}</span>
                        <div class="ratting floatright">
                        <p>( 27 Rating )</p>

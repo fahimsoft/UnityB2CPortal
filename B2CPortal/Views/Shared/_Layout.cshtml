@@ -63,21 +63,23 @@
 
         .autocomplete-items {
             position: absolute;
-            border: 1px solid #d4d4d4;
-            border-bottom: none;
+            /*border: 1px solid #d4d4d4;*/
+            /*border-bottom: none;*/
             border-top: none;
             z-index: 99;
             /*position the autocomplete items to be the same width as the container:*/
             top: 100%;
             left: 0;
             right: 0;
+            height: 200px;
         }
 
             .autocomplete-items div {
-                padding: 10px;
+                /*padding: 10px;*/
                 cursor: pointer;
                 background-color: #fff;
                 border-bottom: 1px solid #d4d4d4;
+                text-align: left;
             }
 
                 /*when hovering an item:*/
@@ -87,8 +89,12 @@
 
         /*when navigating through the items using the arrow keys:*/
         .autocomplete-active {
-            background-color: DodgerBlue !important;
-            color: #ffffff;
+            background-color: #d4d4d4 !important;
+            /*color: #ffffff;*/
+        }
+        .searchimg {
+        width:50px;
+        height:80px;
         }
 
     </style>
@@ -104,6 +110,43 @@
             background-color: Highlight;
             color: #fff
         }
+
+
+        .mainmenu li:hover ul, .cart-itmes:hover .cartdrop {
+            top: 184%;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
+        .searchimg {
+            width: inherit;
+            height: inherit;
+            padding:5px;
+        }
+
+        .autocomplete-items div {
+            height: 70px;
+            padding-left: 10px;
+        }
+
     </style>
 
 
