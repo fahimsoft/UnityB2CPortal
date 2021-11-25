@@ -7,36 +7,36 @@ var NextClickValue = 10;
 
 $(document).ready(function () {
     ShowCartProducts();
-    $("#handlesearch").autocomplete(
-        {
-            source: function (request, response) {
-                $.ajax({
-                    url: '/Product/SearchProductList',
-                    type: "POST",
-                    dataType: "json",
-                    data: { Prefix: request.term },
-                    success: function (data) {
-                        response($.map(data, function (item) {
-                            return {
-                                label: item.Name,
-                                value: item.Name,
-                            }
-                        }));
-                    }
-                });
-            },
-            open: (event) => {
-                $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
-                    let imagePath = element.innerHTML;
-                    $(element).html('');
-                    var inner_html = '<div class="list_item_container"><div class="image"><p>' + imagePath + '</p></div>';
-                    //var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
-                    //    imagePath + '"></div>';
-                    $(element).append(inner_html);
-                });
-            }
+    //$("#handlesearch").autocomplete(
+    //    {
+    //        source: function (request, response) {
+    //            $.ajax({
+    //                url: '/Product/SearchProductList',
+    //                type: "POST",
+    //                dataType: "json",
+    //                data: { Prefix: request.term },
+    //                success: function (data) {
+    //                    response($.map(data, function (item) {
+    //                        return {
+    //                            label: item.Name,
+    //                            value: item.Name,
+    //                        }
+    //                    }));
+    //                }
+    //            });
+    //        },
+    //        open: (event) => {
+    //            $('.ui-autocomplete .ui-menu-item div').toArray().forEach((element) => {
+    //                let imagePath = element.innerHTML;
+    //                $(element).html('');
+    //                var inner_html = '<div class="list_item_container"><div class="image"><p>' + imagePath + '</p></div>';
+    //                //var inner_html = '<div class="list_item_container"><div class="image"><img src="' +
+    //                //    imagePath + '"></div>';
+    //                $(element).append(inner_html);
+    //            });
+    //        }
         
-        });
+    //    });
     jQuery('.plus-minus-box').keyup(function () {
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
@@ -313,8 +313,9 @@ function HandleAddtoWishList(id) {
 //---------------cart Wishlist ----------------
 //---------------Product management----------------
 //Load Product List
+//Load Product List
 function loadProductList() {
-    var html = '', htmlProductList = '', htmlProductGrid = '';
+    var htmldata = '', htmlProductList = '', htmlProductGrid = '';
     $.ajax({
         url: "/Product/GetProduct",
         type: "GET",
@@ -323,99 +324,238 @@ function loadProductList() {
         success: function (result) {
             var data = JSON.parse(result.data);
 
+
+
             $('#lblTotalCount').text('Total Records: ' + data.length);
 
+
+
             $.each(data, function (key, item) {
+
+
 
                 //List Html
                 $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
 
-                    htmlProductList += `<div class="col - xs - 12">
-                            <div class="single-list-view">
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-4">
-                                        <div class="list-img">
-                                            <div class="product-img">
-                                                <div class="pro-type sell">
-                                                    <span>${productPricesValue.Discount}%</span>
-                                                </div>
-                                                <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-8">
-                                        <div class="list-text">
-                                            <h3>${item.Name}</h3>
-                                            <span>${item.ShortDescription}</span>
-                                            <div class="ratting floatright">
-                                                <p>( 27 Rating )</p>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star-half"></i>
-                                                <i class="mdi mdi-star-outline"></i>
-                                            </div>
-                                            <h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
-                                            <p>${item.LongDescription}</p>
-                                            <div class="list-btn">
-                                                <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
-                                                <a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div >
-                           </div >`;
-                });
 
-                //Grid Html
-                $(item.ProductPrices).each(function (productPricesGIndex, productPricesGValue) {
+
+                    htmlProductList += `<div class="col - xs - 12">
+<div class="single-list-view">
+<div class="row">
+<div class="col-xs-12 col-md-4">
+<div class="list-img">
+<div class="product-img">
+<div class="pro-type sell">
+<span>${productPricesValue.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+</div>
+</div>
+</div>
+<div class="col-xs-12 col-md-8">
+<div class="list-text">
+<h3>${item.Name}</h3>
+<span>${item.ShortDescription}</span>
+<div class="ratting floatright">
+<p>( 27 Rating )</p>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star-half"></i>
+<i class="mdi mdi-star-outline"></i>
+</div>
+<h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
+<p>${item.LongDescription}</p>
+<div class="list-btn">
+<a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
+</div>
+</div>
+</div>
+</div>
+</div >
+</div >`;
+
+
 
                     htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="single-product">
-                                                    <div class="product-img">
-                                                        <div class="pro-type">
-                                                      <span>${productPricesGValue.Discount}%</span>
-                                                        </div>
-                                                        <a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="SetLocalStorage(this)"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                                        <div class="actions-btn">
-                                                            <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-                                                            <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-                                                            <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-dsc">
-                                                        <p><a href="#">${item.Name}</a></p>
-                                                        <div class="ratting">
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star-half"></i>
-                                                            <i class="mdi mdi-star-outline"></i>
-                                                        </div>
-                                                        <span><del style='color:silver'>${productPricesGValue.Price} PKR</del>&nbsp${productPricesGValue.Price * (1 - (productPricesGValue.Discount / 100))} PKR</span>
-                                                    </div>
-                                                </div>
-                                            </div>`;
-
+<div class="single-product">
+<div class="product-img">
+<div class="pro-type">
+<span>${productPricesValue.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="SetLocalStorage(this)"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<div class="actions-btn">
+<a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+</div>
+</div>
+<div class="product-dsc">
+<p><a href="#">${item.Name}</a></p>
+<div class="ratting">
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star"></i>
+<i class="mdi mdi-star-half"></i>
+<i class="mdi mdi-star-outline"></i>
+</div>
+<span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
+</div>
+</div>
+</div>`;
                 });
 
-                html = `<div class="tab-pane fade in text-center" id="grid">
-                                  ${htmlProductGrid}
-                                  </div>
-                                  <div class="tab-pane fade active in" id="list">
-                                      ${htmlProductList}
-                                  </div>`;
+
 
             });
 
-            $('#htmlListAndGrid').html(html);
+
+
+            var gl1 = ""; var gl2 = "";
+
+
+
+            var activeclassfor = localStorage.getItem("my-list-grid-btn");
+            switch (activeclassfor) {
+                case "list":
+                    gl1 = "active";
+                    gl2 = "";
+                    break;
+                case "grid":
+                    gl1 = "";
+                    gl2 = "active";
+                    break;
+                default:
+                    gl1 = "active";
+                    gl2 = "";
+                    break;
+            }
+
+
+
+            htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
+${htmlProductGrid}
+</div>
+<div class="tab-pane fade in ${gl1}" id="list">
+${htmlProductList}
+</div>`;
+
+
+
+            $('#htmlListAndGrid').html(htmldata);
+
+
+
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
         }
     });
 }
+//function loadProductList() {
+//    var html = '', htmlProductList = '', htmlProductGrid = '';
+//    $.ajax({
+//        url: "/Product/GetProduct",
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        success: function (result) {
+//            var data = JSON.parse(result.data);
+
+//            $('#lblTotalCount').text('Total Records: ' + data.length);
+
+//            $.each(data, function (key, item) {
+
+//                //List Html
+//                $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
+
+//                    htmlProductList += `<div class="col - xs - 12">
+//                            <div class="single-list-view">
+//                                <div class="row">
+//                                    <div class="col-xs-12 col-md-4">
+//                                        <div class="list-img">
+//                                            <div class="product-img">
+//                                                <div class="pro-type sell">
+//                                                    <span>${productPricesValue.Discount}%</span>
+//                                                </div>
+//                                                <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+//                                            </div>
+//                                        </div>
+//                                    </div>
+//                                    <div class="col-xs-12 col-md-8">
+//                                        <div class="list-text">
+//                                            <h3>${item.Name}</h3>
+//                                            <span>${item.ShortDescription}</span>
+//                                            <div class="ratting floatright">
+//                                                <p>( 27 Rating )</p>
+//                                                <i class="mdi mdi-star"></i>
+//                                                <i class="mdi mdi-star"></i>
+//                                                <i class="mdi mdi-star"></i>
+//                                                <i class="mdi mdi-star-half"></i>
+//                                                <i class="mdi mdi-star-outline"></i>
+//                                            </div>
+//                                            <h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
+//                                            <p>${item.LongDescription}</p>
+//                                            <div class="list-btn">
+//                                                <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
+//                                                <a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
+//                                            </div>
+//                                        </div>
+//                                    </div>
+//                                </div>
+//                             </div >
+//                           </div >`;
+//                });
+
+//                //Grid Html
+//                $(item.ProductPrices).each(function (productPricesGIndex, productPricesGValue) {
+
+//                    htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
+//                                                <div class="single-product">
+//                                                    <div class="product-img">
+//                                                        <div class="pro-type">
+//                                                      <span>${productPricesGValue.Discount}%</span>
+//                                                        </div>
+//                                                        <a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="SetLocalStorage(this)"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+//                                                        <div class="actions-btn">
+//                                                            <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
+//                                                            <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+//                                                            <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+//                                                        </div>
+//                                                    </div>
+//                                                    <div class="product-dsc">
+//                                                        <p><a href="#">${item.Name}</a></p>
+//                                                        <div class="ratting">
+//                                                            <i class="mdi mdi-star"></i>
+//                                                            <i class="mdi mdi-star"></i>
+//                                                            <i class="mdi mdi-star"></i>
+//                                                            <i class="mdi mdi-star-half"></i>
+//                                                            <i class="mdi mdi-star-outline"></i>
+//                                                        </div>
+//                                                        <span><del style='color:silver'>${productPricesGValue.Price} PKR</del>&nbsp${productPricesGValue.Price * (1 - (productPricesGValue.Discount / 100))} PKR</span>
+//                                                    </div>
+//                                                </div>
+//                                            </div>`;
+
+//                });
+
+//                html = `<div class="tab-pane fade in text-center" id="grid">
+//                                  ${htmlProductGrid}
+//                                  </div>
+//                                  <div class="tab-pane fade active in" id="list">
+//                                      ${htmlProductList}
+//                                  </div>`;
+
+//            });
+
+//            $('#htmlListAndGrid').html(html);
+//        },
+//        error: function (errorMessage) {
+//            alert(errorMessage.responseText);
+//        }
+//    });
+//}
 
 //Load Product Quick View
 function LoadQuickView(elem) {
