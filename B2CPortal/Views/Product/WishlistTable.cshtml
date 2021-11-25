@@ -191,77 +191,77 @@
 
 
 
-$(document).ready(function () {
-ShowCartProducts();
-jQuery('.plus-minus-box').keyup(function () {
-this.value = this.value.replace(/[^0-9\.]/g, '');
-});
+//$(document).ready(function () {
+// ShowCartProducts();
+// jQuery('.plus-minus-box').keyup(function () {
+// this.value = this.value.replace(/[^0-9\.]/g, '');
+// });
 
 
 
-$(document).on('click', '.qtybuttonquickview', function () {
-var $button = $(this);
-var oldValue = $button.parent().find("input").val();
-oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-if ($button.text() == "+") {
-var newVal = parseFloat(oldValue) + 1;
-} else {
-// Don't allow decrementing below zero
-if (oldValue > 0) {
-var newVal = parseFloat(oldValue) - 1;
-newVal = newVal == 0 ? 1 : newVal;
-} else {
-newVal = 1;
-}
-}
-var price = parseFloat($('#discoountedprice').text());
-let totalvalue = (price * newVal);
-$('#labalprice').text(totalvalue.toLocaleString());
-$button.parent().find("input").val(newVal);
+// $(document).on('click', '.qtybuttonquickview', function () {
+// var $button = $(this);
+// var oldValue = $button.parent().find("input").val();
+// oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+// if ($button.text() == "+") {
+// var newVal = parseFloat(oldValue) + 1;
+// } else {
+// // Don't allow decrementing below zero
+// if (oldValue > 0) {
+// var newVal = parseFloat(oldValue) - 1;
+// newVal = newVal == 0 ? 1 : newVal;
+// } else {
+// newVal = 1;
+// }
+// }
+// var price = parseFloat($('#discoountedprice').text());
+// let totalvalue = (price * newVal);
+// $('#labalprice').text(totalvalue.toLocaleString());
+// $button.parent().find("input").val(newVal);
 
 
 
-});
-$(".qtybutton").on("click", function () {
-var $button = $(this);
-var oldValue = $button.parent().find("input").val();
-oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-if ($button.text() == "+") {
-var newVal = parseFloat(oldValue) + 1;
-} else {
-// Don't allow decrementing below zero
-if (oldValue > 0) {
-var newVal = parseFloat(oldValue) - 1;
-newVal = newVal == 0 ? 1 : newVal;
-} else {
-newVal = 1;
-}
-}
-var row = $(this).closest("tr");
-var Discount = parseInt($(row).find('td')[1].textContent);
-var price = parseInt($(row).find('td')[2].textContent);
-let actualTotal = (price * newVal);
+// });
+// $(".qtybutton").on("click", function () {
+// var $button = $(this);
+// var oldValue = $button.parent().find("input").val();
+// oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+// if ($button.text() == "+") {
+// var newVal = parseFloat(oldValue) + 1;
+// } else {
+// // Don't allow decrementing below zero
+// if (oldValue > 0) {
+// var newVal = parseFloat(oldValue) - 1;
+// newVal = newVal == 0 ? 1 : newVal;
+// } else {
+// newVal = 1;
+// }
+// }
+// var row = $(this).closest("tr");
+// var Discount = parseInt($(row).find('td')[1].textContent);
+// var price = parseInt($(row).find('td')[2].textContent);
+// let actualTotal = (price * newVal);
 
 
 
-price = price * (1 - (Discount / 100));
-let totalvalue = (price * newVal);
+// price = price * (1 - (Discount / 100));
+// let totalvalue = (price * newVal);
 
 
 
-DiscountAmount = actualTotal - totalvalue;
+// DiscountAmount = actualTotal - totalvalue;
 
 
 
-$(row).find('td')[4].textContent = actualTotal.toLocaleString();
-$(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
-$(row).find('td')[6].textContent = totalvalue.toLocaleString();
+// $(row).find('td')[4].textContent = actualTotal.toLocaleString();
+// $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+// $(row).find('td')[6].textContent = totalvalue.toLocaleString();
 
 
 
-$button.parent().find("input").val(newVal);
-});
-});
+// $button.parent().find("input").val(newVal);
+// });
+//});
 
 
 

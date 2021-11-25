@@ -7,12 +7,59 @@ var NextClickValue = 10;
 
 $(document).ready(function () {
     ShowCartProducts();
-    jQuery('.plus-minus-box').keyup(function () {
+    //jQuery('.plus-minus-box').keyup(function () {
+    //    debugger
+    //    if (this.value > 10) {
+    //        return false
+    //    }
+    //    this.value = this.value.replace(/[^0-9\.]/g, '');
+    //});
+    //---------------------------handle plus minus change ---------------
+    $(document).on('keyup', '.plus-minus-box', function () {
+        if (this.value > 10) {
+            this.value = 10;
+            return false
+        }
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
-    //test
-    $(document).on('click', 'input[type=hidden]', function () {
-        alert( $(this).val());
+    $(document).on('change', 'input[name=qtybuttonquickview]', function () {
+        debugger
+        debugger
+        if (this.value > 10) {
+            return false
+        }
+        this.value = this.value.replace(/[^0-9\.]/g, '');
+    });
+    $(document).on('change', 'input[name=qtybutton]', function () {
+        var $button = $(this);
+        var oldValue = $(this).val();
+        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+        if ($button.text() == "+") {
+            var newVal = parseFloat(oldValue) + 1;
+        } else {
+            // Don't allow decrementing below zero
+            if (oldValue > 0) {
+                var newVal = parseFloat(oldValue) - 1;
+                newVal = newVal == 0 ? 1 : newVal;
+            } else {
+                newVal = 1;
+            }
+        }
+        var row = $(this).closest("tr");
+        var Discount = parseInt($(row).find('td')[1].textContent);
+        var price = parseInt($(row).find('td')[2].textContent);
+        let actualTotal = (price * newVal);
+
+        price = price * (1 - (Discount / 100));
+        let totalvalue = (price * newVal);
+
+        DiscountAmount = actualTotal - totalvalue;
+
+        $(row).find('td')[4].textContent = actualTotal.toLocaleString();
+        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+        $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+
+        $button.parent().find("input").val(newVal);
     });
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
@@ -67,7 +114,7 @@ $(document).ready(function () {
 
         $button.parent().find("input").val(newVal);
     });
-    //----------------
+    //---------------------------handle plus minus change ---------------
     $('.nav-view').on('click', '.my-list-grid-btn', function () {
         localStorage.removeItem('my-list-grid-btn');
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
@@ -646,7 +693,7 @@ function LoadQuickView(elem) {
                                                 <p>${item.LongDescription}</p>
                                                  <div class="plus-minus">
                                                 <a class="dec qtybuttonquickview qtybutton">-</a>
-                                                <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+                                                <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                                 <a class="inc qtybuttonquickview qtybutton">+</a> 
                                             </div>
                                                 PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
@@ -1274,7 +1321,7 @@ function GetProductId() {
                        </div>
                                    <div class="plus-minus">
                                    <a class="dec qtybuttonquickview qtybutton">-</a>
-                                   <input type="number" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+                                   <input type="text" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
                                    PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
