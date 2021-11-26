@@ -67,7 +67,7 @@ namespace B2CPortal.Services
         public async Task<IEnumerable<OrderMaster>> GetOrderList()
         {
             //return await _dxcontext.OrderMasters.Include(x=> x.OrderDetails).ToListAsync();
-            return await _dxcontext.OrderMasters.ToListAsync();
+            return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true).OrderByDescending(x =>x.Id).ToListAsync();
         }
     }
 }

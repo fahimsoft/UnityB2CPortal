@@ -16,19 +16,35 @@ $(document).ready(function () {
     //});
     //---------------------------handle plus minus change ---------------
     $(document).on('keyup', '.plus-minus-box', function () {
-        if (this.value > 10) {
+        if (this.value > 11) {
             this.value = 10;
             return false
         }
         this.value = this.value.replace(/[^0-9\.]/g, '');
     });
     $(document).on('change', 'input[name=qtybuttonquickview]', function () {
-        debugger
-        debugger
-        if (this.value > 10) {
-            return false
+        var $button = $(this);
+        var oldValue = $button.parent().find("input").val();
+        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+        if ($button.text() == "+") {
+            var newVal = parseFloat(oldValue) + 1;
+        } else {
+            // Don't allow decrementing below zero
+            if (oldValue > 0) {
+                var newVal = parseFloat(oldValue) - 1;
+                newVal = newVal == 0 ? 1 : newVal;
+            } else {
+                newVal = 1;
+            }
         }
-        this.value = this.value.replace(/[^0-9\.]/g, '');
+        if (parseInt(newVal) <= 10) {
+            var price = parseFloat($('#discoountedprice').text());
+            let totalvalue = (price * newVal);
+            $('#labalprice').text(totalvalue.toLocaleString());
+            $button.parent().find("input").val(newVal);
+        } else {
+            return false;
+        }
     });
     $(document).on('change', 'input[name=qtybutton]', function () {
         var $button = $(this);
@@ -76,43 +92,50 @@ $(document).ready(function () {
                 newVal = 1;
             }
         }
-        var price = parseFloat($('#discoountedprice').text());
-        let totalvalue = (price * newVal);
-        $('#labalprice').text(totalvalue.toLocaleString());
-        $button.parent().find("input").val(newVal);
-
+        if (parseInt(newVal) <= 10) {
+            var price = parseFloat($('#discoountedprice').text());
+            let totalvalue = (price * newVal);
+            $('#labalprice').text(totalvalue.toLocaleString());
+            $button.parent().find("input").val(newVal);
+        } else {
+            return false;
+        }
     });
     $(document).on('click', '.qtybutton', function () {
         //$(".qtybutton").on("click", function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
-        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-        if ($button.text() == "+") {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            // Don't allow decrementing below zero
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-                newVal = newVal == 0 ? 1 : newVal;
+            oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+            if ($button.text() == "+") {
+                var newVal = parseFloat(oldValue) + 1;
             } else {
-                newVal = 1;
+                // Don't allow decrementing below zero
+                if (oldValue > 0) {
+                    var newVal = parseFloat(oldValue) - 1;
+                    newVal = newVal == 0 ? 1 : newVal;
+                } else {
+                    newVal = 1;
+                }
             }
+        if (parseInt(newVal) <= 10) {
+            var row = $(this).closest("tr");
+            var Discount = parseInt($(row).find('td')[1].textContent);
+            var price = parseInt($(row).find('td')[2].textContent);
+            let actualTotal = (price * newVal);
+
+            price = price * (1 - (Discount / 100));
+            let totalvalue = (price * newVal);
+
+            DiscountAmount = actualTotal - totalvalue;
+
+            $(row).find('td')[4].textContent = actualTotal.toLocaleString();
+            $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+            $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+
+            $button.parent().find("input").val(newVal);
+        } else {
+            return false;
         }
-        var row = $(this).closest("tr");
-        var Discount = parseInt($(row).find('td')[1].textContent);
-        var price = parseInt($(row).find('td')[2].textContent);
-        let actualTotal = (price * newVal);
-
-        price = price * (1 - (Discount / 100));
-        let totalvalue = (price * newVal);
-
-        DiscountAmount = actualTotal - totalvalue;
-
-        $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
-        $(row).find('td')[6].textContent = totalvalue.toLocaleString();
-
-        $button.parent().find("input").val(newVal);
     });
     //---------------------------handle plus minus change ---------------
     $('.nav-view').on('click', '.my-list-grid-btn', function () {
@@ -235,7 +258,7 @@ autocomplete(document.getElementById("handlesearch"), "");
 function removequickviewvalues(id) {
 
     //$('#quentityvalue').val("");
-    document.getElementsByClassName("main-view modal-content").remove();
+    document.getElementsByClassName("main-view modal-content")?.remove();
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
@@ -362,7 +385,7 @@ function Handleorderdetail(id) {
                                         </td>
 
                                         <td>
-${moment(item.Date).format('MMMM Do YYYY')}
+${moment(item.Date).format('DD-MMM-yyyy')}
                                         </td>
                                     </tr>`
 
@@ -696,7 +719,7 @@ function LoadQuickView(elem) {
                                                 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                                 <a class="inc qtybuttonquickview qtybutton">+</a> 
                                             </div>
-                                                PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
+                                                 <strong style="font-size:18px"> PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                                                 </div>
                                                 <div class="list-btn">
                                                     <a href="#"   onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
