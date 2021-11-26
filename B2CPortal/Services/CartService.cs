@@ -33,8 +33,6 @@ namespace B2CPortal.Services
                     }
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
-                    //Current.Quantity = Current.Quantity + 1;
-                    ///Current.TotalPrice = Current.TotalPrice * Current.Quantity;
                 }
                 if (cart.FK_Customer > 0)
                 {
