@@ -5,6 +5,14 @@ var totalComment = 0;
 var PrevClickValue = 0;
 var NextClickValue = 10;
 
+window.onload = function () {
+    var divToHide = document.getElementById('quick-view');
+    document.onclick = function (e) {
+        $(e.target).find('.modal-content').remove();
+    };
+};
+
+
 $(document).ready(function () {
     ShowCartProducts();
     //---------------------------handle plus minus change ---------------
@@ -140,6 +148,11 @@ $(document).ready(function () {
         localStorage.removeItem('my-list-grid-btn');
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
     });
+
+    $('#quick-view').click(function () {
+        //alert("");
+    });
+
 });
 ///========================search with autocomplete========================================
 function autocomplete(inp, arr) {
