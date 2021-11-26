@@ -113,6 +113,8 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                         var cartlist = await _cart.GetCartProducts("", customerId);
                         if (cartlist != null)
                         {
@@ -123,9 +125,13 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var DiscountedPrice = price * (1 - (discount / 100));
+
+
 
 
 
@@ -140,9 +146,13 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                                 };
                                 orderVMs.Add(Order);
                                 orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)item.TotalPrice);
+
+
 
 
 
@@ -152,12 +162,18 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                             //orderVM.CartSubTotalDiscount = totalDiscount;
                             orderVM.OrderTotal = OrderTotal;
 
 
 
+
+
                         }
+
+
 
 
 
@@ -176,8 +192,12 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                     return RedirectToAction("Login", "Account");
                 }
+
+
 
 
 
@@ -186,6 +206,8 @@ namespace B2CPortal.Controllers
             {
                 return BadResponse(ex);
             }
+
+
 
 
 
@@ -205,6 +227,7 @@ namespace B2CPortal.Controllers
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+
                     if (customerId > 0)
                     {
                         // Billing Details Add
@@ -235,6 +258,8 @@ namespace B2CPortal.Controllers
                             Billing.OrderTotal = OrderTotal;
                             Billing.TotalQuantity = tQuantity;
 
+
+
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);
@@ -243,6 +268,7 @@ namespace B2CPortal.Controllers
 
                         // Insert order Detail
                         var ordermasterId = res.Id;
+                        var orderNo = res.OrderNo;
 
 
 
@@ -275,13 +301,54 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                         // Remove from cart
                         HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
                         var removeCart = await _cart.DisableCart(customerId, cookie.Value);
 
 
 
-                        return Json(new { data = res, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        // Sending Mail
+                        var name = Session["UserName"].ToString();
+                        var email = Session["email"].ToString();
+                        string htmlString = @"<html>
+<body>
+<img src=" + "~/Content/Asset/img/img.PNG" + @">
+<h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
+<p>Dear " + name + @",</p>
+<p>Hello, " + name + @"! Thanks for Your Order!</p>
+<p>Order No: " + ordermasterId + @"</p>
+<p>Total Amount: " + res.TotalPrice + @"</p>
+<p>Thanks,</p>
+<p>Unity Foods LTD!</p>
+</body>
+</html>";
+
+
+
+                        bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
+                        if (IsSendEmail)
+                        {
+                            // return SuccessResponse("true");
+                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+
+
+
+                        }
+                        else
+                        {
+                            //return BadResponse("Failed");
+                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+
+
+
+                        }
+
+
+
+
+                        // return Json(new { data = res, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {

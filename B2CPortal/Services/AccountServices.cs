@@ -10,15 +10,13 @@ using System.Web;
 
 namespace B2CPortal.Services
 {
-    public class AccountServices : DALBase<customer> , IAccount 
+    public class AccountServices : DALBase<customer>, IAccount
     {
         public async Task<customer> CreateCustomer(customer customer)
         {
             try
             {
-                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id);
-
-                if (Current == null)
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id); if (Current == null)
                 {
                     New();
                     Current.CreatedOn = DateTime.Now;
@@ -31,7 +29,6 @@ namespace B2CPortal.Services
                 {
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
-
                 }
                 Current.FirstName = customer.FirstName;
                 Current.LastName = customer.LastName;
@@ -40,20 +37,17 @@ namespace B2CPortal.Services
                 Current.Password = customer.Password;
                 Current.Gender = customer.Gender;
                 Current.DateOfBirth = customer.DateOfBirth;
-                Current.Country = customer.Country;
-                Current.City = customer.City;
-                Current.Address = customer.Address;
-                
+                //Current.Country = customer.Country;
+                //Current.City = customer.City;
+                //Current.Address = customer.Address;
                 Save();
                 return Current;
-
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
-
         public async Task<customer> CreateCustomerBilling(customer customer)
         {
             try
@@ -96,7 +90,7 @@ namespace B2CPortal.Services
                 return obj;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -109,7 +103,7 @@ namespace B2CPortal.Services
 
                 return res;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -122,7 +116,7 @@ namespace B2CPortal.Services
                 var obj = await _dxcontext.customers.Where(x => x.EmailId == email).FirstOrDefaultAsync();
                 return obj;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

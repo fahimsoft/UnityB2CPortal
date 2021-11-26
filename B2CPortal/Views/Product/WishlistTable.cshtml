@@ -1,8 +1,6 @@
 ﻿@model List<B2C_Models.Models.WishlistVM>
 
 
-
-
 <!-- pages-title-end -->
 <!-- wishlist content section start -->
 <section class="pages cart-page section-padding">
@@ -21,8 +19,6 @@
                                 <th>Discount Amount</th>
                                 <th>Total</th>
 
-
-
                                 <th>Add To Cart</th>
                                 <th>Remove</th>
                             </tr>
@@ -34,8 +30,6 @@
                                 {
                                     <tr data-id="@item.Id">
 
-
-
                                         <td class="td-img text-left">
                                             <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
                                             <div class="items-dsc">
@@ -45,8 +39,6 @@
                                         <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
                                         <td>@item.Price</td>
 
-
-
                                         <td>
                                             <div class="plus-minus">
                                                 <a class="dec qtybutton">-</a>
@@ -55,46 +47,28 @@
                                             </div>
                                         </td>
 
-
-
                                         <td class="totalpricecol">
-                                            <del> @item.ActualPrice.ToString("#,##0") </del>
+                                            <del> @item.ActualPrice.ToString("#,##0")  </del>
                                         </td>
-
-
 
                                         <td class="totalpricecol">
                                             - @item.DiscountAmount.ToString("#,##0")
 
-
-
                                         </td>
-
-
 
 
                                         <td><strong> @item.TotalPrice </strong></td>
 
-
-
                                         <td style="display:none">@item.FK_ProductMaster</td>
-
-
 
                                         <td style="display:none">@item.Id</td>
                                         <td>
 
-
-
                                             <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
                                             @*<a href="cart.html">Add to cart</a>*@
 
-
-
                                         </td>
                                         <td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>
-
-
 
                                     </tr>
                                 }
@@ -111,12 +85,8 @@
                             }
 
 
-
-
                         </tbody>
                     </table>
-
-
 
                     <div class="text-right">
                         @if (Model == null || Model.Count() <= 0)
@@ -129,17 +99,11 @@
                         }
                     </div>
 
-
-
                 </div>
             </div>
         </div>
 
-
-
         <div class="row margin-top">
-
-
 
             <div class="col-sm-12">
                 <div class="single-cart-form padding60">
@@ -159,7 +123,7 @@
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
-                                    <td> PKR. @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
+                                    <td> PKR.  @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
                                     <th>Vat</th>
@@ -178,288 +142,222 @@
             </div>
         </div>
 
-
-
     </div>
 </section>
 <!-- wishlist content section end -->
 
-
-
 <script>
 
 
-
-
-//$(document).ready(function () {
-// ShowCartProducts();
-// jQuery('.plus-minus-box').keyup(function () {
-// this.value = this.value.replace(/[^0-9\.]/g, '');
-// });
-
-
-
-// $(document).on('click', '.qtybuttonquickview', function () {
-// var $button = $(this);
-// var oldValue = $button.parent().find("input").val();
-// oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-// if ($button.text() == "+") {
-// var newVal = parseFloat(oldValue) + 1;
-// } else {
-// // Don't allow decrementing below zero
-// if (oldValue > 0) {
-// var newVal = parseFloat(oldValue) - 1;
-// newVal = newVal == 0 ? 1 : newVal;
-// } else {
-// newVal = 1;
-// }
-// }
-// var price = parseFloat($('#discoountedprice').text());
-// let totalvalue = (price * newVal);
-// $('#labalprice').text(totalvalue.toLocaleString());
-// $button.parent().find("input").val(newVal);
-
-
-
-// });
-// $(".qtybutton").on("click", function () {
-// var $button = $(this);
-// var oldValue = $button.parent().find("input").val();
-// oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-// if ($button.text() == "+") {
-// var newVal = parseFloat(oldValue) + 1;
-// } else {
-// // Don't allow decrementing below zero
-// if (oldValue > 0) {
-// var newVal = parseFloat(oldValue) - 1;
-// newVal = newVal == 0 ? 1 : newVal;
-// } else {
-// newVal = 1;
-// }
-// }
-// var row = $(this).closest("tr");
-// var Discount = parseInt($(row).find('td')[1].textContent);
-// var price = parseInt($(row).find('td')[2].textContent);
-// let actualTotal = (price * newVal);
-
-
-
-// price = price * (1 - (Discount / 100));
-// let totalvalue = (price * newVal);
-
-
-
-// DiscountAmount = actualTotal - totalvalue;
-
-
-
-// $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-// $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
-// $(row).find('td')[6].textContent = totalvalue.toLocaleString();
-
-
-
-// $button.parent().find("input").val(newVal);
-// });
-//});
-
-
-
-// Add To Cart Update button
-$(".addtocart").click(function () {
-
-
-
-
-var datatosend;
-var $row = $(this).closest("tr"),
-$tds = $row.find("td:nth-child(2)");
-var table = $("#wishList tbody");
-$(this).closest('tr').each(function (i) {
-var $tds = $(this).find('td'),
-cartid = $tds.eq(8).text(),
-productid = $tds.eq(7).text(),
-qty = $(this).find("td:eq(3) input[type='number']").val();
-total = $tds.eq(6).text(),
-
-
-
-datatosend = {
-Id: cartid,
-FK_ProductMaster: productid,
-Quantity: qty,
-TotalQuantity : qty,
-TotalPrice: total
-};
-
-
-
-});
-
-
-
-console.log(datatosend);
-$.ajax({
-type: "POST",
-url: "/Product/UpdateToCart",
-data: { obj :datatosend },
-//contentType: 'application/json',
-//dataType: 'json',
-success: function (data) {
-console.log(data);
-if (data.success) {
-toastr.success(data.msg);
-
-
-
-ShowCartProducts();
-
-
-
-}
-else if (data.success == false) {
-toastr.error(data.msg);
-}
-$($row).remove();
-$("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
-
-
-
-},
-failure: function (data) {
-console.log(data);
-},
-err: function (data) {
-console.log(data);
-}
-
-
-
-})
-});
-
-
-
-// Remove from Wishlist
-$(".delete").click(function () {
-
-
-
-var id;
-var $row = $(this).closest("tr"), // Finds the closest row <tr>
-$tds = $row.find("td:nth-child(2)");
-//console.log($tds);
-$(this).closest('tr').each(function (i) {
-
-
-
-var $tds = $(this).find('td'),
-cartid = $tds.eq(8).text();
-id = cartid
-});
-
-
-
-$.ajax({
-type: "POST",
-url: "/Product/DeleteFromCart",
-data: { Id:id },
-//contentType: 'application/json',
-//dataType: 'json',
-success: function (data) {
-console.log(data);
-if (data.success) {
-toastr.success(data.msg);
-
-
-
-}
-else if (data.success == false) {
-toastr.error(data.msg);
-}
-$("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
-
-
-
-//var p = o.parentNode.parentNode;
-
-
-
-//p.parentNode.removeChild(p);
-$($row).remove();
-return false;
-$("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
-
-
-
-},
-failure: function (data) {
-console.log(data);
-},
-err: function (data) {
-console.log(data);
-}
-
-
-
-})
-
-
-
-});
-
-
-
-// Update Wishlist
-$("#updatewishlist").click(function () {
-
-
-
-var wishlistids = [];
-var wishlistquentites = [];
-var array = $.makeArray($('tbody tr[id]').map(function () {
-return this.id;
-}));
-//$('#myTable').on('click', 'tbody tr', function (event, it) {
-// console.log(it.length);
-//});
-var tb = $("#wishList tbody");//.closest("tr");
-var size = tb.find("tr").length;
-tb.find("tr").each(function (index, element) {
-wishlistids.push(element.dataset["id"]);
-$(element).find('td').each(function (index, element) {
-if (parseInt($(element).find('input').val()) > 0) {
-wishlistquentites.push($(element).find('input').val());
-}
-});
-});
-console.log("Number of rows : " + wishlistquentites);
-console.log("Number of : " + wishlistids);
-$.ajax({
-type: "POST",
-url: '@Url.Action("UpdateWishList", "Product")', //"/Product/DeleteCart",
-data: {
-wishlistquentites: wishlistquentites,
-wishlistids: wishlistids
-},
-success: function (data) {
-if (!data.success) {
-toastr.success(data.msg);
-//ShowCartProducts();
-} else {
-toastr.error(data.msg);
-
-
-
-}
-$("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
-
-
-
-}
-});
-});
-
-
+    //$(document).ready(function () {
+    //    ShowCartProducts();
+    //    jQuery('.plus-minus-box').keyup(function () {
+    //        this.value = this.value.replace(/[^0-9\.]/g, '');
+    //    });
+
+    //    $(document).on('click', '.qtybuttonquickview', function () {
+    //        var $button = $(this);
+    //        var oldValue = $button.parent().find("input").val();
+    //        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+    //        if ($button.text() == "+") {
+    //            var newVal = parseFloat(oldValue) + 1;
+    //        } else {
+    //            // Don't allow decrementing below zero
+    //            if (oldValue > 0) {
+    //                var newVal = parseFloat(oldValue) - 1;
+    //                newVal = newVal == 0 ? 1 : newVal;
+    //            } else {
+    //                newVal = 1;
+    //            }
+    //        }
+    //        var price = parseFloat($('#discoountedprice').text());
+    //        let totalvalue = (price * newVal);
+    //        $('#labalprice').text(totalvalue.toLocaleString());
+    //        $button.parent().find("input").val(newVal);
+
+    //    });
+    //    $(".qtybutton").on("click", function () {
+    //        var $button = $(this);
+    //        var oldValue = $button.parent().find("input").val();
+    //        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+    //        if ($button.text() == "+") {
+    //            var newVal = parseFloat(oldValue) + 1;
+    //        } else {
+    //            // Don't allow decrementing below zero
+    //            if (oldValue > 0) {
+    //                var newVal = parseFloat(oldValue) - 1;
+    //                newVal = newVal == 0 ? 1 : newVal;
+    //            } else {
+    //                newVal = 1;
+    //            }
+    //        }
+    //        var row = $(this).closest("tr");
+    //        var Discount = parseInt($(row).find('td')[1].textContent);
+    //        var price = parseInt($(row).find('td')[2].textContent);
+    //        let actualTotal = (price * newVal);
+
+    //        price = price * (1 - (Discount / 100));
+    //        let totalvalue = (price * newVal);
+
+    //        DiscountAmount = actualTotal - totalvalue;
+
+    //        $(row).find('td')[4].textContent = actualTotal.toLocaleString();
+    //        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+    //        $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+
+    //        $button.parent().find("input").val(newVal);
+    //    });
+    //});
+
+    // Add To Cart Update button
+    $(".addtocart").click(function () {
+
+
+        var datatosend;
+        var $row = $(this).closest("tr"),
+            $tds = $row.find("td:nth-child(2)");
+        var table = $("#wishList tbody");
+        $(this).closest('tr').each(function (i) {
+            var $tds = $(this).find('td'),
+                cartid = $tds.eq(8).text(),
+                productid = $tds.eq(7).text(),
+                qty = $(this).find("td:eq(3) input[type='number']").val();
+            total = $tds.eq(6).text(),
+
+             datatosend = {
+                Id: cartid,
+                FK_ProductMaster: productid,
+                Quantity: qty,
+                TotalQuantity : qty,
+                TotalPrice: total
+            };
+
+        });
+
+        console.log(datatosend);
+        $.ajax({
+            type: "POST",
+            url: "/Product/UpdateToCart",
+            data: { obj :datatosend },
+            //contentType: 'application/json',
+            //dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    toastr.success(data.msg);
+
+                    ShowCartProducts();
+
+                }
+                else if (data.success == false) {
+                    toastr.error(data.msg);
+                }
+                $($row).remove();
+        $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+
+            },
+            failure: function (data) {
+                console.log(data);
+            },
+            err: function (data) {
+                console.log(data);
+            }
+
+        })
+    });
+
+    // Remove from Wishlist
+    $(".delete").click(function () {
+
+        var id;
+        var $row = $(this).closest("tr"),        // Finds the closest row <tr>
+            $tds = $row.find("td:nth-child(2)");
+        //console.log($tds);
+        $(this).closest('tr').each(function (i) {
+
+            var $tds = $(this).find('td'),
+                cartid = $tds.eq(8).text();
+                id = cartid
+        });
+
+        $.ajax({
+            type: "POST",
+            url: "/Product/DeleteFromCart",
+            data: { Id:id },
+            //contentType: 'application/json',
+            //dataType: 'json',
+            success: function (data) {
+                console.log(data);
+                if (data.success) {
+                    toastr.success(data.msg);
+
+                }
+                else if (data.success == false) {
+                    toastr.error(data.msg);
+                }
+                $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+
+                //var p = o.parentNode.parentNode;
+
+                //p.parentNode.removeChild(p);
+                $($row).remove();
+                return false;
+        $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+
+            },
+            failure: function (data) {
+                console.log(data);
+            },
+            err: function (data) {
+                console.log(data);
+            }
+
+        })
+
+    });
+
+    // Update Wishlist
+     $("#updatewishlist").click(function () {
+
+        var wishlistids = [];
+        var wishlistquentites = [];
+        var array = $.makeArray($('tbody tr[id]').map(function () {
+            return this.id;
+        }));
+        //$('#myTable').on('click', 'tbody tr', function (event, it) {
+        //    console.log(it.length);
+        //});
+         var tb = $("#wishList tbody");//.closest("tr");
+        var size = tb.find("tr").length;
+        tb.find("tr").each(function (index, element) {
+            wishlistids.push(element.dataset["id"]);
+            $(element).find('td').each(function (index, element) {
+                if (parseInt($(element).find('input').val()) > 0) {
+                    wishlistquentites.push($(element).find('input').val());
+                }
+            });
+        });
+         console.log("Number of rows : " + wishlistquentites);
+         console.log("Number of  : " + wishlistids);
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("UpdateWishList", "Product")', //"/Product/DeleteCart",
+            data: {
+                wishlistquentites: wishlistquentites,
+                wishlistids: wishlistids
+            },
+            success: function (data) {
+                if (!data.success) {
+                    toastr.success(data.msg);
+                    //ShowCartProducts();
+                } else {
+                    toastr.error(data.msg);
+
+                }
+        $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+
+            }
+        });
+     });
 
 </script>

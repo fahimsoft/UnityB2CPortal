@@ -83,25 +83,25 @@
                             </div>
                             <br />
                         </div>
-                        <div class="custom-input">
-                            <form class="row g-3">
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control border-blue-color" id="fullname" placeholder="Full Name">
+                        <div style="text-align:center" class="custom-input">
+                            <form style="background-color: white; border-width: thin" id="contact" class="row g-3">
+                                <div style="background-color:white" class="col-md-6">
+                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="fullname" placeholder="Full Name">
                                 </div>
-                                <div class="col-md-6">
-                                    <input type="email" class="form-control border-blue-color" id="emailaddress" placeholder="E-mail Address">
+                                <div style="background-color:white" class="col-md-6">
+                                    <input style="background-color:white" type="email" class="form-control border-blue-color" id="emailaddress" placeholder="E-mail Address">
                                 </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control border-blue-color" id="subject" placeholder="Message Subject">
+                                <div style="background-color:white" class="col-md-6">
+                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="subject" placeholder="Message Subject">
                                 </div>
-                                <div class="col-md-6">
-                                    <input type="text" class="form-control border-blue-color" id="number" placeholder="Mobile Number">
+                                <div style="background-color:white" class="col-md-6">
+                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="number" placeholder="Mobile Number">
                                 </div>
                                 <div class="col-12">
                                     <textarea class="form-control border-blue-color" id="message" rows="8" placeholder="Type Your Message Here"></textarea>
                                 </div>
                                 <div class="col-12 text-center">
-                                    <button type="submit" class="btn btn-success">Send Email</button>
+                                    <button type="submit" class="sendmail btn btn-success">Send Email</button>
                                 </div>
                             </form>
                         </div>
@@ -119,3 +119,66 @@
 
 
 <!-- contact content section end -->
+
+@section scripts
+{
+    <script>
+        $('.sendmail').click(function () {
+            debugger
+            var form = $("#contact");
+            var datatosend = {
+                contact: {
+                    /*Id: $('#Id').val(),*/
+                    fullname: $('#fullname').val(),
+                    emailaddress: $('#emailaddress').val(),
+                    subject: $('#subject').val(),
+                    PhoneNo: $('#number').val(),
+                    message: $('#message').val()
+
+                }
+            }
+
+            console.log(datatosend)
+            //$(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+            //$.validator.unobtrusive.parse($(this));//add the form validation
+            //$.validator.unobtrusive.parse(form);
+            //if ($(form).valid()) // using not operator for a time being
+            /*if ($(form)) {*/
+                $.ajax({
+                    type: "POST",
+                    url: "/Contact/SendContactEmail",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+
+                    success: function (data) {
+
+                        // alert(data);
+                        console.log(data);
+                        if (data.success == true) {
+                            toastr.success("Email sent successfully.");
+                           // window.location.href = "/Account/Login";
+                        }
+                        else if (data.success == false) {
+                            toastr.error("Email Failed.");
+                        }
+                    },
+                    failure: function (res) {
+                        console.log(res);
+                    },
+                    err: function (res) {
+                        console.log(res);
+                    }
+                })
+            //}
+            //else {
+            //    return false;
+            //}
+
+        });
+
+
+    </script>
+
+
+}

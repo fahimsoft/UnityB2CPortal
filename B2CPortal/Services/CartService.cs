@@ -64,17 +64,21 @@ namespace B2CPortal.Services
                 //Current = await _dxcontext.Carts.FirstOrDefaultAsync(x => x.FK_ProductMaster == cart.FK_ProductMaster && x.Guid == cart.Guid);
                 //Current = await _dxcontext.Carts.Where(x => x.Guid == cart.Guid && x.IsWishlist == true && x.FK_ProductMaster == cart.FK_ProductMaster || x.IsWishlist == true && x.FK_Customer == cart.FK_Customer && x.FK_ProductMaster == cart.FK_ProductMaster).FirstOrDefaultAsync();
 
+
+
                 Current = await _dxcontext.Carts.FirstOrDefaultAsync
-                                                (
-                                                    x =>
-                                                    (x.Guid == cart.Guid
-                                                    && x.IsWishlist == true
-                                                    && x.FK_ProductMaster == cart.FK_ProductMaster)
-                                                    ||
-                                                    (x.IsWishlist == true
-                                                    && x.FK_Customer == cart.FK_Customer
-                                                    && x.FK_ProductMaster == cart.FK_ProductMaster)
-                                                );
+                (
+                x =>
+                (x.Guid == cart.Guid
+                && x.IsWishlist == true
+                && x.FK_ProductMaster == cart.FK_ProductMaster)
+                ||
+                (x.IsWishlist == true
+                && x.FK_Customer == cart.FK_Customer
+                && x.FK_ProductMaster == cart.FK_ProductMaster)
+                );
+
+
 
 
                 if (Current == null)
@@ -82,6 +86,8 @@ namespace B2CPortal.Services
                     New();
                     Current.CreatedOn = DateTime.Now;
                     Current.IsWishlist = cart.IsWishlist;
+
+
 
 
 
@@ -94,7 +100,11 @@ namespace B2CPortal.Services
 
 
 
+
+
                 }
+
+
 
 
 
@@ -109,8 +119,12 @@ namespace B2CPortal.Services
                 Current.TotalPrice = cart.TotalPrice;
                 Current.TotalQuantity = cart.TotalQuantity;
 
+
+
                 Save();
                 return Current;
+
+
 
 
 
@@ -120,7 +134,6 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
         public async Task<IEnumerable<Cart>> GetCartProducts(string guid, int customerid)
         {
             List<Cart> cartlist = new List<Cart>();
@@ -216,17 +229,18 @@ namespace B2CPortal.Services
             }
         }
 
-
         //work by ahsan---------
         public async Task<IEnumerable<Cart>> GetWishListProducts(string guid, int customerId)
         {
             var wishlist = await _dxcontext.Carts.Where(x =>
-                (x.Guid == guid && x.IsWishlist == true
-                && x.IsActive == true)
-                ||
-                (x.IsWishlist == true
-                && x.IsActive == true
-                && x.FK_Customer == customerId)
+            (x.Guid == guid && x.IsWishlist == true
+            && x.IsActive == true)
+            ||
+            (x.IsWishlist == true
+            && x.IsActive == true
+            && x.FK_Customer == customerId)
+
+
 
             ).ToListAsync();// GetAll();
             return wishlist;
@@ -280,19 +294,6 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-        //public async Task<Cart> GetCartData(string guid, int customerId, int productId)
-        //{
-        //    var cartData = await _dxcontext.Carts.Where(x =>
-        //        (x.Guid == guid && x.IsWishlist == false
-        //        && x.IsActive == true)
-        //        ||
-        //        (x.IsWishlist == false
-        //        && x.IsActive == true
-        //        && x.FK_Customer == customerId)
-
-        //    ).FirstOrDefaultAsync();
-        //    return cartData;
-        //}
         public async Task<Cart> GetCartData(string guid, int customerId, int productId)
         {
             var cartData = await _dxcontext.Carts.Where(x =>
@@ -303,64 +304,25 @@ namespace B2CPortal.Services
             && x.IsActive == true
             && x.FK_Customer == customerId && x.FK_ProductMaster == productId)
 
-
-
             ).FirstOrDefaultAsync();
             return cartData;
         }
-
-        //public async Task<Cart> UpdateToCart(Cart wishlistVM)
+        //public async Task<Cart> GetCartData(string guid, int customerId, int productId)
         //{
-        //    try
-        //    {
-        //        _dxcontext.Configuration.LazyLoadingEnabled = false;
-
-        //        if (wishlistVM.IsWishlist == true)
-        //        {
-        //            Current = await _dxcontext.Carts.Where(x =>
-        //            (x.Guid == wishlistVM.Guid && x.IsWishlist == true
-        //            && x.IsActive == true)
-        //            ||
-        //            (x.IsWishlist == true
-        //            && x.IsActive == true
-        //            && x.FK_Customer == wishlistVM.FK_Customer)
-
-        //        ).FirstOrDefaultAsync();
-
-        //        }
-        //        else
-        //        {
-        //            Current = await _dxcontext.Carts.Where(x =>
-        //            (x.Guid == wishlistVM.Guid && x.IsWishlist == false
-        //            && x.IsActive == true)
-        //            ||
-        //            (x.IsWishlist == false
-        //            && x.IsActive == true
-        //            && x.FK_Customer == wishlistVM.FK_Customer)
-
-        //        ).FirstOrDefaultAsync();
-        //        }
+        //    var cartData = await _dxcontext.Carts.Where(x =>
+        //    (x.Guid == guid && x.IsWishlist == false
+        //    && x.IsActive == true && x.FK_ProductMaster == productId)
+        //    ||
+        //    (x.IsWishlist == false
+        //    && x.IsActive == true
+        //    && x.FK_Customer == customerId && x.FK_ProductMaster == productId)
 
 
-        //        if (Current != null)
-        //        {
-        //            PrimaryKeyValue = Current.Id;
-        //            Current.FK_Customer = wishlistVM?.FK_Customer;
-        //            Current.Guid = wishlistVM?.Guid;
-        //            Current.ModifiedOn = DateTime.Now;
-        //            Current.Quantity = (Current.Quantity + wishlistVM.Quantity);
-        //            Current.TotalQuantity = (Current.TotalQuantity + wishlistVM.TotalQuantity);
-        //            Current.TotalPrice = (Current.TotalPrice + wishlistVM.TotalPrice);
-        //            Current.IsWishlist = wishlistVM.IsWishlist == true ? true : false;
-        //        }
-        //        Save();
-        //        return Current;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw ex;
-        //    }
+
+        //    ).FirstOrDefaultAsync();
+        //    return cartData;
         //}
+
         public async Task<Cart> UpdateToCart(Cart wishlistVM)
         {
             try
@@ -404,7 +366,6 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
 
         public async Task<Cart> UpdateWishList(int cartId)
         {

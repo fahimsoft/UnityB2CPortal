@@ -20,8 +20,6 @@
     </div>
 </div>
 <!-- pages-title-end -->
-
-
 <!-- My account content section start -->
 <section class="pages my-account-page section-padding">
     <div class="container">
@@ -61,7 +59,7 @@
                                                         @*<input type="text" name="name" placeholder="Last Name" />*@
                                                     </div>
                                                 </div>
-                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control" } })
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
                                                 @if (Model.Id > 0)
                                                 {
                                                     @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
@@ -110,14 +108,14 @@
 
                                                 @*<input type="text" name="text" placeholder="Mobile Phone" />*@
                                                 @*<div class="custom-mess">
-            <textarea rows="2" placeholder="Order Notes" name="message"></textarea>
-        </div>
-        <label>Please assign an address title for future reference.<sup>*</sup></label>
-        <div class="input-text">
-            <input type="text" name="refrence" value="" />
-        </div>*@
+                                                        <textarea rows="2" placeholder="Order Notes" name="message"></textarea>
+                                                    </div>
+                                                    <label>Please assign an address title for future reference.<sup>*</sup></label>
+                                                    <div class="input-text">
+                                                        <input type="text" name="refrence" value="" />
+                                                    </div>*@
                                                 <div class="submit-text">
-                                                    <button type="button" class="btn btn-success" id="save">Save</button>
+                                                    <button type="button" class="save btn btn-success" id="save">Save</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -189,7 +187,7 @@
                                             </div>*@
                                         <div class="custom-input">
                                             <form id="settings" @*action="mail.php" method="post"*@>
-                                                @Html.HiddenFor(m => m.Id, new { htmlAttributes = new {  @class = "form-control" } })
+                                                @Html.HiddenFor(m => m.Id, new { htmlAttributes = new { @class = "form-control" } })
 
                                                 @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
                                                 @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
@@ -203,7 +201,7 @@
 
 
                                                 <div class="submit-text text-left">
-                                                    <button id="UpdateBtn" type="submit" value="submit form">Update</button>
+                                                    <button id="UpdateBtn" class="save" type="submit" value="submit form">Update</button>
                                                 </div>
                                             </form>
                                         </div>
@@ -233,32 +231,49 @@
 
     <script type="text/javascript">
 
-        $.validator.addMethod("uniqueEmail", function (value, element) {
 
-            let emailOrgName = "/Account/uniqueEmailCheck?email=" + value;
-            var email = $('.email').val();
-            alert(email);
-            let result = false;
-            $.ajax({
-                url: emailOrgName,
-                data: JSON.stringify(email),
 
-                success: function (data) {
-                    if (data.data.email === 1) {
-                        alert(data.data.email + ': This email already exists.');
-                        console.log(data.data.email + ': This email exists.');
-                        result = false;
-                    } else {
-                        alert(data.data.email + ': Email Available.');
-                        console.log(data.data.email + ': This email does not exist.');
-                        result = true;
-                    }
-                },
-                async: false
+
+        $(document).ready(function () {
+            var email;
+            $('.email').change(function () {
+
+                email = $(this).val();
+
+
+                let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
+                var Email = $('.email').val();
+                // alert(Email);
+                let result = false;
+                $.ajax({
+                    url: emailOrgName,
+                    data: JSON.stringify(Email),
+
+                    success: function (data) {
+                        if (data.success == true) {
+                            toastr.success(data.msg);
+                            $('.save').attr('disabled', false);
+
+                        }
+                        else if (data.success == false) {
+                            toastr.error(data.msg);
+                            $('.save').attr('disabled', true);
+                        }
+
+                    }, error: function (data) {
+                        console.log(data);
+                        // toastr.error(data.msg);
+                    },
+                    async: false
+                });
+                console.log(result);
+                return result;
             });
-            console.log(result);
-            return result;
-        });
+
+        })
+
+
+
         jQuery('#billing').validate({
             rules: {
                 FirstName: {
@@ -423,7 +438,7 @@
             //  var form = $("#purchaseform");
             console.log(datatosend)
             $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-             $.validator.unobtrusive.parse($(this));//add the form validation
+            $.validator.unobtrusive.parse($(this));//add the form validation
             $.validator.unobtrusive.parse(form);
             //if ($(form).valid()) // using not operator for a time being
             if ($(form.valid())) {
@@ -435,11 +450,11 @@
                     dataType: 'json',
                     success: function (data) {
                         console.log(data);
-                        if (data.isSuccessful == true) {
+                        if (data.success == true) {
                             toastr.success("Updated successfully.");
-                           // window.location.href = "/Account/MyAccount";
+                            // window.location.href = "/Account/MyAccount";
                         }
-                        else if (data.isSuccessful == false ) {
+                        else if (data.success == false) {
                             toastr.error("Updation Failed.");
                         }
                     },
@@ -456,7 +471,7 @@
             }
         });
 
-        // save button 
+        // save button
         $("#save").click(function (e) {
             e.preventDefault();
             var form = $("#billing");
@@ -494,7 +509,7 @@
                         console.log(data);
                         if (data.isSuccessful == true) {
                             toastr.success("Billing Address Updated successfully.");
-                           // window.location.href = "/Account/MyAccount";
+                            // window.location.href = "/Account/MyAccount";
                         }
                         else if (data.isSuccessful == false) {
                             toastr.error("Updation Failed.");
@@ -513,7 +528,7 @@
             }
         });
 
-      
+
     </script>
 }
 

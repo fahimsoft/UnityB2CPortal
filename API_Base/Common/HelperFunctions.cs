@@ -1,8 +1,11 @@
 ﻿using B2CPortal.Models;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -103,6 +106,50 @@ namespace API_Base.Common
                     return true;
             }
             return false;
+        }
+
+        // Email configuration
+        public static bool EmailSend(string SenderEmail, string Subject, string Message, bool IsBodyHtml = false)
+        {
+            bool status = false;
+            try
+            {
+                string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
+                string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
+                string Password = ConfigurationManager.AppSettings["Password"].ToString();
+                string Port = ConfigurationManager.AppSettings["Port"].ToString();
+                MailMessage mailMessage = new MailMessage();
+
+                mailMessage.From = new MailAddress(FormEmailId);
+                mailMessage.Subject = Subject;
+                mailMessage.Body = Message;
+                mailMessage.IsBodyHtml = IsBodyHtml;
+                mailMessage.To.Add(new MailAddress(SenderEmail));
+
+
+
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential("muahsan1289@gmail.com", "Password1289.");
+                    smtp.EnableSsl = true;
+                    smtp.Timeout = 20000;
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtp.Send(mailMessage);
+                    status = true;
+
+
+
+                }
+
+
+
+                return status;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
     public enum OrderStatus

@@ -322,7 +322,6 @@ function RemoveCartProduct(id) {
             var tb = $('#myTable tbody');
             if (tb.find("tr").length == 1) {
                 $('#cartmanagebtn').replaceWith(   `
-
                     <div class="text-right">
                             <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
                     </div>

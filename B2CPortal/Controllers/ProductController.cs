@@ -499,6 +499,8 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                 var customerId = 0;
                 if (Session["UserId"] != null)
                 {
@@ -512,6 +514,8 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                     Cart cart = new Cart();
                     var ProductIds = await _cart.GetWishListProducts(cookie.Value, customerId);
                     foreach (var item in ProductIds)
@@ -520,6 +524,8 @@ namespace B2CPortal.Controllers
                         var Name = productmaster.Name;
                         var mainImg = productmaster.MasterImageUrl;
                         //var priceobj = productmaster.ProductPrices.Select(x => x.)
+
+
 
 
 
@@ -552,16 +558,17 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                         //wishlistVMs.Select(c => { c.CartSubTotalDiscount += (decimal)(discount); return c; }).ToList();
                         wishlistVMs.Select(c => { c.OrderTotal += (decimal)item.TotalPrice; return c; }).ToList();
                     }
 
 
 
+
+
                 }
-
-
-
                 return PartialView(wishlistVMs);
             }
             catch (Exception ex)
@@ -569,7 +576,7 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-        public async Task<ActionResult> Wishlist()
+        public ActionResult Wishlist()
         {
             try
             {
@@ -579,9 +586,6 @@ namespace B2CPortal.Controllers
             {
                 return BadResponse(ex);
             }
-
-
-
         }
         [HttpPost]
         public async Task<JsonResult> UpdateToCart(WishlistVM obj)
@@ -598,6 +602,8 @@ namespace B2CPortal.Controllers
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                 }
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
+
+
 
 
 
@@ -625,15 +631,21 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                             var updated = await _cart.UpdateToCart(cartData);
                             var res = await _cart.UpdateWishList(cartId);
                             return Json(new { data = updated, msg = "Cart Updated", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
 
 
 
+
+
                         }
                         catch (Exception ex)
                         {
+
+
 
 
 
@@ -645,6 +657,8 @@ namespace B2CPortal.Controllers
                         var cart = new Cart();
                         cart.Quantity = obj.Quantity;
                         cart.TotalQuantity = obj.TotalQuantity;
+
+
 
 
 
@@ -673,7 +687,11 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                     }
+
+
 
 
 
@@ -688,12 +706,16 @@ namespace B2CPortal.Controllers
 
 
 
+
+
                 }
             }
             catch (Exception ex)
             {
                 return BadResponse(ex);
             }
+
+
 
 
 
