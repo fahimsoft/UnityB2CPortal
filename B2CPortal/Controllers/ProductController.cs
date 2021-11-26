@@ -109,10 +109,12 @@ namespace B2CPortal.Controllers
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
                 var cartobj = new CartViewModel
                 {
                     Price = price,
                     Id = item.Id,
+                    Packsize = packsize,
                     Quantity = (int)item.Quantity,
                     Name = name,
                     MasterImageUrl = MasterImageUrl,
@@ -254,6 +256,7 @@ namespace B2CPortal.Controllers
             {
                 int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
                 string cookie = string.Empty;
+                string msg = string.Empty;
                 if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                 {
                     cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
@@ -283,8 +286,8 @@ namespace B2CPortal.Controllers
                
                 var cartproducts = await _cart.GetCartProducts(cookie, userid);
                 var totalquentity = cartproducts.Sum(x => x.Quantity);
-
-                return Json(new { data = obj, msg = "AdD to Cart Successfully !", cartproductscount = totalquentity, success = true }, JsonRequestBehavior.AllowGet);
+                msg = obj == null ? "You Can't Add to Cart more then 10 times" : "AdD to Cart Successfully !";
+                return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception Ex)

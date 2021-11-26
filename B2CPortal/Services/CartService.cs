@@ -27,6 +27,10 @@ namespace B2CPortal.Services
                 }
                 else
                 {
+                    if (Current.Quantity > 9)
+                    {
+                        return null;
+                    }
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
                     //Current.Quantity = Current.Quantity + 1;

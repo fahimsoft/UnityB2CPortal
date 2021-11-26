@@ -29,6 +29,7 @@ namespace B2CPortal.Models
         public string MasterImageUrl { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
+        public string Packsize { get; set; }
         public decimal? DiscountedPrice { get; internal set; }
         public decimal CartSubTotal { get; internal set; }
         public decimal CartSubTotalDiscount { get; internal set; }

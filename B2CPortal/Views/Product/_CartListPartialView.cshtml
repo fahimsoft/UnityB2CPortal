@@ -156,7 +156,6 @@
     });
     $(".removecartbtn").click(function () {
         debugger
-        toastr.info("Please Wait");
         var row = $(this).closest("tr");
         var id = $(row).attr('data-id');
         $.ajax({
@@ -182,7 +181,6 @@
         //return false;
     });
     $("#updatecart").click(function () {
-        toastr.info("Please Wait");
         var cartids = [];
         var cartquentites = [];
         var array = $.makeArray($('tbody tr[id]').map(function () {

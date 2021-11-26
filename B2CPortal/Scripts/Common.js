@@ -7,13 +7,6 @@ var NextClickValue = 10;
 
 $(document).ready(function () {
     ShowCartProducts();
-    //jQuery('.plus-minus-box').keyup(function () {
-    //    debugger
-    //    if (this.value > 10) {
-    //        return false
-    //    }
-    //    this.value = this.value.replace(/[^0-9\.]/g, '');
-    //});
     //---------------------------handle plus minus change ---------------
     $(document).on('keyup', '.plus-minus-box', function () {
         if (this.value > 11) {
@@ -25,19 +18,19 @@ $(document).ready(function () {
     $(document).on('change', 'input[name=qtybuttonquickview]', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
-        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-        if ($button.text() == "+") {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            // Don't allow decrementing below zero
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-                newVal = newVal == 0 ? 1 : newVal;
-            } else {
-                newVal = 1;
-            }
-        }
-        if (parseInt(newVal) <= 10) {
+        newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
+        //if ($button.text() == "+") {
+        //    var newVal = parseFloat(oldValue) + 1;
+        //} else {
+        //    // Don't allow decrementing below zero
+        //    if (oldValue > 0) {
+        //        var newVal = parseFloat(oldValue) - 1;
+        //        newVal = newVal == 0 ? 1 : newVal;
+        //    } else {
+        //        newVal = 1;
+        //    }
+        //}
+        if (parseInt(newVal) <= 11) {
             var price = parseFloat($('#discoountedprice').text());
             let totalvalue = (price * newVal);
             $('#labalprice').text(totalvalue.toLocaleString());
@@ -49,34 +42,39 @@ $(document).ready(function () {
     $(document).on('change', 'input[name=qtybutton]', function () {
         var $button = $(this);
         var oldValue = $(this).val();
-        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-        if ($button.text() == "+") {
-            var newVal = parseFloat(oldValue) + 1;
-        } else {
-            // Don't allow decrementing below zero
-            if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
-                newVal = newVal == 0 ? 1 : newVal;
-            } else {
-                newVal = 1;
-            }
-        }
+        newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
+        //if ($button.text() == "+") {
+        //    var newVal = parseFloat(oldValue) + 1;
+        //} else {
+        //    // Don't allow decrementing below zero
+        //    if (oldValue > 0) {
+        //        var newVal = parseFloat(oldValue) - 1;
+        //        newVal = newVal == 0 ? 1 : newVal;
+        //    } else {
+        //        newVal = 1;
+        //    }
+        //}
         var row = $(this).closest("tr");
-        var Discount = parseInt($(row).find('td')[1].textContent);
-        var price = parseInt($(row).find('td')[2].textContent);
-        let actualTotal = (price * newVal);
+        var Discount = parseInt($(row).find('td')[1]?.textContent);
+        if (!isNaN(Discount)) {
 
-        price = price * (1 - (Discount / 100));
-        let totalvalue = (price * newVal);
+            var price = parseInt($(row).find('td')[2].textContent);
+            let actualTotal = (price * newVal);
 
-        DiscountAmount = actualTotal - totalvalue;
+            price = price * (1 - (Discount / 100));
+            let totalvalue = (price * newVal);
 
-        $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
-        $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+            DiscountAmount = actualTotal - totalvalue;
 
-        $button.parent().find("input").val(newVal);
+            $(row).find('td')[4].textContent = actualTotal.toLocaleString();
+            $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+            $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+            $button.parent().find("input").val(newVal);
+        } else {
+            $button.parent().find("input").val(newVal);
+        }
     });
+
     $(document).on('click', '.qtybuttonquickview', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
@@ -105,21 +103,21 @@ $(document).ready(function () {
         //$(".qtybutton").on("click", function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
-            oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-            if ($button.text() == "+") {
-                var newVal = parseFloat(oldValue) + 1;
+        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
+        if ($button.text() == "+") {
+            var newVal = parseFloat(oldValue) + 1;
+        } else {
+            // Don't allow decrementing below zero
+            if (oldValue > 0) {
+                var newVal = parseFloat(oldValue) - 1;
+                newVal = newVal == 0 ? 1 : newVal;
             } else {
-                // Don't allow decrementing below zero
-                if (oldValue > 0) {
-                    var newVal = parseFloat(oldValue) - 1;
-                    newVal = newVal == 0 ? 1 : newVal;
-                } else {
-                    newVal = 1;
-                }
+                newVal = 1;
             }
-        if (parseInt(newVal) <= 10) {
+        }
             var row = $(this).closest("tr");
-            var Discount = parseInt($(row).find('td')[1].textContent);
+            var Discount = parseInt($(row).find('td')[1]?.textContent);
+        if (parseInt(newVal) <= 10 && !isNaN(Discount)) {
             var price = parseInt($(row).find('td')[2].textContent);
             let actualTotal = (price * newVal);
 
@@ -275,7 +273,7 @@ function ShowCartProducts() {
                     <i  onclick="RemoveCartProduct(${item.Id})" class="mdi mdi-close removecartbtn"></i>
                     <a class="cart-img" href="cart.html"><img src="${item.MasterImageUrl}" alt="" /></a>
                     <div class="menu-cart-text">
-                        <a href="#"><h5>${item.Name}</h5></a>
+                        <a href="#"><h5>${item.Name} ${item.Packsize}</h5></a>
                         <span>Quantity: ${item.Quantity}</span>
                         <strong>PKR.${item.TotalPrice.toLocaleString()} </strong>
                     </div>
@@ -334,8 +332,12 @@ function HandleAddtocart(id) {
             quentity: quentity,
         },
         success: function (data) {
-            ShowCartProducts();
-            toastr.success("Product Add to Cart successfully.");
+            if (data.success) {
+                ShowCartProducts();
+                toastr.success(data.msg);
+            } else {
+                toastr.error(data.msg);
+            }
 
         }
     });
@@ -717,7 +719,7 @@ function LoadQuickView(elem) {
                                                  <div class="plus-minus">
                                                 <a class="dec qtybuttonquickview qtybutton">-</a>
                                                 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
-                                                <a class="inc qtybuttonquickview qtybutton">+</a> 
+                                                <a class="inc qtybuttonquickview qtybutton">+</a>
                                             </div>
                                                  <strong style="font-size:18px"> PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                                                 </div>
@@ -1336,18 +1338,16 @@ function GetProductId() {
                        <h5><del>${productPrice} PKR</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} PKR</h5>
                        <p>${item.LongDescription}</p>
                        <div class="all-choose">
-                       <div class="s-shoose"> </div>
                        <div class="s-shoose">
-                       <h5>size</h5> <div class="size-drop">
-                       <h5> ${htmlProductSize}</h5> </div>
-                       </div>
                        </div>
                                    <div class="plus-minus">
                                    <a class="dec qtybuttonquickview qtybutton">-</a>
-                                   <input type="text" value="1" name="qtybutton" id="quentityvalue" class="plus-minus-box">
+                                   <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
-                                   PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal>
+
+                                   <strong style="font-size:18px">  PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                       </div>
 
                        <div class="list-btn">
                        <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
