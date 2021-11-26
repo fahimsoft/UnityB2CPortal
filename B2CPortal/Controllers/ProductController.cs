@@ -119,7 +119,8 @@ namespace B2CPortal.Controllers
                     Name = name,
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
-                    TotalPrice = item.TotalPrice == null ? 0 : (decimal)item.TotalPrice
+                    TotalPrice = item.TotalPrice == null ? 0 : (decimal)item.TotalPrice,
+                    FK_ProductMaster = item.FK_ProductMaster,
                 };
                 cartViewModels.Add(cartobj);
             }

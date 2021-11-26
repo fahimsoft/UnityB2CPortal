@@ -284,9 +284,9 @@ function ShowCartProducts() {
             dataobj.cartproducts.map(function (item, index) {
                 html += ` <div class="sin-itme clearfix">
                     <i  onclick="RemoveCartProduct(${item.Id})" class="mdi mdi-close removecartbtn"></i>
-                    <a class="cart-img" href="cart.html"><img src="${item.MasterImageUrl}" alt="" /></a>
+                    <a href="/ProductDetails?productId=${item.FK_ProductMaster}" class="cart-img" href="cart.html"><img src="${item.MasterImageUrl}" alt="" /></a>
                     <div class="menu-cart-text">
-                        <a href="#"><h5>${item.Name} ${item.Packsize}</h5></a>
+                        <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><h5>${item.Name} ${item.Packsize}</h5></a>
                         <span>Quantity: ${item.Quantity}</span>
                         <strong>PKR.${item.TotalPrice.toLocaleString()} </strong>
                     </div>
@@ -1157,7 +1157,8 @@ function loadRecentViewProduct() {
                                     <a href="/ProductDetails/Index?productId=${id[index]}"><img src="${img[index]}" alt="Product Title" /></a>
                                     <div class="actions-btn">
                                         <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${id[index]}><i class="mdi mdi-cart"></i></a>
-                                        <a  data-toggle="modal" id="${id[index]}" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${id[index]}" productName="${name[index]}" productImg="${img[index]}" onClick="LoadQuickView(this)" id="${id[index]}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+
                                         <a onclick="HandleAddtoWishList(this)" productIdList=${id[index]} ><i class="mdi mdi-heart"></i></a>
 
                                     </div>
