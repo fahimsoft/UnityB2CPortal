@@ -737,8 +737,8 @@ function LoadQuickView(elem) {
                                                  <strong style="font-size:18px"> PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                                                 </div>
                                                 <div class="list-btn">
-                                                    <a href="#"   onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-                                                    <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="#">wishlist</a>
+                                                    <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+                                                    <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
                                                     
                                                 </div>
                                                 <div class="share-tag clearfix">
@@ -1157,8 +1157,8 @@ function loadRecentViewProduct() {
                                     <a href="/ProductDetails/Index?productId=${id[index]}"><img src="${img[index]}" alt="Product Title" /></a>
                                     <div class="actions-btn">
                                         <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${id[index]}><i class="mdi mdi-cart"></i></a>
-                                        <a href="#" data-toggle="modal" id="${id[index]}" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>
-                                        <a onclick="HandleAddtoWishList(this)" productIdList=${id[index]} href="#"><i class="mdi mdi-heart"></i></a>
+                                        <a  data-toggle="modal" id="${id[index]}" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>
+                                        <a onclick="HandleAddtoWishList(this)" productIdList=${id[index]} ><i class="mdi mdi-heart"></i></a>
 
                                     </div>
                                 </div>
