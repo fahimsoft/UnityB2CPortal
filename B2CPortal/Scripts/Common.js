@@ -276,8 +276,10 @@ function ShowCartProducts() {
         url: "/Product/GetCartCount",
         data: {},
         success: function (data) {
-            var html = "";
+            var html = "<div class='cartdrop-sin-container'>";
             let dataobj = JSON.parse(data.data);
+
+            
 
             dataobj.cartproducts.map(function (item, index) {
                 html += ` <div class="sin-itme clearfix">
@@ -290,7 +292,7 @@ function ShowCartProducts() {
                     </div>
                 </div> `;
             });
-            html += `
+            html += `</div>
 <div class="totalPriceDetails">
 <div class="total">
                                 <span>total <strong>= PKR. ${dataobj.totalprice.toLocaleString()}</strong></span>
