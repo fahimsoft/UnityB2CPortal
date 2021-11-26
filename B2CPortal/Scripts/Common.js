@@ -184,20 +184,18 @@ function autocomplete(inp, arr) {
                     b = document.createElement("DIV");
                     /*make the matching letters bold:*/
                     b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
-                    b.innerHTML += "<strong>" + item.Name + "</strong>";
+                    b.innerHTML += "<strong class='searchnametxt'>" + item.Name + "</strong>";
                     b.innerHTML += "| <strong style='color:red'>" + item.Price + " PKR</strong>";
                     //b.innerHTML += item.;
                     /*insert a input field that will hold the current array item's value:*/
-                    b.innerHTML += "<input onclick='handlesearchclick(" + item.id + ")' type='hidden' value='" + item.Id + "'>";
+                    b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
                     /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function (e) {
                         debugger
                         var id = $('input[type = hidden]').val();
+                        var name = $('.searchnametxt').text();
+                        inp.value = $(this).find('.searchnametxt').text();
                         window.location.href = '/ProductDetails?productId=' + id + ''
-                        /*insert the value for the autocomplete text field:*/
-                        inp.value = this.getElementsByTagName("input")[0].value;
-                        /*close the list of autocompleted values,
-                        (or any other open lists of autocompleted values:*/
                         closeAllLists();
                     });
                     a.appendChild(b);
@@ -265,7 +263,7 @@ function autocomplete(inp, arr) {
 }
 autocomplete(document.getElementById("handlesearch"), "");
 ///========================search with autocomplete=========================================
-
+//=====================On hover cart list========================
 function removequickviewvalues(id) {
 
     //$('#quentityvalue').val("");
@@ -310,7 +308,6 @@ function ShowCartProducts() {
     });
 
 }
-
 function RemoveCartProduct(id) {
 
     $.ajax({
@@ -323,6 +320,14 @@ function RemoveCartProduct(id) {
             ShowCartProducts();
             toastr.success(data.msg);
             var tb = $('#myTable tbody');
+            if (tb.find("tr").length == 1) {
+                $('#cartmanagebtn').replaceWith(   `
+
+                    <div class="text-right">
+                            <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
+                    </div>
+                `);
+            }
             tb.find("tr").each(function (index, element) {
                 var trvalue = parseInt($(element).attr('data-id'));
                 if (trvalue == parseInt(id)) {
@@ -670,7 +675,7 @@ function LoadQuickView(elem) {
                 else {
                     htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
                         <div class="pro-type">
-                            <span>new</span>
+                            <span>${productDiscount}%</span>
                         </div>
                         <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
                                                         </div>`
@@ -727,7 +732,7 @@ function LoadQuickView(elem) {
                                                     <i class="mdi mdi-star-half"></i>
                                                     <i class="mdi mdi-star-outline"></i>
                                                 </div>
-                                                <h5> <del>${productPrice} PKR</del><labal style="color:gray">-${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> PKR </h5>
+                                                <h5> <del>${productPrice} PKR</del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> PKR </h5>
                                                 <p>${item.LongDescription}</p>
                                                  <div class="plus-minus">
                                                 <a class="dec qtybuttonquickview qtybutton">-</a>
@@ -1295,14 +1300,14 @@ function GetProductId() {
                     if (ProductPDIndex == 0) {
                         htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
                         <div class="pro-type">
-                        <span>new</span>
+                        <span>${productDiscount}%</span>
                         </div>
                         <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
                         </div>`
                     } else {
                         htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
                         <div class="pro-type">
-                        <span>new</span>
+                        <span>${productDiscount}%</span>
                         </div>
                         <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
                         </div>`
