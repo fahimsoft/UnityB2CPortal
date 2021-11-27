@@ -85,6 +85,14 @@
     <Compile Include="Base\DTO.cs" />
     <Compile Include="Common\HelperFunctions.cs" />
     <Compile Include="Common\Connection.cs" />
+    <Compile Include="PaymentMethod\Interfaces\IEasyPaisa.cs" />
+    <Compile Include="PaymentMethod\Interfaces\IHBL.cs" />
+    <Compile Include="PaymentMethod\Interfaces\IStripe.cs" />
+    <Compile Include="PaymentMethod\PaymentViewModel.cs" />
+    <Compile Include="PaymentMethod\PaymentMethodFacade.cs" />
+    <Compile Include="PaymentMethod\Servicees\EasyPaisaService.cs" />
+    <Compile Include="PaymentMethod\Servicees\HBLService.cs" />
+    <Compile Include="PaymentMethod\Servicees\StripeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

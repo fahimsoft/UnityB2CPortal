@@ -30,7 +30,7 @@ namespace API_Base.Base
             PrimaryKeyValue = null;
             Current = Activator.CreateInstance<T>();
         }
-        public async Task<IEnumerable<T>> GetAll()
+        public IEnumerable<T> GetAll()
         {
             return _dxcontext.Set<T>().AsEnumerable();
         }

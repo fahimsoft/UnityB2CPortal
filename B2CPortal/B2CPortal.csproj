@@ -342,6 +342,11 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\logos\cashondelviry.jpg" />
+    <Content Include="Content\logos\easypaisa-apk.png" />
+    <Content Include="Content\logos\hbl.png" />
+    <Content Include="Content\logos\jazz.png" />
+    <Content Include="Content\logos\stripe.png" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
     <Content Include="favicon.ico" />

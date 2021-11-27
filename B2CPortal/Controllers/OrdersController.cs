@@ -1,5 +1,6 @@
 ﻿using API_Base.Base;
 using API_Base.Common;
+using API_Base.PaymentMethod;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using System;
@@ -19,9 +20,12 @@ namespace B2CPortal.Controllers
         private readonly IOrderDetail _ordersDetail = null;
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
-        public OrdersController(IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
+        private readonly PaymentMethodFacade _paymentMethodFacade = null;
+       
+        public OrdersController(PaymentMethodFacade paymentMethodFacade, IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
         {
             _IProductMaster = productMaster;
+            _paymentMethodFacade = new PaymentMethodFacade();
             _cart = cart;
             _orders = orders;
             _ordersDetail = orderDetail;
@@ -227,7 +231,6 @@ namespace B2CPortal.Controllers
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-
                     if (customerId > 0)
                     {
                         // Billing Details Add
@@ -257,21 +260,12 @@ namespace B2CPortal.Controllers
                             Billing.CartSubTotal = subTotal;
                             Billing.OrderTotal = OrderTotal;
                             Billing.TotalQuantity = tQuantity;
-
-
-
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);
-
-
-
                         // Insert order Detail
                         var ordermasterId = res.Id;
                         var orderNo = res.OrderNo;
-
-
-
                         if (cartlist != null)
                         {
                             foreach (var item in cartlist)
