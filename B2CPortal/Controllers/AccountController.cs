@@ -41,7 +41,6 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-
         // Login json response
         [HttpPost]
         public async Task<ActionResult> Login(customer customer)
