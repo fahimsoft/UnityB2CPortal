@@ -302,12 +302,15 @@ namespace B2CPortal.Controllers
             Session.Abandon(); // it will clear the session at the end of request
             return RedirectToAction("index", "Home");
         }
+        // Forgot Password
         [HttpGet]
         public ActionResult ForgotPassword()
         {
             customer customer = new customer();
             return View(customer);
         }
+
+
 
         [HttpPost]
         public async Task<ActionResult> ForgotPassword(string EmailId)
@@ -329,7 +332,11 @@ namespace B2CPortal.Controllers
                     string authToken = resultToken.ToString();
 
                     //Create URL with above token
-                    var lnkHref = "<a href='" + Url.Action("ResetPassword", "Account", new { email = EmailId, code = authToken }, "http") + "'>Reset Password</a>";
+                    var lnkHref = " <a href='" + Url.Action("ResetPassword", "Account", new { email = EmailId, code = authToken }, "http") + "'>Reset Password</a>";
+                    //var lnkHref = "<a href='"+='" + EmailId + @"'&code='" + authToken + @" >Reset Password </a>";
+
+
+
                     //HTML Template for Send email
                     string subject = "Your changed password";
                     string body = "<b>Please find the Password Reset Link. </b><br/>" + lnkHref;
@@ -346,11 +353,68 @@ namespace B2CPortal.Controllers
                 else
                 {
                     return Json(new { data = "", msg = "You are Not Registered!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
                 }
             }
             else
             {
                 return Json(new { data = "", msg = "You are Not Registered!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
+            }
+
+
+
+        }
+        public ActionResult ResetPassword(string code, string email)
+        {
+            customer model = new customer();
+            var ReturnToken = code;
+            model.EmailId = email;
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<ActionResult> ResetPassword(customer customer)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var resetResponse = await _account.ResetPassword(customer);
+                    if (resetResponse != null)
+                    {
+                        return Json(new { data = resetResponse, msg = "Password Has Been Reset!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+
+
+
+                    }
+                    else
+                    {
+                        return Json(new { data = resetResponse, msg = "Password Reset Failed!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
+                    }
+
+
+
+                }
+                else
+                {
+                    return Json(new { data = "", msg = "Password Reset Failed!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { data = ex, msg = "Password Reset Failed!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
 
             }
 

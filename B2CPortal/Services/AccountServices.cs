@@ -121,5 +121,20 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
+        public async Task<customer> ResetPassword(customer customer)
+        {
+            try
+            {
+                Current = await _dxcontext.customers.Where(x => x.EmailId == customer.EmailId).FirstOrDefaultAsync();
+                PrimaryKeyValue = Current.Id;
+                Current.Password = customer.Password;
+                Save();
+                return Current;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

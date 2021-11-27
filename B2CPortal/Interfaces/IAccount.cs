@@ -14,5 +14,6 @@ namespace B2CPortal.Interfaces
         Task<customer> SelectByIdPassword(customer customer);
         Task<customer> SelectById(int id);
         Task<customer> uniqueEmailCheck(string email);
+        Task<customer> ResetPassword(customer customer);
     }
 }
