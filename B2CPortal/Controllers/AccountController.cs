@@ -302,7 +302,6 @@ namespace B2CPortal.Controllers
             Session.Abandon(); // it will clear the session at the end of request
             return RedirectToAction("index", "Home");
         }
-        // Forgot Password
         [HttpGet]
         public ActionResult ForgotPassword()
         {
