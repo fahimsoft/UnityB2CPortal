@@ -115,10 +115,6 @@ namespace B2CPortal.Controllers
                         orderVM.City = customer.City;
                         orderVM.Address = customer.Address;
 
-
-
-
-
                         var cartlist = await _cart.GetCartProducts("", customerId);
                         if (cartlist != null)
                         {
@@ -126,19 +122,9 @@ namespace B2CPortal.Controllers
                             {
                                 OrderTotal = (int)(OrderTotal + item.TotalPrice);
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-
-
-
-
-
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var DiscountedPrice = price * (1 - (discount / 100));
-
-
-
-
-
                                 var ActualPrice = (decimal)(price * item.Quantity);
                                 subTotal = (int)(subTotal + ActualPrice);
                                 totalDiscount = (int)(totalDiscount + discount);
@@ -155,32 +141,13 @@ namespace B2CPortal.Controllers
                                 };
                                 orderVMs.Add(Order);
                                 orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)item.TotalPrice);
-
-
-
-
-
                             }
                             orderVM.orderVMs = orderVMs;
                             orderVM.CartSubTotal = subTotal;
-
-
-
-
-
                             //orderVM.CartSubTotalDiscount = totalDiscount;
                             orderVM.OrderTotal = OrderTotal;
-
-
-
-
-
+                            Session["ordertotal"] = OrderTotal;
                         }
-
-
-
-
-
                         return View(orderVM);
                     }
                     else
@@ -293,15 +260,15 @@ namespace B2CPortal.Controllers
                             }
                         }
 
-
-
-
-
                         // Remove from cart
                         HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
                         var removeCart = await _cart.DisableCart(customerId, cookie.Value);
 
-
+                        if (Billing.paymenttype == PaymentType.Stripe)
+                        {
+                            string url =   Url.Action("Stripe","Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
 
                         // Sending Mail
                         var name = Session["UserName"].ToString();
@@ -318,9 +285,6 @@ namespace B2CPortal.Controllers
 <p>Unity Foods LTD!</p>
 </body>
 </html>";
-
-
-
                         bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
                         if (IsSendEmail)
                         {

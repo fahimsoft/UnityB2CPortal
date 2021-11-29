@@ -161,4 +161,11 @@ namespace API_Base.Common
         Cancelled = 5,
         Rejected = 6,
     }
+    //public enum PaymentType
+    //{
+    //    Stripe = 1,
+    //    HBL = 2,
+    //    JazzCash = 3,
+    //    EasyPaisa = 4
+    //}
 }

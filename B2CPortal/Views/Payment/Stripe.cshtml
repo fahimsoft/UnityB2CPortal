@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewBag.Title = "Stripe";
+}
+
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>Stripe</h2>
+                    <ul class="text-left">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="pages login-page section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3">
+            </div>
+
+            <div class="col-sm-6">
+                <div class="main-input padding60 new-customer">
+                    <div class="log-title">
+                        <h3><strong>Stripe Payment Information</strong></h3>
+                    </div>
+                    <div class="custom-input">
+                        <form class="register" action="@Url.Action("Stripe","Payment")" method="post" id="payment-form">
+                            <div class="form-group">
+                                <input required class="form-control text-box single-line" id="Name" name="Name" placeholder="Full Name:" type="text" value="">
+                            </div>
+                            <div class="form-group">
+                                <input required class="form-control text-box single-line" id="Phone" name="Phone" placeholder="Phone No:" type="text" value="">
+                            </div>
+                            <div class="form-group">
+                            <input required class="email form-control text-box single-line valid" id="EmailId" name="Email" placeholder="Email Address:" type="text" value="" aria-describedby="EmailId-error" aria-invalid="false">
+                            </div>
+                            <div class="form-group">
+                                <div id="card-element" class="email form-control text-box single-line valid">
+                                </div>
+                                <div id="card-errors" role="alert"></div>
+                                </div>
+                            <div class="submit-text coupon">
+                                    <input type="button" disabled style="font-size:18px; color:black" class="form-control" value="@ViewBag.Amount $" id="btnAddSale"/>
+                                </div>
+                                <div class="submit-text coupon">
+                                    <button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>
+                                    <a href="@Url.Action("Checkout","Orders")"  class="btn btn-success" id="btnAddSale">Go Back</a>
+                                </div>
+                            
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+            </div>
+        </div>
+    </div>
+</section>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    var stripe = Stripe('pk_test_51K02zhHN8ZNk6QpYFAv3QugLYSjhcvohcBHRzoisAVcTE8V0FMvBdPlaH9Hg7ZouEhGCljhEUMCBPIulz2EFY22V00snwg0UZB');
+    var elements = stripe.elements();
+    var style = {
+        base: {
+            fontSize: '16px',
+            color: '#32325d',
+        },
+    };
+    var card = elements.create('card', { style: style });
+    card.mount('#card-element');
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+    function stripeTokenHandler(token) {
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+        form.submit();
+    }
+</script>
+
+

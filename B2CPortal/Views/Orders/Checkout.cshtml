@@ -135,12 +135,6 @@
             </div>
         </div>
 
-
-
-
-
-
-
         <div class="row margin-top">
             <div class="col-xs-12 col-sm-6">
                 <div class="padding60">
@@ -171,7 +165,7 @@
 
                                 <tr>
                                     <th>Cart Subtotal</th>
-                                    <td>PKR. @Model.CartSubTotal</td>
+                                    <td>  @Model.CartSubTotal</td>
 
                                 </tr>
                                 <tr>
@@ -181,17 +175,17 @@
 
                                 <tr>
                                     <th>Shipping and Handing</th>
-                                    <td>$00.00</td>
+                                    <td><strong class="pricesymbol"> </strong>  00.00</td>
                                 </tr>
                                 <tr>
                                     <th>Vat</th>
-                                    <td>$00.00</td>
+                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th>Order total</th>
-                                    <td>PKR. @Model.OrderTotal</td>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -206,29 +200,29 @@
                         <h3><strong>Payment method</strong></h3>
                     </div>
                     <div class="form-check">
-                            <img width="100" height="50" style="text-align:right" src="~/Content/logos/stripe.png" />
-                        <input class="form-check-input" value="stripe" checked type="radio" name="paymenttype" id="paymenttype1">
+                        <img width="100" height="50" style="text-align:right" src="~/Content/logos/stripe.png" />
+                        <input class="form-check-input" value="Stripe" checked type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
-                            <img width="100" height="50" src="~/Content/logos/hbl.png" />
-                        <input class="form-check-input" value="hbl" type="radio" name="paymenttype" id="paymenttype1">
+                        <img width="100" height="50" src="~/Content/logos/hbl.png" />
+                        <input class="form-check-input" value="HBL" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             HBL (Habib Bank Limited)
                         </label>
                     </div>
                     <div class="form-check">
-                            <img width="100" height="50" src="~/Content/logos/jazz.png" />
-                        <input class="form-check-input" value="jazzcash" type="radio" name="paymenttype" id="paymenttype1">
+                        <img width="100" height="50" src="~/Content/logos/jazz.png" />
+                        <input class="form-check-input" value="JazzCash" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Jazz Cash (Mobilink)
                         </label>
                     </div>
                     <div class="form-check">
-                            <img width="100" height="50" src="~/Content/logos/easypaisa-apk.png" />
-                        <input class="form-check-input" value="easypaisa" type="radio" name="paymenttype" id="paymenttype1">
+                        <img width="100" height="50" src="~/Content/logos/easypaisa-apk.png" />
+                        <input class="form-check-input" value="EasyPaisa" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Easypaisa (Telenor)
                         </label>
@@ -238,63 +232,63 @@
                         <img width="100" height="50" src="~/Content/logos/cashondelviry.jpg" />
                         <input class="form-check-input" value="easypaisa" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
-                            COD (Cash On Delivery) 
+                            COD (Cash On Delivery)
                         </label>
                     </div>
 
                     @*<div class="categories">
-            <ul id="accordion" class="panel-group clearfix">
-                <li class="panel">
+                            <ul id="accordion" class="panel-group clearfix">
+                                <li class="panel">
 
 
-                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
-                        <div class="medium-a">
-                            direct bank transfer
-                        </div>
-                    </div>
-                    <div class="panel-collapse collapse in" id="collapse1">
-                        <div class="normal-a">
-                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
-                        </div>
-                    </div>
-                </li>
-                <li class="panel">
-                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
-                        <div class="medium-a">
-                            cheque payment
-                        </div>
-                    </div>
-                    <div class="paypal-dsc panel-collapse collapse" id="collapse2">
-                        <div class="normal-a">
-                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
-                        </div>
-                    </div>
-                </li>
-                <li class="panel">
-                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
-                        <div class="medium-a">
-                            paypal
-                        </div>
-                    </div>
-                    <div class="paypal-dsc panel-collapse collapse" id="collapse3">
-                        <div class="normal-a">
-                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-            @if (Model.OrderTotal > 0)
-            {
-                <div class="submit-text">
-                    <a class="order">place order</a>
-                </div>
-            }
-            else
-            {
-                <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
-            }
+                                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse1">
+                                        <div class="medium-a">
+                                            direct bank transfer
+                                        </div>
+                                    </div>
+                                    <div class="panel-collapse collapse in" id="collapse1">
+                                        <div class="normal-a">
+                                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="panel">
+                                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse2">
+                                        <div class="medium-a">
+                                            cheque payment
+                                        </div>
+                                    </div>
+                                    <div class="paypal-dsc panel-collapse collapse" id="collapse2">
+                                        <div class="normal-a">
+                                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="panel">
+                                    <div data-toggle="collapse" data-parent="#accordion" data-target="#collapse3">
+                                        <div class="medium-a">
+                                            paypal
+                                        </div>
+                                    </div>
+                                    <div class="paypal-dsc panel-collapse collapse" id="collapse3">
+                                        <div class="normal-a">
+                                            <p>Lorem Ipsum is simply in dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry.</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                            @if (Model.OrderTotal > 0)
+                            {
+                                <div class="submit-text">
+                                    <a class="order">place order</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
+                            }
 
-        </div>*@
+                        </div>*@
                     @if (Model.OrderTotal > 0)
                     {
                         <div class="submit-text">
@@ -390,8 +384,8 @@
                     Country: $('#Country').val(),
                     City: $('#City').val(),
                     BillingAddress: $('#Address').val(),
-                    ShippingAddress: $('.SAddress').val()
-
+                    ShippingAddress: $('.SAddress').val(),
+                    PaymentType: $('input[name="paymenttype"]:checked').val()
                 }
             }
 
@@ -424,8 +418,8 @@
                                     debugger;
                                     console.log(data);
                                     if (data.success == true) {
+                                        window.location.href = data.data;// reload();
                                         toastr.success(data.msg);
-                                        window.location.reload();
                                     }
                                     else if (data.success == false) {
                                         toastr.error("Failed.");

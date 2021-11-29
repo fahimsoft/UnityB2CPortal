@@ -4,15 +4,41 @@ var rating = 0;
 var totalComment = 0;
 var PrevClickValue = 0;
 var NextClickValue = 10;
+var pricesymbol = {
+    symbol: ""
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    var requestUrl = "http://ip-api.com/json";
+    $.ajax({
+        url: requestUrl,
+        type: 'GET',
+        success: function (json) {
+            debugger
+            if (json.country == "Pakistan") {
+                pricesymbol.symbol = "$";
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+                //$(".pricesymbol").text(pricesymbol.symbol);
+            } else {
+                pricesymbol.symbol = "PKR.";
+                //$(".pricesymbol").text(pricesymbol.symbol);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            }
+        },
+        error: function (err) {
+            console.log("Request failed, error= " + err);
+        }
+    });
+});
+
 
 window.onload = function () {
     var divToHide = document.getElementById('quick-view');
     document.onclick = function (e) {
         $(e.target).find('.modal-content').remove();
     };
+
 };
-
-
 $(document).ready(function () {
     ShowCartProducts();
     //---------------------------handle plus minus change ---------------
@@ -123,8 +149,8 @@ $(document).ready(function () {
                 newVal = 1;
             }
         }
-            var row = $(this).closest("tr");
-            var Discount = parseInt($(row).find('td')[1]?.textContent);
+        var row = $(this).closest("tr");
+        var Discount = parseInt($(row).find('td')[1]?.textContent);
         if (parseInt(newVal) <= 10 && !isNaN(Discount)) {
             var price = parseInt($(row).find('td')[2].textContent);
             let actualTotal = (price * newVal);
@@ -148,11 +174,6 @@ $(document).ready(function () {
         localStorage.removeItem('my-list-grid-btn');
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
     });
-
-    $('#quick-view').click(function () {
-        //alert("");
-    });
-
 });
 ///========================search with autocomplete========================================
 function autocomplete(inp, arr) {
@@ -185,7 +206,7 @@ function autocomplete(inp, arr) {
                     /*make the matching letters bold:*/
                     b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
                     b.innerHTML += "<strong class='searchnametxt'>" + item.Name + "</strong>";
-                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " PKR</strong>";
+                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " ${pricesymbol.symbol}</strong>";
                     //b.innerHTML += item.;
                     /*insert a input field that will hold the current array item's value:*/
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
@@ -265,8 +286,6 @@ autocomplete(document.getElementById("handlesearch"), "");
 ///========================search with autocomplete=========================================
 //=====================On hover cart list========================
 function removequickviewvalues(id) {
-
-    //$('#quentityvalue').val("");
     document.getElementsByClassName("main-view modal-content")?.remove();
 }
 //=====================On hover cart list========================
@@ -276,11 +295,9 @@ function ShowCartProducts() {
         url: "/Product/GetCartCount",
         data: {},
         success: function (data) {
+            //$(".pricesymbol").text(pricesymbol.symbol);
             var html = "<div class='cartdrop-sin-container'>";
             let dataobj = JSON.parse(data.data);
-
-            
-
             dataobj.cartproducts.map(function (item, index) {
                 html += ` <div class="sin-itme clearfix">
                     <i  onclick="RemoveCartProduct(${item.Id})" class="mdi mdi-close removecartbtn"></i>
@@ -288,14 +305,14 @@ function ShowCartProducts() {
                     <div class="menu-cart-text">
                         <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><h5>${item.Name} ${item.Packsize}</h5></a>
                         <span>Quantity: ${item.Quantity}</span>
-                        <strong>PKR.${item.TotalPrice.toLocaleString()} </strong>
+                        <strong>${pricesymbol.symbol} ${item.TotalPrice.toLocaleString()} </strong>
                     </div>
                 </div> `;
             });
             html += `</div>
 <div class="totalPriceDetails">
 <div class="total">
-                                <span>total <strong>= PKR. ${dataobj.totalprice.toLocaleString()}</strong></span>
+                                <span>total <strong>= ${pricesymbol.symbol} ${dataobj.totalprice.toLocaleString()}</strong></span>
                             </div>
                             <a class="goto" href="/Product/AddToCart"> go to cart</a>
                             <a class="out-menu" href="/Orders/Checkout">Check out</a>
@@ -305,6 +322,8 @@ function ShowCartProducts() {
             $('#cartdrop').html(html);
             $('#productaddtocart').html(dataobj.cartproductscount);
             $('#totalprice').html(dataobj.totalprice.toLocaleString());
+            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+
 
         }
     });
@@ -323,7 +342,7 @@ function RemoveCartProduct(id) {
             toastr.success(data.msg);
             var tb = $('#myTable tbody');
             if (tb.find("tr").length == 1) {
-                $('#cartmanagebtn').replaceWith(   `
+                $('#cartmanagebtn').replaceWith(`
                     <div class="text-right">
                             <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
                     </div>
@@ -411,10 +430,6 @@ ${moment(item.Date).format('DD-MMM-yyyy')}
                                     </tr>`
 
             });
-
-
-
-
             html = `
 <div class="container">
         <div class="row">
@@ -454,10 +469,9 @@ ${moment(item.Date).format('DD-MMM-yyyy')}
             </div>
         </div>
     </div>`;
-
-
             $('#quick-view').html(html);
             //SetLocalStorage(elem);
+            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -498,13 +512,7 @@ function loadProductList() {
         dataType: "json",
         success: function (result) {
             var data = JSON.parse(result.data);
-
-
-
             $('#lblTotalCount').text('Total Records: ' + data.length);
-
-
-
             $.each(data, function (key, item) {
 
 
@@ -539,7 +547,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
+<h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
 <p>${item.LongDescription}</p>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -575,7 +583,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
+<span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
 </div>
 </div>
 </div>`;
@@ -584,8 +592,6 @@ function loadProductList() {
 
 
             });
-
-
 
             var gl1 = ""; var gl2 = "";
 
@@ -619,9 +625,7 @@ ${htmlProductList}
 
 
             $('#htmlListAndGrid').html(htmldata);
-
-
-
+            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -733,14 +737,14 @@ function LoadQuickView(elem) {
                                                     <i class="mdi mdi-star-half"></i>
                                                     <i class="mdi mdi-star-outline"></i>
                                                 </div>
-                                                <h5> <del>${productPrice} PKR</del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> PKR </h5>
+                                                <h5> <del>${productPrice} ${pricesymbol.symbol}</del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> ${pricesymbol.symbol} </h5>
                                                 <p>${item.LongDescription}</p>
                                                  <div class="plus-minus">
                                                 <a class="dec qtybuttonquickview qtybutton">-</a>
                                                 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                                 <a class="inc qtybuttonquickview qtybutton">+</a>
                                             </div>
-                                                 <strong style="font-size:18px"> PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                                                 <strong style="font-size:18px"> ${pricesymbol.symbol}. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                                                 </div>
                                                 <div class="list-btn">
                                                     <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
@@ -773,6 +777,7 @@ function LoadQuickView(elem) {
 
             $('#quick-view').html(html);
             SetLocalStorage(elem);
+            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -828,7 +833,7 @@ function loadProductListByName() {
                                                 <i class="mdi mdi-star-half"></i>
                                                 <i class="mdi mdi-star-outline"></i>
                                             </div>
-                                            <h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
+                                            <h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
                                             <p>${item.LongDescription}</p>
                                             <div class="list-btn">
                                                 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -862,7 +867,7 @@ function loadProductListByName() {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
+                                                        <span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
                                                     </div>
                                                 </div>
                                             </div>`;
@@ -896,6 +901,7 @@ function loadProductListByName() {
                                   </div>`;
 
                 $('#htmlListAndGrid').html(htmldata);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -958,7 +964,7 @@ function loadProductListById(filterList) {
                                                 <i class="mdi mdi-star-half"></i>
                                                 <i class="mdi mdi-star-outline"></i>
                                             </div>
-                                            <h5><del>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</h5 >
+                                            <h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
                                             <p>${item.LongDescription}</p>
                                             <div class="list-btn">
                                                 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -992,7 +998,7 @@ function loadProductListById(filterList) {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${productPricesValue.Price} PKR</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} PKR</span>
+                                                        <span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
                                                     </div>
                                                 </div>
                                             </div>`;
@@ -1030,6 +1036,8 @@ function loadProductListById(filterList) {
 
 
                 $('#htmlListAndGrid').html(htmldata);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -1119,7 +1127,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${productPriceValue.Price}PKR</del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} PKR</span>
+                                    <span><del style='color: silver'>${productPriceValue.Price}${pricesymbol.symbol}</del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} ${pricesymbol.symbol}</span>
                                 </div>
                             </div>
                         </div>
@@ -1133,6 +1141,7 @@ function loadFeatureProduct() {
 
             });
             $('#ulLoadFeatureProduct').html(html);
+            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -1183,7 +1192,7 @@ function loadRecentViewProduct() {
         // });
 
         $('#ulLoadRecentViewProduct').html(html);
-
+        document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
 
     }
 }
@@ -1355,7 +1364,7 @@ function GetProductId() {
                        <i class="mdi mdi-star-half"></i>
                        <i class="mdi mdi-star-outline"></i>
                        </div>
-                       <h5><del>${productPrice} PKR</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} PKR</h5>
+                       <h5><del>${productPrice} ${pricesymbol.symbol}</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} ${pricesymbol.symbol}</h5>
                        <p>${item.LongDescription}</p>
                        <div class="all-choose">
                        <div class="s-shoose">
@@ -1366,7 +1375,7 @@ function GetProductId() {
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
 
-                                   <strong style="font-size:18px">  PKR. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                                   <strong style="font-size:18px">  ${pricesymbol.symbol}. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                        </div>
 
                        <div class="list-btn">
@@ -1395,6 +1404,8 @@ function GetProductId() {
                        </div>
                        `;
                 $('#quick-view').html(html);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -1513,6 +1524,8 @@ function GetProductCommentAndRating() {
 
                 $('#commentAndRating').html(html);
                 $('#div-paggination').html(htmlPaggination);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+
 
             },
             error: function (errorMessage) {
@@ -1618,6 +1631,7 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
                 $('#commentAndRating').html(html);
 
                 $('#div-paggination').html(htmlPaggination);
+                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
 
             },
             error: function (errorMessage) {
@@ -1690,3 +1704,13 @@ function GetProductIdFromURL() {
 }
 
 // Wasiq Code End
+//*******************************************************************
+
+var paymenttype = {
+    Stripe: "Stripe",
+    HBL: "HBL",
+    JazzCash: "JazzCash",
+    EasyPaisa: "EasyPaisa",
+};
+
+//*******************************************************************

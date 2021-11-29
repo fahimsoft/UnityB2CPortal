@@ -7,7 +7,7 @@ using System.Web;
 
 namespace B2CPortal.Models
 {
-    public class OrderVM
+    public class PaymentViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -55,12 +55,5 @@ namespace B2CPortal.Models
         public List<OrderVM> orderVMs { get; set; }
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
-    }
-    public enum PaymentType
-    {
-        Stripe = 1,
-        HBL = 2,
-        JazzCash = 3,
-        EasyPaisa = 4
     }
 }

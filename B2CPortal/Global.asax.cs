@@ -13,7 +13,7 @@ namespace B2CPortal
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -33,5 +33,9 @@ namespace B2CPortal
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             };
         }
+
     }
 }
+
+
+   
