@@ -27,7 +27,12 @@
             <div class="col-sm-6">
                 <div class="main-input padding60 new-customer">
                     <div class="log-title">
-                        <h3><strong>Stripe Payment Information</strong></h3>
+                        <h3>
+                            <strong>
+                                Stripe Payment Information
+                                <b style="background-color:antiquewhite"> (<strong class="pricesymbol"> </strong> @ViewBag.Amount )</b>
+                            </strong>
+                        </h3>
                     </div>
                     <div class="custom-input">
                         <form class="register" action="@Url.Action("Stripe","Payment")" method="post" id="payment-form">
@@ -38,21 +43,18 @@
                                 <input required class="form-control text-box single-line" id="Phone" name="Phone" placeholder="Phone No:" type="text" value="">
                             </div>
                             <div class="form-group">
-                            <input required class="email form-control text-box single-line valid" id="EmailId" name="Email" placeholder="Email Address:" type="text" value="" aria-describedby="EmailId-error" aria-invalid="false">
+                                <input required class="email form-control text-box single-line valid" id="EmailId" name="Email" placeholder="Email Address:" type="text" value="" aria-describedby="EmailId-error" aria-invalid="false">
                             </div>
                             <div class="form-group">
                                 <div id="card-element" class="email form-control text-box single-line valid">
                                 </div>
                                 <div id="card-errors" role="alert"></div>
-                                </div>
+                            </div>
                             <div class="submit-text coupon">
-                                    <input type="button" disabled style="font-size:18px; color:black" class="form-control" value="@ViewBag.Amount $" id="btnAddSale"/>
-                                </div>
-                                <div class="submit-text coupon">
-                                    <button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>
-                                    <a href="@Url.Action("Checkout","Orders")"  class="btn btn-success" id="btnAddSale">Go Back</a>
-                                </div>
-                            
+                                <button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>
+                                <a href="@Url.Action("Checkout","Orders")" class="btn btn-success" id="btnAddSale">Go Back</a>
+                            </div>
+
                         </form>
                     </div>
                 </div>

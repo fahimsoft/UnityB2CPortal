@@ -386,6 +386,7 @@
     <Content Include="Content\Asset\fonts\materialdesignicons-webfont.woff2" />
     <Content Include="Content\Asset\js\README.md" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\Helper.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />

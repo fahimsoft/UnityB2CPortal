@@ -5,35 +5,7 @@ var PrevClickValue = 0;
 var NextClickValue = 10;
 var PrevProdClickValue = 0;
 var NextProdClickValue = 10;
-
-var pricesymbol = {
-    symbol: ""
-};
-
-document.addEventListener('DOMContentLoaded', () => {
-    var requestUrl = "http://ip-api.com/json";
-    $.ajax({
-        url: requestUrl,
-        type: 'GET',
-        success: function (json) {
-            debugger
-            if (json.country == "Pakistan") {
-                pricesymbol.symbol = "$.";
-
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
-                //$(".pricesymbol").text(pricesymbol.symbol);
-            } else {
-                pricesymbol.symbol = "PKR.";
-                //$(".pricesymbol").text(pricesymbol.symbol);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-            }
-        },
-        error: function (err) {
-            console.log("Request failed, error= " + err);
-        }
-    });
-});
+var pricesymbol = "pricesymbol";
 
 window.onload = function () {
     var divToHide = document.getElementById('quick-view');
@@ -43,6 +15,7 @@ window.onload = function () {
 };
 $(document).ready(function () {
     ShowCartProducts();
+
     //---------------------------handle plus minus change ---------------
     $(document).on('keyup', '.plus-minus-box', function () {
         if (this.value > 11) {
@@ -208,7 +181,7 @@ function autocomplete(inp, arr) {
                     /*make the matching letters bold:*/
                     b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
                     b.innerHTML += "<strong class='searchnametxt'>" + item.Name + "</strong>";
-                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " PKR </strong>";
+                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
                     //b.innerHTML += item.;
                     /*insert a input field that will hold the current array item's value:*/
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
@@ -297,7 +270,6 @@ function ShowCartProducts() {
         url: "/Product/GetCartCount",
         data: {},
         success: function (data) {
-            //$(".pricesymbol").text(pricesymbol.symbol);
             var html = "<div class='cartdrop-sin-container'>";
             let dataobj = JSON.parse(data.data);
             dataobj.cartproducts.map(function (item, index) {
@@ -307,29 +279,27 @@ function ShowCartProducts() {
                     <div class="menu-cart-text">
                         <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><h5>${item.Name} ${item.Packsize}</h5></a>
                         <span>Quantity: ${item.Quantity}</span>
-                        <strong>${pricesymbol.symbol} ${item.TotalPrice.toLocaleString()} </strong>
+                        <strong> <strong class="pricesymbol"> </strong>  ${item.TotalPrice.toLocaleString()} </strong>
                     </div>
                 </div> `;
             });
             html += `</div>
 <div class="totalPriceDetails">
 <div class="total">
-                                <span>total <strong>= ${pricesymbol.symbol} ${dataobj.totalprice.toLocaleString()}</strong></span>
+                                <span>total <strong>= <strong class="pricesymbol"> </strong> ${dataobj.totalprice.toLocaleString()}</strong></span>
                             </div>
                             <a class="goto" href="/Product/AddToCart"> go to cart</a>
                             <a class="out-menu" href="/Orders/Checkout">Check out</a>
                             </div>
-
-`;
+                                    `;
             $('#cartdrop').html(html);
             $('#productaddtocart').html(dataobj.cartproductscount);
             $('#totalprice').html(dataobj.totalprice.toLocaleString());
-            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
-
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);
+            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         }
     });
-
 }
 function RemoveCartProduct(id) {
 
@@ -472,8 +442,9 @@ ${moment(item.Date).format('DD-MMM-yyyy')}
         </div>
     </div>`;
             $('#quick-view').html(html);
-            //SetLocalStorage(elem);
-            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);
+            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -503,7 +474,6 @@ function HandleAddtoWishList(id) {
 }
 //---------------cart Wishlist ----------------
 //---------------Product management----------------
-//Load Product List
 //Load Product List
 function loadProductList() {
     var htmldata = '', htmlProductList = '', htmlProductGrid = '';
@@ -549,7 +519,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
+<h5><del>${productPricesValue.Price} <strong class="pricesymbol"> </strong></del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} <strong class="pricesymbol"> </strong></h5 >
 <p>${item.LongDescription}</p>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -585,7 +555,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
+<span><del style='color:silver'>${productPricesValue.Price} <strong class="pricesymbol"> </strong></del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} <strong class="pricesymbol"> </strong></span>
 </div>
 </div>
 </div>`;
@@ -627,7 +597,9 @@ ${htmlProductList}
 
 
             $('#htmlListAndGrid').html(htmldata);
-            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);
+            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -739,14 +711,14 @@ function LoadQuickView(elem) {
                                                     <i class="mdi mdi-star-half"></i>
                                                     <i class="mdi mdi-star-outline"></i>
                                                 </div>
-                                                <h5> <del>${productPrice} ${pricesymbol.symbol}</del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> ${pricesymbol.symbol} </h5>
+                                                <h5> <del>${productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
                                                 <p>${item.LongDescription}</p>
                                                  <div class="plus-minus">
                                                 <a class="dec qtybuttonquickview qtybutton">-</a>
                                                 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                                 <a class="inc qtybuttonquickview qtybutton">+</a>
                                             </div>
-                                                 <strong style="font-size:18px"> ${pricesymbol.symbol}. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                                                 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
                                                 </div>
                                                 <div class="list-btn">
                                                     <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
@@ -779,7 +751,9 @@ function LoadQuickView(elem) {
 
             $('#quick-view').html(html);
             SetLocalStorage(elem);
-            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);
+            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -814,15 +788,11 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         dataType: "json",
         traditional: true,
         success: function (result) {
-            debugger
-
             var data = JSON.parse(result.data);
             if (data.length > 0)
                 totalProductList = data[0].totalProduct;
             else
-                totalProductList = 0
-
-
+                totalProductList = 0;
             $('#lblTotalCount').text('Total Records: ' + totalProductList);
             $.each(data, function (key, item) {
 
@@ -852,7 +822,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                                                 <i class="mdi mdi-star-half"></i>
                                                 <i class="mdi mdi-star-outline"></i>
                                             </div>
-                                            <h5><del>${item.Price} PKR</del>&nbsp${item.Price * (1 - (item.Discount / 100))} PKR</h5 >
+                                            <h5><del>${item.Price} <strong class="pricesymbol"> </strong></del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></h5 >
                                             <p>${item.LongDescription}</p>
                                             <div class="list-btn">
                                             <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -886,13 +856,11 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${item.Price} PKR</del>&nbsp${item.Price * (1 - (item.Discount / 100))} PKR</span>
+                                                        <span><del style='color:silver'>${item.Price} <strong class="pricesymbol"> </strong></del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></span>
                                                     </div>
                                                 </div>
                                             </div>`;
             });
-
-            debugger
 
             if (totalProductList <= 10 || totalProductList == undefined) {
 
@@ -944,7 +912,8 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
             $('#htmlListAndGrid').html(htmldata);
             $('#htmlProdListPaggination').html(htmlPaggination);
-
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -1010,7 +979,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${productPriceValue.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} ${pricesymbol.symbol}</span>
+                                    <span><del style='color: silver'>${productPriceValue.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} <strong class="pricesymbol"> </strong></span>
                                 </div>
                             </div>
                         </div>
@@ -1018,14 +987,11 @@ function loadFeatureProduct() {
                 </li>`;
 
                 });
-
-
-
-
             });
             $('#ulLoadFeatureProduct').html(html);
             debugger
-            document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -1076,7 +1042,9 @@ function loadRecentViewProduct() {
         // });
 
         $('#ulLoadRecentViewProduct').html(html);
-        document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+        var symbolvalue = GetCookieByName(pricesymbol);
+        $('.pricesymbol').text(symbolvalue);
+        //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
 
     }
 }
@@ -1233,7 +1201,7 @@ function GetProductId() {
                        <i class="mdi mdi-star-half"></i>
                        <i class="mdi mdi-star-outline"></i>
                        </div>
-                                              <h5><del>${productPrice} ${pricesymbol.symbol}</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} ${pricesymbol.symbol}</h5>
+                                              <h5><del>${productPrice} <strong class="pricesymbol"> </strong></del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} <strong class="pricesymbol"> </strong></h5>
                        <p>${item.LongDescription}</p>
                        <div class="all-choose">
                        <div class="s-shoose"> </div>
@@ -1247,7 +1215,7 @@ function GetProductId() {
                                    <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
-                                   <strong style="font-size:18px">  ${pricesymbol.symbol}. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
 
                        <div class="list-btn">
                        <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
@@ -1275,6 +1243,8 @@ function GetProductId() {
                        </div>
                        `;
                 $('#quick-view').html(html);
+                var symbolvalue = GetCookieByName(pricesymbol);
+                $('.pricesymbol').text(symbolvalue);
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);

@@ -158,19 +158,19 @@
                                     {
                                         <tr>
                                             <th>@item.Name  x @item.Quantity</th>
-                                            <td>@item.TotalPrice</td>
+                                            <td> <strong class="pricesymbol"> </strong> @item.TotalPrice</td>
                                         </tr>
                                     }
                                 }
 
                                 <tr>
                                     <th>Cart Subtotal</th>
-                                    <td>  @Model.CartSubTotal</td>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
 
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td>@Model.CartSubTotalDiscount </td>
+                                    <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
                                 </tr>
 
                                 <tr>

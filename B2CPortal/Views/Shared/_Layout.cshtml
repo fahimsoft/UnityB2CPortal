@@ -42,9 +42,10 @@
     <script data-require="toastr" data-semver="2.1.2" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.1.2/toastr.min.js"></script>
     <script data-require="jquery@2.2.0" data-semver="2.2.0" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <style>
-        .form-check{
-            font-size:large;
+        .form-check {
+            font-size: large;
         }
+
         .list-btn > a:hover {
             cursor: pointer;
         }
@@ -95,11 +96,11 @@
             background-color: #d4d4d4 !important;
             /*color: #ffffff;*/
         }
-        .searchimg {
-        width:50px;
-        height:80px;
-        }
 
+        .searchimg {
+            width: 50px;
+            height: 80px;
+        }
     </style>
 
     <style>
@@ -115,9 +116,10 @@
         }
 
 
-        .mainmenu li:hover ul{
+        .mainmenu li:hover ul {
             top: 105%;
         }
+
         .cart-itmes:hover .cartdrop {
             top: 187%;
         }
@@ -145,13 +147,14 @@
         .searchimg {
             width: inherit;
             height: inherit;
-            padding:5px;
+            padding: 5px;
         }
 
         .autocomplete-items div {
             height: 70px;
             padding-left: 10px;
         }
+
         .quentityamounttext strong {
             font-size: 18px
         }
@@ -191,12 +194,12 @@
     <script src="@Url.Content("~/Scripts/jquery.validate.min.js")"></script>
     <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
     <script src="@Url.Content("~/Scripts/Common.js")"></script>
-
+    <script src="~/Scripts/Helper.js"></script>
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />*@
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />*@
     @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/bootstrap")
-        @Scripts.Render("~/bundles/lib")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/lib")
     @RenderSection("scripts", required: false)
 
 </body>
