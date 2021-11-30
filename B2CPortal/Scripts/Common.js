@@ -1,9 +1,11 @@
-
-var rating = 0;
 var rating = 0;
 var totalComment = 0;
+var totalProductList = 0;
 var PrevClickValue = 0;
 var NextClickValue = 10;
+var PrevProdClickValue = 0;
+var NextProdClickValue = 10;
+
 var pricesymbol = {
     symbol: ""
 };
@@ -784,40 +786,57 @@ function LoadQuickView(elem) {
         }
     });
 }
-//Load Product List by Id
-// filer Change Event
-function loadProductListByName() {
+function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
+
+    var htmldata = '';
+    var htmlProductList = '';
+    var countBtn = 1;
+    var htmlPrevButton = '';
+    var htmlNextButton = '';
+    var htmlbtn = '';
+    var htmlProductGrid = '';
+    //var totalProductList = 0;
+
+    var postData = {
+        filterList: filterList,
+        search: search,
+        nextPage: nextPage,
+        prevPage: prevPage
+    };
     debugger
-    var productName = $('#textProductName').val();
+    $.ajax({
+        url: "/Product/GetProductListbySidebar",
+        type: "POST",
+        //data: JSON.stringify(filterList),
+        data: JSON.stringify(postData),
+        //data: { filterList},
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        traditional: true,
+        success: function (result) {
+            debugger
 
-    if (productName != null && productName != undefined && productName != '') {
+            var data = JSON.parse(result.data);
+            if (data.length > 0)
+                totalProductList = data[0].totalProduct;
+            else
+                totalProductList = 0
 
-        $.ajax({
-            url: "/Product/GetProductbyName",
-            data: { productName: productName },
-            type: "GET",
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            success: function (result) {
 
-                var htmldata = '', htmlProductList = '', htmlProductGrid = '';
-                var data = JSON.parse(result.data);
-                $('#lblTotalCount').text('Total Records: ' + data.length);
-                $.each(data, function (key, item) {
+            $('#lblTotalCount').text('Total Records: ' + totalProductList);
+            $.each(data, function (key, item) {
 
-                    //List Html
-                    $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
-
-                        htmlProductList += `<div class="col - xs - 12">
+                //List Html
+                htmlProductList += `<div class="col - xs - 12">
                             <div class="single-list-view">
                                 <div class="row">
                                     <div class="col-xs-12 col-md-4">
                                         <div class="list-img">
                                             <div class="product-img">
                                                 <div class="pro-type sell">
-                                                    <span>${productPricesValue.Discount}%</span>
+                                                    <span>${item.Discount}%</span>
                                                 </div>
-                                                <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+                                                    <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                             </div>
                                         </div>
                                     </div>
@@ -833,11 +852,11 @@ function loadProductListByName() {
                                                 <i class="mdi mdi-star-half"></i>
                                                 <i class="mdi mdi-star-outline"></i>
                                             </div>
-                                            <h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
+                                            <h5><del>${item.Price} PKR</del>&nbsp${item.Price * (1 - (item.Discount / 100))} PKR</h5 >
                                             <p>${item.LongDescription}</p>
                                             <div class="list-btn">
-                                                <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
-                                                <a href="#">wishlist</a>
+                                            <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
+                                            <a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
                                             </div>
                                         </div>
                                     </div>
@@ -845,17 +864,17 @@ function loadProductListByName() {
                              </div >
                            </div >`;
 
-                        htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
+                htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
                                                 <div class="single-product">
                                                     <div class="product-img">
                                                         <div class="pro-type">
-                                                      <span>${productPricesValue.Discount}%</span>
+                                                      <span>${item.Discount}%</span>
                                                         </div>
                                                         <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                                         <div class="actions-btn">
-                                                            <a onclick="HandleAddtocart(this)" productIdList=${item.Id}><i  class="mdi mdi-cart"></i></a>
-                                                            <a href="#" data-toggle="modal" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-                                                            <a href="#"><i class="mdi mdi-heart"></i></a>
+                                                        <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
+                                                        <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+                                                        <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
                                                         </div>
                                                     </div>
                                                     <div class="product-dsc">
@@ -867,233 +886,97 @@ function loadProductListByName() {
                                                             <i class="mdi mdi-star-half"></i>
                                                             <i class="mdi mdi-star-outline"></i>
                                                         </div>
-                                                        <span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
+                                                        <span><del style='color:silver'>${item.Price} PKR</del>&nbsp${item.Price * (1 - (item.Discount / 100))} PKR</span>
                                                     </div>
                                                 </div>
                                             </div>`;
+            });
 
-                    });
-                });
+            debugger
 
-                var gl1 = ""; var gl2 = "";
+            if (totalProductList <= 10 || totalProductList == undefined) {
 
-                var activeclassfor = localStorage.getItem("my-list-grid-btn");
-                switch (activeclassfor) {
-                    case "list":
-                        gl1 = "active";
-                        gl2 = "";
-                        break;
-                    case "grid":
-                        gl1 = "";
-                        gl2 = "active";
-                        break;
-                    default:
-                        gl1 = "active";
-                        gl2 = "";
-                        break;
-                }
+                countBtn = 1;
+            } else {
 
-                htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
+                countBtn = totalProductList / 10;
+                countBtn = Math.ceil(countBtn);
+            }
+
+            htmlPrevButton = `<span> <input type="button" Class="btn-Prod-PrevAndNext" value="Previous" class="btn-Prod-Paggination" /></span>`;
+            htmlNextButton = `<span> <input type="button" Class="btn-Prod-PrevAndNext" value="Next" class="btn-Prod-Paggination" /></span>`;
+
+            let prevCount = 0;
+            for (i = 1; i <= countBtn; i++) {
+
+                prevPage = parseInt(prevCount) * 10;
+                htmlbtn += `<span> <input type="button" value="${i}" class="btn-Prod-Paggination" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
+                prevCount += 1;
+
+            }
+
+            var gl1 = ""; var gl2 = "";
+            var activeclassfor = localStorage.getItem("my-list-grid-btn");
+
+            switch (activeclassfor) {
+                case "list":
+                    gl1 = "active";
+                    gl2 = "";
+                    break;
+                case "grid":
+                    gl1 = "";
+                    gl2 = "active";
+                    break;
+                default:
+                    gl1 = "active";
+                    gl2 = "";
+                    break;
+            }
+
+            htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
                                   ${htmlProductGrid}
                                   </div>
                                   <div class="tab-pane fade in ${gl1}" id="list">
                                       ${htmlProductList}
                                   </div>`;
 
-                $('#htmlListAndGrid').html(htmldata);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-            },
-            error: function (errorMessage) {
-                alert(errorMessage.responseText);
-            }
-        });
+            let htmlPaggination = htmlPrevButton + htmlbtn + htmlNextButton;
 
-    } else {
-        loadProductList();
-    }
-}
-//Load Product List by Id
-function loadProductListById(filterList) {
+            $('#htmlListAndGrid').html(htmldata);
+            $('#htmlProdListPaggination').html(htmlPaggination);
 
-    var htmldata = ''; var htmlProductList = ''; var htmlProductGrid = '';
-
-    if (filterList != null && filterList != undefined && filterList != '') {
-
-        //var postData = {
-        //    filterList: filterList
-        //};
-
-        $.ajax({
-            url: "/Product/GetProductListbySidebar",
-            type: "POST",
-            data: JSON.stringify(filterList),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            traditional: true,
-            success: function (result) {
-
-                var data = JSON.parse(result.data);
-                $('#lblTotalCount').text('Total Records: ' + data.length);
-                $.each(data, function (key, item) {
-
-                    //List Html
-                    $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
-
-                        htmlProductList += `<div class="col - xs - 12">
-                            <div class="single-list-view">
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-4">
-                                        <div class="list-img">
-                                            <div class="product-img">
-                                                <div class="pro-type sell">
-                                                    <span>${productPricesValue.Discount}%</span>
-                                                </div>
-                                                <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-8">
-                                        <div class="list-text">
-                                            <h3>${item.Name}</h3>
-                                            <span>${item.ShortDescription}</span>
-                                            <div class="ratting floatright">
-                                                <p>( 27 Rating )</p>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star-half"></i>
-                                                <i class="mdi mdi-star-outline"></i>
-                                            </div>
-                                            <h5><del>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</h5 >
-                                            <p>${item.LongDescription}</p>
-                                            <div class="list-btn">
-                                                <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
-                                                <a href="#">wishlist</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div >
-                           </div >`;
-
-                        htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="single-product">
-                                                    <div class="product-img">
-                                                        <div class="pro-type">
-                                                      <span>${productPricesValue.Discount}%</span>
-                                                        </div>
-                                                        <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                                        <div class="actions-btn">
-                                                            <a href="#" onclick="HandleAddtocart(this)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-                                                            <a href="#" data-toggle="modal" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-                                                            <a href="#"><i class="mdi mdi-heart"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-dsc">
-                                                        <p><a href="#">${item.Name}</a></p>
-                                                        <div class="ratting">
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star-half"></i>
-                                                            <i class="mdi mdi-star-outline"></i>
-                                                        </div>
-                                                        <span><del style='color:silver'>${productPricesValue.Price} ${pricesymbol.symbol}</del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} ${pricesymbol.symbol}</span>
-                                                    </div>
-                                                </div>
-                                            </div>`;
-                    });
-
-
-
-
-                });
-
-                var gl1 = ""; var gl2 = "";
-
-                var activeclassfor = localStorage.getItem("my-list-grid-btn");
-                switch (activeclassfor) {
-                    case "list":
-                        gl1 = "active";
-                        gl2 = "";
-                        break;
-                    case "grid":
-                        gl1 = "";
-                        gl2 = "active";
-                        break;
-                    default:
-                        gl1 = "active";
-                        gl2 = "";
-                        break;
-                }
-
-                htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
-                                  ${htmlProductGrid}
-                                  </div>
-                                  <div class="tab-pane fade in ${gl1}" id="list">
-                                      ${htmlProductList}
-                                  </div>`;
-
-
-                $('#htmlListAndGrid').html(htmldata);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
-            },
-            error: function (errorMessage) {
-                alert(errorMessage.responseText);
-            }
-        });
-
-    } else {
-        loadProductList();
-    }
+        },
+        error: function (errorMessage) {
+            alert(errorMessage.responseText);
+        }
+    });
 }
 $('.main-filter-container').on("change", ".filter", function () {
-    let filterList = [];
+    debugger
 
-    if ($(this).prop("checked")) {
+    var slides = document.getElementsByClassName("filter");
 
-        var slides = document.getElementsByClassName("filter");
-        for (var i = 0; i < slides.length; i++) {
+    let filterList_Dummy = [];
 
-            if ($(slides.item(i)).prop("checked")) {
-                filterList.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
-            }
-        }
+    for (var i = 0; i < slides.length; i++) {
 
-        var Count = 0;
-
-        loadProductListById(filterList);
-
-    } else {
-
-        var ifPresent = false;
-
-        var slides = document.getElementsByClassName("filter");
-
-        let filterList_Dummy = [];
-
-        var Count = 0;
-
-        for (var i = 0; i < slides.length; i++) {
-
-            if ($(slides.item(i)).prop("checked")) {
-                ifPresent = true;
-                filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
-            }
-        }
-
-
-        if (ifPresent) {
-
-            loadProductListById(filterList_Dummy);
-        }
-        else {
-            loadProductList();
+        if ($(slides.item(i)).prop("checked")) {
+            ifPresent = true;
+            filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
         }
     }
-});
 
+
+    var searchProduct = $('#textProductName').val();
+    //if (ifPresent) {
+
+    loadProductListById(filterList_Dummy, searchProduct, 10, 0);
+    //}
+    //else {
+    //    loadProductList();
+    //}
+    //}
+});
 //Load Data function
 function loadFeatureProduct() {
     $.ajax({
@@ -1208,29 +1091,16 @@ function toggle(className, obj) {
 //------------------------------------------------------------------------
 //------------------------------------------------------------------------
 // Wasiq Code Start
-// Comment Save btn
 $("#btnSave").click(function (e) {
 
-    // if (validateFileds()) {
-
-
-
-
     e.preventDefault();
-
-
 
     let urlstr = location.href;
     let url = new URL(urlstr);
     let searchparams = url.searchParams;
     var productId = searchparams.get('productId');
 
-
-
     var commentAndRating = {
-
-
-
 
         CustomerId: $("#UserId").val(),
         AnonymousName: $('#txtName').val(),
@@ -1239,45 +1109,41 @@ $("#btnSave").click(function (e) {
         FK_ProductMaster: productId,
         rate: rating,
 
+    }
+    debugger
+    var validate = CommentValidate(commentAndRating.AnonymousName, commentAndRating.EmailId, commentAndRating.Comment);
+    if (validate) {
 
+        $.ajax({
+            type: "POST",
+            url: "/ProductDetails/SaveComment",
+            data: JSON.stringify(commentAndRating),
+            contentType: 'application/json',
+            dataType: 'json',
+            success: function (data) {
+
+                if (data.isSuccessful == true) {
+                    toastr.success("Your Reviews has been Updated.");
+                    GetProductCommentAndRating();
+                }
+                else if (data.isSuccessful == false) {
+                    toastr.error("Found Issue,Please Check your Data.");
+                }
+            },
+            error: function (data) {
+                toastr.error("Found Issue, Please Check your Data.");
+            },
+
+        });
 
     }
 
-
-
-    $.ajax({
-        type: "POST",
-        url: "/ProductDetails/SaveComment",
-        data: JSON.stringify(commentAndRating),
-        contentType: 'application/json',
-        dataType: 'json',
-        success: function (data) {
-
-
-
-            if (data.isSuccessful == true) {
-                toastr.success("Your Reviews has been Updated.");
-                GetProductCommentAndRating();
-            }
-            else if (data.isSuccessful == false) {
-                toastr.error("Found Issue,Please Check your Data.");
-            }
-        },
-        error: function (data) {
-            toastr.error("Found Issue, Please Check your Data.");
-        },
-
-
-
-    });
-    // }
 });
-//Get Product by ID
 
 function GetProductId() {
 
     var productId = GetProductIdFromURL();
-
+    debugger
     if (productId != null && productId != undefined) {
         $.ajax({
             url: "/Product/GetProductbyId",
@@ -1286,10 +1152,12 @@ function GetProductId() {
                 Id: productId
             },
             success: function (result) {
+                debugger
                 var html = '';
                 var index = 1;
                 var fade = 1;
                 var productPrice = 0;
+                var productDiscount = 0;
                 var htmlProductDetail = '';
                 var htmlProductPriceDetail = '',
                     htmlProductSize = '';
@@ -1311,14 +1179,14 @@ function GetProductId() {
                     if (ProductPDIndex == 0) {
                         htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
                         <div class="pro-type">
-                        <span>${productDiscount}%</span>
+                        <span>new</span>
                         </div>
                         <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
                         </div>`
                     } else {
                         htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
                         <div class="pro-type">
-                        <span>${productDiscount}%</span>
+                        <span>new</span>
                         </div>
                         <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
                         </div>`
@@ -1365,19 +1233,21 @@ function GetProductId() {
                        <i class="mdi mdi-star-half"></i>
                        <i class="mdi mdi-star-outline"></i>
                        </div>
-                       <h5><del>${productPrice} ${pricesymbol.symbol}</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} ${pricesymbol.symbol}</h5>
+                                              <h5><del>${productPrice} ${pricesymbol.symbol}</del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} ${pricesymbol.symbol}</h5>
                        <p>${item.LongDescription}</p>
                        <div class="all-choose">
+                       <div class="s-shoose"> </div>
                        <div class="s-shoose">
+                       <h5>size</h5> <div class="size-drop">
+                       <h5> ${htmlProductSize}</h5> </div>
+                       </div>
                        </div>
                                    <div class="plus-minus">
                                    <a class="dec qtybuttonquickview qtybutton">-</a>
-                                   <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
+                                   <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
-
                                    <strong style="font-size:18px">  ${pricesymbol.symbol}. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
-                       </div>
 
                        <div class="list-btn">
                        <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
@@ -1405,8 +1275,6 @@ function GetProductId() {
                        </div>
                        `;
                 $('#quick-view').html(html);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -1525,8 +1393,6 @@ function GetProductCommentAndRating() {
 
                 $('#commentAndRating').html(html);
                 $('#div-paggination').html(htmlPaggination);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
 
             },
             error: function (errorMessage) {
@@ -1632,7 +1498,6 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
                 $('#commentAndRating').html(html);
 
                 $('#div-paggination').html(htmlPaggination);
-                document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
 
             },
             error: function (errorMessage) {
@@ -1704,15 +1569,56 @@ function GetProductIdFromURL() {
     return productId;
 }
 
+// Validation
+var rating = 0;
+$('.product-rating').click(function () {
+
+    rating = $(this).attr('rating');
+});
+
+function CommentValidate(name, email, message) {
+    debugger
+
+    $('#lblName').text('');
+    $('#lblEmail').text('');
+    $('#lblMessage').text('');
+    $('#lblrating').text('');
+
+    var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
+    var isEmailValid = pattern.test(email);
+
+    if (name.length == 0) {
+        $('#lblName').text("Please insert a Name.");
+        return false;
+
+
+    } else if (isEmailValid == false) {
+        $('#lblEmail').text("Please insert a valid Email.");
+        return false;
+
+
+    } else if (message.length == 0) {
+        $('#lblMessage').text("Please insert Reviews");
+        return false;
+
+
+    } else if (rating == 0) {
+        $('#lblrating').text("Please Mark Product Rating.");
+        return false;
+
+    } else {
+        rating = 0;
+        return true;
+    }
+
+}
+
 // Wasiq Code End
 //*******************************************************************
-
 var paymenttype = {
     Stripe: "Stripe",
     HBL: "HBL",
     JazzCash: "JazzCash",
     EasyPaisa: "EasyPaisa",
 };
-document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-
 //*******************************************************************

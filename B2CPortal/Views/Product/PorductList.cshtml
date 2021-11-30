@@ -2,7 +2,6 @@
 @{
     ViewBag.Title = "GetPorductList";
 }   
-@*<script src="@Url.Content("~/Scripts/jquery-3.4.1.min.js")"></script>*@
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
@@ -67,7 +66,8 @@
 
                         </div>
                     </div>
-
+                    <div id="htmlProdListPaggination" style="float: right;">
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,19 +77,91 @@
 <!-- quick view start -->
 <div class="product-details quick-view modal animated zoomInUp" id="quick-view">
 
-
-
-
 </div>
 <!-- quick view end -->
-
 
 <script>
 
     //LoadProductList
     $(document).ready(function () {
-        loadProductList();
+
+        //loadProductList();
+
+        loadProductListById(null, "", 10, 0);
+
+        $('#textProductName').change(function () {
+
+            var searchProduct = $(this).val();
+            loadProductListById(GetfilterListDummy(), searchProduct, 10, 0);
+        });
+
+
+        // Paggination Button ,1,2,3..
+        $('#htmlProdListPaggination').on('click', '.btn-Prod-Paggination', function () {
+
+
+            var nextPage = $(this).attr('next-page');
+            var prevPage = $(this).attr('prev-page');
+
+            PrevProdClickValue = prevPage;
+            NextProdClickValue = nextPage;
+
+            $('#htmlProdListPaggination').find('.btn-Prod-Paggination').removeClass('applyActiveBtn');
+            $(this).addClass('applyActiveBtn');
+
+
+            var searchProduct = $('#textProductName').val();
+
+            loadProductListById(GetfilterListDummy(), searchProduct, nextPage, prevPage);
+
+        });
+
+        // Prev and Next Button
+        $('#htmlProdListPaggination').on('click', '.btn-Prod-PrevAndNext', function () {
+
+            let searchProduct = $('#textProductName').val();
+            let value = $(this).attr('value');
+
+            debugger
+            if (value == "Previous") {
+                if (PrevProdClickValue > 0)
+                    PrevProdClickValue = parseInt(PrevProdClickValue) - 10;
+                else
+                    return false;
+            }
+
+            if (value == "Next") {
+                if ((parseInt(totalProductList) - 10) > PrevProdClickValue)
+                    PrevProdClickValue = parseInt(PrevProdClickValue) + 10;
+                else
+                    return false;
+            }
+
+            var currentBtnIndex = (((NextProdClickValue + PrevProdClickValue) / NextProdClickValue) - 1);
+
+            $('#htmlProdListPaggination').find('.btn-Prod-Paggination').removeClass('applyActiveBtn');
+            $('#htmlProdListPaggination').find('.btn-Prod-Paggination').eq(currentBtnIndex).addClass('applyActiveBtn');
+
+            loadProductListById(GetfilterListDummy(), searchProduct, NextProdClickValue, PrevProdClickValue);
+        });
+
     });
+
+    function GetfilterListDummy() {
+
+        var slides = document.getElementsByClassName("filter");
+        let filterList_Dummy = [];
+
+        for (var i = 0; i < slides.length; i++) {
+
+            if ($(slides.item(i)).prop("checked")) {
+                ifPresent = true;
+                filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
+            }
+        }
+
+        return filterList_Dummy;
+    }
 
 
 </script>

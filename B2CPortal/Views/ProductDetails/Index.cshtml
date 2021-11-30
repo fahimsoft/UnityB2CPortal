@@ -41,7 +41,11 @@
                         <div class="info-reviews review-text tab-pane fade in active" id="reviews">
                             <div class="about-author" id="commentAndRating"> </div>
                         </div>
-                        <hr /> <div class="your-rating log-title">
+                        <hr />
+                        <div id="div-paggination" style="float:right">
+                            @* <span style="float:right"> <input type="button" value="1" class="btn-paggination" next-page="10" prev-page="0" /></span>*@
+                        </div>
+                         <div class="your-rating log-title">
                             <h3>leave your review</h3>
                             <h5>Your rating</h5>
                             <div class="rating clearfix">
@@ -86,6 +90,11 @@
                                         </a>
                                     </li>
                                 </ul>
+                               
+                                <br />
+                                <label id="lblrating" value="" style="color:red"></label>
+
+
                             </div>
                         </div>
                         <div class="custom-input">
@@ -105,7 +114,7 @@
                                 </div>
                                 <div class="col-xs-12">
                                     <div class="custom-mess">
-<textarea name="message" id="txtMessage" placeholder="Your Review" rows="2" required></textarea>
+                                        <textarea name="message" id="txtMessage" placeholder="Your Review" rows="2" required></textarea>
                                         <label id="lblMessage" value="" style="color:red"></label>
                                     </div>
                                 </div>
@@ -124,6 +133,7 @@
 </div>
 <script>
     $(document).ready(function () {
+
         GetProductId();
         debugger
         let CurrentProductId = localStorage.getItem('CurrentProductId');
@@ -215,6 +225,8 @@
             GetProductCommentWithPaggination(NextClickValue, PrevClickValue);
         });
     });
+
+
 
 </script>
 

@@ -19,7 +19,6 @@ namespace B2CPortal.Controllers
 {
     public class ProductController : BaseController
     {
-
         //private readonly IProductDetail _ProductDetailService = null;
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
@@ -50,7 +49,46 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
+        [HttpGet]
+        [ActionName("GetProductwithPaggination")] //updated
+        public async Task<JsonResult> GetProductwithPaggination(int nextPage, int prevPage)
+        {
+            try
+            {
+                List<ProductsVM> productsVM = new List<ProductsVM>();
 
+                var obj = await _IProductMaster.GetProduct();
+                var totalProduct = obj.Count();
+                var fillterProductList = obj.OrderByDescending(x => x.CreatedOn).Skip(prevPage).Take(nextPage).ToList();
+
+                foreach (var item in fillterProductList)
+                {
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = item.ProductPrices.Select(x => x.Price).FirstOrDefault(),
+                        Discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        totalProduct = totalProduct
+
+                    };
+                    productsVM.Add(producVMList);
+                }
+
+                return SuccessResponse(productsVM);
+
+
+            }
+            catch (Exception Ex)
+            {
+
+                return BadResponse(Ex);
+            }
+        }
         [HttpGet]
         [ActionName("GetFeaturedProduct")]
         public async Task<JsonResult> GetFeaturedProduct()
@@ -145,17 +183,54 @@ namespace B2CPortal.Controllers
         }
         [HttpGet]
         [ActionName("GetProductbyName")]
-        public async Task<JsonResult> GetProductbyName(string productName) // long Id
+        public async Task<JsonResult> GetProductbyName(string productName, int nextPage, int prevPage) //updated
         {
             try
             {
+
                 //var obj = await _IProductMaster.GetProductById(Id);
-
+                // var obj = await _IProductMaster.GetProductByName(productName);
                 //return SuccessResponse(obj);
+                //  if (prevPage== 0)
+                //  obj.OrderByDescending(x => x.CreatedOn).Skip(0).Take(10).ToList();
+                // else
+                //   obj.OrderByDescending(x => x.CreatedOn).Skip(nextPage).Take(prevPage).ToList();
 
+                // return SuccessResponse(obj);
+
+
+                List<ProductsVM> productsVM = new List<ProductsVM>();
                 var obj = await _IProductMaster.GetProductByName(productName);
+                var totalProduct = obj.Count();
 
-                return SuccessResponse(obj);
+
+                if (prevPage == 0)
+                    obj.OrderByDescending(x => x.CreatedOn).Skip(0).Take(10).ToList();
+                else
+                    obj.OrderByDescending(x => x.CreatedOn).Skip(nextPage).Take(prevPage).ToList();
+
+                // var fillterProductList = obj.OrderByDescending(x => x.CreatedOn).Skip(prevPage).Take(nextPage).ToList();
+
+                foreach (var item in obj)
+                {
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = item.ProductPrices.Select(x => x.Price).FirstOrDefault(),
+                        Discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        totalProduct = totalProduct
+
+                    };
+                    productsVM.Add(producVMList);
+                }
+
+                return SuccessResponse(productsVM);
+
             }
             catch (Exception Ex)
             {
@@ -758,31 +833,6 @@ namespace B2CPortal.Controllers
             try
             {
                 var obj = await _IProductMaster.GetSidebar();
-
-
-                //var obj = (from PM in _IProductMaster.ProductMasters
-                //           join PP in _IProductMaster.ProductPrices on PM.Id equals PP.FK_ProductMaster
-                //           join PD in _IProductMaster.ProductDetails on PM.Id equals PD.FK_ProductMaster
-
-                //           select new { PM.Id, PM.Name, PM.ShortDescription, PM.LongDescription, PP.Price, PP.Discount, PD.ImageUrl }).Where(x => x.Id == Id);
-
-                ////var obj2 = await obj.ToListAsync().ConfigureAwait(false);
-
-                //return obj.Select(x => new ProductsVM()
-                //{
-                //    Id = x.Id,
-                //    Name = x.Name,
-                //    Price = x.Price,
-                //    Discount = x.Discount,
-                //    //MasterImageUrl=x.MasterImageUrl,
-                //    ImageUrl = x.ImageUrl,
-                //    ShortDescription = x.ShortDescription,
-                //    LongDescription = x.LongDescription
-
-                //}).FirstOrDefault();
-
-
-
                 return SuccessResponse(obj);
 
 
@@ -795,25 +845,15 @@ namespace B2CPortal.Controllers
         }
         [HttpPost]
         [ActionName("GetProductListbySidebar")]
-        public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList) //int[] filterList
+        public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
         {
             try
             {
-                var obj = await _IProductMaster.GetProductListbySidebar(filterList);
-                return SuccessResponse(obj);
-                //string jsonStr = JsonConvert.SerializeObject(obj);
-
-                //return Content(JsonConvert.SerializeObject(obj,
-                //new JsonSerializerSettings
-                //{
-                //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                //}), "application/json");
-                // return this.Json(new { data = jsonStr, msg = "", success = true}, JsonRequestBehavior.AllowGet);
-
+                var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
+                return SuccessResponse(filter);
             }
             catch (Exception Ex)
             {
-                //return BadResponse(Ex.Message.ToString());
                 throw Ex;
             }
         }
@@ -841,16 +881,11 @@ namespace B2CPortal.Controllers
         }
 
     }
-
-
     public class SideBarVM
     {
         public int ID { get; set; }
         public string Name { get; set; }
     }
-
-
-
     public class IpInfo
     {
         //country

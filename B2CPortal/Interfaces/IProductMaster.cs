@@ -22,15 +22,9 @@ namespace B2CPortal.Interfaces
         Task<List<ProductsVM>> SearchProducts(string name);
 
         Task<ProductMaster> GetDataForWishList(int id);
-
-        //Task<ProductMaster> AddProduct(ProductMaster Product);
-        //Task<bool> DeleteProduct(long Id);
-
         Task<BrandCategoryVM> GetSidebar();
-        Task<IEnumerable<ProductMaster>> GetProductListbySidebar(SideBarVM[] filterList); //int[] filterList
 
-        //Task<ProductMaster> AddProduct(ProductMaster Product);
-        //Task<bool> DeleteProduct(long Id);
+        Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage); //int[] filterList
 
     }
 }

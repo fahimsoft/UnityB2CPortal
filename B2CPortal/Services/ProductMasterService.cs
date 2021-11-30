@@ -136,7 +136,6 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
         public async Task<BrandCategoryVM> GetSidebar()
         {
             try
@@ -165,11 +164,17 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
-        public async Task<IEnumerable<ProductMaster>> GetProductListbySidebar(SideBarVM[] filterList) //int[] filterList
+        public async Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage) //int[] filterList
         {
             try
             {
+                var totalProduct = 0;
+
+                if (filterList == null)
+                {
+                    filterList = new SideBarVM[] { };
+                }
+
                 int[] cat = new int[filterList.Count(x => x.Name == "Category")];
                 int[] brand = new int[filterList.Count(x => x.Name == "Brand")];
                 int catI = 0;
@@ -193,52 +198,159 @@ namespace B2CPortal.Services
                 var obj = new List<ProductMaster>();
                 if (cat.Length > 0 && brand.Length > 0)
                 {
-                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
-                    && (cat.Contains(x.FK_ProductCategory) 
-                    && brand.Contains(x.FK_ProductBrand)))
-                        //.Include(x => x.ProductCategory)
-                        //.Include(x => x.ProductBrand)
-                        .OrderByDescending(x=>x.Id)
-                        .AsNoTracking()
-                        .ToListAsync();
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand))
+                        && x.Name.Contains(search))
+                            .Include(x => x.ProductPrices)
+                            .OrderByDescending(x => x.Id)
+                            .AsNoTracking()
+                            .Skip(prevPage).Take(nextPage)
+                            .ToListAsync();
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                            && (cat.Contains(x.FK_ProductCategory)
+                            && brand.Contains(x.FK_ProductBrand))
+                            && x.Name.Contains(search)
+                        );
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand)))
+                            .Include(x => x.ProductPrices)
+                            .OrderByDescending(x => x.Id)
+                            .AsNoTracking()
+                            .Skip(prevPage).Take(nextPage)
+                            .ToListAsync();
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                            && (cat.Contains(x.FK_ProductCategory)
+                            && brand.Contains(x.FK_ProductBrand))
+                        );
+                    }
                 }
                 else if (cat.Length > 0)
                 {
-                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true && 
-                    cat.Contains(x.FK_ProductCategory))
-                        //.Include(x => x.ProductCategory)
-                        //.Include(x => x.ProductBrand)
-                        .Include(x =>x.ProductPrices)
-                        .OrderByDescending(x => x.Id)
-                        .AsNoTracking()
-                        .ToListAsync();
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory)
+                        && x.Name.Contains(search))
+
+                            .Include(x => x.ProductPrices)
+                            .OrderByDescending(x => x.Id)
+                            .AsNoTracking()
+                            .Skip(prevPage).Take(nextPage)
+                            .ToListAsync();
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                            && cat.Contains(x.FK_ProductCategory)
+                            && x.Name.Contains(search)
+                        );
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory))
+
+                            .Include(x => x.ProductPrices)
+                            .OrderByDescending(x => x.Id)
+                            .AsNoTracking()
+                            .Skip(prevPage).Take(nextPage)
+                            .ToListAsync();
+                        //wrong count
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory));
+                    }
                 }
                 else if (brand.Length > 0)
                 {
-                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true && 
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand)
+                        && x.Name.Contains(search))
+
+                            .Include(x => x.ProductPrices)
+                            .OrderByDescending(x => x.Id)
+                            .AsNoTracking()
+                            .Skip(prevPage).Take(nextPage)
+                            .ToListAsync();
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand)
+                        && x.Name.Contains(search));
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
                     brand.Contains(x.FK_ProductBrand))
-                        //.Include(x => x.ProductCategory)
-                        //.Include(x => x.ProductBrand)
+
                         .Include(x => x.ProductPrices)
                         .OrderByDescending(x => x.Id)
                         .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
                         .ToListAsync();
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                    brand.Contains(x.FK_ProductBrand));
+                    }
+                }
+                else if (search.Length > 0)
+                {
+                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                    && x.Name.Contains(search))
+
+                        .Include(x => x.ProductPrices)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                    x.Name.Contains(search));
                 }
                 else
                 {
                     obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true)
-                        //.Include(x => x.ProductCategory)
-                        //.Include(x => x.ProductBrand)
+                        .Include(x => x.ProductPrices)
+
                         .OrderByDescending(x => x.Id)
                         .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
                         .ToListAsync();
 
+                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true);
                 }
 
-                return obj;
+                List<ProductsVM> productsVM = new List<ProductsVM>();
 
-                //var obj = await _dxcontext.ProductMasters.Where(x=>x.IsActive).Include(x => x.ProductPrices).Include(x => x.ProductDetails).Include(x => x.ProductPackSize).Where(x => x.Id == brandId).OrderByDescending(a => a.Id).ToListAsync();//  GetAll();
-                //var obj = await _dxcontext.ProductMasters.Where(x=>x.IsActive).Include(x => x.ProductPrices).Include(x => x.ProductDetails).Include(x => x.ProductPackSize).OrderByDescending(a => a.Id).ToListAsync();//  GetAll();
+
+
+                foreach (var item in obj)
+                {
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = item.ProductPrices.Select(x => x.Price).FirstOrDefault(),
+                        Discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        totalProduct = totalProduct
+
+                    };
+                    productsVM.Add(producVMList);
+                }
+
+
+                return productsVM;
 
 
             }
