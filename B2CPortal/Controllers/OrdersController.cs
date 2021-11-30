@@ -120,7 +120,7 @@ namespace B2CPortal.Controllers
                         {
                             foreach (var item in cartlist)
                             {
-                                OrderTotal = (int)(OrderTotal + item.TotalPrice);
+                                OrderTotal = (int)(OrderTotal + item.TotalPrice == null ? 0:item.TotalPrice);
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -132,15 +132,10 @@ namespace B2CPortal.Controllers
                                 {
                                     Name = productData.Name,
                                     Quantity = item.Quantity,
-                                    TotalPrice = (int)item.TotalPrice
-
-
-
-
-
+                                    TotalPrice = (int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
                                 };
                                 orderVMs.Add(Order);
-                                orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)item.TotalPrice);
+                                orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
                             }
                             orderVM.orderVMs = orderVMs;
                             orderVM.CartSubTotal = subTotal;
@@ -290,23 +285,12 @@ namespace B2CPortal.Controllers
                         {
                             // return SuccessResponse("true");
                             return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-
-
-
                         }
                         else
                         {
                             //return BadResponse("Failed");
                             return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
-
-
-
                         }
-
-
-
-
-                        // return Json(new { data = res, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                     }
                     else
                     {

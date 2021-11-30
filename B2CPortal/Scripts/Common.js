@@ -208,7 +208,7 @@ function autocomplete(inp, arr) {
                     /*make the matching letters bold:*/
                     b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
                     b.innerHTML += "<strong class='searchnametxt'>" + item.Name + "</strong>";
-                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " ${pricesymbol.symbol}</strong>";
+                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " PKR </strong>";
                     //b.innerHTML += item.;
                     /*insert a input field that will hold the current array item's value:*/
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
