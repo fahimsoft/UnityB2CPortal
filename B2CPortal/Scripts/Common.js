@@ -16,8 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
         success: function (json) {
             debugger
             if (json.country == "Pakistan") {
-                pricesymbol.symbol = "$";
+                pricesymbol.symbol = "$.";
+
                 document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+
                 //$(".pricesymbol").text(pricesymbol.symbol);
             } else {
                 pricesymbol.symbol = "PKR.";
@@ -31,13 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 window.onload = function () {
     var divToHide = document.getElementById('quick-view');
     document.onclick = function (e) {
         $(e.target).find('.modal-content').remove();
     };
-
 };
 $(document).ready(function () {
     ShowCartProducts();
@@ -479,7 +479,7 @@ ${moment(item.Date).format('DD-MMM-yyyy')}
     });
 }
 //Plus and minus quentiry------------>
-//---------------cart count and hover list----------------]
+//---------------cart count and hover list----------------
 //---------------cart Wishlist ----------------
 function HandleAddtoWishList(id) {
     var proid = $(id).attr("productIdList");
@@ -1127,7 +1127,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${productPriceValue.Price}${pricesymbol.symbol}</del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} ${pricesymbol.symbol}</span>
+                                    <span><del style='color: silver'>${productPriceValue.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} ${pricesymbol.symbol}</span>
                                 </div>
                             </div>
                         </div>
@@ -1141,6 +1141,7 @@ function loadFeatureProduct() {
 
             });
             $('#ulLoadFeatureProduct').html(html);
+            debugger
             document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
@@ -1712,5 +1713,6 @@ var paymenttype = {
     JazzCash: "JazzCash",
     EasyPaisa: "EasyPaisa",
 };
+document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
 
 //*******************************************************************

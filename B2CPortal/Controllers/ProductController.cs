@@ -11,6 +11,9 @@ using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net;
+using System.Web.Script.Serialization;
+using System.Globalization;
 
 namespace B2CPortal.Controllers
 {
@@ -31,11 +34,13 @@ namespace B2CPortal.Controllers
         }
 
         [HttpGet]
+
         [ActionName("GetProduct")]
         public async Task<JsonResult> GetProduct()
         {
             try
             {
+
                 var obj = await _IProductMaster.GetProduct();
                 return SuccessResponse(obj);
             }
@@ -52,6 +57,8 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                GetCountryByIP();
+
                 var obj = await _IProductMaster.GetFeaturedProduct();
                 return SuccessResponse(obj);
             }
@@ -83,7 +90,7 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
-      [HttpPost]
+        [HttpPost]
         public async Task<JsonResult> SearchProductList(string Prefix)
         {
             var productmasetr = await _IProductMaster.SearchProducts(Prefix);
@@ -92,6 +99,7 @@ namespace B2CPortal.Controllers
         }
         public async Task<JsonResult> GetCartCount()
         {
+            GetCountryByIP();
             string cartguid = string.Empty;
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -157,7 +165,7 @@ namespace B2CPortal.Controllers
         }
         public async Task<ActionResult> GetCartList()
         {
-             List < CartViewModel > cartViewModels = new List<CartViewModel>();
+            List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
             string cookie = string.Empty;
             if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
@@ -264,7 +272,7 @@ namespace B2CPortal.Controllers
                 }
                 else
                 {
-                    cookie =  Guid.NewGuid().ToString();
+                    cookie = Guid.NewGuid().ToString();
                     HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
                 }
                 var productobj = await _IProductMaster.GetProductById(proid);
@@ -273,7 +281,7 @@ namespace B2CPortal.Controllers
                 var fixprice = price * (1 - (discount / 100));
                 var cart = new Cart();
                 cart.Quantity = quentity;
-                cart.Guid =cookie;
+                cart.Guid = cookie;
                 cart.IsWishlist = false;
                 cart.IsActive = true;
                 cart.TotalPrice = fixprice;
@@ -284,7 +292,7 @@ namespace B2CPortal.Controllers
                     cart.FK_Customer = userid;
                 }
                 var obj = await _cart.CreateCart(cart);
-               
+
                 var cartproducts = await _cart.GetCartProducts(cookie, userid);
                 var totalquentity = cartproducts.Sum(x => x.Quantity);
                 msg = obj == null ? "You Can't Add to Cart more then 10 times" : "AdD to Cart Successfully !";
@@ -303,12 +311,12 @@ namespace B2CPortal.Controllers
         {
             string msg = string.Empty;
             var cartproducts = await _cart.DeleteCart(id);
-            msg = cartproducts == true ? "Delete Cart Product Successfully !" : "Error: Cart Not Deleted !"; 
+            msg = cartproducts == true ? "Delete Cart Product Successfully !" : "Error: Cart Not Deleted !";
             return Json(new { data = "", msg = msg, success = cartproducts }, JsonRequestBehavior.AllowGet);
 
         }
         [HttpPost]
-        public async Task<JsonResult> UpdateCartList(List<int> cartquentites , List<int> cartids)
+        public async Task<JsonResult> UpdateCartList(List<int> cartquentites, List<int> cartids)
         {
             string msg = string.Empty;
             bool updateresult = false;
@@ -338,7 +346,7 @@ namespace B2CPortal.Controllers
             {
                 string msg = string.Empty;
                 bool updateresult = false;
-                for (int i=0; i < wishlistids.Count(); i++)
+                for (int i = 0; i < wishlistids.Count(); i++)
                 {
                     var wishlistProducts = await _cart.GetWishlistById(wishlistids[i]);
                     if (wishlistProducts != null)
@@ -800,7 +808,7 @@ namespace B2CPortal.Controllers
                 //{
                 //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 //}), "application/json");
-               // return this.Json(new { data = jsonStr, msg = "", success = true}, JsonRequestBehavior.AllowGet);
+                // return this.Json(new { data = jsonStr, msg = "", success = true}, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception Ex)
@@ -809,38 +817,44 @@ namespace B2CPortal.Controllers
                 throw Ex;
             }
         }
+        public static void GetCountryByIP()
+        {
+            string pricesymbol = "pricesymbol";
+                string pricesymbolvalue = "PKR";
+            if (string.IsNullOrEmpty(HelperFunctions.GetCookie(pricesymbol)))
+            {
+                IpInfo ipInfo = new IpInfo();
+                string info = new WebClient().DownloadString("http://ipinfo.io");
+                JavaScriptSerializer jsonObject = new JavaScriptSerializer();
+                ipInfo = jsonObject.Deserialize<IpInfo>(info);
+                RegionInfo region = new RegionInfo(ipInfo.Country);
+                if (region.EnglishName.ToLower() == "pakistan" || ipInfo.Country.ToLower() == "pk")
+                {
+                    HelperFunctions.SetCookie(pricesymbol, pricesymbolvalue, 1);
+                }
+                else
+                {
+                    pricesymbolvalue = "$";
+                    HelperFunctions.SetCookie(pricesymbol, pricesymbolvalue, 1);
+                }
+            }
+        }
+
     }
 
-    //public async List<CartViewModel> GetAddtoCartLIst(IEnumerable<Cart> cartproducts)
-    //{
-    //    List<CartViewModel> cartViewModels = new List<CartViewModel>();
-
-    //    foreach (var item in cartproducts)
-    //    {
-    //        var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-    //        string name = productmasetr.Select(x => x.Name).FirstOrDefault();
-    //        string MasterImageUrl = productmasetr.Select(x => x.MasterImageUrl).FirstOrDefault();
-    //        var discountobj = productmasetr.Select(x => x.ProductPrices).FirstOrDefault();
-    //        var discount = discountobj.Select(x => x.Discount).FirstOrDefault();
-    //        var price = discountobj.Select(x => x.Price).FirstOrDefault();
-    //        var cartobj = new CartViewModel
-    //        {
-    //            Price = price,
-    //            Quantity = (int)item.Quantity,
-    //            Name = name,
-    //            MasterImageUrl = MasterImageUrl,
-    //            Discount = discount,
-    //            TotalPrice = item.TotalPrice == null ? 0 : (decimal)item.TotalPrice
-
-    //        };
-    //        cartViewModels.Add(cartobj);
-    //    }
-    //    return  cartViewModels;
-    //}
 
     public class SideBarVM
     {
         public int ID { get; set; }
         public string Name { get; set; }
     }
+
+
+
+    public class IpInfo
+    {
+        //country
+        public string Country { get; set; }
+    }
+
 }
