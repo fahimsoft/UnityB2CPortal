@@ -892,7 +892,6 @@ namespace B2CPortal.Controllers
             }
             return pricesymbolvalue;
         }
-
         private decimal ExchangeRateFromAPI(decimal amount, string firstCcode, string lastCcode)
 
         {

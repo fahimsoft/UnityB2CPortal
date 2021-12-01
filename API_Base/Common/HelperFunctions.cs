@@ -27,7 +27,7 @@ namespace API_Base.Common
       
         public static void SetCookie(string cookieName, string cookieValue, int days)
         {
-            HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+            //HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
 
             cookieName = cookieName.ToLower();
             var cookie = new HttpCookie(cookieName)
