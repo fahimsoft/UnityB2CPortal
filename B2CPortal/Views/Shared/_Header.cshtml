@@ -79,10 +79,10 @@
                                         <a href="#"><i class="mdi mdi-settings"></i></a>
                                         <ul>
                                             @*<li><a href="my-account.html">My account</a></li>*@
-                                            <li><a href="@Url.Action("AddToCart","Product")">My cart</a></li>
-                                            <li><a href="@Url.Action("Wishlist","Product")">My wishlist</a></li>
-                                            <li><a href="@Url.Action("Checkout","Orders")">Check out</a></li>
-                                            <li><a href="@Url.Action("Index","Orders")">My Orders</a></li>
+                                            <li><a href="@Url.Action("AddToCart", "Product")">My cart</a></li>
+                                            <li><a href="@Url.Action("Wishlist", "Product")">My wishlist</a></li>
+                                            <li><a href="@Url.Action("Checkout", "Orders")">Check out</a></li>
+                                            <li><a href="@Url.Action("Index", "Orders")">My Orders</a></li>
                                         </ul>
                                     </li>
                                 </ul>
@@ -150,7 +150,12 @@
                         </ul>
                         </li>*@
                                     <li><a href="about.html">About</a></li>
-                                    <li><a href="@Url.Action("ContactUs","Contact")">Contact</a></li>
+                                    <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
+                                    <li>
+                                        Conversion Rate
+                                        @{string rate =  string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "null" : Session["ConversionRate"]?.ToString();  }
+                                       <br /> @rate
+                                    </li>
 
 
 

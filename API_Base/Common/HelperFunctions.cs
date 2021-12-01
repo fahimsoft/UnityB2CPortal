@@ -113,7 +113,6 @@ namespace API_Base.Common
             }
             return false;
         }
-
         public static string GetConvertedCurrencyAmount(string from, string to)
         {
             //var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-all?api_key=/convert?from="+from+"&to="+to+"&amount="+amount+"&api_key=b75242ac8a-e6d2b7e4c3-r3frds");
@@ -123,9 +122,6 @@ namespace API_Base.Common
              root = jsonObject.Deserialize<Root>(result);
             return root.result.PKR.ToString();
         }
-
-                
-
         // Email configuration
         public static bool EmailSend(string SenderEmail, string Subject, string Message, bool IsBodyHtml = false)
         {
