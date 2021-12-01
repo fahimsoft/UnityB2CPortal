@@ -3,17 +3,15 @@ using API_Base.Common;
 using B2C_Models.Models;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
-using B2CPortal.Services;
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Net;
 using System.Web.Script.Serialization;
-using System.Globalization;
 
 namespace B2CPortal.Controllers
 {
@@ -39,6 +37,7 @@ namespace B2CPortal.Controllers
         {
             try
             {
+
 
                 var obj = await _IProductMaster.GetProduct();
                 return SuccessResponse(obj);
@@ -95,8 +94,6 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                GetCountryByIP();
-
                 var obj = await _IProductMaster.GetFeaturedProduct();
                 return SuccessResponse(obj);
             }
@@ -137,7 +134,7 @@ namespace B2CPortal.Controllers
         }
         public async Task<JsonResult> GetCartCount()
         {
-            GetCountryByIP();
+            GetCountryByIP(Request);
             string cartguid = string.Empty;
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -413,7 +410,6 @@ namespace B2CPortal.Controllers
 
         }
 
-        //edit by ahsan-------------
         [HttpPost]
         public async Task<JsonResult> UpdateWishList(List<int> wishlistids, List<int> wishlistquentites)
         {
@@ -857,29 +853,68 @@ namespace B2CPortal.Controllers
                 throw Ex;
             }
         }
-        public static void GetCountryByIP()
+        public static string GetCountryByIP(HttpRequestBase request)
         {
-            string pricesymbol = "pricesymbol";
-                string pricesymbolvalue = "PKR";
-            if (string.IsNullOrEmpty(HelperFunctions.GetCookie(pricesymbol)))
+            string pricesymbolvalue = "PKR";
+            if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.pricesymbol)) && HelperFunctions.GetCookie(HelperFunctions.pricesymbol) != "undefined")
             {
+                pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
+            }
+            else
+            {
+
                 IpInfo ipInfo = new IpInfo();
-                string info = new WebClient().DownloadString("http://ipinfo.io");
+                string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
                 JavaScriptSerializer jsonObject = new JavaScriptSerializer();
                 ipInfo = jsonObject.Deserialize<IpInfo>(info);
-                RegionInfo region = new RegionInfo(ipInfo.Country);
-                if (region.EnglishName.ToLower() == "pakistan" || ipInfo.Country.ToLower() == "pk")
+                if (ipInfo.Country == null ||  (ipInfo.Country?.ToLower() == "pakistan" || ipInfo.Country?.ToLower() == "pk"))
                 {
-                    HelperFunctions.SetCookie(pricesymbol, pricesymbolvalue, 1);
+                    pricesymbolvalue = "PKR";
+                    HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
                 }
                 else
                 {
                     pricesymbolvalue = "$";
-                    HelperFunctions.SetCookie(pricesymbol, pricesymbolvalue, 1);
+                    HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
                 }
             }
+            return pricesymbolvalue;
         }
 
+        private decimal ExchangeRateFromAPI(decimal amount, string firstCcode, string lastCcode)
+
+        {
+
+            try
+
+            {
+
+                WebClient web = new WebClient();
+
+                const string urlPattern = "http://finance.yahoo.com/d/quotes.csv?s={0}{1}=X&f=l1";
+
+                string url = String.Format(urlPattern, firstCcode, lastCcode);
+
+                // Get response as string
+
+                string response = new WebClient().DownloadString(url);
+
+                // Convert string to number
+
+                decimal exchangeRate = decimal.Parse(response, System.Globalization.CultureInfo.InvariantCulture);
+
+                return exchangeRate;
+
+            }
+
+            catch (Exception ex)
+            {
+
+                return 0;
+
+            }
+
+        }
     }
     public class SideBarVM
     {

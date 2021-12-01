@@ -9,6 +9,7 @@ namespace B2CPortal.Models
 {
     public class OrderVM
     {
+
         public int Id { get; set; }
         public string Name { get; set; }
         public string FirstName { get; set; }
@@ -24,6 +25,9 @@ namespace B2CPortal.Models
         public string Status { get; set; }
         public string EmailId { get; set; }
         public string Gender { get; set; }
+        public string PaymentMode { get; set; }
+        public string Currency { get; set; }
+        public decimal ConversionRate { get; set; }
         public PaymentType paymenttype { get; set; }
         public Nullable<System.DateTime> DateOfBirth { get; set; }
         public string CNIC { get; set; }
@@ -46,13 +50,11 @@ namespace B2CPortal.Models
         public int FK_ProductMaster { get; set; }
         public Nullable<decimal> Discount { get; set; }
         public decimal CartSubTotal { get; set; }
+        public List<OrderVM> orderVMs { get; set; }
         public decimal CartSubTotalDiscount { get; internal set; }
 
         public decimal ShipingAndHostring { get; internal set; }
         public decimal OrderTotal { get; internal set; }
-        public int VatTax { get; internal set; }
-        public CartViewModel CartViewModel { get; set; }
-        public List<OrderVM> orderVMs { get; set; }
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
     }
@@ -62,5 +64,14 @@ namespace B2CPortal.Models
         HBL = 2,
         JazzCash = 3,
         EasyPaisa = 4
+    }
+    public enum OrderStatus
+    {
+        Pending = 1,
+        Confirmed = 2,
+        InProcess = 3,
+        Delivered = 4,
+        Cancelled = 5,
+        Rejected = 6,
     }
 }

@@ -19,10 +19,9 @@ namespace API_Base.PaymentMethod
             _easypaisa = new  EasyPaisaService();
             _hbl = new  HBLService();
         }
-
-        public void CreateStripePayment(PaymentViewModel paymentViewModel)
+        public dynamic CreateStripePayment(PaymentVM paymentViewModel)
         {
-            _stripe.CreatePayment(paymentViewModel);
+          return  _stripe.CreatePayment(paymentViewModel);
         }
 
 

@@ -8,6 +8,6 @@ namespace API_Base.PaymentMethod.Interfaces
 {
    public interface IEasyPaisa
     {
-        void CreatePayment(PaymentViewModel paymentViewModel);
+        void CreatePayment(PaymentVM paymentViewModel);
     }
 }

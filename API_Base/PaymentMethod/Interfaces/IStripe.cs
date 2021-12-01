@@ -8,6 +8,6 @@ namespace API_Base.PaymentMethod.Interfaces
 {
    public interface IStripe
     {
-        void CreatePayment(PaymentViewModel paymentViewModel);
+        dynamic CreatePayment(PaymentVM paymentViewModel);
     }
 }

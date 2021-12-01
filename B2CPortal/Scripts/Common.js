@@ -363,6 +363,7 @@ function Handleorderdetail(id) {
         //contentType: "application/json;charset=utf-8",
         //dataType: "json",
         success: function (result) {
+            debugger
             var html = '';
             var htmlProductPriceDetail = '', htmlProductSize = '';
             var data = result.data;

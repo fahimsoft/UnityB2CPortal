@@ -27,6 +27,8 @@ namespace B2C_Models.Models
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public string Currency { get; set; }
+        public Nullable<decimal> ConversionRate { get; set; }
     
         public virtual customer customer { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }

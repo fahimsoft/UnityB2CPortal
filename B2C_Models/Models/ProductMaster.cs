@@ -20,8 +20,8 @@ namespace B2C_Models.Models
             this.OrderDetails = new HashSet<OrderDetail>();
             this.ProductDetails = new HashSet<ProductDetail>();
             this.ProductPrices = new HashSet<ProductPrice>();
-            this.Carts = new HashSet<Cart>();
             this.CommentAndRatings = new HashSet<CommentAndRating>();
+            this.Carts = new HashSet<Cart>();
         }
     
         public int Id { get; set; }
@@ -50,9 +50,9 @@ namespace B2C_Models.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductPrice> ProductPrices { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Cart> Carts { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CommentAndRating> CommentAndRatings { get; set; }
         public virtual ProductCategory ProductCategory { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Cart> Carts { get; set; }
     }
 }

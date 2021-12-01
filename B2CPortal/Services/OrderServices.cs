@@ -33,7 +33,6 @@ namespace B2CPortal.Services
                 Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
                 if (Current == null)
                 {
-                    New();
                     Current.CreatedOn = DateTime.Now;
                     Current.FK_Customer = Billing.FK_Customer;
                     Current.PhoneNo = Billing.PhoneNo;
@@ -43,9 +42,13 @@ namespace B2CPortal.Services
                     Current.TotalPrice = (int)Billing.OrderTotal;
                     Current.TotalQuantity = Billing.TotalQuantity;
                     Current.OrderNo= Billing.OrderNo;
-                    Current.Status= Billing.Status;
-                    
-                    
+                    Current.Currency = Billing.Currency;
+                    Current.ConversionRate = Billing.ConversionRate;
+                    Current.PaymentMode = Billing.PaymentMode;
+                    Current.Status = Billing.Status;
+                    New();
+
+
 
                 }
                 else
@@ -64,10 +67,42 @@ namespace B2CPortal.Services
 
         }
 
-        public async Task<IEnumerable<OrderMaster>> GetOrderList()
+        public async Task<IEnumerable<OrderMaster>> GetOrderList(int userid)
         {
             //return await _dxcontext.OrderMasters.Include(x=> x.OrderDetails).ToListAsync();
-            return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true).OrderByDescending(x =>x.Id).ToListAsync();
+            return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true && x.FK_Customer == userid).OrderByDescending(x =>x.Id).ToListAsync();
+        }
+
+        public async Task<bool> UpdateOrderMAster(OrderVM ordervm)
+        {
+            try
+            {
+                Current = await _dxcontext.OrderMasters.Where(x => x.Id == ordervm.Id && x.IsActive == true).FirstOrDefaultAsync();
+                if (Current == null)
+                {
+                    New();
+                    Current.CreatedOn = DateTime.Now;
+                }
+                else
+                {
+                   PrimaryKeyValue = Current.Id;
+                    Current.ModifiedOn = DateTime.Now;
+                    Current.Currency = ordervm.Currency;
+                    Current.ConversionRate = ordervm.ConversionRate;
+                    Current.PaymentMode= ordervm.PaymentMode;
+                    Current.Status= ordervm.Status;
+                    Current.TotalPrice = ordervm.TotalPrice;
+
+
+                }
+                Save();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw;
+            }
         }
     }
 }

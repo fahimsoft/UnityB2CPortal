@@ -1,51 +1,100 @@
-﻿using B2CPortal.Models;
+﻿using API_Base.PaymentMethod;
+using B2CPortal.Interfaces;
+using B2CPortal.Models;
 using Stripe;
 using System;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace B2CPortal.Controllers
 {
     public class PaymentController : Controller
     {
+        private readonly IOrders _orders = null;
+        //private readonly IOrderDetail _ordersDetail = null;
+        private readonly IProductMaster _IProductMaster = null;
+        private readonly ICart _cart = null;
+        private readonly PaymentMethodFacade _PaymentMethodFacade = null;
+        public PaymentController(IOrders order, IProductMaster productMaster, ICart cart)
+        {
+            _orders = order;
+            _IProductMaster = productMaster;
+            _cart = cart;
+            _PaymentMethodFacade = new PaymentMethodFacade();
+        }
         public ActionResult Stripe()
         {
             ViewBag.Amount = Session["ordertotal"];
             return View();
         }
         [HttpPost]
-        public ActionResult Stripe(string stripeToken, Payment payment)
+        public async Task<ActionResult> StripeAsync(string stripeToken, Payment payment)
         {
-            StripeConfiguration.ApiKey = "sk_test_51K02zhHN8ZNk6QpY0XRnHeR44USPCKbNMY18HocZVMQ7BB0u2NA7xhzJum8kc1wZTJKiUWEVbOp6gwPA26eHF4Hh008jjfgFGZ";
             try
             {
-                if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()))
+                if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()))
                 {
-                    return RedirectToAction("Checkout","Orders");
+                    return RedirectToAction("Checkout", "Orders");
                 }
-                var customeroptions = new CustomerCreateOptions
+                var ConversionRate = "";
+                ConversionRate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString();
+
+                var paymentmodel = new PaymentVM
                 {
-                    Email = payment.Email,
                     Name = payment.Name,
+                    Email = payment.Email,
                     Phone = payment.Phone,
-                    Description = "Stripe payment",
-                    Source = stripeToken
-                };
-                var customerservice = new CustomerService();
-                 var customer = customerservice.Create(customeroptions);
-                payment.Description = "this payment from stripe";
-                var options = new ChargeCreateOptions
-                {
-                    Amount = long.Parse(Session["ordertotal"].ToString()) * 100 ,
-                    Currency = "usd",
                     Description = payment.Description,
-                  //  Source = stripeToken,
-                    Customer = customer.Id,
+                    StripeToken = stripeToken,
+                    Amount =  long.Parse(Session["ordertotal"].ToString()) > 50 ? long.Parse(Session["ordertotal"].ToString()) : long.Parse(Session["ordertotal"].ToString()) * 100,
+
                 };
-                var service = new ChargeService();
-                var charge = service.Create(options);
-                var model = new PaymentViewModel();
-                model.TotalPrice = (int?)options.Amount;
-                return View("PaymentStatus", model);
+                dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
+                if (result != null && ((Charge)result).Amount >  0)
+                {
+                    var ordervm = new OrderVM {
+                        Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
+                        Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString(),
+                        ConversionRate = decimal.Parse(ConversionRate),
+                        PaymentMode = PaymentType.Stripe.ToString(),
+                        Status = OrderStatus.Confirmed.ToString(),
+                        TotalPrice = Convert.ToInt32( paymentmodel.Amount)
+                    };
+                  var dd = await _orders.UpdateOrderMAster(ordervm);
+                    var model = new PaymentViewModel();
+                    model.TotalPrice = Convert.ToInt32(paymentmodel.Amount);
+                    return View("PaymentStatus", model);
+                }
+                else
+                {
+                    return RedirectToAction("Checkout", "Orders");
+                }
+                #region stripe comment code
+
+                //var customeroptions = new CustomerCreateOptions
+                //{
+                //    Email = payment.Email,
+                //    Name = payment.Name,
+                //    Phone = payment.Phone,
+                //    Description = "Stripe payment",
+                //    Source = stripeToken
+                //};
+                //var customerservice = new CustomerService();
+                // var customer = customerservice.Create(customeroptions);
+                //payment.Description = "this payment from stripe";
+                //var options = new ChargeCreateOptions
+                //{
+                //    Amount = long.Parse(Session["ordertotal"].ToString()) * 100 ,
+                //    Currency = "usd",
+                //    Description = payment.Description,
+                //  //  Source = stripeToken,
+                //    Customer = customer.Id,
+                //};
+                //var service = new ChargeService();
+                //var charge = service.Create(options);
+                #endregion
+
+
             }
             catch (Exception ex)
             {
@@ -54,7 +103,7 @@ namespace B2CPortal.Controllers
 
         }
 
-        public ActionResult PaymentStatus(PaymentViewModel paymentViewModel)
+        public ActionResult PaymentStatus(PaymentVM paymentViewModel)
         {
             return View(paymentViewModel);
         }

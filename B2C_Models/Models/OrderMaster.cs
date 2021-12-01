@@ -41,6 +41,9 @@ namespace B2C_Models.Models
         public string City { get; set; }
         public string Country { get; set; }
         public string Status { get; set; }
+        public string Currency { get; set; }
+        public Nullable<decimal> ConversionRate { get; set; }
+        public string PaymentMode { get; set; }
     
         public virtual customer customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

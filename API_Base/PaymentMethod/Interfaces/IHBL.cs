@@ -8,7 +8,7 @@ namespace API_Base.PaymentMethod.Interfaces
 {
    public interface IHBL
     {
-        void CreatePayment(PaymentViewModel paymentViewModel);
+        void CreatePayment(PaymentVM paymentViewModel);
 
     }
 }

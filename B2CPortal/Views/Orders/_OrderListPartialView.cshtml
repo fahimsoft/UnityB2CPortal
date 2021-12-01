@@ -32,6 +32,7 @@
                                         <th>Description</th>
                                         <th>Quantity</th>
                                         <th> Price</th>
+                                        <th> Payment Mode</th>
                                         <th> Status</th>
                                         <th> Action</th>
                                     </tr>
@@ -87,6 +88,9 @@
 
                                                 <td>
                                                     @item.TotalPrice
+                                                </td>
+                                                <td>
+                                                    @item.PaymentMode
                                                 </td>
                                                 <td style="color:rebeccapurple">
                                                     @item.Status
@@ -161,8 +165,6 @@
         });
     });
     $(".removecartbtn").click(function () {
-        debugger
-        toastr.info("Please Wait");
         var row = $(this).closest("tr");
         var id = $(row).attr('data-id');
         $.ajax({

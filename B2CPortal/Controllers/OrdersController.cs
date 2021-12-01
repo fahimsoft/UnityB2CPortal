@@ -71,20 +71,36 @@ namespace B2CPortal.Controllers
         }
         public async Task<ActionResult> GetOrderList()
         {
-        
-            List<OrderVM> list = new List<OrderVM>();
-            var orderlist = await _orders.GetOrderList();
 
-            foreach (var item in orderlist)
+            try
             {
-                OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
-                var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
-                dd.OrderNo = result;
-                
+                List<OrderVM> list = new List<OrderVM>();
+                if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
+                {
+                    int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    var orderlist = await _orders.GetOrderList(userid);
 
-                list.Add((OrderVM)dd);
+                    foreach (var item in orderlist)
+                    {
+                        OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
+                        var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
+                        dd.OrderNo = result;
+
+                        list.Add((OrderVM)dd);
+                    }
+                    return PartialView("_OrderListPartialView", list);
+                }
+                else
+                {
+                    string CurrentURL = Request.Url.AbsoluteUri;
+                    TempData["returnurl"] = CurrentURL;
+                    return RedirectToAction("Login", "Account");
+                }
             }
-           return PartialView("_OrderListPartialView", list);
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
         #endregion
         [HttpGet]
@@ -190,9 +206,11 @@ namespace B2CPortal.Controllers
                 var subTotal = 0;
                 var customerId = 0;
                 var tQuantity = 0;
+                var ConversionRate = "";
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    ConversionRate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString();
                     if (customerId > 0)
                     {
                         // Billing Details Add
@@ -222,6 +240,10 @@ namespace B2CPortal.Controllers
                             Billing.CartSubTotal = subTotal;
                             Billing.OrderTotal = OrderTotal;
                             Billing.TotalQuantity = tQuantity;
+                            Billing.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
+                            Billing.ConversionRate = decimal.Parse(ConversionRate);
+                            Billing.PaymentMode = Billing.paymenttype.ToString();
+                            Billing.Status = OrderStatus.InProcess.ToString();
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);
@@ -261,6 +283,7 @@ namespace B2CPortal.Controllers
 
                         if (Billing.paymenttype == PaymentType.Stripe)
                         {
+                            Session["ordermasterId"] = ordermasterId;
                             string url =   Url.Action("Stripe","Payment");
                             return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }

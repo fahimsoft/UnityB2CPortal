@@ -38,9 +38,9 @@ namespace B2C_Models.Models
         public virtual DbSet<Userinfo> Userinfoes { get; set; }
         public virtual DbSet<ProductPrice> ProductPrices { get; set; }
         public virtual DbSet<customer> customers { get; set; }
-        public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<CommentAndRating> CommentAndRatings { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
+        public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<OrderMaster> OrderMasters { get; set; }
     }
 }

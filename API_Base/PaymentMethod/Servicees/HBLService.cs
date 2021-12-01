@@ -9,7 +9,7 @@ namespace API_Base.PaymentMethod.Servicees
 {
     public class HBLService : IHBL
     {
-        public void CreatePayment(PaymentViewModel paymentViewModel)
+        public void CreatePayment(PaymentVM paymentViewModel)
         {
             throw new NotImplementedException();
         }

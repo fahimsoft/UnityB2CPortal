@@ -24,13 +24,13 @@
         <EntityTypeShape EntityType="B2CModel.ProductPrice" Width="1.5" PointX="7.5" PointY="9.625" />
         <AssociationConnector Association="B2CModel.FK_ProductPrice_ProductMaster" />
         <EntityTypeShape EntityType="B2CModel.customer" Width="1.5" PointX="6" PointY="1" />
-        <EntityTypeShape EntityType="B2CModel.Cart" Width="1.5" PointX="11.25" PointY="5.625" />
-        <AssociationConnector Association="B2CModel.FK_Cart_Customer" />
-        <AssociationConnector Association="B2CModel.FK_Cart_ProductMaster" />
         <EntityTypeShape EntityType="B2CModel.CommentAndRating" Width="1.5" PointX="7.5" PointY="14.5" />
         <AssociationConnector Association="B2CModel.FK_CommentAndRating_ProductMaster" />
         <EntityTypeShape EntityType="B2CModel.ProductCategory" Width="1.5" PointX="3" PointY="4.25" />
         <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductCategory" />
+        <EntityTypeShape EntityType="B2CModel.Cart" Width="1.5" PointX="11.25" PointY="5.5" />
+        <AssociationConnector Association="B2CModel.FK_Cart_Customer" />
+        <AssociationConnector Association="B2CModel.FK_Cart_ProductMaster" />
         <EntityTypeShape EntityType="B2CModel.OrderMaster" Width="1.5" PointX="8.25" PointY="0.75" />
         <AssociationConnector Association="B2CModel.FK_OrderMaster_Customer" />
         <AssociationConnector Association="B2CModel.FK_OrderDetail_OrderMaster" />

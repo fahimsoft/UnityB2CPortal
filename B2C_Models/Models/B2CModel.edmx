@@ -22,6 +22,8 @@
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="Currency" Type="varchar" MaxLength="50" />
+          <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="City">
           <Key>
@@ -120,6 +122,9 @@
           <Property Name="City" Type="varchar" MaxLength="50" />
           <Property Name="Country" Type="varchar" MaxLength="50" />
           <Property Name="Status" Type="varchar" MaxLength="50" />
+          <Property Name="Currency" Type="varchar" MaxLength="50" />
+          <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="PaymentMode" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="ProductBrand">
           <Key>
@@ -506,15 +511,6 @@
             <End Role="ProductPrice" EntitySet="ProductPrices" />
           </AssociationSet>
           <EntitySet Name="customers" EntityType="B2CModel.customer" />
-          <EntitySet Name="Carts" EntityType="B2CModel.Cart" />
-          <AssociationSet Name="FK_Cart_Customer" Association="B2CModel.FK_Cart_Customer">
-            <End Role="customer" EntitySet="customers" />
-            <End Role="Cart" EntitySet="Carts" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Cart_ProductMaster" Association="B2CModel.FK_Cart_ProductMaster">
-            <End Role="ProductMaster" EntitySet="ProductMasters" />
-            <End Role="Cart" EntitySet="Carts" />
-          </AssociationSet>
           <EntitySet Name="CommentAndRatings" EntityType="B2CModel.CommentAndRating" />
           <AssociationSet Name="FK_CommentAndRating_ProductMaster" Association="B2CModel.FK_CommentAndRating_ProductMaster">
             <End Role="ProductMaster" EntitySet="ProductMasters" />
@@ -524,6 +520,15 @@
           <AssociationSet Name="FK_ProductMaster_ProductCategory" Association="B2CModel.FK_ProductMaster_ProductCategory">
             <End Role="ProductCategory" EntitySet="ProductCategories" />
             <End Role="ProductMaster" EntitySet="ProductMasters" />
+          </AssociationSet>
+          <EntitySet Name="Carts" EntityType="B2CModel.Cart" />
+          <AssociationSet Name="FK_Cart_Customer" Association="B2CModel.FK_Cart_Customer">
+            <End Role="customer" EntitySet="customers" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Cart_ProductMaster" Association="B2CModel.FK_Cart_ProductMaster">
+            <End Role="ProductMaster" EntitySet="ProductMasters" />
+            <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
           <EntitySet Name="OrderMasters" EntityType="B2CModel.OrderMaster" />
           <AssociationSet Name="FK_OrderMaster_Customer" Association="B2CModel.FK_OrderMaster_Customer">
@@ -624,10 +629,10 @@
           <NavigationProperty Name="ProductVariant" Relationship="B2CModel.FK_ProductMaster_ProductVariant" FromRole="ProductMaster" ToRole="ProductVariant" />
           <Property Name="MasterImageUrl" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="ProductPrices" Relationship="B2CModel.FK_ProductPrice_ProductMaster" FromRole="ProductMaster" ToRole="ProductPrice" />
-          <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="ProductMaster" ToRole="Cart" />
           <NavigationProperty Name="CommentAndRatings" Relationship="B2CModel.FK_CommentAndRating_ProductMaster" FromRole="ProductMaster" ToRole="CommentAndRating" />
           <Property Name="IsFeatured" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ProductCategory" Relationship="B2CModel.FK_ProductMaster_ProductCategory" FromRole="ProductMaster" ToRole="ProductCategory" />
+          <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="ProductMaster" ToRole="Cart" />
         </EntityType>
         <EntityType Name="ProductPackSize">
           <Key>
@@ -791,57 +796,13 @@
           <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Country" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_Customer" FromRole="customer" ToRole="Cart" />
-          <NavigationProperty Name="OrderMasters" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="customer" ToRole="OrderMaster" />
           <Property Name="Guid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="IsWebUser" Type="Boolean" />
           <Property Name="IsAppUser" Type="Boolean" />
           <Property Name="RegisteredFrom" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_Customer" FromRole="customer" ToRole="Cart" />
+          <NavigationProperty Name="OrderMasters" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="customer" ToRole="OrderMaster" />
         </EntityType>
-        <EntityType Name="Cart">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="FK_ProductMaster" Type="Int32" Nullable="false" />
-          <Property Name="FK_Customer" Type="Int32" />
-          <Property Name="Guid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="IsWishlist" Type="Boolean" />
-          <Property Name="TotalQuantity" Type="Int32" />
-          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="CreatedOn" Type="DateTime" Precision="0" />
-          <Property Name="CreatedBy" Type="Int32" />
-          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
-          <Property Name="ModifiedBy" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" />
-          <NavigationProperty Name="customer" Relationship="B2CModel.FK_Cart_Customer" FromRole="Cart" ToRole="customer" />
-          <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="Cart" ToRole="ProductMaster" />
-        </EntityType>
-        <Association Name="FK_Cart_Customer">
-          <End Type="B2CModel.customer" Role="customer" Multiplicity="0..1" />
-          <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="customer">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Cart">
-              <PropertyRef Name="FK_Customer" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_Cart_ProductMaster">
-          <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="1" />
-          <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductMaster">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Cart">
-              <PropertyRef Name="FK_ProductMaster" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <EntityType Name="CommentAndRating">
           <Key>
             <PropertyRef Name="Id" />
@@ -899,6 +860,52 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FK_ProductMaster" Type="Int32" Nullable="false" />
+          <Property Name="FK_Customer" Type="Int32" />
+          <Property Name="Guid" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="IsWishlist" Type="Boolean" />
+          <Property Name="TotalQuantity" Type="Int32" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="0" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
+          <Property Name="ModifiedBy" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="customer" Relationship="B2CModel.FK_Cart_Customer" FromRole="Cart" ToRole="customer" />
+          <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="Cart" ToRole="ProductMaster" />
+        </EntityType>
+        <Association Name="FK_Cart_Customer">
+          <End Type="B2CModel.customer" Role="customer" Multiplicity="0..1" />
+          <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="FK_Customer" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Cart_ProductMaster">
+          <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="1" />
+          <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="FK_ProductMaster" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityType Name="OrderMaster">
           <Key>
             <PropertyRef Name="Id" />
@@ -923,9 +930,12 @@
           <Property Name="IsActive" Type="Boolean" />
           <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Country" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="PaymentMode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="customer" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="OrderMaster" ToRole="customer" />
           <NavigationProperty Name="OrderDetails" Relationship="B2CModel.FK_OrderDetail_OrderMaster" FromRole="OrderMaster" ToRole="OrderDetail" />
-          <Property Name="Status" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <Association Name="FK_OrderMaster_Customer">
           <End Type="B2CModel.customer" Role="customer" Multiplicity="1" />
@@ -1143,25 +1153,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Carts">
-            <EntityTypeMapping TypeName="B2CModel.Cart">
-              <MappingFragment StoreEntitySet="Cart">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
-                <ScalarProperty Name="TotalQuantity" ColumnName="TotalQuantity" />
-                <ScalarProperty Name="IsWishlist" ColumnName="IsWishlist" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-                <ScalarProperty Name="Guid" ColumnName="Guid" />
-                <ScalarProperty Name="FK_Customer" ColumnName="FK_Customer" />
-                <ScalarProperty Name="FK_ProductMaster" ColumnName="FK_ProductMaster" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="CommentAndRatings">
             <EntityTypeMapping TypeName="B2CModel.CommentAndRating">
               <MappingFragment StoreEntitySet="CommentAndRating">
@@ -1195,9 +1186,33 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="B2CModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="TotalQuantity" ColumnName="TotalQuantity" />
+                <ScalarProperty Name="IsWishlist" ColumnName="IsWishlist" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Guid" ColumnName="Guid" />
+                <ScalarProperty Name="FK_Customer" ColumnName="FK_Customer" />
+                <ScalarProperty Name="FK_ProductMaster" ColumnName="FK_ProductMaster" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OrderMasters">
             <EntityTypeMapping TypeName="B2CModel.OrderMaster">
               <MappingFragment StoreEntitySet="OrderMaster">
+                <ScalarProperty Name="PaymentMode" ColumnName="PaymentMode" />
+                <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
                 <ScalarProperty Name="Country" ColumnName="Country" />
                 <ScalarProperty Name="City" ColumnName="City" />
