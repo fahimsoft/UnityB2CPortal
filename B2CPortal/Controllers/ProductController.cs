@@ -134,7 +134,19 @@ namespace B2CPortal.Controllers
         }
         public async Task<JsonResult> GetCartCount()
         {
+
             GetCountryByIP(Request);
+            Session["currency"] = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
+            if (Session["currency"].ToString().ToLower() == "pkr")
+            {
+                Session["ConversionRate"] = "1";
+            }
+            else
+            if (Session["currency"].ToString().ToLower() != "pkr" && Session["ConversionRate"] == null)
+            {
+                var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
+                Session["ConversionRate"] = conversionrate;
+            }
             string cartguid = string.Empty;
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -862,7 +874,6 @@ namespace B2CPortal.Controllers
             }
             else
             {
-
                 IpInfo ipInfo = new IpInfo();
                 string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
                 JavaScriptSerializer jsonObject = new JavaScriptSerializer();
@@ -875,6 +886,7 @@ namespace B2CPortal.Controllers
                 else
                 {
                     pricesymbolvalue = "$";
+                    
                     HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
                 }
             }

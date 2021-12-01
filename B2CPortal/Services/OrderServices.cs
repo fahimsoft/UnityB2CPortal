@@ -80,8 +80,8 @@ namespace B2CPortal.Services
                 Current = await _dxcontext.OrderMasters.Where(x => x.Id == ordervm.Id && x.IsActive == true).FirstOrDefaultAsync();
                 if (Current == null)
                 {
-                    New();
                     Current.CreatedOn = DateTime.Now;
+                    New();
                 }
                 else
                 {
@@ -92,8 +92,6 @@ namespace B2CPortal.Services
                     Current.PaymentMode= ordervm.PaymentMode;
                     Current.Status= ordervm.Status;
                     Current.TotalPrice = ordervm.TotalPrice;
-
-
                 }
                 Save();
                 return true;

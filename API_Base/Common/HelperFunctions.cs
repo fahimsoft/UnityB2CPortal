@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace API_Base.Common
 {
@@ -26,6 +27,8 @@ namespace API_Base.Common
       
         public static void SetCookie(string cookieName, string cookieValue, int days)
         {
+            HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
+
             cookieName = cookieName.ToLower();
             var cookie = new HttpCookie(cookieName)
             {
@@ -100,7 +103,6 @@ namespace API_Base.Common
             Random _rdm = new Random();
             return _rdm.Next(_min, _max);
         }
-
         public static bool fBrowserIsMobile()
         {
             Debug.Assert(HttpContext.Current != null); if (HttpContext.Current.Request != null && HttpContext.Current.Request.ServerVariables["HTTP_USER_AGENT"] != null)
@@ -111,6 +113,18 @@ namespace API_Base.Common
             }
             return false;
         }
+
+        public static string GetConvertedCurrencyAmount(string from, string to)
+        {
+            //var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-all?api_key=/convert?from="+from+"&to="+to+"&amount="+amount+"&api_key=b75242ac8a-e6d2b7e4c3-r3frds");
+            Root root = new Root(); 
+            var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-one?from="+from+"&to="+to+"&api_key=b75242ac8a-e6d2b7e4c3-r3frds");
+            JavaScriptSerializer jsonObject = new JavaScriptSerializer();
+             root = jsonObject.Deserialize<Root>(result);
+            return root.result.PKR.ToString();
+        }
+
+                
 
         // Email configuration
         public static bool EmailSend(string SenderEmail, string Subject, string Message, bool IsBodyHtml = false)
@@ -155,6 +169,18 @@ namespace API_Base.Common
                 throw e;
             }
         }
+    }
+    public class Result
+    {
+        public double PKR { get; set; }
+    }
+
+    public class Root
+    {
+        public string @base { get; set; }
+        public Result result { get; set; }
+        public string updated { get; set; }
+        public int ms { get; set; }
     }
     //public enum OrderStatus
     //{
