@@ -150,8 +150,11 @@ namespace B2CPortal.Services
             {
                 Current = await _dxcontext.Carts.FirstOrDefaultAsync(o => o.Id == Id && o.IsWishlist == false && o.IsActive == true);
                 if (Current != null)
+                {
                     PrimaryKeyValue = Current.Id;
-                Delete();
+                    Current.IsActive = false;
+                }
+                Save();
 
                 return true;
             }

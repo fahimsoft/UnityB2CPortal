@@ -15,7 +15,6 @@ window.onload = function () {
 };
 $(document).ready(function () {
     ShowCartProducts();
-
     //---------------------------handle plus minus change ---------------
     $(document).on('keyup', '.plus-minus-box', function () {
         if (this.value > 11) {
@@ -28,18 +27,7 @@ $(document).ready(function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
-        //if ($button.text() == "+") {
-        //    var newVal = parseFloat(oldValue) + 1;
-        //} else {
-        //    // Don't allow decrementing below zero
-        //    if (oldValue > 0) {
-        //        var newVal = parseFloat(oldValue) - 1;
-        //        newVal = newVal == 0 ? 1 : newVal;
-        //    } else {
-        //        newVal = 1;
-        //    }
-        //}
-        if (parseInt(newVal) <= 11) {
+        if (parseFloat(newVal) <= 11) {
             var price = parseFloat($('#discoountedprice').text());
             let totalvalue = (price * newVal);
             $('#labalprice').text(totalvalue.toLocaleString());
@@ -52,22 +40,11 @@ $(document).ready(function () {
         var $button = $(this);
         var oldValue = $(this).val();
         newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
-        //if ($button.text() == "+") {
-        //    var newVal = parseFloat(oldValue) + 1;
-        //} else {
-        //    // Don't allow decrementing below zero
-        //    if (oldValue > 0) {
-        //        var newVal = parseFloat(oldValue) - 1;
-        //        newVal = newVal == 0 ? 1 : newVal;
-        //    } else {
-        //        newVal = 1;
-        //    }
-        //}
         var row = $(this).closest("tr");
-        var Discount = parseInt($(row).find('td')[1]?.textContent);
+        var Discount = parseFloat($(row).find('td')[1]?.textContent);
         if (!isNaN(Discount)) {
 
-            var price = parseInt($(row).find('td')[2].textContent);
+            var price = parseFloat($(row).find('td')[2].textContent);
             let actualTotal = (price * newVal);
 
             price = price * (1 - (Discount / 100));
@@ -99,7 +76,7 @@ $(document).ready(function () {
                 newVal = 1;
             }
         }
-        if (parseInt(newVal) <= 10) {
+        if (parseFloat(newVal) <= 10) {
             var price = parseFloat($('#discoountedprice').text());
             let totalvalue = (price * newVal);
             $('#labalprice').text(totalvalue.toLocaleString());
@@ -109,7 +86,6 @@ $(document).ready(function () {
         }
     });
     $(document).on('click', '.qtybutton', function () {
-        //$(".qtybutton").on("click", function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
@@ -125,9 +101,9 @@ $(document).ready(function () {
             }
         }
         var row = $(this).closest("tr");
-        var Discount = parseInt($(row).find('td')[1]?.textContent);
-        if (parseInt(newVal) <= 10 && !isNaN(Discount)) {
-            var price = parseInt($(row).find('td')[2].textContent);
+        var Discount = parseFloat($(row).find('td')[1]?.textContent);
+        if (parseFloat(newVal) <= 10 && !isNaN(Discount)) {
+            var price = parseFloat($(row).find('td')[2].textContent);
             let actualTotal = (price * newVal);
 
             price = price * (1 - (Discount / 100));
@@ -187,7 +163,7 @@ function autocomplete(inp, arr) {
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
                     /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function (e) {
-                        debugger
+                        
                         var id = $('input[type = hidden]').val();
                         var name = $('.searchnametxt').text();
                         inp.value = $(this).find('.searchnametxt').text();
@@ -270,6 +246,7 @@ function ShowCartProducts() {
         url: "/Product/GetCartCount",
         data: {},
         success: function (data) {
+            debugger
             var html = "<div class='cartdrop-sin-container'>";
             let dataobj = JSON.parse(data.data);
             dataobj.cartproducts.map(function (item, index) {
@@ -279,14 +256,14 @@ function ShowCartProducts() {
                     <div class="menu-cart-text">
                         <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><h5>${item.Name} ${item.Packsize}</h5></a>
                         <span>Quantity: ${item.Quantity}</span>
-                        <strong> <strong class="pricesymbol"> </strong>  ${item.TotalPrice.toLocaleString()} </strong>
+                        <strong> <strong class="pricesymbol"> </strong>  ${item.TotalPrice} </strong>
                     </div>
                 </div> `;
             });
             html += `</div>
 <div class="totalPriceDetails">
 <div class="total">
-                                <span>total <strong>= <strong class="pricesymbol"> </strong> ${dataobj.totalprice.toLocaleString()}</strong></span>
+                                <span>total <strong>= <strong class="pricesymbol"> </strong> ${dataobj.totalprice}</strong></span>
                             </div>
                             <a class="goto" href="/Product/AddToCart"> go to cart</a>
                             <a class="out-menu" href="/Orders/Checkout">Check out</a>
@@ -294,7 +271,7 @@ function ShowCartProducts() {
                                     `;
             $('#cartdrop').html(html);
             $('#productaddtocart').html(dataobj.cartproductscount);
-            $('#totalprice').html(dataobj.totalprice.toLocaleString());
+            $('#totalprice').html(dataobj.totalprice);
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
@@ -302,7 +279,6 @@ function ShowCartProducts() {
     });
 }
 function RemoveCartProduct(id) {
-
     $.ajax({
         type: "POST",
         url: "/Product/DeleteCart",
@@ -363,7 +339,6 @@ function Handleorderdetail(id) {
         //contentType: "application/json;charset=utf-8",
         //dataType: "json",
         success: function (result) {
-            debugger
             var html = '';
             var htmlProductPriceDetail = '', htmlProductSize = '';
             var data = result.data;
@@ -778,7 +753,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         nextPage: nextPage,
         prevPage: prevPage
     };
-    debugger
+    
     $.ajax({
         url: "/Product/GetProductListbySidebar",
         type: "POST",
@@ -922,7 +897,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
     });
 }
 $('.main-filter-container').on("change", ".filter", function () {
-    debugger
+    
 
     var slides = document.getElementsByClassName("filter");
 
@@ -957,19 +932,15 @@ function loadFeatureProduct() {
         success: function (result) {
             var html = '';
             var data = JSON.parse(result.data);
-
+            debugger
             $.each(data, function (key, item) {
-
-
-                $(item.ProductPrices).each(function (productPriceIndex, productPriceValue) {
-
-                    html += `<li>
+                html += `<li>
                     <div class="text-center">
                         <div class="col-xs-12 col-sm-6 col-md-3">
                             <div class="single-product">
                                 <div class="product-img">
                                     <div class="pro-type">
-                                        <span>${productPriceValue.Discount}%</span>
+                                        <span>${item.Discount}%</span>
                                     </div>
                                     <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                     <div class="actions-btn">
@@ -980,17 +951,16 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${productPriceValue.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${productPriceValue.Price * (1 - (productPriceValue.Discount / 100))} <strong class="pricesymbol"> </strong></span>
+                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></span>
                                 </div>
                             </div>
                         </div>
                         </div></div>
                 </li>`;
 
-                });
             });
             $('#ulLoadFeatureProduct').html(html);
-            debugger
+            
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
         },
@@ -1079,7 +1049,7 @@ $("#btnSave").click(function (e) {
         rate: rating,
 
     }
-    debugger
+    
     var validate = CommentValidate(commentAndRating.AnonymousName, commentAndRating.EmailId, commentAndRating.Comment);
     if (validate) {
 
@@ -1112,7 +1082,7 @@ $("#btnSave").click(function (e) {
 function GetProductId() {
 
     var productId = GetProductIdFromURL();
-    debugger
+    
     if (productId != null && productId != undefined) {
         $.ajax({
             url: "/Product/GetProductbyId",
@@ -1121,7 +1091,7 @@ function GetProductId() {
                 Id: productId
             },
             success: function (result) {
-                debugger
+                
                 var html = '';
                 var index = 1;
                 var fade = 1;
@@ -1335,7 +1305,7 @@ function GetProductCommentAndRating() {
                     htmlNextButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Next" class="btn-paggination" /></span>`;
                     let prevCount = 0;
                     for (var i = 1; i <= countBtn; i++) {
-                        debugger
+                        
                         prevPage = parseInt(prevCount) * 10;
                         if (i == 1)
                             htmlbtn += `<span> <input type="button"  value="${i}" class="btn-paggination applyActiveBtn" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
@@ -1382,7 +1352,7 @@ function GetProductCommentAndRating() {
 // Get Product Comment And Rating with Paggination
 function GetProductCommentWithPaggination(nextPage, prevPage) {
 
-    debugger
+    
     var htmlPrevButton = '';
     var htmlNextButton = '';
     let urlstr = location.href;
@@ -1513,7 +1483,7 @@ function SetLocalStorageInArray(key, value) {
 
 // Set Local Storage--- Store Multiple values on Single Key ( Generalize Fn)
 function SetLocalStorageInSingleKey(key, value) {
-    debugger
+    
     if (key != undefined) {
         var pushValue = [];
         for (var i = 0; i < value.length; i++) {
@@ -1548,7 +1518,7 @@ $('.product-rating').click(function () {
 });
 
 function CommentValidate(name, email, message) {
-    debugger
+    
 
     $('#lblName').text('');
     $('#lblEmail').text('');

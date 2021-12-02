@@ -47,14 +47,14 @@
                                             </div>
                                         </td>
                                         <td class="totalpricecol" style="text-decoration:line-through;">
-                                            @item.ActualPrice.ToString("#,##0")
+                                            @item.ActualPrice
                                         </td>
                                         <td class="totalpricecol">
-                                            - @item.DiscountAmount.ToString("#,##0")
+                                            - @item.DiscountAmount
 
                                         </td>
                                         <td class="totalpricecol">
-                                            <b style="font-weight:bolder;">@item.TotalPrice.ToString("#,##0")</b>
+                                            <b style="font-weight:bolder;">@item.TotalPrice</b>
                                         </td>
                                         <td><i class="mdi mdi-close removecartbtn" title="Remove this product"></i></td>
                                     </tr>
@@ -119,11 +119,11 @@
                             <tbody>
                                 <tr>
                                     <th>Cart Subtotal</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.Select(x => x.CartSubTotal).FirstOrDefault().ToString("#,##0")</td>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.Select(x => x.CartSubTotal).FirstOrDefault()</td>
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td>( @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault().ToString("#,##0") )</td>
+                                    <td> <strong class="pricesymbol"> </strong>  @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
@@ -137,7 +137,7 @@
                             <tfoot>
                                 <tr>
                                     <th class="tfoot-padd">Order total</th>
-                                    <td class="tfoot-padd"> <strong class="pricesymbol"> </strong>  @Model.Select(x => x.OrderTotal).FirstOrDefault().ToString("#,##0")</td>
+                                    <td class="tfoot-padd"> <strong class="pricesymbol"> </strong>  @Model.Select(x => x.OrderTotal).FirstOrDefault()</td>
                                 </tr>
                             </tfoot>
                         </table>
