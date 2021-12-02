@@ -135,7 +135,7 @@
     $(document).ready(function () {
 
         GetProductId();
-        debugger
+         
         let CurrentProductId = localStorage.getItem('CurrentProductId');
         if (CurrentProductId != GetProductIdFromURL()) {
 
@@ -144,7 +144,7 @@
         }
 
 
-        debugger
+         
         let commentArray = [];
         let commentStorage = localStorage.getItem('CommentSection');
 
@@ -186,7 +186,7 @@
             let value = $(this).attr('value')
 
 
-            debugger
+             
             if (value == "Previous") {
 
                 if (PrevClickValue == 0)

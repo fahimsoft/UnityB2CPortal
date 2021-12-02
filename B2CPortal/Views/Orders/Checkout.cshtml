@@ -200,28 +200,28 @@
                         <h3><strong>Payment method</strong></h3>
                     </div>
                     <div class="form-check">
-                        <img width="100" height="50" style="text-align:right" src="~/Content/logos/stripe.png" />
+                        <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
                         <input class="form-check-input" value="Stripe" checked type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
-                        <img width="100" height="50" src="~/Content/logos/hbl.png" />
+                        <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
                         <input class="form-check-input" value="HBL" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             HBL (Habib Bank Limited)
                         </label>
                     </div>
                     <div class="form-check">
-                        <img width="100" height="50" src="~/Content/logos/jazz.png" />
+                        <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
                         <input class="form-check-input" value="JazzCash" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Jazz Cash (Mobilink)
                         </label>
                     </div>
                     <div class="form-check">
-                        <img width="100" height="50" src="~/Content/logos/easypaisa-apk.png" />
+                        <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
                         <input class="form-check-input" value="EasyPaisa" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             Easypaisa (Telenor)
@@ -229,12 +229,14 @@
                     </div>
                     <hr />
                     <div class="form-check">
-                        <img width="100" height="50" src="~/Content/logos/cashondelviry.jpg" />
+                        <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
                         <input class="form-check-input" value="easypaisa" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             COD (Cash On Delivery)
                         </label>
                     </div>
+
+
                     @if (Model.OrderTotal > 0)
                     {
                         <div class="submit-text">
@@ -243,11 +245,89 @@
                     }
                     else
                     {
-                        <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
+                        <a class="btn btn-primary" style="margin-left: 357px;" href="/Product/PorductList">Shop Now</a>
                     }
                 </div>
             </div>
+
+
         </div>
+
+
+
+        <!-- Modal starts -->
+
+        <div class="modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Confirm Order</h3>
+                        @*<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>*@
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="cart-form-text pay-details table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <td>Total</td>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    @if (Model.orderVMs != null)
+                                    {
+                                        foreach (var item in Model.orderVMs)
+                                        {
+                                            <tr>
+                                                <th>@item.Name  x @item.Quantity</th>
+                                                <td> <strong class="pricesymbol"> </strong> @item.TotalPrice</td>
+                                            </tr>
+                                        }
+                                    }
+
+                                    <tr>
+                                        <th>Cart Subtotal</th>
+                                        <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
+
+                                    </tr>
+                                    <tr>
+                                        <th>Total Discount</th>
+                                        <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th>Shipping and Handing</th>
+                                        <td><strong class="pricesymbol"> </strong>  00.00</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Vat</th>
+                                        <td> <strong class="pricesymbol"> </strong>  00.00</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Order total</th>
+                                        <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="confirmBtn btn btn-primary">Confirm</button>
+                        <button type="button" class="cancelBtn btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Ends -->
+
 
     </div>
 
@@ -337,59 +417,57 @@
 
             console.log(JSON.stringify(datatosend));
             console.log(datatosend);
+             
+            $('.modal').show();
 
-            $.confirm({
+            $('.confirmBtn').click(function () {
 
-                title: 'Confirm!',
-                content: `<div style="width: 300px" class="row"><b style="margin-left: 15px"> Order Total</b><b style="margin-left: 150px">@Model.OrderTotal</b></div>`,
-                buttons: {
-                    confirm: function () {
-                        //$.alert('Confirmed!');
+                $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+                $.validator.unobtrusive.parse($(this));//add the form validation
+                $.validator.unobtrusive.parse(form);
+                //if ($(form).valid()) // using not operator for a time being
+                if ($(form.valid())) {
 
-
-                        debugger
-                        $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-                        $.validator.unobtrusive.parse($(this));//add the form validation
-                        $.validator.unobtrusive.parse(form);
-                        //if ($(form).valid()) // using not operator for a time being
-                        if ($(form.valid())) {
-
-                            $.ajax({
-                                type: "POST",
-                                url: "/Orders/AddBillingDetails",
-                                data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                                contentType: 'application/json',
-                                dataType: 'json',
-                                success: function (data) {
-                                    debugger;
-                                    console.log(data);
-                                    if (data.success == true) {
-                                        window.location.href = data.data;// reload();
-                                        toastr.success(data.msg);
-                                    }
-                                    else if (data.success == false) {
-                                        toastr.error("Failed.");
-                                    }
-                                },
-                                failure: function (data) {
-                                    console.log(data);
-                                },
-                                err: function (data) {
-                                    console.log(data);
-                                }
-                            })
+                    $.ajax({
+                        type: "POST",
+                        url: "/Orders/AddBillingDetails",
+                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function (data) {
+                             ;
+                            console.log(data);
+                            if (data.success == true) {
+                                window.location.href = data.data;// reload();
+                                toastr.success(data.msg);
+                            }
+                            else if (data.success == false) {
+                                toastr.error("Failed.");
+                            }
+                        },
+                        failure: function (data) {
+                            console.log(data);
+                        },
+                        err: function (data) {
+                            console.log(data);
                         }
-                        else {
-                            return false;
-                        }
-
-                    },
-                    cancel: function () {
-                       // $.alert('Canceled!');
-                    }
-
+                    })
                 }
-            });
+                else {
+                    return false;
+                }
+
+
+            })
+
+            $('.cancelBtn').click(function () {
+
+                $('.modal').hide();
+
+
+            })
+
+
 
 
 

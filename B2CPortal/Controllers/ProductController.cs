@@ -164,6 +164,7 @@ namespace B2CPortal.Controllers
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
+                var DiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice) / conversionvalue, 2);
                 var cartobj = new CartViewModel
                 {
                     ActualPrice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2),
@@ -175,7 +176,7 @@ namespace B2CPortal.Controllers
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
                     TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 1),
-                    DiscountAmount = Math.Round(((decimal)(price * item.Quantity) - (item.TotalPrice == null ? 0 : (decimal)item.TotalPrice)) / conversionvalue, 2),
+                    DiscountAmount = DiscountAmount,
                     ShipingAndHostring = 0,
                     VatTax = 0
                 };
@@ -302,6 +303,7 @@ namespace B2CPortal.Controllers
         {
             string msg = string.Empty;
             bool updateresult = false;
+            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
             for (int i = 0; i < cartids.Count(); i++)
             {
                 var cartproducts = await _cart.GetCartById(cartids[i]);
@@ -311,7 +313,7 @@ namespace B2CPortal.Controllers
                     var productmasetr = await _IProductMaster.GetProductById(cartproducts.FK_ProductMaster);
                     var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    cartproducts.TotalPrice = (price * (1 - (discount / 100))) * cartproducts.Quantity;
+                    cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) * cartproducts.Quantity) / conversionvalue,2);
                     updateresult = await _cart.UpdateCart(cartproducts);
                 }
             }

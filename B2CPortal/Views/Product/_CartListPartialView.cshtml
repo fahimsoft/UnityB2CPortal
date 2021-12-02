@@ -78,13 +78,13 @@
                     <div class="text-right">
                         @if (Model == null || Model.Count() <= 0)
                         {
-                            <a class="btn btn-primary"  href="/Product/PorductList">Shop Now</a>
+                            <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
                         }
                         else
                         {
                             <div id="cartmanagebtn">
-                            <button type="button" id="updatecart" class="btn btn-primary">Update Cart</button>
-                            <a class="btn btn-primary" href="/Orders/Checkout">Check out</a>
+                                <button type="button" id="updatecart" class="btn btn-primary">Update Cart</button>
+                                <a class="btn btn-primary" href="/Orders/Checkout">Check out</a>
                             </div>
                         }
                     </div>
@@ -157,7 +157,7 @@
         });
     });
     $(".removecartbtn").click(function () {
-        debugger
+         
         var row = $(this).closest("tr");
         var id = $(row).attr('data-id');
         $.ajax({
@@ -183,14 +183,12 @@
         //return false;
     });
     $("#updatecart").click(function () {
+        document.getElementsByClassName("loader-container")[0].style.display = "block";
         var cartids = [];
         var cartquentites = [];
         var array = $.makeArray($('tbody tr[id]').map(function () {
             return this.id;
         }));
-        //$('#myTable').on('click', 'tbody tr', function (event, it) {
-        //    console.log(it.length);
-        //});
         var tb = $("#myTable tbody");//.closest("tr");
         var size = tb.find("tr").length;
         tb.find("tr").each(function (index, element) {
@@ -215,6 +213,7 @@
                     ShowCartProducts();
                     $("#CartTable").load('@Url.Action("GetCartList", "Product")');
                     toastr.success(data.msg);
+                    document.getElementsByClassName("loader-container")[0].style.display = "none";
                 } else {
                     toastr.error(data.msg);
                 }

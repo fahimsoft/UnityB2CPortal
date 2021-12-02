@@ -241,12 +241,12 @@ function removequickviewvalues(id) {
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
+    document.getElementsByClassName("loader-container")[0].style.display = "block";
     $.ajax({
         type: "POST",
         url: "/Product/GetCartCount",
         data: {},
         success: function (data) {
-            debugger
             var html = "<div class='cartdrop-sin-container'>";
             let dataobj = JSON.parse(data.data);
             dataobj.cartproducts.map(function (item, index) {
@@ -274,6 +274,8 @@ function ShowCartProducts() {
             $('#totalprice').html(dataobj.totalprice);
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
+            document.getElementsByClassName("loader-container")[0].style.display = "none";
+
             //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         }
     });
@@ -932,7 +934,7 @@ function loadFeatureProduct() {
         success: function (result) {
             var html = '';
             var data = JSON.parse(result.data);
-            debugger
+             
             $.each(data, function (key, item) {
                 html += `<li>
                     <div class="text-center">

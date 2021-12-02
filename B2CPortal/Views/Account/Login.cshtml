@@ -239,7 +239,7 @@
 
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
-            debugger
+             
             e.preventDefault();
             var form = $("#register");
 
@@ -271,7 +271,7 @@
                     dataType: 'json',
 
                     success: function (data) {
-                        debugger
+                         
                         // alert(data);
                         console.log(data);
                         if (data.success == true) {
@@ -318,7 +318,7 @@
                     //cache : false,
                     //processData: false,
                     success: function (data) {
-                        debugger
+                         
                         if (data.success == true /*&& res.count > 0*/) {
                             toastr.success("Login successfully.");
                             window.location = data.data;
