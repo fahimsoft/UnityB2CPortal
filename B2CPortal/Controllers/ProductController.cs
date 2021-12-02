@@ -163,11 +163,9 @@ namespace B2CPortal.Controllers
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
                 var cartobj = new CartViewModel
                 {
-                    // CartSubTotal = (decimal)(price * item.Quantity),
-                    //OrderTotal = HelperFunctions.TotalPrice((decimal)(price * (1 - (discount / 100)))),
-                    // DiscountedPrice = price * (1 - (discount / 100)),
                     ActualPrice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2),
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
                     //Price = decimal.Parse(String.Format("{0:0.00}", price * (1 - (discount / 100)))),
@@ -176,7 +174,7 @@ namespace B2CPortal.Controllers
                     Name = name,
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
-                    TotalPrice = item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 1),
+                    TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 1),
                     DiscountAmount = Math.Round(((decimal)(price * item.Quantity) - (item.TotalPrice == null ? 0 : (decimal)item.TotalPrice)) / conversionvalue, 2),
                     ShipingAndHostring = 0,
                     VatTax = 0

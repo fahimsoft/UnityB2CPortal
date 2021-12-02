@@ -33,6 +33,7 @@ namespace B2CPortal.Services
                 Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
                 if (Current == null)
                 {
+                    New();
                     Current.CreatedOn = DateTime.Now;
                     Current.FK_Customer = Billing.FK_Customer;
                     Current.PhoneNo = Billing.PhoneNo;
@@ -49,7 +50,6 @@ namespace B2CPortal.Services
                     Current.Country = Billing.Country;
                     Current.City = Billing.City;
                     Current.ShippingAddress = Billing.ShippingAddress;
-                    New();
 
 
 
