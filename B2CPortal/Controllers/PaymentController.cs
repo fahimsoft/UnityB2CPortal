@@ -44,9 +44,9 @@ namespace B2CPortal.Controllers
                     Name = payment.Name,
                     Email = payment.Email,
                     Phone = payment.Phone,
-                    Description = payment.Description,
+                    Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
                     StripeToken = stripeToken,
-                    Amount =  long.Parse(Session["ordertotal"].ToString()) > 50 ? long.Parse(Session["ordertotal"].ToString()) : long.Parse(Session["ordertotal"].ToString()) * 100,
+                    Amount =   (Session["ordertotal"] == null ?  1 : Convert.ToDecimal(Session["ordertotal"]) * 100)  < 50 ? 100 :Convert.ToDecimal(Session["ordertotal"]) * 100 ,
 
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
@@ -110,7 +110,7 @@ namespace B2CPortal.Controllers
     }
     public class Payment
     {
-        public long Amount { get; set; }
+        public decimal Amount { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
