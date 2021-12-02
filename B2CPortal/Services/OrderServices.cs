@@ -46,6 +46,9 @@ namespace B2CPortal.Services
                     Current.ConversionRate = Billing.ConversionRate;
                     Current.PaymentMode = Billing.PaymentMode;
                     Current.Status = Billing.Status;
+                    Current.Country = Billing.Country;
+                    Current.City = Billing.City;
+                    Current.ShippingAddress = Billing.ShippingAddress;
                     New();
 
 

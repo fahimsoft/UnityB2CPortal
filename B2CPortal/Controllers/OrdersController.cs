@@ -43,7 +43,8 @@ namespace B2CPortal.Controllers
         public async Task<JsonResult> GetOrderDetailsById(int id)
         {
             List<OrderVM> orderdetailslist = new List<OrderVM>();
-           var detailslist =  await _ordersDetail.GetOrderDetailsById(id);
+            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            var detailslist =  await _ordersDetail.GetOrderDetailsById(id);
             foreach (var item in detailslist)
             {
                 var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
@@ -55,12 +56,12 @@ namespace B2CPortal.Controllers
                 var detailsobj = new OrderVM
                 {
                     Name = name,
-                    Price = price,
+                    Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
                     Discount = item.Discount, 
-                    SubTotalPrice = (price * item.Quantity),
-                    DiscountAmount = ((price * item.Quantity) - item.Price),
+                    SubTotalPrice = Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
+                    DiscountAmount = Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
                     Quantity = item.Quantity,
-                    TotalPrice = Convert.ToInt32(item.Price),
+                    TotalPrice = Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
                     MasterImageUrl = MasterImageUrl,
                     Date = item.CreatedOn.ToString(),
                     FK_ProductMaster = item.FK_ProductMaster
@@ -74,6 +75,7 @@ namespace B2CPortal.Controllers
 
             try
             {
+                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 List<OrderVM> list = new List<OrderVM>();
                 if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
                 {
@@ -85,6 +87,10 @@ namespace B2CPortal.Controllers
                         OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
                         var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
                         dd.OrderNo = result;
+                        dd.Price = Math.Round(Convert.ToDecimal(dd.Price/conversionvalue),2);
+                        dd.SubTotalPrice = Math.Round(Convert.ToDecimal(dd.SubTotalPrice / conversionvalue),2);
+                        dd.DiscountAmount = Math.Round(Convert.ToDecimal(dd.DiscountAmount / conversionvalue),2);
+                        dd.TotalPrice = Math.Round(Convert.ToDecimal(dd.TotalPrice / conversionvalue),2);
 
                         list.Add((OrderVM)dd);
                     }
@@ -109,9 +115,10 @@ namespace B2CPortal.Controllers
         {
             try
             {
+            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
-                var OrderTotal = 0;
+                decimal OrderTotal = 0;
                 var totalDiscount = 0;
                 var customerId = 0;
                 var subTotal = 0;
@@ -136,7 +143,7 @@ namespace B2CPortal.Controllers
                         {
                             foreach (var item in cartlist)
                             {
-                                OrderTotal = (int)(OrderTotal + item.TotalPrice == null ? 0:item.TotalPrice);
+                                OrderTotal +=  Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -154,10 +161,10 @@ namespace B2CPortal.Controllers
                                 orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
                             }
                             orderVM.orderVMs = orderVMs;
-                            orderVM.CartSubTotal = subTotal;
-                            //orderVM.CartSubTotalDiscount = totalDiscount;
-                            orderVM.OrderTotal = OrderTotal;
-                            Session["ordertotal"] = OrderTotal;
+                            orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2) ;
+                            orderVM.CartSubTotalDiscount = Math.Round(orderVM.CartSubTotalDiscount/conversionvalue,2);
+                            orderVM.OrderTotal = Math.Round(OrderTotal/conversionvalue,2);
+                            Session["ordertotal"] = Math.Round(OrderTotal / conversionvalue, 2);
                         }
                         return View(orderVM);
                     }
@@ -202,15 +209,14 @@ namespace B2CPortal.Controllers
             {
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
-                var OrderTotal = 0;
-                var subTotal = 0;
+                decimal OrderTotal = 0;
+                decimal subTotal = 0;
                 var customerId = 0;
                 var tQuantity = 0;
-                var ConversionRate = "";
+                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-                    ConversionRate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString();
                     if (customerId > 0)
                     {
                         // Billing Details Add
@@ -225,25 +231,28 @@ namespace B2CPortal.Controllers
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var DiscountedPrice = price * (1 - (discount / 100));
                                 var ActualPrice = (decimal)(price * item.Quantity);
-                                OrderTotal = (int)(OrderTotal + item.TotalPrice);
-                                subTotal = (int)(subTotal + ActualPrice);
+                                OrderTotal = (decimal)(OrderTotal + item.TotalPrice);
+                                subTotal = (subTotal + ActualPrice);
                                 tQuantity = (int)(tQuantity + item.Quantity);
                                 var Order = new OrderVM
                                 {
                                     Name = productData.Name,
                                     Quantity = item.Quantity,
-                                    TotalPrice = (int)item.TotalPrice
+                                    TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
                                 };
                                 orderVMs.Add(Order);
                             }
                             Billing.orderVMs = orderVMs;
-                            Billing.CartSubTotal = subTotal;
-                            Billing.OrderTotal = OrderTotal;
+                            Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2) ;
+                            Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
                             Billing.TotalQuantity = tQuantity;
                             Billing.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                            Billing.ConversionRate = decimal.Parse(ConversionRate);
+                            Billing.ConversionRate = conversionvalue;
                             Billing.PaymentMode = Billing.paymenttype.ToString();
                             Billing.Status = OrderStatus.InProcess.ToString();
+                            Billing.Country = Billing.Country;
+                            Billing.City = Billing.City;
+                            Billing.ShippingAddress = Billing.ShippingAddress;
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);
@@ -292,17 +301,17 @@ namespace B2CPortal.Controllers
                         var name = Session["UserName"].ToString();
                         var email = Session["email"].ToString();
                         string htmlString = @"<html>
-<body>
-<img src=" + "~/Content/Asset/img/img.PNG" + @">
-<h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
-<p>Dear " + name + @",</p>
-<p>Hello, " + name + @"! Thanks for Your Order!</p>
-<p>Order No: " + ordermasterId + @"</p>
-<p>Total Amount: " + res.TotalPrice + @"</p>
-<p>Thanks,</p>
-<p>Unity Foods LTD!</p>
-</body>
-</html>";
+                           <body>
+                           <img src=" + "~/Content/Asset/img/img.PNG" + @">
+                           <h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
+                            <p>Dear " + name + @",</p>
+                            <p>Hello, " + name + @"! Thanks for Your Order!</p>
+                            <p>Order No: " + ordermasterId + @"</p>
+                            <p>Total Amount: " + res.TotalPrice + @"</p>
+                            <p>Thanks,</p>
+                            <p>Unity Foods LTD!</p>
+                            </body>
+                            </html>";
                         bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
                         if (IsSendEmail)
                         {

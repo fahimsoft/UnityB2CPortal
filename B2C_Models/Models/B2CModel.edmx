@@ -104,7 +104,7 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="OrderDescription" Type="nvarchar" MaxLength="300" />
           <Property Name="TotalQuantity" Type="int" />
-          <Property Name="TotalPrice" Type="int" />
+          <Property Name="TotalPrice" Type="decimal" Precision="18" Scale="2" />
           <Property Name="FK_Customer" Type="int" Nullable="false" />
           <Property Name="OrderNo" Type="nvarchar" MaxLength="100" />
           <Property Name="ShippingAddress" Type="nvarchar" MaxLength="500" />
@@ -913,7 +913,7 @@
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="OrderDescription" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
           <Property Name="TotalQuantity" Type="Int32" />
-          <Property Name="TotalPrice" Type="Int32" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="FK_Customer" Type="Int32" Nullable="false" />
           <Property Name="OrderNo" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="ShippingAddress" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />

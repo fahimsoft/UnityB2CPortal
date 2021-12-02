@@ -47,7 +47,7 @@
                                                     @item.OrderNo
                                                     @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
                                                     <!--<div class="items-dsc">
-    <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
+                                                     <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
                                                     @*<p class="itemcolor">Color : <span>Blue</span></p>*@
                                                     @*<p class="itemcolor">Size   : <span>SL</span></p>*@
                                                     <!--</div>-->
@@ -87,7 +87,7 @@
                                                 </td>
 
                                                 <td>
-                                                    @item.TotalPrice
+                                                    <strong class="pricesymbol"> </strong>   @item.TotalPrice
                                                 </td>
                                                 <td>
                                                     @item.PaymentMode
@@ -158,13 +158,13 @@
 
 
 
-        <script>
-    $(document).ready(function () {
-        jQuery('.plus-minus-box').keyup(function () {
-            this.value = this.value.replace(/[^0-9\.]/g, '');
-        });
-    });
-    $(".removecartbtn").click(function () {
+        <!--<script>
+    //$(document).ready(function () {
+    //    jQuery('.plus-minus-box').keyup(function () {
+    //        this.value = this.value.replace(/[^0-9\.]/g, '');
+    //    });
+    //});-->
+    @*$(".removecartbtn").click(function () {
         var row = $(this).closest("tr");
         var id = $(row).attr('data-id');
         $.ajax({
@@ -229,6 +229,6 @@
 
             }
         });
-    });
+    });*@
 
-        </script>
+        <!--</script>-->

@@ -258,9 +258,13 @@ namespace B2CPortal.Services
 
 
 
+
+
                 if (Current == null)
                 {
                     New();
+
+
 
                     Current.CreatedOn = DateTime.Now;
                     Current.Quantity = 1;
@@ -272,6 +276,8 @@ namespace B2CPortal.Services
                     //if(quan != null)
                     //{
 
+
+
                     //}
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
@@ -279,15 +285,23 @@ namespace B2CPortal.Services
                     Current.TotalQuantity++;
                     Current.TotalPrice = (cart.TotalPrice * Current.Quantity);
 
+
+
                 }
+                Current.Currency = cart.Currency;
+                Current.ConversionRate = cart.ConversionRate;
                 Current.Guid = cart.Guid;
                 Current.IsWishlist = cart.IsWishlist;
                 Current.IsActive = cart.IsActive;
                 Current.FK_ProductMaster = cart.FK_ProductMaster;
                 Current.FK_Customer = cart.FK_Customer;
 
+
+
                 Save();
                 return Current;
+
+
 
 
 
@@ -310,22 +324,6 @@ namespace B2CPortal.Services
             ).FirstOrDefaultAsync();
             return cartData;
         }
-        //public async Task<Cart> GetCartData(string guid, int customerId, int productId)
-        //{
-        //    var cartData = await _dxcontext.Carts.Where(x =>
-        //    (x.Guid == guid && x.IsWishlist == false
-        //    && x.IsActive == true && x.FK_ProductMaster == productId)
-        //    ||
-        //    (x.IsWishlist == false
-        //    && x.IsActive == true
-        //    && x.FK_Customer == customerId && x.FK_ProductMaster == productId)
-
-
-
-        //    ).FirstOrDefaultAsync();
-        //    return cartData;
-        //}
-
         public async Task<Cart> UpdateToCart(Cart wishlistVM)
         {
             try

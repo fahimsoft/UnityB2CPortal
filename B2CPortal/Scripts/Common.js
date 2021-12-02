@@ -357,23 +357,23 @@ function Handleorderdetail(id) {
                                            ${item.Discount}
                                         </td>
                                         <td>
-                                           ${item.Price}
+                                          <strong class="pricesymbol"> </strong>  ${item.Price}
                                         </td>
                                         <td>
                                            ${item.Quantity}
                                         </td>
                                          <td>
-                                           ${item.SubTotalPrice}
+                                        <strong class="pricesymbol"> </strong>    ${item.SubTotalPrice}
                                         </td>
                                             <td>
-                                           ${item.DiscountAmount}
+                                         <strong class="pricesymbol"> </strong>   ${item.DiscountAmount}
                                         </td>
                                             <td>
-                                           ${item.TotalPrice}
+                                          <strong class="pricesymbol"> </strong>  ${item.TotalPrice}
                                         </td>
 
                                         <td>
-${moment(item.Date).format('DD-MMM-yyyy')}
+                                            ${moment(item.Date).format('DD-MMM-yyyy')}
                                         </td>
                                     </tr>`
 
@@ -951,7 +951,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></span>
+                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.Price} <strong class="pricesymbol"> </strong></span>
                                 </div>
                             </div>
                         </div>
