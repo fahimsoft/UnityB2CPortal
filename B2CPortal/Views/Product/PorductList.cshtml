@@ -18,12 +18,7 @@
         </div>
     </div>
 </div>
-@*<section class="collection-area collection-area2 section-padding">
-</section>*@
-<!-- pages-title-end -->
-<!-- collection section start -->
-<!-- collection section end -->
-<!-- product-list-view content section start -->
+
 <section class="pages products-page">`
     <div class="container">
         <div class="row">
@@ -45,8 +40,8 @@
                                             <li class="my-list-grid-btn active" mylistgridbtn="list"><a data-toggle="tab" href="#list"> <i class="mdi mdi-view-list"></i> </a></li>
                                             <li>
 
-                                                <button type="button" id="btnSearch" onclick="loadProductListByName()"><i class="mdi mdi-magnify"></i></button>
-                                                <input type="text" id="textProductName" onchange="loadProductListByName()" style="margin-top: 14px; border: 0; width: 492px;" placeholder="Search within these results...">
+                                                <button type="button" id="btnSearch" onclick="onChangeSearchByName()"><i class="mdi mdi-magnify"></i></button>
+                                                <input type="text" id="textProductName" onchange="onChangeSearchByName()" style="margin-top: 14px; border: 0; width: 492px;" placeholder="Search within these results...">
 
                                             </li>
 
@@ -81,37 +76,41 @@
 <!-- quick view end -->
 
 <script>
-
     //LoadProductList
     $(document).ready(function () {
+        //Updated 3-Dec-2021
 
-        //loadProductList();
+        var filterSearchByName = localStorage.getItem("filterSearchByName") == undefined ? "" : localStorage.getItem("filterSearchByName");
+        var filterPrevpage = localStorage.getItem("filterPrevpage") == undefined ? 0 : localStorage.getItem("filterPrevpage");
+        var filterNextPage = localStorage.getItem("filterNextPage") == undefined ? 10 : localStorage.getItem("filterNextPage");
+        var filterCategoryAndBrand = localStorage.getItem("categoryAndBrand") == undefined ? [] : localStorage.getItem("categoryAndBrand")
 
-        loadProductListById(null, "", 10, 0);
+        $('#textProductName').val(filterSearchByName);
+        loadProductListById(filterCategoryAndBrand, filterSearchByName, filterNextPage, filterPrevpage);
 
-        $('#textProductName').change(function () {
 
-            var searchProduct = $(this).val();
-            loadProductListById(GetfilterListDummy(), searchProduct, 10, 0);
-        });
 
 
         // Paggination Button ,1,2,3..
         $('#htmlProdListPaggination').on('click', '.btn-Prod-Paggination', function () {
 
-
             var nextPage = $(this).attr('next-page');
             var prevPage = $(this).attr('prev-page');
+            var searchProduct = $('#textProductName').val();
 
             PrevProdClickValue = prevPage;
             NextProdClickValue = nextPage;
 
+            //Filter local Storage Work .. 2-Dec-2021
+
+
+            SetLocalStorageForFilter(null, searchProduct, NextProdClickValue, PrevProdClickValue)
+
+
             $('#htmlProdListPaggination').find('.btn-Prod-Paggination').removeClass('applyActiveBtn');
             $(this).addClass('applyActiveBtn');
 
-
-            var searchProduct = $('#textProductName').val();
-
+            // var searchProduct = $('#textProductName').val();
             loadProductListById(GetfilterListDummy(), searchProduct, nextPage, prevPage);
 
         });
@@ -119,10 +118,11 @@
         // Prev and Next Button
         $('#htmlProdListPaggination').on('click', '.btn-Prod-PrevAndNext', function () {
 
+            debugger
             let searchProduct = $('#textProductName').val();
             let value = $(this).attr('value');
 
-             
+
             if (value == "Previous") {
                 if (PrevProdClickValue > 0)
                     PrevProdClickValue = parseInt(PrevProdClickValue) - 10;
@@ -142,26 +142,29 @@
             $('#htmlProdListPaggination').find('.btn-Prod-Paggination').removeClass('applyActiveBtn');
             $('#htmlProdListPaggination').find('.btn-Prod-Paggination').eq(currentBtnIndex).addClass('applyActiveBtn');
 
+            SetLocalStorageForFilter(null, searchProduct, NextProdClickValue, PrevProdClickValue);
             loadProductListById(GetfilterListDummy(), searchProduct, NextProdClickValue, PrevProdClickValue);
         });
 
     });
+    //on change Search Box Manage Local Storage and change Event
+    function onChangeSearchByName() {
 
-    function GetfilterListDummy() {
+        var SearchByName = $('#textProductName').val();
+        var filterSearchByName = localStorage.getItem("filterSearchByName") == undefined ? "" : localStorage.getItem("filterSearchByName");
+        var filterPrevpage = localStorage.getItem("filterPrevpage") == undefined ? 0 : localStorage.getItem("filterPrevpage");
+        var filterNextPage = localStorage.getItem("filterNextPage") == undefined ? 10 : localStorage.getItem("filterNextPage");
+        var filterCategoryAndBrand = localStorage.getItem("categoryAndBrand") == undefined ? [] : localStorage.getItem("categoryAndBrand");
 
-        var slides = document.getElementsByClassName("filter");
-        let filterList_Dummy = [];
+        filterPrevpage == undefined ? 0 : filterPrevpage
+        filterNextPage == undefined ? 10 : filterNextPage
 
-        for (var i = 0; i < slides.length; i++) {
+        if (filterSearchByName != true)
+            filterSearchByName = SearchByName;
 
-            if ($(slides.item(i)).prop("checked")) {
-                ifPresent = true;
-                filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
-            }
-        }
+        SetLocalStorageForFilter(GetfilterListDummy(), filterSearchByName, filterNextPage, filterPrevpage)
+        loadProductListById(filterCategoryAndBrand, filterSearchByName, filterNextPage, filterPrevpage);
 
-        return filterList_Dummy;
     }
-
 
 </script>

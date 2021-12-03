@@ -330,6 +330,40 @@ namespace B2CPortal.Controllers
         }
         #endregion
         [HttpGet]
+        [ActionName("GetProductbyIdWithRating")]
+        public async Task<JsonResult> GetProductbyIdWithRating(long Id)
+        {
+            try
+            {
+                var obj = await _IProductMaster.GetProductByIdWithRating(Id);
+
+
+
+                return SuccessResponse(obj);
+            }
+            catch (Exception Ex)
+            {
+
+
+
+                return BadResponse(Ex);
+            }
+        } //Updated 1-Dec
+        [HttpPost]
+        [ActionName("GetProductListbySidebar")]
+        public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
+        {
+            try
+            {
+                var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
+                return SuccessResponse(filter);
+            }
+            catch (Exception Ex)
+            {
+                throw Ex;
+            }
+        }
+        [HttpGet]
         [ActionName("GetFeaturedProduct")]
         public async Task<JsonResult> GetFeaturedProduct()
         {
@@ -796,20 +830,20 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
-        [HttpPost]
-        [ActionName("GetProductListbySidebar")]
-        public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
-        {
-            try
-            {
-                var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
-                return SuccessResponse(filter);
-            }
-            catch (Exception Ex)
-            {
-                throw Ex;
-            }
-        }
+        //[HttpPost]
+        //[ActionName("GetProductListbySidebar")]
+        //public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
+        //{
+        //    try
+        //    {
+        //        var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
+        //        return SuccessResponse(filter);
+        //    }
+        //    catch (Exception Ex)
+        //    {
+        //        throw Ex;
+        //    }
+        //}
         public static string GetCountryByIP(HttpRequestBase request)
         {
             string pricesymbolvalue = "PKR";
@@ -837,40 +871,8 @@ namespace B2CPortal.Controllers
             }
             return pricesymbolvalue;
         }
-        private decimal ExchangeRateFromAPI(decimal amount, string firstCcode, string lastCcode)
+      
 
-        {
-
-            try
-
-            {
-
-                WebClient web = new WebClient();
-
-                const string urlPattern = "http://finance.yahoo.com/d/quotes.csv?s={0}{1}=X&f=l1";
-
-                string url = String.Format(urlPattern, firstCcode, lastCcode);
-
-                // Get response as string
-
-                string response = new WebClient().DownloadString(url);
-
-                // Convert string to number
-
-                decimal exchangeRate = decimal.Parse(response, System.Globalization.CultureInfo.InvariantCulture);
-
-                return exchangeRate;
-
-            }
-
-            catch (Exception ex)
-            {
-
-                return 0;
-
-            }
-
-        }
     }
     public class SideBarVM
     {

@@ -99,7 +99,6 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
         public async Task<IEnumerable<ProductMaster>> GetProductByName(string name)
         {
             try
@@ -117,7 +116,6 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
         public async Task<ProductMaster> GetDataForWishList(int id)
         {
             try
@@ -164,203 +162,6 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-        public async Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage) //int[] filterList
-        {
-            try
-            {
-                var totalProduct = 0;
-
-                if (filterList == null)
-                {
-                    filterList = new SideBarVM[] { };
-                }
-
-                int[] cat = new int[filterList.Count(x => x.Name == "Category")];
-                int[] brand = new int[filterList.Count(x => x.Name == "Brand")];
-                int catI = 0;
-                int brandI = 0;
-                foreach (var item in filterList)
-                {
-                    switch (item.Name)
-                    {
-                        case "Category":
-                            cat[catI] = item.ID;
-                            catI++;
-                            break;
-                        case "Brand":
-                            brand[brandI] = item.ID;
-                            brandI++;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                var obj = new List<ProductMaster>();
-                if (cat.Length > 0 && brand.Length > 0)
-                {
-                    if (search.Length > 0)
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
-                        && (cat.Contains(x.FK_ProductCategory)
-                        && brand.Contains(x.FK_ProductBrand))
-                        && x.Name.Contains(search))
-                            .Include(x => x.ProductPrices)
-                            .OrderByDescending(x => x.Id)
-                            .AsNoTracking()
-                            .Skip(prevPage).Take(nextPage)
-                            .ToListAsync();
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
-                            && (cat.Contains(x.FK_ProductCategory)
-                            && brand.Contains(x.FK_ProductBrand))
-                            && x.Name.Contains(search)
-                        );
-                    }
-                    else
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
-                        && (cat.Contains(x.FK_ProductCategory)
-                        && brand.Contains(x.FK_ProductBrand)))
-                            .Include(x => x.ProductPrices)
-                            .OrderByDescending(x => x.Id)
-                            .AsNoTracking()
-                            .Skip(prevPage).Take(nextPage)
-                            .ToListAsync();
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
-                            && (cat.Contains(x.FK_ProductCategory)
-                            && brand.Contains(x.FK_ProductBrand))
-                        );
-                    }
-                }
-                else if (cat.Length > 0)
-                {
-                    if (search.Length > 0)
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
-                        cat.Contains(x.FK_ProductCategory)
-                        && x.Name.Contains(search))
-
-                            .Include(x => x.ProductPrices)
-                            .OrderByDescending(x => x.Id)
-                            .AsNoTracking()
-                            .Skip(prevPage).Take(nextPage)
-                            .ToListAsync();
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
-                            && cat.Contains(x.FK_ProductCategory)
-                            && x.Name.Contains(search)
-                        );
-                    }
-                    else
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
-                        cat.Contains(x.FK_ProductCategory))
-
-                            .Include(x => x.ProductPrices)
-                            .OrderByDescending(x => x.Id)
-                            .AsNoTracking()
-                            .Skip(prevPage).Take(nextPage)
-                            .ToListAsync();
-                        //wrong count
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
-                        cat.Contains(x.FK_ProductCategory));
-                    }
-                }
-                else if (brand.Length > 0)
-                {
-                    if (search.Length > 0)
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
-                        brand.Contains(x.FK_ProductBrand)
-                        && x.Name.Contains(search))
-
-                            .Include(x => x.ProductPrices)
-                            .OrderByDescending(x => x.Id)
-                            .AsNoTracking()
-                            .Skip(prevPage).Take(nextPage)
-                            .ToListAsync();
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
-                        brand.Contains(x.FK_ProductBrand)
-                        && x.Name.Contains(search));
-                    }
-                    else
-                    {
-                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
-                    brand.Contains(x.FK_ProductBrand))
-
-                        .Include(x => x.ProductPrices)
-                        .OrderByDescending(x => x.Id)
-                        .AsNoTracking()
-                        .Skip(prevPage).Take(nextPage)
-                        .ToListAsync();
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
-                    brand.Contains(x.FK_ProductBrand));
-                    }
-                }
-                else if (search.Length > 0)
-                {
-                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
-                    && x.Name.Contains(search))
-
-                        .Include(x => x.ProductPrices)
-                        .OrderByDescending(x => x.Id)
-                        .AsNoTracking()
-                        .Skip(prevPage).Take(nextPage)
-                        .ToListAsync();
-
-                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
-                    x.Name.Contains(search));
-                }
-                else
-                {
-                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true)
-                        .Include(x => x.ProductPrices)
-
-                        .OrderByDescending(x => x.Id)
-                        .AsNoTracking()
-                        .Skip(prevPage).Take(nextPage)
-                        .ToListAsync();
-
-                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true);
-                }
-
-                List<ProductsVM> productsVM = new List<ProductsVM>();
-
-
-
-                foreach (var item in obj)
-                {
-                    var producVMList = new ProductsVM
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Price = item.ProductPrices.Select(x => x.Price).FirstOrDefault(),
-                        Discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
-                        MasterImageUrl = item.MasterImageUrl,
-                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
-                        ShortDescription = item.ShortDescription,
-                        LongDescription = item.LongDescription,
-                        totalProduct = totalProduct
-
-                    };
-                    productsVM.Add(producVMList);
-                }
-
-
-                return productsVM;
-
-
-            }
-            catch (Exception Ex)
-            {
-
-                throw Ex;
-            }
-        }
-
         public async Task<List<ProductsVM>> SearchProducts(string name)
         {
             try
@@ -400,56 +201,321 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+        public async Task<IEnumerable<ProductsVM>> GetProductByIdWithRating(long Id) //updated 30 Nov 5.43 pm
+        {
+            try
+            {
+                decimal conversionvalue = HttpContext.Current.Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(HttpContext.Current.Session["ConversionRate"]);
 
-        //public async Task<ProductMaster> AddUser(ProductMaster obj)
-        //{
-        //    try
-        //    {
-        //        //Current = await _dxcontext.Users.FirstOrDefaultAsync(o => o.ID == obj.Id);
-        //        //if (Current == null)
-        //        //{
-        //        //    New();
+                var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + Id + "").ToList<ProductsVM>();
 
-        //        //}
-        //        //else
-        //        //{
-        //        //    PrimaryKeyValue = Current.Id;
+                var obj = await _dxcontext.ProductMasters
+                .Include(x => x.ProductPrices)
+                .Include(x => x.ProductDetails)
+                .Include(x => x.ProductPackSize)
+                .AsNoTracking().Where(x => x.Id == Id).ToListAsync();
 
-        //        //}
-        //        ////Current.Name = Current.Name;
-        //        ////Current.PhoneNo = Current.PhoneNo;
-
-        //        //Save();
-
-        //        return Current;
-
-        //    }
-        //    catch (Exception Ex)
-        //    {
-
-        //        throw Ex;
-        //    }
-        //}
-
-        //public async Task<bool> DeleteUser(long Id)
-        //{
-        //    try
-        //    {
-        //        Current = await _dxcontext.ProductMasters.FirstOrDefaultAsync(o => o.Id == Id);
-        //        if (Current != null)
-        //            PrimaryKeyValue = Current.Id;
-        //        Delete();
-
-        //        return true;
-        //    }
-        //    catch (Exception Ex)
-        //    {
-
-        //        throw Ex;
-        //    }
-        //}
+                List<ProductsVM> productsVM = new List<ProductsVM>();
+                foreach (var item in obj)
+                {
+                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue,2),
+                        Discount = discount,
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        UOM = item.ProductPackSize.UOM,
+                        TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
+                        AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault()
+                    };
+                    productsVM.Add(producVMList);
+                }
 
 
+
+                return productsVM;
+
+
+
+
+            }
+            catch (Exception Ex)
+            {
+
+
+
+                throw Ex;
+            }
+        }
+        public async Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage) //int[] filterList
+        {
+            try
+            {
+                var totalProduct = 0;
+
+                decimal conversionvalue = HttpContext.Current.Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(HttpContext.Current.Session["ConversionRate"]);
+
+                if (filterList == null)
+                {
+                    filterList = new SideBarVM[] { };
+                }
+
+
+
+                int[] cat = new int[filterList.Count(x => x.Name == "Category")];
+                int[] brand = new int[filterList.Count(x => x.Name == "Brand")];
+                int catI = 0;
+                int brandI = 0;
+                foreach (var item in filterList)
+                {
+                    switch (item.Name)
+                    {
+                        case "Category":
+                            cat[catI] = item.ID;
+                            catI++;
+                            break;
+                        case "Brand":
+                            brand[brandI] = item.ID;
+                            brandI++;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                var obj = new List<ProductMaster>();
+                if (cat.Length > 0 && brand.Length > 0)
+                {
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand))
+                        && x.Name.Contains(search))
+                        .Include(x => x.ProductPackSize)
+                        .Include(x => x.ProductPrices)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand))
+                        && x.Name.Contains(search)
+                        );
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand)))
+                        .Include(x => x.ProductPackSize)
+                        .Include(x => x.ProductPrices)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                        && (cat.Contains(x.FK_ProductCategory)
+                        && brand.Contains(x.FK_ProductBrand))
+                        );
+                    }
+                }
+                else if (cat.Length > 0)
+                {
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory)
+                        && x.Name.Contains(search))
+
+
+
+                        .Include(x => x.ProductPrices)
+                        .Include(x => x.ProductPackSize)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                        && cat.Contains(x.FK_ProductCategory)
+                        && x.Name.Contains(search)
+                        );
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory))
+                        .Include(x => x.ProductPackSize)
+                        .Include(x => x.ProductPrices)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+                        //wrong count
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                        cat.Contains(x.FK_ProductCategory));
+                    }
+                }
+                else if (brand.Length > 0)
+                {
+                    if (search.Length > 0)
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand)
+                        && x.Name.Contains(search))
+
+
+
+                        .Include(x => x.ProductPrices)
+                        .Include(x => x.ProductPackSize)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand)
+                        && x.Name.Contains(search));
+                    }
+                    else
+                    {
+                        obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand))
+
+
+
+                        .Include(x => x.ProductPrices)
+                        .Include(x => x.ProductPackSize)
+                        .OrderByDescending(x => x.Id)
+                        .AsNoTracking()
+                        .Skip(prevPage).Take(nextPage)
+                        .ToListAsync();
+
+
+
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                        brand.Contains(x.FK_ProductBrand));
+                    }
+                }
+                else if (search.Length > 0)
+                {
+                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true
+                    && x.Name.Contains(search))
+
+
+
+                    .Include(x => x.ProductPrices)
+                    .Include(x => x.ProductPackSize)
+                    .OrderByDescending(x => x.Id)
+                    .AsNoTracking()
+                    .Skip(prevPage).Take(nextPage)
+                    .ToListAsync();
+
+
+
+                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true &&
+                    x.Name.Contains(search));
+                }
+                else
+                {
+                    obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true)
+                    .Include(x => x.ProductPrices)
+                    .Include(x => x.ProductPackSize)
+                    .OrderByDescending(x => x.Id)
+                    .AsNoTracking()
+                    .Skip(prevPage).Take(nextPage)
+                    .ToListAsync();
+
+
+
+                    totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true);
+                }
+
+
+
+                List<ProductsVM> productsVM = new List<ProductsVM>();
+
+
+
+                var ids = obj.Select(x => x.Id).ToArray();
+
+
+
+                var objRating = _dxcontext.CommentAndRatings
+                .GroupBy(w => new
+                {
+                    Id = w.FK_ProductMaster,
+                })
+                .Select(s => new ProductsCommentVM()
+                {
+                    Id = s.Key.Id,
+                    AvgRating = s.Sum(x => (decimal)x.Rate) / s.Count(),
+                    TotalRatingCount = s.Count()
+                }).AsNoTracking().ToList();
+
+
+
+
+
+                foreach (var item in obj)
+                {
+                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = Math.Round(Convert.ToDecimal(price)/ conversionvalue,2),
+                        Discount = discount,// item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        totalProduct = totalProduct,
+                        UOM = item.ProductPackSize.UOM,
+
+
+
+                        TotalRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).TotalRatingCount,
+                        AvgRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).AvgRating
+                    };
+                    productsVM.Add(producVMList);
+                }
+
+
+
+
+                return productsVM;
+
+
+
+
+            }
+            catch (Exception Ex)
+            {
+
+
+
+                throw Ex;
+            }
+        }
 
     }
 }

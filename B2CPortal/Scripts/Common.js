@@ -520,7 +520,7 @@ function loadProductList() {
 <a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="SetLocalStorage(this)"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
 <div class="actions-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
 <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
 </div>
 </div>
@@ -584,160 +584,349 @@ ${htmlProductList}
         }
     });
 }
-function LoadQuickView(elem) {
+//function LoadQuickView(elem) {
+//    var Id = elem.id;
+//    $.ajax({
+//        url: '/Product/GetProductbyId?Id=' + Id + '',
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        success: function (result) {
+//            var html = '';
+//            var index = 1;
+//            var fade = 1;
+//            var productPrice = 0;
+//            var htmlProductDetail = '';
+//            var htmlProductPriceDetail = '', htmlProductSize = '';
+//            var item = JSON.parse(result.data);
+
+//            $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
+
+//                productPrice = PriceValue.Price;
+//                productDiscount = PriceValue.Discount;
+//            });
+
+//            $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
+
+//                if (ProductDetailsIndex == 1) {
+//                    htmlProductDetail += `<li class="active"><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+//                }
+//                else {
+//                    htmlProductDetail += `<li><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+//                }
+
+
+//                index += 1;
+//            });
+
+//            $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
+
+//                if (ProductPDIndex == 0) {
+//                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+//                        <div class="pro-type">
+//                            <span id="discountedvalue">${productDiscount} </span>%
+//                        </div>
+//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+//                                                        </div>`
+//                }
+//                else {
+//                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+//                        <div class="pro-type">
+//                            <span>${productDiscount}%</span>
+//                        </div>
+//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+//                                                        </div>`
+//                }
+
+//                fade += 1;
+//            });
+
+//            $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
+
+//                htmlProductSize += `<option value="${ProductSizeValue.Id}">${ProductSizeValue.UOM}</option>`
+
+
+//            });
+
+
+//            html = `<div class="container">
+//        <div class="row">
+//            <div class="col-xs-12">
+//                <div class="d-table">
+//                    <div class="d-tablecell">
+//                        <div class="modal-dialog">
+//                            <div class="main-view modal-content">
+//                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
+//                                    <span>x</span>
+//                                </div>
+//                                <div class="row">
+//                                    <div class="col-xs-12 col-sm-5 col-md-4">
+//                                        <div class="quick-image">
+//                                            <div class="single-quick-image text-center">
+//                                                <div class="list-img">
+//                                                    <div class="product-img tab-content">
+//                                                    ${htmlProductPriceDetail}
+//                                                    </div>
+//                                                </div>
+//                                            </div>
+//                                            <div class="quick-thumb">
+//                                                <ul class="product-slider">${htmlProductDetail}
+
+//                                              </ul>
+//                                            </div>
+//                                        </div>
+//                                    </div>
+//                                    <div class="col-xs-12 col-sm-7 col-md-8">
+//                                        <div class="quick-right">
+//                                            <div class="list-text">
+//                                                <h3>${item.Name} ${htmlProductSize}</h3>
+//                                                <span>${item.ShortDescription}</span>
+//                                                <div class="ratting floatright">
+//                                                    <p>( 27 Rating )</p>
+//                                                    <i class="mdi mdi-star"></i>
+//                                                    <i class="mdi mdi-star"></i>
+//                                                    <i class="mdi mdi-star"></i>
+//                                                    <i class="mdi mdi-star-half"></i>
+//                                                    <i class="mdi mdi-star-outline"></i>
+//                                                </div>
+//                                                <h5> <del>${productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
+//                                                <p>${item.LongDescription}</p>
+//                                                 <div class="plus-minus">
+//                                                <a class="dec qtybuttonquickview qtybutton">-</a>
+//                                                <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
+//                                                <a class="inc qtybuttonquickview qtybutton">+</a>
+//                                            </div>
+//                                                 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+//                                                </div>
+//                                                <div class="list-btn">
+//                                                    <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+//                                                    <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
+                                                    
+//                                                </div>
+//                                                <div class="share-tag clearfix">
+//                                                    <ul class="blog-share floatleft">
+//                                                        <li><h5>share </h5></li>
+//                                                        <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+//                                                        <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+//                                                        <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+//                                                        <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+//                                                        <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+//                                                        <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+//                                                    </ul>
+//                                                </div>
+//                                            </div>
+//                                        </div>
+//                                    </div>
+//                                </div>
+//                            </div>
+//                        </div>
+//                    </div>
+//                </div>
+//            </div>
+//        </div>
+//    </div>`;
+
+
+//            $('#quick-view').html(html);
+//            SetLocalStorage(elem);
+//            var symbolvalue = GetCookieByName(pricesymbol);
+//            $('.pricesymbol').text(symbolvalue);
+//            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+//        },
+//        error: function (errorMessage) {
+//            alert(errorMessage.responseText);
+//        }
+//    });
+//}
+function LoadQuickViewWithRating(elem) {
+
+
+
     var Id = elem.id;
+
+
+
     $.ajax({
-        url: '/Product/GetProductbyId?Id=' + Id + '',
+        url: '/Product/GetProductbyIdWithRating?Id=' + Id + '',
         type: "GET",
         contentType: "application/json;charset=utf-8",
         dataType: "json",
         success: function (result) {
+
+
+
             var html = '';
             var index = 1;
             var fade = 1;
             var productPrice = 0;
+            var productDiscount = 0;
             var htmlProductDetail = '';
-            var htmlProductPriceDetail = '', htmlProductSize = '';
+            var htmlProductPriceDetail = '';
+            var htmlProductSize = '';
+
+
+
             var item = JSON.parse(result.data);
 
-            $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
 
-                productPrice = PriceValue.Price;
-                productDiscount = PriceValue.Discount;
+
+            $(item).each(function (i, v) {
+
+
+
+                productPrice = item[i].Price;
+                productDiscount = item[i].Discount;
             });
 
-            $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
 
-                if (ProductDetailsIndex == 1) {
-                    htmlProductDetail += `<li class="active"><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+
+            $(item).each(function (i, v) {
+
+
+
+                if (i == 1) {
+                    htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[i].ImageUrl}" alt="quick view" /> </a></li>`
                 }
                 else {
-                    htmlProductDetail += `<li><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+                    htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${item[i].ImageUrl}" alt="quick view" /> </a></li>`
                 }
+
 
 
                 index += 1;
+
+
+
             });
 
-            $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
 
-                if (ProductPDIndex == 0) {
+
+            $(item).each(function (i, v) {
+
+
+
+                if (i == 0) {
                     htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
-                        <div class="pro-type">
-                            <span id="discountedvalue">${productDiscount} </span>%
-                        </div>
-                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-                                                        </div>`
+<div class="pro-type">
+<span id="discountedvalue">${productDiscount} </span>%
+</div>
+<a class="simpleLens-image" data-lens-image="${item[i].ImageUrl}" href="#"><img src="${item[i].ImageUrl}" alt="" class="simpleLens-big-image"></a>
+</div>`
                 }
                 else {
                     htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
-                        <div class="pro-type">
-                            <span>${productDiscount}%</span>
-                        </div>
-                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-                                                        </div>`
+<div class="pro-type">
+<span>${productDiscount}%</span>
+</div>
+<a class="simpleLens-image" data-lens-image="${item[i].ImageUrl}" href="#"><img src="${item[i].ImageUrl}" alt="" class="simpleLens-big-image"></a>
+</div>`
                 }
+
+
 
                 fade += 1;
             });
 
-            $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
-
-                htmlProductSize += `<option value="${ProductSizeValue.Id}">${ProductSizeValue.UOM}</option>`
 
 
+            $(item).each(function (i, v) {
+
+
+
+                htmlProductSize += `<option value="${item[i].Id}"></option><h3>${item[i].Name}&nbsp;${item[i].UOM} </h3>
+<span>${item[i].ShortDescription}</span>
+<div class="ratting floatright">
+<p>( ${item[i].TotalRating} Rating )</p>
+${GetProductRating(item[i].AvgRating)}`;
             });
 
 
-            html = `<div class="container">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="d-table">
-                    <div class="d-tablecell">
-                        <div class="modal-dialog">
-                            <div class="main-view modal-content">
-                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
-                                    <span>x</span>
-                                </div>
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-5 col-md-4">
-                                        <div class="quick-image">
-                                            <div class="single-quick-image text-center">
-                                                <div class="list-img">
-                                                    <div class="product-img tab-content">
-                                                    ${htmlProductPriceDetail}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="quick-thumb">
-                                                <ul class="product-slider">${htmlProductDetail}
 
-                                              </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-7 col-md-8">
-                                        <div class="quick-right">
-                                            <div class="list-text">
-                                                <h3>${item.Name} ${htmlProductSize}</h3>
-                                                <span>${item.ShortDescription}</span>
-                                                <div class="ratting floatright">
-                                                    <p>( 27 Rating )</p>
-                                                    <i class="mdi mdi-star"></i>
-                                                    <i class="mdi mdi-star"></i>
-                                                    <i class="mdi mdi-star"></i>
-                                                    <i class="mdi mdi-star-half"></i>
-                                                    <i class="mdi mdi-star-outline"></i>
-                                                </div>
-                                                <h5> <del>${productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
-                                                <p>${item.LongDescription}</p>
-                                                 <div class="plus-minus">
-                                                <a class="dec qtybuttonquickview qtybutton">-</a>
-                                                <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
-                                                <a class="inc qtybuttonquickview qtybutton">+</a>
-                                            </div>
-                                                 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
-                                                </div>
-                                                <div class="list-btn">
-                                                    <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-                                                    <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
-                                                    
-                                                </div>
-                                                <div class="share-tag clearfix">
-                                                    <ul class="blog-share floatleft">
-                                                        <li><h5>share </h5></li>
-                                                        <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
-                                                        <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
-                                                        <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
-                                                        <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
-                                                        <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
-                                                        <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>`;
+            html = `<div class="container">
+<div class="row">
+<div class="col-xs-12">
+<div class="d-table">
+<div class="d-tablecell">
+<div class="modal-dialog">
+<div class="main-view modal-content">
+<div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
+<span>x</span>
+</div>
+<div class="row">
+<div class="col-xs-12 col-sm-5 col-md-4">
+<div class="quick-image">
+<div class="single-quick-image text-center">
+<div class="list-img">
+<div class="product-img tab-content">
+${htmlProductPriceDetail}
+</div>
+</div>
+</div>
+<div class="quick-thumb">
+<ul class="product-slider">${htmlProductDetail}
+
+
+
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 col-sm-7 col-md-8">
+<div class="quick-right">
+<div class="list-text">
+${htmlProductSize}
+</div>
+<h5> <del>${productPrice == undefined ? 0 : productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount == undefined ? 0 : productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
+<p>${item.LongDescription}</p>
+<div class="plus-minus">
+<a class="dec qtybuttonquickview qtybutton">-</a>
+<input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
+<a class="inc qtybuttonquickview qtybutton">+</a>
+</div>
+<strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+</div>
+<div class="list-btn">
+<a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
+
+</div>
+<div class="share-tag clearfix">
+<ul class="blog-share floatleft">
+<li><h5>share </h5></li>
+<li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+<li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+<li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+<li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+<li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+<li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>`;
+
+
 
 
             $('#quick-view').html(html);
             SetLocalStorage(elem);
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
-            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
         }
     });
 }
+//Single Function Using ..on Load ,Filtering, Paggination,Search
 function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
     var htmldata = '';
@@ -747,7 +936,17 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
     var htmlNextButton = '';
     var htmlbtn = '';
     var htmlProductGrid = '';
-    //var totalProductList = 0;
+
+    var List = [];
+    let array = [];
+
+    if (filterList.length > 0 && filterList != '[[]]') {
+
+        List = filterList.substring(1, filterList.length - 1);
+        array.push(List);
+        filterList = JSON.parse(array)
+
+    }
 
     var postData = {
         filterList: filterList,
@@ -755,22 +954,37 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         nextPage: nextPage,
         prevPage: prevPage
     };
-    
+
+
+
+    //if (filterList.length > 0)
+    //    var filterList = JSON.stringify(filterList);
+
+    //var postData = {
+    //    filterList: filterList,
+    //    search: search,
+    //    nextPage: nextPage,
+    //    prevPage: prevPage
+    //};
+
     $.ajax({
+
         url: "/Product/GetProductListbySidebar",
         type: "POST",
-        //data: JSON.stringify(filterList),
         data: JSON.stringify(postData),
-        //data: { filterList},
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         traditional: true,
+
         success: function (result) {
+
+
             var data = JSON.parse(result.data);
-            if (data.length > 0)
-                totalProductList = data[0].totalProduct;
-            else
+            if (data.length <= 0)
                 totalProductList = 0;
+            else
+                totalProductList = data[0].totalProduct;
+
             $('#lblTotalCount').text('Total Records: ' + totalProductList);
             $.each(data, function (key, item) {
 
@@ -790,17 +1004,13 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                                     </div>
                                     <div class="col-xs-12 col-md-8">
                                         <div class="list-text">
-                                            <h3>${item.Name}</h3>
+                                            <h3>${item.Name}&nbsp;${item.UOM}</h3>
                                             <span>${item.ShortDescription}</span>
                                             <div class="ratting floatright">
-                                                <p>( 27 Rating )</p>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star"></i>
-                                                <i class="mdi mdi-star-half"></i>
-                                                <i class="mdi mdi-star-outline"></i>
+                                                <p>( ${item.TotalRating} Rating )</p>
+                                                ${GetProductRating(item.AvgRating)}
                                             </div>
-                                            <h5><del>${item.Price} <strong class="pricesymbol"> </strong></del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></h5 >
+                                            <h5><del> <strong class="pricesymbol"> </strong> ${item.Price}</del>&nbsp <strong class="pricesymbol"> </strong> ${item.Price * (1 - (item.Discount / 100))} </h5 >
                                             <p>${item.LongDescription}</p>
                                             <div class="list-btn">
                                             <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -818,21 +1028,17 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                                                         <div class="pro-type">
                                                       <span>${item.Discount}%</span>
                                                         </div>
-                                                        <a href="#"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+                                                        <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                                         <div class="actions-btn">
                                                         <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-                                                        <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickView(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+                                                        <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
                                                         <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
                                                         </div>
                                                     </div>
                                                     <div class="product-dsc">
-                                                        <p><a href="#">${item.Name}</a></p>
+                                                        <p><a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}">${item.Name}&nbsp;${item.UOM}</a></p>
                                                         <div class="ratting">
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star"></i>
-                                                            <i class="mdi mdi-star-half"></i>
-                                                            <i class="mdi mdi-star-outline"></i>
+                                                           ${GetProductRating(item.AvgRating)}
                                                         </div>
                                                         <span><del style='color:silver'>${item.Price} <strong class="pricesymbol"> </strong></del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></span>
                                                     </div>
@@ -890,39 +1096,52 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
             $('#htmlListAndGrid').html(htmldata);
             $('#htmlProdListPaggination').html(htmlPaggination);
+
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
+            if (filterList != null && filterList != undefined && filterList != '[[]]' && filterList.length > 0) {
+
+                $.each(filterList, function (index, value) {
+
+                    var filterListslides = document.getElementsByClassName("filter");
+
+                    for (var i = 0; i < filterListslides.length; i++) {
+
+                        if ($(filterListslides.item(i)).attr("myfilter").toString() == value.Name.toString() && $(filterListslides.item(i)).attr("categoryid").toString() == value.ID.toString()) {
+                            $(filterListslides.item(i)).prop("checked", true);
+                        }
+
+                    }
+
+                });
+            }
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
         }
     });
+
 }
+
+//updated 1-Dec-2021
+
 $('.main-filter-container').on("change", ".filter", function () {
-    
-
-    var slides = document.getElementsByClassName("filter");
-
-    let filterList_Dummy = [];
-
-    for (var i = 0; i < slides.length; i++) {
-
-        if ($(slides.item(i)).prop("checked")) {
-            ifPresent = true;
-            filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
-        }
-    }
 
 
-    var searchProduct = $('#textProductName').val();
-    //if (ifPresent) {
+    var filterCategoryAndBrand = [];
+    GetfilterListDummy();
 
-    loadProductListById(filterList_Dummy, searchProduct, 10, 0);
-    //}
-    //else {
-    //    loadProductList();
-    //}
-    //}
+    var filterSearchByName = localStorage.getItem("filterSearchByName") == undefined ? "" : localStorage.getItem("filterSearchByName");
+    var filterPrevpage = localStorage.getItem("filterPrevpage") == undefined ? 0 : localStorage.getItem("filterPrevpage");
+    var filterNextPage = localStorage.getItem("filterNextPage") == undefined ? 10 : localStorage.getItem("filterNextPage");
+
+    filterCategoryAndBrand = localStorage.getItem("categoryAndBrand");
+
+
+    SetLocalStorageForFilter(filterCategoryAndBrand, filterSearchByName, 10, 0)
+    loadProductListById(filterCategoryAndBrand, filterSearchByName, 10, 0);
+
+
 });
 //Load Data function
 function loadFeatureProduct() {
@@ -947,7 +1166,7 @@ function loadFeatureProduct() {
                                     <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
                                     <div class="actions-btn">
                                         <a onclick="HandleAddtocart(this)" productIdList=${item.Id}  ><i class="mdi mdi-cart"></i></a>
-                                        <a href="#" data-toggle="modal" onClick="LoadQuickView(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+                                        <a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
                                         <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}><i class="mdi mdi-heart"></i></a>
                                     </div>
                                 </div>
@@ -995,7 +1214,7 @@ function loadRecentViewProduct() {
                                     <a href="/ProductDetails/Index?productId=${id[index]}"><img src="${img[index]}" alt="Product Title" /></a>
                                     <div class="actions-btn">
                                         <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${id[index]}><i class="mdi mdi-cart"></i></a>
-<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickView(this)" productId="${id[index]}" productName="${name[index]}" productImg="${img[index]}" onClick="LoadQuickView(this)" id="${id[index]}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${id[index]}" productName="${name[index]}" productImg="${img[index]}" onClick="LoadQuickViewWithRating(this)" id="${id[index]}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
 
                                         <a onclick="HandleAddtoWishList(this)" productIdList=${id[index]} ><i class="mdi mdi-heart"></i></a>
 
@@ -1512,6 +1731,157 @@ function GetProductIdFromURL() {
     return productId;
 }
 
+function GetProductByIdWithRating() { //updated 30-Nov-2021
+
+    var productId = GetProductIdFromURL();
+
+    if (productId != null && productId != undefined) {
+        $.ajax({
+            url: "/Product/GetProductbyIdWithRating",
+            type: "Get",
+            data: {
+                Id: productId
+            },
+            success: function (result) {
+
+                var html = '';
+                var index = 1;
+                var fade = 1;
+                var productPrice = 0;
+                var productDiscount = 0;
+                var htmlProductDetail = '';
+                var htmlProductPriceDetail = '';
+                var htmlProductSize = '';
+                debugger
+                var item = JSON.parse(result.data);
+                var rating = item[0].AvgRating;
+
+                var htlmRating = GetProductRating(rating);
+
+                $(item).each(function (i, v) {
+                    productPrice = item[i].Price;
+                    productDiscount = item[i].Discount;
+                });
+
+                $(item).each(function (i, v) {
+                    if (i == 1) {
+                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[i].ImageUrl}" alt="quick view" /> </a></li>`
+                    } else {
+                        htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${item[i].ImageUrl}" alt="quick view" /> </a></li>`
+                    }
+                    index += 1;
+                });
+                $(item).each(function (i, v) {
+                    if (i == 0) {
+                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                        <span>new</span>
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${item[i].ImageUrl}" href="#"><img src="${item[i].ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                        </div>`
+                    } else {
+                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+                        <div class="pro-type">
+                        <span>new</span>
+                        </div>
+                        <a class="simpleLens-image" data-lens-image="${item[i].ImageUrl}" href="#"><img src="${item[i].ImageUrl}" alt="" class="simpleLens-big-image"></a>
+                        </div>`
+                    }
+                    fade += 1;
+                });
+
+                $(item).each(function (i, v) {
+                    htmlProductSize += `${item[i].UOM}`
+                });
+
+
+
+                html = `
+                       <div class="col-xs-12">
+                       <div class="d-table">
+                       <div class="d-tablecell">
+                       <div class="">
+                       <div class="main-view">
+                       <div class="modal-footer" data-dismiss="modal">
+                       <span></span>
+                       </div>
+                       <div class="row">
+                       <div class="col-xs-12 col-sm-5 col-md-4">
+                       <div class="quick-image">
+                       <div class="single-quick-image text-center">
+                       <div class="list-img">
+                       <div class="product-img tab-content">
+                       ${htmlProductPriceDetail}
+                       </div>
+                       </div>
+                       </div>
+                       <div class="quick-thumb">
+                       <ul class="product-slider">${htmlProductDetail} </ul>
+                       </div>
+                       </div>
+                       </div>
+                       <div class="col-xs-12 col-sm-7 col-md-8">
+                       <div class="quick-right">
+                       <div class="list-text">
+                       <h3>${item[0].Name} ${htmlProductSize}</h3>
+                       <span>${item[0].ShortDescription}</span>
+                       <div class="ratting floatright">
+                       <p>( ${item[0].TotalRating} Rating )</p>
+
+                        ${htlmRating}
+             
+                       </div>
+                       <h5><del>${productPrice} <strong class="pricesymbol"> </strong></del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} <strong class="pricesymbol"> </strong></h5>
+                       <p>${item[0].LongDescription}</p>
+                       <div class="all-choose">
+                       <div class="s-shoose"> </div>
+                       <div class="s-shoose">
+                       <h5>size</h5> <div class="size-drop">
+                       <h5> ${htmlProductSize}</h5> </div>
+                       </div>
+                       </div>
+                                   <div class="plus-minus">
+                                   <a class="dec qtybuttonquickview qtybutton">-</a>
+                                   <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
+                                   <a class="inc qtybuttonquickview qtybutton">+</a>
+                                   </div>
+                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+
+                       <div class="list-btn">
+                       <a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>
+                       <a onclick="HandleAddtoWishList(this)" productIdList=${item[0].Id}>wishlist</a>
+                       </div>
+                       <div class="share-tag clearfix">
+                       <ul class="blog-share floatleft">
+                       <li><h5>share </h5></li>
+                       <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+                       <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+                       </ul>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       </div>
+                       `;
+                $('#quick-view').html(html);
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+            }
+        });
+    }
+}
+
+
 // Validation
 var rating = 0;
 $('.product-rating').click(function () {
@@ -1520,8 +1890,6 @@ $('.product-rating').click(function () {
 });
 
 function CommentValidate(name, email, message) {
-    
-
     $('#lblName').text('');
     $('#lblEmail').text('');
     $('#lblMessage').text('');
@@ -1534,25 +1902,159 @@ function CommentValidate(name, email, message) {
         $('#lblName').text("Please insert a Name.");
         return false;
 
-
     } else if (isEmailValid == false) {
         $('#lblEmail').text("Please insert a valid Email.");
         return false;
-
 
     } else if (message.length == 0) {
         $('#lblMessage').text("Please insert Reviews");
         return false;
 
 
+
+
     } else if (rating == 0) {
         $('#lblrating').text("Please Mark Product Rating.");
         return false;
+
+
 
     } else {
         rating = 0;
         return true;
     }
+
+
+
+}
+
+
+
+function GetProductRating(rating) {
+
+
+
+    var htlmRating = '';
+    var remainingRating = 5 - rating;
+
+
+
+    var isDecimalRatingAssign = false;
+    var isDecimalRating = rating % 1;
+
+
+
+    if (isDecimalRating != 0) {
+        isDecimalRating = true;
+
+
+
+        rating = Math.ceil(rating);
+        remainingRating = Math.floor(remainingRating);
+    }
+    else {
+        isDecimalRating = false;
+    }
+
+
+
+    for (var i = 1; i <= rating; i++) {
+        if (isDecimalRating) { //true
+            if (i == rating) { // 4==4
+                //half star
+                htlmRating += `<i class="mdi mdi-star-half"></i>`;
+                isDecimalRatingAssign = true;
+            }
+            else {
+                //full star
+                htlmRating += `<i class="mdi mdi-star"></i>`;
+            }
+        } else {
+            //full star
+            htlmRating += `<i class="mdi mdi-star"></i>`;
+        }
+    }
+
+
+
+    if (isDecimalRatingAssign) { //true
+        for (var i = 0; i < remainingRating; i++) {
+            //half star
+            htlmRating += `<i class="mdi mdi-star-outline"></i>`;
+        }
+    }
+
+
+
+    if (!isDecimalRating) { //false
+        for (var i = 0; i < remainingRating; i++) {
+            // Empty Star
+            htlmRating += `<i class="mdi mdi-star-outline"></i>`;
+        }
+    }
+
+
+
+    return htlmRating;
+}
+
+
+
+//Get Dummy Product List Filter Array
+
+
+
+function GetfilterListDummy() { //Updated 2-Dec-2021 -- Move Product List to Common.js
+
+
+
+    var slides = document.getElementsByClassName("filter");
+    let filterList_Dummy = [];
+
+
+
+    for (var i = 0; i < slides.length; i++) {
+
+
+
+        if ($(slides.item(i)).prop("checked")) {
+            ifPresent = true;
+            filterList_Dummy.push({ "Name": $(slides.item(i)).attr('myfilter'), "ID": parseInt($(slides.item(i)).attr('categoryId')) });
+        }
+    }
+
+
+
+
+    let categoryAndBrand = [];
+
+
+
+    localStorage.removeItem("categoryAndBrand");
+    categoryAndBrand.push(filterList_Dummy);
+
+
+
+    localStorage.setItem("categoryAndBrand", JSON.stringify(categoryAndBrand));
+
+
+
+    return filterList_Dummy;
+}
+// Set Local Storage For Filter -- Updated 2-Dec-2021
+
+
+
+function SetLocalStorageForFilter(FilterCateAndBrand, filterSearchByName, filterNextPage, filterPrevpage) {
+
+
+
+    localStorage.setItem("filterSearchByName", filterSearchByName);
+    localStorage.setItem("filterPrevpage", filterPrevpage);
+    localStorage.setItem("filterNextPage", filterNextPage);
+    // localStorage.setItem("categoryAndBrand", FilterCateAndBrand);
+
+
 
 }
 

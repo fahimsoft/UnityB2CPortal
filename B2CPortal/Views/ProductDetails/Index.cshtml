@@ -134,22 +134,35 @@
 <script>
     $(document).ready(function () {
 
-        GetProductId();
-         
+
+
+        GetProductByIdWithRating();
+
+
+
+        
         let CurrentProductId = localStorage.getItem('CurrentProductId');
         if (CurrentProductId != GetProductIdFromURL()) {
+
+
 
             localStorage.removeItem('CurrentProductId');
             localStorage.removeItem('CommentSection');
         }
 
 
-         
+
+
+        
         let commentArray = [];
         let commentStorage = localStorage.getItem('CommentSection');
 
+
+
         if (commentStorage != null)
             commentArray = commentStorage.split(',');
+
+
 
         if (commentArray.length > 0)
             GetProductCommentWithPaggination(commentArray[0], commentArray[1]);
@@ -157,42 +170,68 @@
             GetProductCommentAndRating();
 
 
+
+
         $('.product-rating').click(function (elem) {
             rating = $(this).attr('rating');
         });
 
+
+
         // Paggination Button ,1,2,3..
         $('#div-paggination').on('click', '.btn-paggination', function () {
+
+
 
             //var localvalues = [];
             //var ProductId = [];
             var nextPage = $(this).attr('next-page');
             var prevPage = $(this).attr('prev-page');
 
+
+
             PrevClickValue = prevPage;
             NextClickValue = nextPage;
+
+
 
             $('#div-paggination').find('.btn-paggination').removeClass('applyActiveBtn');
             $(this).addClass('applyActiveBtn');
 
+
+
             SetLocalStorageCommentSection(nextPage, prevPage);
             GetProductCommentWithPaggination(nextPage, prevPage);
 
+
+
         });
+
+
 
         // Prev and Next Button
         $('#div-paggination').on('click', '.btn-PrevAndNext', function () {
 
+
+
             let value = $(this).attr('value')
 
 
-             
+
+
+            
             if (value == "Previous") {
+
+
 
                 if (PrevClickValue == 0)
                     PrevClickValue = commentArray[1];
 
+
+
                 if (PrevClickValue > 0) {
+
+
 
                     PrevClickValue = parseInt(PrevClickValue) - 10;
                     SetLocalStorageCommentSection(NextClickValue, PrevClickValue)
@@ -202,12 +241,20 @@
             }
 
 
+
+
             if (value == "Next") {
+
+
 
                 if (PrevClickValue == 0)
                     PrevClickValue = commentArray[1];
 
+
+
                 if ((parseInt(totalComment) - 10) > PrevClickValue) {
+
+
 
                     PrevClickValue = parseInt(PrevClickValue) + 10;
                     SetLocalStorageCommentSection(NextClickValue, PrevClickValue)
@@ -215,18 +262,23 @@
                     return false;
                 }
 
+
+
             }
 
+
+
             var currentBtnIndex = (((NextClickValue + PrevClickValue) / NextClickValue) - 1);
+
+
 
             $('#div-paggination').find('.btn-paggination').removeClass('applyActiveBtn');
             $('#div-paggination').find('.btn-paggination').eq(currentBtnIndex).addClass('applyActiveBtn');
 
+
+
             GetProductCommentWithPaggination(NextClickValue, PrevClickValue);
         });
     });
-
-
-
 </script>
 
