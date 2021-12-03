@@ -58,11 +58,11 @@ namespace B2CPortal.Controllers
                         ConversionRate = decimal.Parse(ConversionRate),
                         PaymentMode = PaymentType.Stripe.ToString(),
                         Status = OrderStatus.Confirmed.ToString(),
-                        TotalPrice = Convert.ToInt32( paymentmodel.Amount)
+                        TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
                     };
                   var dd = await _orders.UpdateOrderMAster(ordervm);
                     var model = new PaymentViewModel();
-                    model.TotalPrice = Convert.ToInt32(paymentmodel.Amount);
+                    model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
                     return View("PaymentStatus", model);
                 }
                 else

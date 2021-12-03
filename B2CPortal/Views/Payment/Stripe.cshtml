@@ -80,6 +80,8 @@
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         stripe.createToken(card).then(function (result) {
+            document.getElementsByClassName("loader-container")[0].style.display = "block";
+
             if (result.error) {
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;

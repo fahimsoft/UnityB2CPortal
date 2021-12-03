@@ -52,16 +52,19 @@ namespace B2CPortal.Controllers
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
+                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                 var detailsobj = new OrderVM
                 {
                     Name = name,
-                    Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                    Price =  Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
                     Discount = item.Discount, 
-                    SubTotalPrice = Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
-                    DiscountAmount = Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
+                    SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
+                    DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
                     Quantity = item.Quantity,
-                    TotalPrice = Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
+                    TotalPrice = discountedprice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
                     MasterImageUrl = MasterImageUrl,
                     Date = item.CreatedOn.ToString(),
                     FK_ProductMaster = item.FK_ProductMaster
@@ -87,10 +90,10 @@ namespace B2CPortal.Controllers
                         OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
                         var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
                         dd.OrderNo = result;
-                        dd.Price = Math.Round(Convert.ToDecimal(dd.Price/conversionvalue),2);
-                        dd.SubTotalPrice = Math.Round(Convert.ToDecimal(dd.SubTotalPrice / conversionvalue),2);
-                        dd.DiscountAmount = Math.Round(Convert.ToDecimal(dd.DiscountAmount / conversionvalue),2);
-                        dd.TotalPrice = Math.Round(Convert.ToDecimal(dd.TotalPrice / conversionvalue),2);
+                        dd.Price = dd.Price;
+                        dd.SubTotalPrice = dd.SubTotalPrice;
+                        dd.DiscountAmount = dd.DiscountAmount;
+                        dd.TotalPrice = dd.TotalPrice;
 
                         list.Add((OrderVM)dd);
                     }

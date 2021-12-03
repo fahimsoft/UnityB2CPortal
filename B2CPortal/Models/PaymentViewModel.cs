@@ -15,7 +15,7 @@ namespace B2CPortal.Models
         public string LastName { get; set; }
         public string OrderDescription { get; set; }
         public Nullable<int> TotalQuantity { get; set; }
-        public Nullable<int> TotalPrice { get; set; }
+        public Nullable<decimal> TotalPrice { get; set; }
         public int FK_Customer { get; set; }
         public string OrderNo { get; set; }
         public string ShippingAddress { get; set; }

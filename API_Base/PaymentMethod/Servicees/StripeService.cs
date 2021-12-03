@@ -29,7 +29,7 @@ namespace API_Base.PaymentMethod.Servicees
                 payment.Description = "this payment from stripe";
                 var options = new ChargeCreateOptions
                 {
-                    Amount = long.Parse(payment.Amount.ToString()),
+                    Amount = Convert.ToInt64(payment.Amount),
                     Currency = "usd",
                     Description = payment.Description,
                     //  Source = stripeToken,
