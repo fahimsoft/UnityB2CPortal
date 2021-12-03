@@ -142,7 +142,7 @@ namespace B2CPortal.Services
             _dxcontext.Configuration.LazyLoadingEnabled = false;
             cartlist = await _dxcontext.Carts.Where(x => (x.Guid == guid && x.IsWishlist == false && x.IsActive == true)
             ||
-            (x.IsWishlist == false && x.IsActive == true && x.FK_Customer == customerid)).ToListAsync();
+            (x.FK_Customer == customerid && x.IsWishlist == false && x.IsActive == true )).ToListAsync();
             return cartlist;
         }
 

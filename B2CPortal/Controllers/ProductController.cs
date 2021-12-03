@@ -122,7 +122,7 @@ namespace B2CPortal.Controllers
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity) - discountedprice) / conversionvalue, 2);
+                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity/ conversionvalue) - discountedprice), 2);
                 var cartobj = new CartViewModel
                 {
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
@@ -133,7 +133,7 @@ namespace B2CPortal.Controllers
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
                     TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
-                    FK_ProductMaster = item.FK_ProductMaster    ,
+                    FK_ProductMaster = item.FK_ProductMaster ,
                 };
                 cartViewModels.Add(cartobj);
                 totalprice += discountedprice;
@@ -320,7 +320,7 @@ namespace B2CPortal.Controllers
                     var productmasetr = await _IProductMaster.GetProductById(cartproducts.FK_ProductMaster);
                     var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) * cartproducts.Quantity) / conversionvalue,2);
+                    cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * cartproducts.Quantity) * (1 - (discount / 100))) / conversionvalue,2);
                     updateresult = await _cart.UpdateCart(cartproducts);
                 }
             }

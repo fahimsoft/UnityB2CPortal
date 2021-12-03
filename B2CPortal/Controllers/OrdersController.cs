@@ -143,11 +143,13 @@ namespace B2CPortal.Controllers
                         {
                             foreach (var item in cartlist)
                             {
-                                OrderTotal +=  Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var DiscountedPrice = price * (1 - (discount / 100));
+                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity/ conversionvalue) - discountedprice), 2);
+
+                                //var DiscountedPrice = price * (1 - (discount / 100));
                                 var ActualPrice = (decimal)(price * item.Quantity);
                                 subTotal = (int)(subTotal + ActualPrice);
                                 totalDiscount = (int)(totalDiscount + discount);
@@ -155,16 +157,18 @@ namespace B2CPortal.Controllers
                                 {
                                     Name = productData.Name,
                                     Quantity = item.Quantity,
-                                    TotalPrice = (int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
+                                    TotalPrice = discountedprice //(int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
                                 };
                                 orderVMs.Add(Order);
-                                orderVM.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
+
+                                orderVM.CartSubTotalDiscount += totalDiscountAmount;//((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
+                                OrderTotal += discountedprice;//Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
                             }
                             orderVM.orderVMs = orderVMs;
                             orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2) ;
-                            orderVM.CartSubTotalDiscount = Math.Round(orderVM.CartSubTotalDiscount/conversionvalue,2);
-                            orderVM.OrderTotal = Math.Round(OrderTotal/conversionvalue,2);
-                            Session["ordertotal"] = Math.Round(OrderTotal / conversionvalue, 2);
+                            orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
+                            orderVM.OrderTotal = OrderTotal;
+                            Session["ordertotal"] = OrderTotal; 
                         }
                         return View(orderVM);
                     }
