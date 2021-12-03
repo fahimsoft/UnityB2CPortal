@@ -107,6 +107,7 @@ namespace B2CPortal.Controllers
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
             string cookie = string.Empty;
+            decimal totalprice = 0;
             if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
             {
                 cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
@@ -120,6 +121,8 @@ namespace B2CPortal.Controllers
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
+                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity) - discountedprice) / conversionvalue, 2);
                 var cartobj = new CartViewModel
                 {
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
@@ -129,20 +132,21 @@ namespace B2CPortal.Controllers
                     Name = name,
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
-                    TotalPrice = item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
-                    FK_ProductMaster = item.FK_ProductMaster,
+                    TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
+                    FK_ProductMaster = item.FK_ProductMaster    ,
                 };
                 cartViewModels.Add(cartobj);
+                totalprice += discountedprice;
             }
             var totalquentity = cartproducts.Sum(x => x.Quantity);
-            var totalprice = cartproducts.Sum(x => x.TotalPrice);
+            //var totalprice = cartproducts.Sum(x => x.TotalPrice);
 
             return SuccessResponse(new
             {
                 cartproducts = cartViewModels,
                 cartproductscount = totalquentity,
-                totalprice = Math.Round(Convert.ToDecimal(totalprice / conversionvalue), 2)
-            });
+                totalprice = totalprice
+            }) ;
 
         }
         public async Task<ActionResult> GetCartList()
@@ -163,27 +167,30 @@ namespace B2CPortal.Controllers
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
-                var DiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice) / conversionvalue, 2);
+                var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
+                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                 var cartobj = new CartViewModel
                 {
-                    ActualPrice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2),
+                    ActualPrice = actualprice,//Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2),
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
-                    //Price = decimal.Parse(String.Format("{0:0.00}", price * (1 - (discount / 100)))),
                     Id = item.Id,
                     Quantity = (int)item.Quantity,
                     Name = name,
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
-                    TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 1),
-                    DiscountAmount = DiscountAmount,
+                    TotalPrice = discountedprice,
+                    DiscountAmount = totalDiscountAmount,
                     ShipingAndHostring = 0,
                     VatTax = 0
                 };
                 cartViewModels.Add(cartobj);
-                cartViewModels.Select(c => { c.CartSubTotal += Math.Round((decimal)(price * item.Quantity) / conversionvalue, 2); return c; }).ToList();
-                cartViewModels.Select(c => { c.CartSubTotalDiscount += Math.Round(((decimal)(price * item.Quantity) - (decimal)item.TotalPrice) / conversionvalue, 2); return c; }).ToList();
-                cartViewModels.Select(c => { c.OrderTotal += Math.Round((decimal)item.TotalPrice / conversionvalue, 2); return c; }).ToList();
+                cartViewModels.Select(c => { c.CartSubTotal += actualprice; return c; }).ToList();
+                cartViewModels.Select(c => { c.CartSubTotalDiscount += totalDiscountAmount; return c; }).ToList();
+                cartViewModels.Select(c => { c.OrderTotal += discountedprice; return c; }).ToList();
+                //cartViewModels.Select(c => { c.CartSubTotal += Math.Round((decimal)(price * item.Quantity) / conversionvalue, 2); return c; }).ToList();
+                //cartViewModels.Select(c => { c.CartSubTotalDiscount += Math.Round(((decimal)(price * item.Quantity) - (decimal)item.TotalPrice) / conversionvalue, 2); return c; }).ToList();
+                //cartViewModels.Select(c => { c.OrderTotal += Math.Round((decimal)item.TotalPrice / conversionvalue, 2); return c; }).ToList();
             }
 
             //return View(cartViewModels);

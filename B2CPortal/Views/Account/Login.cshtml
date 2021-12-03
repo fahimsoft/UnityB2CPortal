@@ -116,70 +116,55 @@
 {
     <script src="~/Scripts/jquery.validate.min.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-
     <script type="text/javascript">
-            var email;
-            $('.email').change(function () {
-
-                email = $(this).val();
+        var email;
 
 
-                let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
-                var Email = $('.email').val();
-                // alert(Email);
-                let result = false;
-                $.ajax({
-                    url: emailOrgName,
-                    data: JSON.stringify(Email),
 
-                    success: function (data) {
-                        if (data.success == true) {
-                            toastr.success(data.msg);
-                            $('#btnAddSale').attr('disabled', false);
-                        }
-                        else if (data.success == false) {
-                            toastr.error(data.msg);
-                            $('#btnAddSale').attr('disabled', true);
-                        }
-
-                    },
-                    async: false
-                });
-                console.log(result);
-                return result;
-            });
-
-        
 
         jQuery('#register').validate({
             rules: {
                 FirstName: {
                     required: true,
 
+
+
                     maxlength: 50
                 },
                 LastName: {
                     required: true
 
+
+
                 }, EmailId: {
                     required: true,
                     uniqueEmail: true
+
+
 
                 }, DateOfBirth: {
                     required: true
                 }, Gender: {
                     required: true
 
+
+
                 }, password: {
                     required: true
+
+
 
                 }, ConfirmPassword: {
                     required: true,
                     equalTo: ".Password"
 
+
+
                 }, PhoneNo: {
                     required: true
                 }
+
+
 
             },
             messages: {
@@ -203,8 +188,12 @@
                     required: "Phone No Is Required"
                 }
 
+
+
             }
         });
+
+
 
         jQuery('#login').validate({
             rules: {
@@ -212,10 +201,16 @@
                     required: true,
                     email: true
 
+
+
                 }, Password: {
                     required: true
 
+
+
                 }
+
+
 
             },
             messages: {
@@ -225,29 +220,77 @@
                     required: "Password Is Required"
                 }
 
+
+
             }
         });
+
+
 
 
         $('input[name="ConfirmPassword"]').keypress(function (e) {
             if (e.which == 13) {
                 $('#btnAddSale').click();
                 //$('form#login').submit();
-                return false;    //<---- Add this line
+                return false; //<---- Add this line
             }
         });
 
+
+
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
-             
+            debugger
+
+
+
+            email = $('.email').val();
+
+
+
+
+            let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
+            var Email = $('.email').val();
+            // alert(Email);
+            let result = false;
+            $.ajax({
+                url: emailOrgName,
+                data: JSON.stringify(Email),
+
+
+
+                success: function (data) {
+                    if (data.success == true) {
+                        toastr.success(data.msg);
+                        $('#btnAddSale').attr('disabled', false);
+                    }
+                    else if (data.success == false) {
+                        toastr.error(data.msg);
+                        $('#btnAddSale').attr('disabled', true);
+                    }
+
+
+
+                },
+                async: false
+            });
+            console.log(result);
+            return result;
+
+
+
             e.preventDefault();
             var form = $("#register");
 
+
+
             var datatosend = {
                 customer: {
-                    /*    idx: $('#idx').val(),*/
+                    /* idx: $('#idx').val(),*/
                     FirstName: $('#FirstName').val(),
                     LastName: $('#LastName').val(),
+
+
 
                     PhoneNo: $('#PhoneNo').val(),
                     DateOfBirth: $('#DateOfBirth').val(),
@@ -255,10 +298,12 @@
                     EmailId: $('.email').val(),
                     Password: $('.Password').val()
 
+
+
                 }
             }
             console.log(JSON.stringify(datatosend));
-            //  var form = $("#purchaseform");
+            // var form = $("#purchaseform");
             console.log(datatosend)
             $.validator.unobtrusive.parse(form);
             //if ($(form).valid()) // using not operator for a time being
@@ -270,8 +315,10 @@
                     contentType: 'application/json',
                     dataType: 'json',
 
+
+
                     success: function (data) {
-                         
+                        debugger
                         // alert(data);
                         console.log(data);
                         if (data.success == true) {
@@ -296,18 +343,24 @@
             }
         });
 
+
+
         $('#Password, #EmailId').keypress(function (e) {
             if (e.which == 13) {
                 $('#loginbtn').click();
                 //$('form#login').submit();
-                return false;    //<---- Add this line
+                return false; //<---- Add this line
             }
         });
+
+
 
         // Login Submit button
         $('#loginbtn').click(function (e) {
             e.preventDefault();
             var form = $("#login");
+
+
 
             $.validator.unobtrusive.parse(form);
             if ($(form).valid()) {
@@ -318,7 +371,7 @@
                     //cache : false,
                     //processData: false,
                     success: function (data) {
-                         
+                        debugger
                         if (data.success == true /*&& res.count > 0*/) {
                             toastr.success("Login successfully.");
                             window.location = data.data;
@@ -340,6 +393,8 @@
                 return false;
             }
         });
+
+
 
 
     </script>

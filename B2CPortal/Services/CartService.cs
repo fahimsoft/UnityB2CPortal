@@ -45,6 +45,8 @@ namespace B2CPortal.Services
                 Current.TotalQuantity = Current.Quantity;
                 Current.IsActive = cart.IsActive;
                 Current.IsWishlist = false;
+                Current.Currency= cart.Currency;
+                Current.ConversionRate= cart.ConversionRate;
 
                 Save();
                 return Current;
