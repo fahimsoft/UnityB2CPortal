@@ -95,7 +95,7 @@
                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
                             @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
-                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password:", @class = "password form-control", Type = "Password" } })
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password:", @class = "Password form-control", Type = "Password" } })
                             @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
 
                             <input class="form-control" type="password" name="ConfirmPassword" placeholder="Confirm Password" required />
@@ -122,10 +122,14 @@
 
 
 
+
+
         jQuery('#register').validate({
             rules: {
                 FirstName: {
                     required: true,
+
+
 
 
 
@@ -136,9 +140,13 @@
 
 
 
+
+
                 }, EmailId: {
                     required: true,
                     uniqueEmail: true
+
+
 
 
 
@@ -149,8 +157,12 @@
 
 
 
+
+
                 }, password: {
                     required: true
+
+
 
 
 
@@ -160,9 +172,13 @@
 
 
 
+
+
                 }, PhoneNo: {
                     required: true
                 }
+
+
 
 
 
@@ -190,8 +206,12 @@
 
 
 
+
+
             }
         });
+
+
 
 
 
@@ -203,12 +223,18 @@
 
 
 
+
+
                 }, Password: {
                     required: true
 
 
 
+
+
                 }
+
+
 
 
 
@@ -222,8 +248,12 @@
 
 
 
+
+
             }
         });
+
+
 
 
 
@@ -238,40 +268,57 @@
 
 
 
+
+
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
             debugger
 
 
-            email = $('.email').val();
 
-            let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
-            var Email = $('.email').val();
-            // alert(Email);
-            let result = false;
-            $.ajax({
-                url: emailOrgName,
-                data: JSON.stringify(Email),
-                success: function (data) {
-                    if (data.success == true) {
-                        toastr.success(data.msg);
-                        $('#btnAddSale').attr('disabled', false);
-                    }
-                    else if (data.success == false) {
-                        toastr.error(data.msg);
-                        $('#btnAddSale').attr('disabled', true);
-                    }
-
-                },
-                async: false
-            });
-            console.log(result);
-            return result;
+            var userinput = $('.email').val();
+            var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
 
 
+
+            if (!pattern.test(userinput)) {
+                toastr.error('not a valid e-mail address');
+                alert('not a valid e-mail address');
+            } else {
+                email = $('.email').val();
+
+
+
+                let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
+                var Email = $('.email').val();
+                // alert(Email);
+                let result = false;
+                $.ajax({
+                    url: emailOrgName,
+                    data: JSON.stringify(Email),
+                    success: function (data) {
+                        if (data.success == true) {
+                            toastr.success(data.msg);
+                            $('#btnAddSale').attr('disabled', false);
+                        }
+                        else if (data.success == false) {
+                            toastr.error(data.msg);
+                            $('#btnAddSale').attr('disabled', true);
+                        }
+
+
+
+                    },
+                    async: false
+                });
+                console.log(result);
+                // return result;
+            }
 
             e.preventDefault();
             var form = $("#register");
+
+
 
 
 
@@ -280,17 +327,11 @@
                     /* idx: $('#idx').val(),*/
                     FirstName: $('#FirstName').val(),
                     LastName: $('#LastName').val(),
-
-
-
                     PhoneNo: $('#PhoneNo').val(),
                     DateOfBirth: $('#DateOfBirth').val(),
                     Gender: $('#Gender').val(),
                     EmailId: $('.email').val(),
                     Password: $('.Password').val()
-
-
-
                 }
             }
             console.log(JSON.stringify(datatosend));
@@ -305,9 +346,6 @@
                     data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
                     contentType: 'application/json',
                     dataType: 'json',
-
-
-
                     success: function (data) {
                         debugger
                         // alert(data);
@@ -336,6 +374,8 @@
 
 
 
+
+
         $('#Password, #EmailId').keypress(function (e) {
             if (e.which == 13) {
                 $('#loginbtn').click();
@@ -346,10 +386,14 @@
 
 
 
+
+
         // Login Submit button
         $('#loginbtn').click(function (e) {
             e.preventDefault();
             var form = $("#login");
+
+
 
 
 
@@ -388,6 +432,10 @@
 
 
 
+
+
     </script>
+
+
 }
 

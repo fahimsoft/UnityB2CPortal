@@ -11,6 +11,8 @@ window.onload = function () {
     var divToHide = document.getElementById('quick-view');
     document.onclick = function (e) {
         $(e.target).find('.modal-content').remove();
+        //$('body').addClass('body-pading-right');
+        //$('.quick-view .modal-dialog .modal-content').find('.row').remove();
     };
 };
 $(document).ready(function () {
@@ -26,7 +28,7 @@ $(document).ready(function () {
     $(document).on('change', 'input[name=qtybuttonquickview]', function () {
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
-        newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
+        newVal = oldValue == "0" || parseFloat(oldValue) <= 0 || oldValue == "" ? 1 : $button.parent().find("input").val();
         if (parseFloat(newVal) <= 11) {
             var price = parseFloat($('#discoountedprice').text());
             let totalvalue = (price * newVal);
@@ -39,7 +41,7 @@ $(document).ready(function () {
     $(document).on('change', 'input[name=qtybutton]', function () {
         var $button = $(this);
         var oldValue = $(this).val();
-        newVal = oldValue == "0" || oldValue == "" ? 1 : $button.parent().find("input").val();
+        newVal = oldValue == "0" || parseFloat(oldValue) <= 0 || oldValue == "" ? 1 : $button.parent().find("input").val();
         var row = $(this).closest("tr");
         var Discount = parseFloat($(row).find('td')[1]?.textContent);
         if (!isNaN(Discount)) {
@@ -62,6 +64,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.qtybuttonquickview', function () {
+        debugger
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
@@ -311,7 +314,7 @@ function RemoveCartProduct(id) {
     });
 }
 function HandleAddtocart(id) {
-
+    debugger
     var proid = $(id).attr("productIdList");
     var quentity = $('#quentityvalue').val();
     $.ajax({
@@ -592,168 +595,8 @@ ${htmlProductList}
         }
     });
 }
-//function LoadQuickView(elem) {
-//    var Id = elem.id;
-//    $.ajax({
-//        url: '/Product/GetProductbyId?Id=' + Id + '',
-//        type: "GET",
-//        contentType: "application/json;charset=utf-8",
-//        dataType: "json",
-//        success: function (result) {
-//            var html = '';
-//            var index = 1;
-//            var fade = 1;
-//            var productPrice = 0;
-//            var htmlProductDetail = '';
-//            var htmlProductPriceDetail = '', htmlProductSize = '';
-//            var item = JSON.parse(result.data);
-
-//            $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
-
-//                productPrice = PriceValue.Price;
-//                productDiscount = PriceValue.Discount;
-//            });
-
-//            $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
-
-//                if (ProductDetailsIndex == 1) {
-//                    htmlProductDetail += `<li class="active"><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-//                }
-//                else {
-//                    htmlProductDetail += `<li><a data-toggle="tab"  href="#sin-${index}"> <img  src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-//                }
-
-
-//                index += 1;
-//            });
-
-//            $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
-
-//                if (ProductPDIndex == 0) {
-//                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
-//                        <div class="pro-type">
-//                            <span id="discountedvalue">${productDiscount} </span>%
-//                        </div>
-//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-//                                                        </div>`
-//                }
-//                else {
-//                    htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
-//                        <div class="pro-type">
-//                            <span>${productDiscount}%</span>
-//                        </div>
-//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-//                                                        </div>`
-//                }
-
-//                fade += 1;
-//            });
-
-//            $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
-
-//                htmlProductSize += `<option value="${ProductSizeValue.Id}">${ProductSizeValue.UOM}</option>`
-
-
-//            });
-
-
-//            html = `<div class="container">
-//        <div class="row">
-//            <div class="col-xs-12">
-//                <div class="d-table">
-//                    <div class="d-tablecell">
-//                        <div class="modal-dialog">
-//                            <div class="main-view modal-content">
-//                                <div class="modal-footer" data-dismiss="modal" onclick="removequickviewvalues()">
-//                                    <span>x</span>
-//                                </div>
-//                                <div class="row">
-//                                    <div class="col-xs-12 col-sm-5 col-md-4">
-//                                        <div class="quick-image">
-//                                            <div class="single-quick-image text-center">
-//                                                <div class="list-img">
-//                                                    <div class="product-img tab-content">
-//                                                    ${htmlProductPriceDetail}
-//                                                    </div>
-//                                                </div>
-//                                            </div>
-//                                            <div class="quick-thumb">
-//                                                <ul class="product-slider">${htmlProductDetail}
-
-//                                              </ul>
-//                                            </div>
-//                                        </div>
-//                                    </div>
-//                                    <div class="col-xs-12 col-sm-7 col-md-8">
-//                                        <div class="quick-right">
-//                                            <div class="list-text">
-//                                                <h3>${item.Name} ${htmlProductSize}</h3>
-//                                                <span>${item.ShortDescription}</span>
-//                                                <div class="ratting floatright">
-//                                                    <p>( 27 Rating )</p>
-//                                                    <i class="mdi mdi-star"></i>
-//                                                    <i class="mdi mdi-star"></i>
-//                                                    <i class="mdi mdi-star"></i>
-//                                                    <i class="mdi mdi-star-half"></i>
-//                                                    <i class="mdi mdi-star-outline"></i>
-//                                                </div>
-//                                                <h5> <del>${productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount}% </labal>   <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
-//                                                <p>${item.LongDescription}</p>
-//                                                 <div class="plus-minus">
-//                                                <a class="dec qtybuttonquickview qtybutton">-</a>
-//                                                <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
-//                                                <a class="inc qtybuttonquickview qtybutton">+</a>
-//                                            </div>
-//                                                 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
-//                                                </div>
-//                                                <div class="list-btn">
-//                                                    <a  onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-//                                                    <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
-                                                    
-//                                                </div>
-//                                                <div class="share-tag clearfix">
-//                                                    <ul class="blog-share floatleft">
-//                                                        <li><h5>share </h5></li>
-//                                                        <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
-//                                                        <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
-//                                                        <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
-//                                                        <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
-//                                                        <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
-//                                                        <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
-//                                                    </ul>
-//                                                </div>
-//                                            </div>
-//                                        </div>
-//                                    </div>
-//                                </div>
-//                            </div>
-//                        </div>
-//                    </div>
-//                </div>
-//            </div>
-//        </div>
-//    </div>`;
-
-
-//            $('#quick-view').html(html);
-//            SetLocalStorage(elem);
-//            var symbolvalue = GetCookieByName(pricesymbol);
-//            $('.pricesymbol').text(symbolvalue);
-//            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
-//        },
-//        error: function (errorMessage) {
-//            alert(errorMessage.responseText);
-//        }
-//    });
-//}
 function LoadQuickViewWithRating(elem) {
-
-
-
     var Id = elem.id;
-
-
-
     $.ajax({
         url: '/Product/GetProductbyIdWithRating?Id=' + Id + '',
         type: "GET",
@@ -848,8 +691,6 @@ function LoadQuickViewWithRating(elem) {
 ${GetProductRating(item[i].AvgRating)}`;
             });
 
-
-
             html = `<div class="container">
 <div class="row">
 <div class="col-xs-12">
@@ -884,7 +725,7 @@ ${htmlProductPriceDetail}
 <div class="list-text">
 ${htmlProductSize}
 </div>
-<h5> <del>${productPrice == undefined ? 0 : productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount == undefined ? 0 : productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
+<h5> <del> <strong class="pricesymbol"></strong>${productPrice == undefined ? 0 : productPrice}</del><labal style="color:gray">- ${productDiscount == undefined ? 0 : productDiscount}% </labal> <strong class="pricesymbol"></strong><b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> </h5>
 <p>${item[0].LongDescription}</p>
 <div class="plus-minus">
 <a class="dec qtybuttonquickview qtybutton">-</a>
@@ -894,8 +735,8 @@ ${htmlProductSize}
 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
 </div>
 <div class="list-btn">
-<a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
+<a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item[0].Id} >wishlist</a>
 
 </div>
 <div class="share-tag clearfix">
@@ -1027,7 +868,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                                                         <div class="ratting">
                                                            ${GetProductRating(item.AvgRating)}
                                                         </div>
-                                                        <span><del style='color:silver'>${item.Price} <strong class="pricesymbol"> </strong></del>&nbsp${item.Price * (1 - (item.Discount / 100))} <strong class="pricesymbol"> </strong></span>
+                                                        <span><del style='color:silver'> <strong class="pricesymbol"></strong>${item.Price}</del>&nbsp <strong class="pricesymbol"></strong>${item.Price * (1 - (item.Discount / 100))} </span>
                                                     </div>
                                                 </div>
                                             </div>`;
@@ -1132,7 +973,7 @@ $('.main-filter-container').on("change", ".filter", function () {
     var filterCategoryAndBrandarray;
 
     if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
-        debugger
+        
         // if (typeof (filterList)=='string')
         var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
         filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
@@ -1172,7 +1013,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.DiscountedAmount} <strong class="pricesymbol"> </strong></span>
+                                    <span><del style='color: silver'> <strong class="pricesymbol"> </strong>${item.Price} </del>&nbsp <strong class="pricesymbol"></strong>${item.DiscountedAmount} </span>
                                 </div>
                             </div>
                         </div>
@@ -1300,150 +1141,150 @@ $("#btnSave").click(function (e) {
 
 });
 
-function GetProductId() {
+//function GetProductId() {
 
-    var productId = GetProductIdFromURL();
+//    var productId = GetProductIdFromURL();
     
-    if (productId != null && productId != undefined) {
-        $.ajax({
-            url: "/Product/GetProductbyId",
-            type: "Get",
-            data: {
-                Id: productId
-            },
-            success: function (result) {
+//    if (productId != null && productId != undefined) {
+//        $.ajax({
+//            url: "/Product/GetProductbyId",
+//            type: "Get",
+//            data: {
+//                Id: productId
+//            },
+//            success: function (result) {
                 
-                var html = '';
-                var index = 1;
-                var fade = 1;
-                var productPrice = 0;
-                var productDiscount = 0;
-                var htmlProductDetail = '';
-                var htmlProductPriceDetail = '',
-                    htmlProductSize = '';
-                var item = JSON.parse(result.data);
-                $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
-                    productPrice = PriceValue.Price;
-                    productDiscount = PriceValue.Discount;
-                });
+//                var html = '';
+//                var index = 1;
+//                var fade = 1;
+//                var productPrice = 0;
+//                var productDiscount = 0;
+//                var htmlProductDetail = '';
+//                var htmlProductPriceDetail = '',
+//                    htmlProductSize = '';
+//                var item = JSON.parse(result.data);
+//                $(item.ProductPrices).each(function (PriceIndex, PriceValue) {
+//                    productPrice = PriceValue.Price;
+//                    productDiscount = PriceValue.Discount;
+//                });
 
-                $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
-                    if (ProductDetailsIndex == 1) {
-                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-                    } else {
-                        htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
-                    }
-                    index += 1;
-                });
-                $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
-                    if (ProductPDIndex == 0) {
-                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
-                        <div class="pro-type">
-                        <span>new</span>
-                        </div>
-                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-                        </div>`
-                    } else {
-                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
-                        <div class="pro-type">
-                        <span>new</span>
-                        </div>
-                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
-                        </div>`
-                    }
-                    fade += 1;
-                });
-                $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
-                    htmlProductSize += `${ProductSizeValue.UOM}`
-                });
-                html = `
-                       <div class="col-xs-12">
-                       <div class="d-table">
-                       <div class="d-tablecell">
-                       <div class="">
-                       <div class="main-view">
-                       <div class="modal-footer" data-dismiss="modal">
-                       <span></span>
-                       </div>
-                       <div class="row">
-                       <div class="col-xs-12 col-sm-5 col-md-4">
-                       <div class="quick-image">
-                       <div class="single-quick-image text-center">
-                       <div class="list-img">
-                       <div class="product-img tab-content">
-                       ${htmlProductPriceDetail}
-                       </div>
-                       </div>
-                       </div>
-                       <div class="quick-thumb">
-                       <ul class="product-slider">${htmlProductDetail} </ul>
-                       </div>
-                       </div>
-                       </div>
-                       <div class="col-xs-12 col-sm-7 col-md-8">
-                       <div class="quick-right">
-                       <div class="list-text">
-                       <h3>${item.Name} ${htmlProductSize}</h3>
-                       <span>${item.ShortDescription}</span>
-                       <div class="ratting floatright">
-                       <p>( 27 Rating )</p>
-                       <i class="mdi mdi-star"></i>
-                       <i class="mdi mdi-star"></i>
-                       <i class="mdi mdi-star"></i>
-                       <i class="mdi mdi-star-half"></i>
-                       <i class="mdi mdi-star-outline"></i>
-                       </div>
-                                              <h5><del>${productPrice} <strong class="pricesymbol"> </strong></del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} <strong class="pricesymbol"> </strong></h5>
-                       <p>${item.LongDescription}</p>
-                       <div class="all-choose">
-                       <div class="s-shoose"> </div>
-                       <div class="s-shoose">
-                       <h5>size</h5> <div class="size-drop">
-                       <h5> ${htmlProductSize}</h5> </div>
-                       </div>
-                       </div>
-                                   <div class="plus-minus">
-                                   <a class="dec qtybuttonquickview qtybutton">-</a>
-                                   <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
-                                   <a class="inc qtybuttonquickview qtybutton">+</a>
-                                   </div>
-                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+//                $(item.ProductDetails).each(function (ProductDetailsIndex, ProductDetailsValue) {
+//                    if (ProductDetailsIndex == 1) {
+//                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+//                    } else {
+//                        htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${ProductDetailsValue.ImageUrl}" alt="quick view" /> </a></li>`
+//                    }
+//                    index += 1;
+//                });
+//                $(item.ProductDetails).each(function (ProductPDIndex, ProductPDValue) {
+//                    if (ProductPDIndex == 0) {
+//                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
+//                        <div class="pro-type">
+//                        <span>new</span>
+//                        </div>
+//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+//                        </div>`
+//                    } else {
+//                        htmlProductPriceDetail += `<div class="simpleLens-container tab-pane fade in" id="sin-${fade}">
+//                        <div class="pro-type">
+//                        <span>new</span>
+//                        </div>
+//                        <a class="simpleLens-image" data-lens-image="${ProductPDValue.ImageUrl}" href="#"><img src="${ProductPDValue.ImageUrl}" alt="" class="simpleLens-big-image"></a>
+//                        </div>`
+//                    }
+//                    fade += 1;
+//                });
+//                $(item.ProductPackSize).each(function (ProductDetailsIndex, ProductSizeValue) {
+//                    htmlProductSize += `${ProductSizeValue.UOM}`
+//                });
+//                html = `
+//                       <div class="col-xs-12">
+//                       <div class="d-table">
+//                       <div class="d-tablecell">
+//                       <div class="">
+//                       <div class="main-view">
+//                       <div class="modal-footer" data-dismiss="modal">
+//                       <span></span>
+//                       </div>
+//                       <div class="row">
+//                       <div class="col-xs-12 col-sm-5 col-md-4">
+//                       <div class="quick-image">
+//                       <div class="single-quick-image text-center">
+//                       <div class="list-img">
+//                       <div class="product-img tab-content">
+//                       ${htmlProductPriceDetail}
+//                       </div>
+//                       </div>
+//                       </div>
+//                       <div class="quick-thumb">
+//                       <ul class="product-slider">${htmlProductDetail} </ul>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       <div class="col-xs-12 col-sm-7 col-md-8">
+//                       <div class="quick-right">
+//                       <div class="list-text">
+//                       <h3>${item.Name} ${htmlProductSize}</h3>
+//                       <span>${item.ShortDescription}</span>
+//                       <div class="ratting floatright">
+//                       <p>( 27 Rating )</p>
+//                       <i class="mdi mdi-star"></i>
+//                       <i class="mdi mdi-star"></i>
+//                       <i class="mdi mdi-star"></i>
+//                       <i class="mdi mdi-star-half"></i>
+//                       <i class="mdi mdi-star-outline"></i>
+//                       </div>
+//                            <h5><del> <strong class="pricesymbol"></strong>${productPrice} </del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> <strong class="pricesymbol"></strong>${productPrice * (1 - (productDiscount / 100))}</h5>
+//                       <p>${item.LongDescription}</p>
+//                       <div class="all-choose">
+//                       <div class="s-shoose"> </div>
+//                       <div class="s-shoose">
+//                       <h5>size</h5> <div class="size-drop">
+//                       <h5> ${htmlProductSize}</h5> </div>
+//                       </div>
+//                       </div>
+//                                   <div class="plus-minus">
+//                                   <a class="dec qtybuttonquickview qtybutton">-</a>
+//                                   <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
+//                                   <a class="inc qtybuttonquickview qtybutton">+</a>
+//                                   </div>
+//                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
 
-                       <div class="list-btn">
-                       <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-                       <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}>wishlist</a>
-                       </div>
-                       <div class="share-tag clearfix">
-                       <ul class="blog-share floatleft">
-                       <li><h5>share </h5></li>
-                       <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
-                       <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
-                       <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
-                       <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
-                       <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
-                       <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
-                       </ul>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       </div>
-                       `;
-                $('#quick-view').html(html);
-                var symbolvalue = GetCookieByName(pricesymbol);
-                $('.pricesymbol').text(symbolvalue);
-            },
-            error: function (errorMessage) {
-                alert(errorMessage.responseText);
-            }
-        });
-    }
-}
+//                       <div class="list-btn">
+//                       <a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
+//                       <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}>wishlist</a>
+//                       </div>
+//                       <div class="share-tag clearfix">
+//                       <ul class="blog-share floatleft">
+//                       <li><h5>share </h5></li>
+//                       <li><a href="#"><i class="mdi mdi-facebook"></i></a></li>
+//                       <li><a href="#"><i class="mdi mdi-twitter"></i></a></li>
+//                       <li><a href="#"><i class="mdi mdi-linkedin"></i></a></li>
+//                       <li><a href="#"><i class="mdi mdi-vimeo"></i></a></li>
+//                       <li><a href="#"><i class="mdi mdi-dribbble"></i></a></li>
+//                       <li><a href="#"><i class="mdi mdi-instagram"></i></a></li>
+//                       </ul>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       </div>
+//                       `;
+//                $('#quick-view').html(html);
+//                var symbolvalue = GetCookieByName(pricesymbol);
+//                $('.pricesymbol').text(symbolvalue);
+//            },
+//            error: function (errorMessage) {
+//                alert(errorMessage.responseText);
+//            }
+//        });
+//    }
+//}
 
 function SetLocalStorageCommentSection(nextPage, prevPage) {
 
@@ -1732,7 +1573,6 @@ function GetProductIdFromURL() {
 }
 
 function GetProductByIdWithRating() { //updated 30-Nov-2021
-
     var productId = GetProductIdFromURL();
 
     if (productId != null && productId != undefined) {
@@ -1752,7 +1592,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                 var htmlProductDetail = '';
                 var htmlProductPriceDetail = '';
                 var htmlProductSize = '';
-                debugger
+                
                 var item = JSON.parse(result.data);
                 var rating = item[0].AvgRating;
 
@@ -1831,7 +1671,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                         ${htlmRating}
              
                        </div>
-                       <h5><del>${productPrice} <strong class="pricesymbol"> </strong></del> <labal style="color:#999"> ${productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} <strong class="pricesymbol"> </strong></h5>
+                       <h5><del><strong class="pricesymbol"></strong>${productPrice}</del> <labal style="color:#999"> ${productDiscount}% </labal> <strong class="pricesymbol"></strong><b id="discoountedprice">${productPrice * (1 - (productDiscount / 100))} </h5>
                        <p>${item[0].LongDescription}</p>
                        <div class="all-choose">
                        <div class="s-shoose"> </div>
