@@ -17,6 +17,7 @@ namespace B2CPortal.Models
         public string MasterImageUrl { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
+        public decimal? DiscountedAmount { get; set; }
 
         public string UOM { get; set; }
         public SingleProduct product { get; set; }

@@ -85,9 +85,28 @@
         var filterNextPage = localStorage.getItem("filterNextPage") == undefined ? 10 : localStorage.getItem("filterNextPage");
         var filterCategoryAndBrand = localStorage.getItem("categoryAndBrand") == undefined ? [] : localStorage.getItem("categoryAndBrand")
 
-        $('#textProductName').val(filterSearchByName);
-        loadProductListById(filterCategoryAndBrand, filterSearchByName, filterNextPage, filterPrevpage);
+        var filterCategoryAndBrandarray;
 
+
+
+        if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
+            debugger
+            // if (typeof (filterList)=='string')
+            var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
+
+
+
+            filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
+
+
+
+        }
+
+
+
+
+        $('#textProductName').val(filterSearchByName);
+        loadProductListById(filterCategoryAndBrandarray, filterSearchByName, filterNextPage, filterPrevpage);
 
 
 

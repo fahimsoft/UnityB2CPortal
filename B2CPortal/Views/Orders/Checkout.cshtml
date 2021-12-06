@@ -230,7 +230,7 @@
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input class="form-check-input" value="easypaisa" type="radio" name="paymenttype" id="paymenttype1">
+                        <input class="form-check-input" value="COD" type="radio" name="paymenttype" id="paymenttype1">
                         <label class="form-check-label" for="paymenttype1">
                             COD (Cash On Delivery)
                         </label>
@@ -393,6 +393,8 @@
 
 
         $('.order').click(function () {
+            $(this).attr('disabled', 'disabled');
+
             // Both Form Data
             if ($('input.shipto').is(':checked')) {
                 //alert("ok");
@@ -421,6 +423,7 @@
             $('.modal').show();
 
             $('.confirmBtn').click(function () {
+                $(this).attr('disabled', 'disabled');
 
                 $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
                 $.validator.unobtrusive.parse($(this));//add the form validation
@@ -454,14 +457,19 @@
                     })
                 }
                 else {
+                    $(this).removeAttr('disabled');
+                    $('.order').removeAttr('disabled');
+
                     return false;
                 }
+
 
 
             })
 
             $('.cancelBtn').click(function () {
-
+                $('confirmBtn').removeAttr('disabled');
+                $('.order').removeAttr('disabled');
                 $('.modal').hide();
 
 

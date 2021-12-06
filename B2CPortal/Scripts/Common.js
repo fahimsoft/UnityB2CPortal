@@ -237,8 +237,10 @@ autocomplete(document.getElementById("handlesearch"), "");
 ///========================search with autocomplete=========================================
 //=====================On hover cart list========================
 function removequickviewvalues(id) {
-    document.getElementsByClassName("main-view modal-content")?.remove();
+    $('body').addClass('body-pading-right');
+    $('.quick-view .modal-dialog .modal-content').find('.row').remove();
 }
+
 //=====================On hover cart list========================
 function ShowCartProducts() {
     document.getElementsByClassName("loader-container")[0].style.display = "block";
@@ -434,6 +436,7 @@ function Handleorderdetail(id) {
 //---------------cart Wishlist ----------------
 function HandleAddtoWishList(id) {
     var proid = $(id).attr("productIdList");
+    var quentity = $('#quentityvalue').val();
     //var guid = $.cookie("cartguid");
     //  var guid = document.cookie.split('=')[1];
     $.ajax({
@@ -441,11 +444,16 @@ function HandleAddtoWishList(id) {
         url: "/Product/GetDataForWishList",
         data: {
             id: proid,
+            quentity: quentity,
             // guid: guid
         },
         success: function (data) {
-            // document.cookie = "cartguid=" + data.data.Guid;
-            toastr.success("Product Add to Wish List successfully.");
+            if (data.success) {
+                ShowCartProducts();
+                toastr.success(data.msg);
+            } else {
+                toastr.error(data.msg);
+            }
         }
     });
 
@@ -877,7 +885,7 @@ ${htmlProductPriceDetail}
 ${htmlProductSize}
 </div>
 <h5> <del>${productPrice == undefined ? 0 : productPrice} <strong class="pricesymbol"> </strong></del><labal style="color:gray">- ${productDiscount == undefined ? 0 : productDiscount}% </labal> <b id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
-<p>${item.LongDescription}</p>
+<p>${item[0].LongDescription}</p>
 <div class="plus-minus">
 <a class="dec qtybuttonquickview qtybutton">-</a>
 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
@@ -937,16 +945,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
     var htmlbtn = '';
     var htmlProductGrid = '';
 
-    var List = [];
-    let array = [];
 
-    if (filterList.length > 0 && filterList != '[[]]') {
-
-        List = filterList.substring(1, filterList.length - 1);
-        array.push(List);
-        filterList = JSON.parse(array)
-
-    }
 
     var postData = {
         filterList: filterList,
@@ -954,18 +953,6 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         nextPage: nextPage,
         prevPage: prevPage
     };
-
-
-
-    //if (filterList.length > 0)
-    //    var filterList = JSON.stringify(filterList);
-
-    //var postData = {
-    //    filterList: filterList,
-    //    search: search,
-    //    nextPage: nextPage,
-    //    prevPage: prevPage
-    //};
 
     $.ajax({
 
@@ -1059,6 +1046,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
             htmlNextButton = `<span> <input type="button" Class="btn-Prod-PrevAndNext" value="Next" class="btn-Prod-Paggination" /></span>`;
 
             let prevCount = 0;
+            let oprevPage = prevPage;
             for (i = 1; i <= countBtn; i++) {
 
                 prevPage = parseInt(prevCount) * 10;
@@ -1096,6 +1084,9 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
             $('#htmlListAndGrid').html(htmldata);
             $('#htmlProdListPaggination').html(htmlPaggination);
+
+
+            $('#htmlProdListPaggination').find('.btn-Prod-Paggination').eq(((oprevPage / nextPage))).addClass('btn-Prod-Paggination-active');
 
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
@@ -1137,9 +1128,18 @@ $('.main-filter-container').on("change", ".filter", function () {
 
     filterCategoryAndBrand = localStorage.getItem("categoryAndBrand");
 
+    //Merge to . 4-Dec-2021
+    var filterCategoryAndBrandarray;
 
-    SetLocalStorageForFilter(filterCategoryAndBrand, filterSearchByName, 10, 0)
-    loadProductListById(filterCategoryAndBrand, filterSearchByName, 10, 0);
+    if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
+        debugger
+        // if (typeof (filterList)=='string')
+        var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
+        filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
+
+    }
+
+    loadProductListById(filterCategoryAndBrandarray, filterSearchByName, 10, 0);
 
 
 });
@@ -1172,7 +1172,7 @@ function loadFeatureProduct() {
                                 </div>
                                 <div class="product-dsc">
                                     <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.Price} <strong class="pricesymbol"> </strong></span>
+                                    <span><del style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp${item.DiscountedAmount} <strong class="pricesymbol"> </strong></span>
                                 </div>
                             </div>
                         </div>
@@ -1212,11 +1212,11 @@ function loadRecentViewProduct() {
                                         <span></span>
                                     </div>
                                     <a href="/ProductDetails/Index?productId=${id[index]}"><img src="${img[index]}" alt="Product Title" /></a>
-                                    <div class="actions-btn">
-                                        <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${id[index]}><i class="mdi mdi-cart"></i></a>
-<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${id[index]}" productName="${name[index]}" productImg="${img[index]}" onClick="LoadQuickViewWithRating(this)" id="${id[index]}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+                                    <div class=" actioneye actions-btn">
+                                       
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${id[index]}" productName="${name[index]}" productImg="${img[index]}" onClick="LoadQuickViewWithRating(this)" id="${id[index]}" data-target="#quick-view"><i class=" mdi mdi-eye"></i></a>
 
-                                        <a onclick="HandleAddtoWishList(this)" productIdList=${id[index]} ><i class="mdi mdi-heart"></i></a>
+                                      
 
                                     </div>
                                 </div>
@@ -1895,8 +1895,8 @@ function CommentValidate(name, email, message) {
     $('#lblMessage').text('');
     $('#lblrating').text('');
 
-    var pattern = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-    var isEmailValid = pattern.test(email);
+    const emailValidate = /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    var isEmailValid = emailValidate.test(email);
 
     if (name.length == 0) {
         $('#lblName').text("Please insert a Name.");

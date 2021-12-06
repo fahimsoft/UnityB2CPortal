@@ -13,7 +13,6 @@
         <EntityTypeShape EntityType="B2CModel.ProductMaster" Width="1.5" PointX="5.25" PointY="10.625" IsExpanded="true" />
         <EntityTypeShape EntityType="B2CModel.ProductPackSize" Width="1.5" PointX="3" PointY="15.5" />
         <EntityTypeShape EntityType="B2CModel.ProductVariant" Width="1.5" PointX="3" PointY="8.25" />
-        <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="0.75" PointY="1.875" />
         <EntityTypeShape EntityType="B2CModel.User" Width="1.5" PointX="0.75" PointY="4.875" />
         <EntityTypeShape EntityType="B2CModel.Userinfo" Width="1.5" PointX="7.75" PointY="6.875" />
         <AssociationConnector Association="B2CModel.FK_OrderDetail_ProductMaster" />
@@ -34,6 +33,7 @@
         <EntityTypeShape EntityType="B2CModel.OrderMaster" Width="1.5" PointX="8.25" PointY="0.75" />
         <AssociationConnector Association="B2CModel.FK_OrderMaster_Customer" />
         <AssociationConnector Association="B2CModel.FK_OrderDetail_OrderMaster" />
+        <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="0.75" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

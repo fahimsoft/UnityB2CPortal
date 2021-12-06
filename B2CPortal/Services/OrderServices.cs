@@ -40,7 +40,7 @@ namespace B2CPortal.Services
                     Current.EmailId = Billing.EmailId;
                     Current.BillingAddress = Billing.BillingAddress;
                     Current.IsActive = true;
-                    Current.TotalPrice = (int)Billing.OrderTotal;
+                    Current.TotalPrice = Billing.OrderTotal;
                     Current.TotalQuantity = Billing.TotalQuantity;
                     Current.OrderNo= Billing.OrderNo;
                     Current.Currency = Billing.Currency;
@@ -94,7 +94,7 @@ namespace B2CPortal.Services
                     Current.ConversionRate = ordervm.ConversionRate;
                     Current.PaymentMode= ordervm.PaymentMode;
                     Current.Status= ordervm.Status;
-                    Current.TotalPrice = ordervm.TotalPrice;
+                    Current.TotalPrice =(int) ordervm.TotalPrice;
                 }
                 Save();
                 return true;

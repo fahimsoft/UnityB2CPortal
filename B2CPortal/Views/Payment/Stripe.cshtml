@@ -52,7 +52,7 @@
                             </div>
                             <div class="submit-text coupon">
                                 <button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>
-                                <a href="@Url.Action("Checkout","Orders")" class="btn btn-success" id="btnAddSale">Go Back</a>
+                                <a href="@Url.Action("Checkout","Orders")" class="btn btn-success" id="btnBack">Go Back</a>
                             </div>
 
                         </form>
@@ -78,11 +78,15 @@
     card.mount('#card-element');
     var form = document.getElementById('payment-form');
     form.addEventListener('submit', function (event) {
+
         event.preventDefault();
+        $('#btnAddSale').attr('disabled', 'disabled');
         stripe.createToken(card).then(function (result) {
             document.getElementsByClassName("loader-container")[0].style.display = "block";
 
             if (result.error) {
+                $('#btnAddSale').removeAttr('disabled');
+
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;
             } else {

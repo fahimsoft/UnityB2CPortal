@@ -7,7 +7,8 @@ namespace B2CPortal.Models
 {
     public class CommentAndRatingVM
     {
-         internal int totalComment;
+        public int totalComment { get; set; }
+        //internal int totalComment;
         public int Id { get; set; }
         public string CustomerName { get; set; }
         public string CustomerComment { get; set; }

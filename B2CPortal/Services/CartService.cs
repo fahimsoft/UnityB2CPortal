@@ -256,56 +256,40 @@ namespace B2CPortal.Services
             {
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
                 Current = await _dxcontext.Carts.FirstOrDefaultAsync(x => x.Guid == cart.Guid && x.IsWishlist == true && x.IsActive == true && x.FK_ProductMaster == cart.FK_ProductMaster || x.IsWishlist == true && x.FK_ProductMaster == cart.FK_ProductMaster && x.IsActive == true && x.FK_Customer == cart.FK_Customer);
-                //var quan = await _dxcontext.Carts.FirstOrDefaultAsync(x => x.Guid == cart.Guid);
-
-
-
-
-
+                
                 if (Current == null)
                 {
                     New();
-
-
-
                     Current.CreatedOn = DateTime.Now;
-                    Current.Quantity = 1;
-                    Current.TotalQuantity = 1;
-                    Current.TotalPrice = cart.TotalPrice;
+                  
                 }
                 else
                 {
-                    //if(quan != null)
-                    //{
-
-
-
-                    //}
+                    if ((cart.Quantity + Current.Quantity) > 9)
+                    {
+                        return null;
+                    }
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
-                    Current.Quantity++;
-                    Current.TotalQuantity++;
-                    Current.TotalPrice = (cart.TotalPrice * Current.Quantity);
-
-
-
                 }
+                if (cart.FK_Customer > 0)
+                {
+                    Current.FK_Customer = cart.FK_Customer;
+                }
+                Current.Quantity = cart.Quantity + (Current.Quantity == null ? 0 : Current.Quantity);
+                Current.TotalPrice = (cart.TotalPrice * Current.Quantity);
+                Current.TotalQuantity = Current.Quantity;
+              
+              
                 Current.Currency = cart.Currency;
                 Current.ConversionRate = cart.ConversionRate;
                 Current.Guid = cart.Guid;
                 Current.IsWishlist = cart.IsWishlist;
                 Current.IsActive = cart.IsActive;
                 Current.FK_ProductMaster = cart.FK_ProductMaster;
-                Current.FK_Customer = cart.FK_Customer;
-
-
-
+              
                 Save();
                 return Current;
-
-
-
-
 
             }
             catch (Exception ex)

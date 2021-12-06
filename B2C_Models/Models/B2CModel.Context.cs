@@ -33,7 +33,6 @@ namespace B2C_Models.Models
         public virtual DbSet<ProductMaster> ProductMasters { get; set; }
         public virtual DbSet<ProductPackSize> ProductPackSizes { get; set; }
         public virtual DbSet<ProductVariant> ProductVariants { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<Userinfo> Userinfoes { get; set; }
         public virtual DbSet<ProductPrice> ProductPrices { get; set; }
@@ -42,5 +41,6 @@ namespace B2C_Models.Models
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<OrderMaster> OrderMasters { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

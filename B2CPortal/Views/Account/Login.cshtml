@@ -243,11 +243,7 @@
             debugger
 
 
-
             email = $('.email').val();
-
-
-
 
             let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
             var Email = $('.email').val();
@@ -256,9 +252,6 @@
             $.ajax({
                 url: emailOrgName,
                 data: JSON.stringify(Email),
-
-
-
                 success: function (data) {
                     if (data.success == true) {
                         toastr.success(data.msg);
@@ -268,8 +261,6 @@
                         toastr.error(data.msg);
                         $('#btnAddSale').attr('disabled', true);
                     }
-
-
 
                 },
                 async: false

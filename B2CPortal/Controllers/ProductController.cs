@@ -377,12 +377,14 @@ namespace B2CPortal.Controllers
                     string MasterImageUrl = item.MasterImageUrl;
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
 
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name,
                         Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                        DiscountedAmount = discountedprice,
                         Discount = discount,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = MasterImageUrl,
@@ -543,10 +545,11 @@ namespace B2CPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> GetDataForWishList(int id, string guid)
+        public async Task<JsonResult> GetDataForWishList(int id, int quentity = 1)
         {
             try
             {
+                string msg = string.Empty;
                 var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
                 string cookie = string.Empty;
                 if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
@@ -561,7 +564,8 @@ namespace B2CPortal.Controllers
                 Cart cart = new Cart(); var res = await _IProductMaster.GetDataForWishList(id);
                 var Price = res.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var Discount = res.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                var DiscountedPrice = Price * (1 - (Discount / 100)); var customerId = 0;
+                var DiscountedPrice = Price * (1 - (Discount / 100));
+                var customerId = 0;
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -574,6 +578,8 @@ namespace B2CPortal.Controllers
                 cart.FK_ProductMaster = res.Id;
                 cart.IsWishlist = true;
                 cart.IsActive = true;
+                cart.Quantity = quentity;
+                cart.TotalQuantity = quentity;
                 cart.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                 cart.ConversionRate = Convert.ToDecimal(string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString());
                 if (cart.Currency == "PKR")
@@ -584,8 +590,14 @@ namespace B2CPortal.Controllers
                 {
                     cart.TotalPrice = DiscountedPrice / Convert.ToDecimal(usdRate);
                 }
-                var response = await _cart.CreateWishList(cart);
-                return Json(new { data = response, msg = "Added To WishList", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+                var obj = await _cart.CreateWishList(cart);
+
+                var cartproducts = await _cart.GetWishListProducts(cookie, customerId);
+                var totalquentity = cartproducts.Sum(x => x.Quantity);
+                msg = obj == null ? "You Can't Add to WishList more then 10 times" : "Added To WishList!";
+                return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
+
+                // return Json(new { data = response, msg = "Added To WishList", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

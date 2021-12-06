@@ -28,49 +28,50 @@
                             {
                                 foreach (var item in Model)
                                 {
-                                    <tr data-id="@item.Id">
+                            <tr data-id="@item.Id">
 
-                                        <td class="td-img text-left">
-                                            <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
-                                            <div class="items-dsc">
-                                                <h5><a href="#">@item.Name</a></h5>
-                                            </div>
-                                        </td>
-                                        <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
-                                        <td>@item.Price</td>
+                                <td class="td-img text-left">
+                                    <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
+                                    <div class="items-dsc">
+                                        <h5><a href="#">@item.Name</a></h5>
+                                    </div>
+                                </td>
+                                <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
+                                <td>@item.Price</td>
 
-                                        <td>
-                                            <div class="plus-minus">
-                                                <a class="dec qtybutton">-</a>
-                                                <input type="number" value="@item.TotalQuantity" name="qtybutton" class="plus-minus-box">
-                                                <a class="inc qtybutton">+</a>
-                                            </div>
-                                        </td>
+                                <td>
+                                    <div class="plus-minus">
+                                        <a class="dec qtybutton">-</a>
+                                        <input type="number" value="@item.TotalQuantity" name="qtybutton" class="plus-minus-box">
+                                        <a class="inc qtybutton">+</a>
+                                    </div>
+                                </td>
 
-                                        <td class="totalpricecol">
-                                            <del> @item.ActualPrice   </del>
-                                        </td>
+                                <td class="totalpricecol">
+                                    <del> @item.ActualPrice   </del>
+                                </td>
 
-                                        <td class="totalpricecol">
-                                            - @item.DiscountAmount 
+                                <td class="totalpricecol">
+                                    - @item.DiscountAmount
 
-                                        </td>
+                                </td>
 
 
-                                        <td><strong> @item.TotalPrice </strong></td>
+                                <td><strong> @item.TotalPrice </strong></td>
 
-                                        <td style="display:none">@item.FK_ProductMaster</td>
+                                <td style="display:none">@item.FK_ProductMaster</td>
 
-                                        <td style="display:none">@item.Id</td>
-                                        <td>
+                                <td style="display:none">@item.Id</td>
+                                <td>
 
-                                            <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
-                                            @*<a href="cart.html">Add to cart</a>*@
+                                    <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
+                                    @*<a href="cart.html">Add to cart</a>*@
 
-                                        </td>
-                                        <td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>
+                                </td>
+                                @*<td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>*@
+                                <td><i class="mdi mdi-close delete" title="Remove this product"></i></td>
 
-                                    </tr>
+                            </tr>
                                 }
                             }
                             else
@@ -119,7 +120,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() </td>
+                                    <td><strong class="pricesymbol"> </strong>  (@Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() )</td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
@@ -148,66 +149,6 @@
 
 <script>
 
-
-    //$(document).ready(function () {
-    //    ShowCartProducts();
-    //    jQuery('.plus-minus-box').keyup(function () {
-    //        this.value = this.value.replace(/[^0-9\.]/g, '');
-    //    });
-
-    //    $(document).on('click', '.qtybuttonquickview', function () {
-    //        var $button = $(this);
-    //        var oldValue = $button.parent().find("input").val();
-    //        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-    //        if ($button.text() == "+") {
-    //            var newVal = parseFloat(oldValue) + 1;
-    //        } else {
-    //            // Don't allow decrementing below zero
-    //            if (oldValue > 0) {
-    //                var newVal = parseFloat(oldValue) - 1;
-    //                newVal = newVal == 0 ? 1 : newVal;
-    //            } else {
-    //                newVal = 1;
-    //            }
-    //        }
-    //        var price = parseFloat($('#discoountedprice').text());
-    //        let totalvalue = (price * newVal);
-    //        $('#labalprice').text(totalvalue.toLocaleString());
-    //        $button.parent().find("input").val(newVal);
-
-    //    });
-    //    $(".qtybutton").on("click", function () {
-    //        var $button = $(this);
-    //        var oldValue = $button.parent().find("input").val();
-    //        oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
-    //        if ($button.text() == "+") {
-    //            var newVal = parseFloat(oldValue) + 1;
-    //        } else {
-    //            // Don't allow decrementing below zero
-    //            if (oldValue > 0) {
-    //                var newVal = parseFloat(oldValue) - 1;
-    //                newVal = newVal == 0 ? 1 : newVal;
-    //            } else {
-    //                newVal = 1;
-    //            }
-    //        }
-    //        var row = $(this).closest("tr");
-    //        var Discount = parseInt($(row).find('td')[1].textContent);
-    //        var price = parseInt($(row).find('td')[2].textContent);
-    //        let actualTotal = (price * newVal);
-
-    //        price = price * (1 - (Discount / 100));
-    //        let totalvalue = (price * newVal);
-
-    //        DiscountAmount = actualTotal - totalvalue;
-
-    //        $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-    //        $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
-    //        $(row).find('td')[6].textContent = totalvalue.toLocaleString();
-
-    //        $button.parent().find("input").val(newVal);
-    //    });
-    //});
 
     // Add To Cart Update button
     $(".addtocart").click(function () {
@@ -269,17 +210,19 @@
     // Remove from Wishlist
     $(".delete").click(function () {
 
-        var id;
-        var $row = $(this).closest("tr"),        // Finds the closest row <tr>
-            $tds = $row.find("td:nth-child(2)");
-        //console.log($tds);
-        $(this).closest('tr').each(function (i) {
+        //var id;
+        //var $row = $(this).closest("tr"),        // Finds the closest row <tr>
+        //    $tds = $row.find("td:nth-child(2)");
+        ////console.log($tds);
+        //$(this).closest('tr').each(function (i) {
 
-            var $tds = $(this).find('td'),
-                cartid = $tds.eq(8).text();
-                id = cartid
-        });
+        //    var $tds = $(this).find('td'),
+        //        cartid = $tds.eq(8).text();
+        //        id = cartid
+        //});
 
+        var row = $(this).closest("tr");
+        var id = $(row).attr('data-id');
         $.ajax({
             type: "POST",
             url: "/Product/DeleteFromCart",

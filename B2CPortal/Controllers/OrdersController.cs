@@ -245,13 +245,19 @@ namespace B2CPortal.Controllers
                                 {
                                     Name = productData.Name,
                                     Quantity = item.Quantity,
-                                    TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
+                                    // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
+                                    //no need of conversion already converted into cart
+                                    TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
+
                                 };
                                 orderVMs.Add(Order);
                             }
                             Billing.orderVMs = orderVMs;
-                            Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2) ;
-                            Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
+                            Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
+                            //no need of conversion already converted
+                           // Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
+                            Billing.OrderTotal = Math.Round(OrderTotal, 2);
+
                             Billing.TotalQuantity = tQuantity;
                             Billing.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                             Billing.ConversionRate = conversionvalue;
@@ -286,22 +292,11 @@ namespace B2CPortal.Controllers
                                     FK_OrderMaster = ordermasterId,
                                     FK_ProductMaster = item.FK_ProductMaster,
                                     Quantity = item.Quantity,
-                                    TotalPrice = (int)item.TotalPrice,
+                                    TotalPrice = item.TotalPrice,
                                     Discount = discount
                                 };
                                 var response = await _ordersDetail.CreateOrderDetail(Order);
                             }
-                        }
-
-                        // Remove from cart
-                        HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
-                        var removeCart = await _cart.DisableCart(customerId, cookie.Value);
-
-                        if (Billing.paymenttype == PaymentType.Stripe)
-                        {
-                            Session["ordermasterId"] = ordermasterId;
-                            string url =   Url.Action("Stripe","Payment");
-                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }
 
                         // Sending Mail
@@ -323,13 +318,31 @@ namespace B2CPortal.Controllers
                         if (IsSendEmail)
                         {
                             // return SuccessResponse("true");
-                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                            //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }
                         else
                         {
                             //return BadResponse("Failed");
-                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+                            //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
                         }
+
+                        // Remove from cart
+                        HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
+                        var removeCart = await _cart.DisableCart(customerId, cookie.Value);
+
+                        if (Billing.paymenttype == PaymentType.Stripe)
+                        {
+                            Session["ordermasterId"] = ordermasterId;
+                            string url =   Url.Action("Stripe","Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+
+                        }
+
+
                     }
                     else
                     {
