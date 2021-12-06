@@ -25,7 +25,18 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
+        public async Task<OrderMaster> GetOrderMasterById(int id)
+        {
+            try
+            {
+                var obj = await _dxcontext.OrderMasters.Where(x => x.Id == id).Include(x => x.OrderDetails).FirstOrDefaultAsync();
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public async Task<OrderMaster> CreateOrder(OrderVM Billing)
         {
             try
@@ -106,4 +117,5 @@ namespace B2CPortal.Services
             }
         }
     }
+ 
 }

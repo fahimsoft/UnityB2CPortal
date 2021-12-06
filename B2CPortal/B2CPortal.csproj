@@ -435,6 +435,8 @@
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Payment\Stripe.cshtml" />
     <Content Include="Views\Payment\PaymentStatus.cshtml" />
+    <Content Include="Views\Payment\PaymentStatusCOD.cshtml" />
+    <Content Include="Views\Payment\_DownloadPDF.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

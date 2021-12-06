@@ -424,7 +424,7 @@
 
             $('.confirmBtn').click(function () {
                 $(this).attr('disabled', 'disabled');
-
+                document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
                 $.validator.unobtrusive.parse($(this));//add the form validation
                 $.validator.unobtrusive.parse(form);
@@ -438,8 +438,6 @@
                         contentType: 'application/json',
                         dataType: 'json',
                         success: function (data) {
-                             ;
-                            console.log(data);
                             if (data.success == true) {
                                 window.location.href = data.data;// reload();
                                 toastr.success(data.msg);
@@ -447,6 +445,7 @@
                             else if (data.success == false) {
                                 toastr.error("Failed.");
                             }
+                            document.getElementsByClassName("loader-container")[0].style.display = "none";
                         },
                         failure: function (data) {
                             console.log(data);

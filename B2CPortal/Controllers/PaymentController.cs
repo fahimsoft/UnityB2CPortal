@@ -46,13 +46,14 @@ namespace B2CPortal.Controllers
                     Phone = payment.Phone,
                     Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
                     StripeToken = stripeToken,
-                    Amount =   (Session["ordertotal"] == null ?  1 : Convert.ToDecimal(Session["ordertotal"]) * 100)  < 50 ? 100 :Convert.ToDecimal(Session["ordertotal"]) * 100 ,
+                    Amount = (Session["ordertotal"] == null ? 1 : Convert.ToDecimal(Session["ordertotal"]) * 100) < 50 ? 100 : Convert.ToDecimal(Session["ordertotal"]) * 100,
 
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
-                if (result != null && ((Charge)result).Amount >  0)
+                if (result != null && ((Charge)result).Amount > 0)
                 {
-                    var ordervm = new OrderVM {
+                    var ordervm = new OrderVM
+                    {
                         Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
                         Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString(),
                         ConversionRate = decimal.Parse(ConversionRate),
@@ -60,7 +61,7 @@ namespace B2CPortal.Controllers
                         Status = OrderStatus.Confirmed.ToString(),
                         TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
                     };
-                  var dd = await _orders.UpdateOrderMAster(ordervm);
+                    var dd = await _orders.UpdateOrderMAster(ordervm);
                     var model = new PaymentViewModel();
                     model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
                     return View("PaymentStatus", model);
@@ -102,10 +103,22 @@ namespace B2CPortal.Controllers
             }
 
         }
-
+        [HttpGet]
         public ActionResult PaymentStatus(PaymentVM paymentViewModel)
         {
             return View(paymentViewModel);
+        }
+        [HttpGet]
+        public ActionResult PaymentStatusCOD(OrderVM orderVM)
+        {
+            orderVM = (OrderVM)Session["orderdata"];
+            return View(orderVM);
+        }
+        [HttpGet]
+        public ActionResult DownloadPDFOrder()
+        {
+           var  orderVM = (OrderVM)Session["orderdata"];
+            return Json(new { data = orderVM, msg = "", success = true },JsonRequestBehavior.AllowGet);
         }
     }
     public class Payment

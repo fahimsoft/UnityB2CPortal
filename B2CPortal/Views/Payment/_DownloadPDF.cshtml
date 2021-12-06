@@ -1,0 +1,194 @@
+﻿@model B2CPortal.Models.OrderVM
+@{
+    ViewBag.Title = "PaymentStatusCOD";
+}
+@{
+    if (Model != null)
+    {
+
+        <section class="pages checkout section-padding">
+            <div class="container">
+                <div class="row margin-top">
+                    <div class="col-xs-12 col-sm-12">
+                        <div class="padding60">
+                            <div class="log-title">
+                                <center>
+                                    <h2>Congratulation @Model.FirstName !</h2>
+                                    <h3>Your [COD] Order Genrated Successfully !</h3>
+                                </center>
+                            </div>
+                            <div class="cart-form-text pay-details table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <td>Total</td>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                        @if (Model.orderVMs != null)
+                                        {
+                                            foreach (var item in Model.orderVMs)
+                                            {
+                                                <tr>
+                                                    <th>@item.Name  x @item.Quantity</th>
+                                                    <td> <strong class="pricesymbol"> </strong> @item.TotalPrice</td>
+                                                </tr>
+                                            }
+                                        }
+
+                                        <tr>
+                                            <th>Cart Subtotal</th>
+                                            <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
+
+                                        </tr>
+                                        <tr>
+                                            <th>Total Discount</th>
+                                            <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Shipping and Handing</th>
+                                            <td><strong class="pricesymbol"> </strong>  00.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Vat</th>
+                                            <td> <strong class="pricesymbol"> </strong>  00.00</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th>Order total</th>
+                                            <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <button class="btn btn-primary" id="btnPrint"> Print </button>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    }
+}
+
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>*@
+@*<script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>*@
+@*<script src="https://code.jquery.com/jquery-3.6.0.js"></script>*@
+@*<script src="https://code.jquery.com/jquery-migrate-3.3.2.js"></script>*@
+@*<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
+<script>
+    $(document).ready(function () {
+        $("#btnPrint").bind("click", function () {
+            debugger
+        //var divContents = $("#dvContainer").html();
+        //var printWindow = window.open('', '', 'height=400,width=800');
+        //printWindow.document.write('<html><head><title>DIV Contents</title>');
+        //printWindow.document.write('</head><body >');
+        //printWindow.document.write(divContents);
+        //printWindow.document.write('</body></html>');
+        //printWindow.document.close();
+        //printWindow.print();
+        var datapdf = '';
+        var orderdetails  = '';
+        $.ajax({
+            url: "/Payment/DownloadPDFOrder",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (result) {
+                debugger
+                //$.each(data, (index, item) => {
+                //    orderdetails += `
+                //    <tr>
+                //    <th>${item.Name} x ${item.Quantity}</th>
+                //    <td> <strong class="pricesymbol"> </strong> ${item.TotalPrice}</td>
+                //    </tr>
+                //    `;
+                //});
+                var data = JSON.parse(result.data);
+                var divContents = $("#pdfordertable").html();
+                var printWindow = window.open('', '', 'height=400,width=800');
+                printWindow.document.write('<html><head><title>DIV Contents</title>');
+                printWindow.document.write('</head><body >');
+                printWindow.document.write(divContents);
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+
+
+        //        datapdf = ` <section class="pages checkout section-padding">
+        //    <div class="container">
+        //        <div class="row margin-top">
+        //            <div class="col-xs-12 col-sm-12">
+        //                <div class="padding60">
+        //                    <div class="log-title">
+        //                        <center>
+        //                            <h2>Congratulation ${data.EmailId}!</h2>
+        //                            <h3>Your [COD] Order Genrated Successfully !</h3>
+        //                        </center>
+        //                    </div>
+        //                    <div class="cart-form-text pay-details table-responsive">
+        //                        <table>
+        //                            <thead>
+        //                                <tr>
+        //                                    <th>Product</th>
+        //                                    <td>Total</td>
+        //                                </tr>
+        //                            </thead>
+
+        //                            <tbody>
+
+        //                         ${orderdetails }
+
+        //                                <tr>
+        //                                    <th>Cart Subtotal</th>
+        //                                    <td><strong class="pricesymbol"> </strong>  ${data.CartSubTotal}</td>
+
+        //                                </tr>
+        //                                <tr>
+        //                                    <th>Total Discount</th>
+        //                                    <td> <strong class="pricesymbol"> </strong>${data.CartSubTotalDiscount}</td>
+        //                                </tr>
+
+        //                                <tr>
+        //                                    <th>Shipping and Handing</th>
+        //                                    <td><strong class="pricesymbol"> </strong>  00.00</td>
+        //                                </tr>
+        //                                <tr>
+        //                                    <th>Vat</th>
+        //                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
+        //                                </tr>
+        //                            </tbody>
+        //                            <tfoot>
+        //                                <tr>
+        //                                    <th>Order total</th>
+        //                                    <td><strong class="pricesymbol"> </strong> ${data.OrderTotal}</td>
+        //                                </tr>
+        //                            </tfoot>
+        //                        </table>
+        //                        <button class="btn btn-primary" onclick="window.print();"> Print </button>
+
+        //                    </div>
+        //                </div>
+        //            </div>
+
+        //        </div>
+        //    </div>
+
+        //</section>`;
+
+        //        $("#pdfordertable").html(datapdf);
+            }
+            });
+        //$("#pdfordertable").load('@Url.Action("DownloadPDFOrder", "Payment")')
+    });
+});
+</script>

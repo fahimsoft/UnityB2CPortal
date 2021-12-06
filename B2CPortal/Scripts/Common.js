@@ -475,9 +475,6 @@ function loadProductList() {
             var data = JSON.parse(result.data);
             $('#lblTotalCount').text('Total Records: ' + data.length);
             $.each(data, function (key, item) {
-
-
-
                 //List Html
                 $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
 

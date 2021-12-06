@@ -1,4 +1,5 @@
 ﻿using API_Base.Common;
+using B2C_Models.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -57,13 +58,16 @@ namespace B2CPortal.Models
         public decimal OrderTotal { get; internal set; }
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
+        public  ICollection<OrderDetail> OrderDetails { get; set; }
+
     }
     public enum PaymentType
     {
         Stripe = 1,
         HBL = 2,
         JazzCash = 3,
-        EasyPaisa = 4
+        EasyPaisa = 4,
+        COD = 5
     }
     public enum OrderStatus
     {

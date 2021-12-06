@@ -3,6 +3,7 @@ using API_Base.Common;
 using API_Base.PaymentMethod;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
+using B2CPortal.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace B2CPortal.Controllers
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
         private readonly PaymentMethodFacade _paymentMethodFacade = null;
-       
+
         public OrdersController(PaymentMethodFacade paymentMethodFacade, IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
         {
             _IProductMaster = productMaster;
@@ -30,7 +31,7 @@ namespace B2CPortal.Controllers
             _orders = orders;
             _ordersDetail = orderDetail;
         }
-        public ActionResult Index() 
+        public ActionResult Index()
         {
             if (Convert.ToInt32(HttpContext.Session["UserId"]) <= 0)
             {
@@ -44,7 +45,7 @@ namespace B2CPortal.Controllers
         {
             List<OrderVM> orderdetailslist = new List<OrderVM>();
             decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-            var detailslist =  await _ordersDetail.GetOrderDetailsById(id);
+            var detailslist = await _ordersDetail.GetOrderDetailsById(id);
             foreach (var item in detailslist)
             {
                 var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
@@ -59,8 +60,8 @@ namespace B2CPortal.Controllers
                 var detailsobj = new OrderVM
                 {
                     Name = name,
-                    Price =  Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
-                    Discount = item.Discount, 
+                    Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                    Discount = item.Discount,
                     SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
                     DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
                     Quantity = item.Quantity,
@@ -71,7 +72,7 @@ namespace B2CPortal.Controllers
                 };
                 orderdetailslist.Add(detailsobj);
             }
-            return Json(new { data = orderdetailslist },JsonRequestBehavior.AllowGet);
+            return Json(new { data = orderdetailslist }, JsonRequestBehavior.AllowGet);
         }
         public async Task<ActionResult> GetOrderList()
         {
@@ -118,7 +119,7 @@ namespace B2CPortal.Controllers
         {
             try
             {
-            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
                 decimal OrderTotal = 0;
@@ -150,7 +151,7 @@ namespace B2CPortal.Controllers
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity/ conversionvalue) - discountedprice), 2);
+                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                                 //var DiscountedPrice = price * (1 - (discount / 100));
                                 var ActualPrice = (decimal)(price * item.Quantity);
@@ -168,10 +169,10 @@ namespace B2CPortal.Controllers
                                 OrderTotal += discountedprice;//Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
                             }
                             orderVM.orderVMs = orderVMs;
-                            orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2) ;
+                            orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
                             orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
                             orderVM.OrderTotal = OrderTotal;
-                            Session["ordertotal"] = OrderTotal; 
+                            Session["ordertotal"] = OrderTotal;
                         }
                         return View(orderVM);
                     }
@@ -202,11 +203,6 @@ namespace B2CPortal.Controllers
             {
                 return BadResponse(ex);
             }
-
-
-
-
-
         }
         [HttpPost]
         [ActionName("AddBillingDetails")]
@@ -255,7 +251,7 @@ namespace B2CPortal.Controllers
                             Billing.orderVMs = orderVMs;
                             Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
                             //no need of conversion already converted
-                           // Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
+                            // Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
                             Billing.OrderTotal = Math.Round(OrderTotal, 2);
 
                             Billing.TotalQuantity = tQuantity;
@@ -284,9 +280,6 @@ namespace B2CPortal.Controllers
                                 OrderTotal = (int)(OrderTotal + item.TotalPrice);
                                 subTotal = (int)(subTotal + ActualPrice);
                                 tQuantity = (int)(tQuantity + item.Quantity);
-
-
-
                                 var Order = new OrderVM
                                 {
                                     FK_OrderMaster = ordermasterId,
@@ -300,9 +293,11 @@ namespace B2CPortal.Controllers
                         }
 
                         // Sending Mail
-                        var name = Session["UserName"].ToString();
-                        var email = Session["email"].ToString();
-                        string htmlString = @"<html>
+                        try
+                        {
+                            var name = Session["UserName"].ToString();
+                            var email = Session["email"].ToString();
+                            string htmlString = @"<html>
                            <body>
                            <img src=" + "~/Content/Asset/img/img.PNG" + @">
                            <h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
@@ -314,16 +309,22 @@ namespace B2CPortal.Controllers
                             <p>Unity Foods LTD!</p>
                             </body>
                             </html>";
-                        bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
-                        if (IsSendEmail)
-                        {
-                            // return SuccessResponse("true");
-                            //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                            bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
+                            if (IsSendEmail)
+                            {
+                                // return SuccessResponse("true");
+                                //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                            }
+                            else
+                            {
+                                //return BadResponse("Failed");
+                                //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+                            }
                         }
-                        else
+                        catch 
                         {
-                            //return BadResponse("Failed");
-                            //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+
+                           
                         }
 
                         // Remove from cart
@@ -333,15 +334,36 @@ namespace B2CPortal.Controllers
                         if (Billing.paymenttype == PaymentType.Stripe)
                         {
                             Session["ordermasterId"] = ordermasterId;
-                            string url =   Url.Action("Stripe","Payment");
+                            string url = Url.Action("Stripe", "Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                        else if (Billing.paymenttype == PaymentType.COD)
+                        {
+                           // var model = new OrderVM();
+                           //var ordermaster = await _orders.GetOrderMasterById(ordermasterId);
+                           // var paymentobj =  HelperFunctions.CopyPropertiesTo(ordermaster, model);
+                           // model = (OrderVM)paymentobj;
+                            Session["ordermasterId"] = ordermasterId;
+                            Session["ordertotal"] = orderVM.OrderTotal;
+                            //model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
+                            //var customer = await _orders.GetCustomerById(customerId);
+                            //model.FirstName = customer.FirstName;
+                            //model.LastName = customer.LastName;
+                            //model.EmailId = customer.EmailId;
+                            //model.PhoneNo = customer.PhoneNo;
+                            //model.Country = customer.Country;
+                            //model.City = customer.City;
+                            //model.Address = customer.Address;
+                            var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
+                            Billing.OrderNo = result;
+                            Session["orderdata"] = Billing;
+                            string url = Url.Action("PaymentStatusCOD", "Payment");
                             return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }
                         else
                         {
-                            return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-
+                            return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }
-
 
                     }
                     else
@@ -359,184 +381,5 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-        // GET: Orders
-        //[HttpGet]
-        //[ActionName("Checkout")]
-        //public async Task<ActionResult> Checkout()
-        //{
-        //    try
-        //    {
-        //        OrderVM orderVM = new OrderVM();
-        //        List<OrderVM> orderVMs = new List<OrderVM>();
-        //        var OrderTotal = 0;
-        //        var totalDiscount = 0;
-        //        var customerId = 0;
-        //        var subTotal = 0;
-        //        if (Session["UserId"] != null)
-        //        {
-        //            customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-        //            if (customerId > 0)
-        //            {
-        //                // customer data for billing and shipment
-        //                var customer = await _orders.GetCustomerById(customerId);
-        //                orderVM.FK_Customer = customer.Id;
-        //                orderVM.FirstName = customer.FirstName;
-        //                orderVM.LastName = customer.LastName;
-        //                orderVM.EmailId = customer.EmailId;
-        //                orderVM.PhoneNo = customer.PhoneNo;
-        //                orderVM.Country = customer.Country;
-        //                orderVM.City = customer.City;
-        //                orderVM.Address = customer.Address;
-
-        //                var cartlist = await _cart.GetCartProducts("", customerId);
-        //                if (cartlist != null)
-        //                {
-        //                    foreach (var item in cartlist)
-        //                    {
-        //                        OrderTotal = (int)(OrderTotal + item.TotalPrice);
-        //                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-
-        //                        var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-        //                        var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-        //                        var DiscountedPrice = price * (1 - (discount / 100));
-
-        //                        var ActualPrice = (decimal)(price * item.Quantity);
-        //                        subTotal = (int)(subTotal + ActualPrice);
-        //                        totalDiscount = (int)(totalDiscount + discount);
-        //                        var Order = new OrderVM
-        //                        {
-        //                            Name = productData.Name,
-        //                            Quantity = item.Quantity,
-        //                            TotalPrice = (int)item.TotalPrice
-
-        //                        };
-        //                        orderVMs.Add(Order);
-
-        //                    }
-        //                    orderVM.orderVMs = orderVMs;
-        //                    orderVM.CartSubTotal = subTotal;
-        //                    orderVM.CartSubTotalDiscount = totalDiscount;
-        //                    orderVM.OrderTotal = OrderTotal;
-
-        //                }
-
-        //                return View(orderVM);
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("Login", "Account");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return RedirectToAction("Login", "Account");
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadResponse(ex);
-        //    }
-
-        //}
-
-        //[HttpPost]
-        //[ActionName("AddBillingDetails")]
-        //public async Task<ActionResult> AddBillingDetails(OrderVM Billing)
-        //{
-        //    try
-        //    {
-        //        OrderVM orderVM = new OrderVM();
-        //        List<OrderVM> orderVMs = new List<OrderVM>();
-        //        var OrderTotal = 0;
-        //        var subTotal = 0;
-        //        var customerId = 0;
-        //        var tQuantity = 0;
-        //        if (Session["UserId"] != null)
-        //        {
-        //            customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-        //            if (customerId > 0)
-        //            {
-        //                // Billing Details Add
-        //                Billing.FK_Customer = customerId;
-        //                var cartlist = await _cart.GetCartProducts("", customerId);
-        //                if (cartlist != null)
-        //                {
-        //                    foreach (var item in cartlist)
-        //                    {
-        //                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-        //                        var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-        //                        var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-        //                        var DiscountedPrice = price * (1 - (discount / 100));
-        //                        var ActualPrice = (decimal)(price * item.Quantity);
-        //                        OrderTotal = (int)(OrderTotal + item.TotalPrice);
-        //                        subTotal = (int)(subTotal + ActualPrice);
-        //                        tQuantity = (int)(tQuantity + item.Quantity);
-
-        //                        var Order = new OrderVM
-        //                        {
-        //                            Name = productData.Name,
-        //                            Quantity = item.Quantity,
-        //                            TotalPrice = (int)item.TotalPrice
-        //                        };
-        //                        orderVMs.Add(Order);
-
-        //                    }
-        //                    Billing.orderVMs = orderVMs;
-        //                    Billing.CartSubTotal = subTotal;
-        //                    Billing.OrderTotal = OrderTotal;
-        //                    Billing.TotalQuantity = tQuantity;
-        //                    Billing.OrderNo = HelperFunctions.GenerateRandomNo().ToString();
-        //                    Billing.Status = OrderStatus.Pending.ToString();
-        //                }
-        //                // Insert order Master
-        //                var res = await _orders.CreateOrder(Billing);
-
-        //                // Insert order Detail
-        //                var ordermasterId = res.Id;
-
-        //                if (cartlist != null)
-        //                {
-        //                    foreach (var item in cartlist)
-        //                    {
-        //                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-        //                        var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-        //                        var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-        //                        var DiscountedPrice = price * (1 - (discount / 100));
-        //                        var ActualPrice = (decimal)(price * item.Quantity);
-        //                        OrderTotal = (int)(OrderTotal + item.TotalPrice);
-        //                        subTotal = (int)(subTotal + ActualPrice);
-        //                        tQuantity = (int)(tQuantity + item.Quantity);
-
-        //                        var Order = new OrderVM
-        //                        {
-        //                            FK_OrderMaster = ordermasterId,
-        //                            FK_ProductMaster = item.FK_ProductMaster,
-        //                            Quantity = item.Quantity,
-        //                            TotalPrice = (int)item.TotalPrice,
-        //                            Discount = discount
-        //                        };
-        //                        var response = await _ordersDetail.CreateOrderDetail(Order);
-
-        //                    }
-        //                }
-
-        //                return Json(new { data = res, msg = "Billing Details Added Successfully !", success = true }, JsonRequestBehavior.AllowGet);
-        //            }
-        //            else
-        //            {
-        //                return RedirectToAction("Login", "Account");
-        //            }
-        //        }
-        //        else
-        //        {
-        //            return Json(new { data = "", msg = "Something bad happened", success = false }, JsonRequestBehavior.AllowGet);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadResponse(ex);
-        //    }
-        //}
     }
 }

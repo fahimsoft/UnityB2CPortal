@@ -32,6 +32,9 @@ namespace B2CPortal.Models
         public string Address { get; set; }
         public string MasterImageUrl { get; set; }
         public string Date { get; set; }
+        public string PaymentMode { get; set; }
+        public decimal? ConversionRate { get; set; }
+        public string Currency { get; set; }
         public  decimal bTotal { get; set; }
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MMM-yyyy}")]
         public Nullable<System.DateTime> CreatedOn { get; set; }
@@ -55,5 +58,6 @@ namespace B2CPortal.Models
         public List<OrderVM> orderVMs { get; set; }
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
+   
     }
 }
