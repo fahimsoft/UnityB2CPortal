@@ -343,8 +343,6 @@ function Handleorderdetail(id) {
         data: {
             id: id
         },
-        //contentType: "application/json;charset=utf-8",
-        //dataType: "json",
         success: function (result) {
             var html = '';
             var htmlProductPriceDetail = '', htmlProductSize = '';
@@ -364,19 +362,19 @@ function Handleorderdetail(id) {
                                            ${item.Discount}
                                         </td>
                                         <td>
-                                          <strong class="pricesymbol"> </strong>  ${item.Price}
+                                          ${item.Price}
                                         </td>
                                         <td>
                                            ${item.Quantity}
                                         </td>
                                          <td>
-                                        <strong class="pricesymbol"> </strong>    ${item.SubTotalPrice}
+                                      ${item.SubTotalPrice}
                                         </td>
                                             <td>
-                                         <strong class="pricesymbol"> </strong>   ${item.DiscountAmount}
+                                         ${item.DiscountAmount}
                                         </td>
                                             <td>
-                                          <strong class="pricesymbol"> </strong>  ${item.TotalPrice}
+                                            ${item.TotalPrice}
                                         </td>
 
                                         <td>
@@ -403,11 +401,11 @@ function Handleorderdetail(id) {
                             <tr>
                                 <th>Product Name</th>
                                 <th>Discount %</th>
-                                <th>Price</th>
+                                <th> (<strong class="pricesymbol"> </strong>)Price</th>
                                 <th>Quantity</th>
-                                <th>Sub Total</th>
-                                <th>Discounted Amount</th>
-                                <th>Total</th>
+                                <th> (<strong class="pricesymbol"></strong>)Sub Total</th>
+                                <th> (<strong class="pricesymbol"> </strong>)Discounted Amount</th>
+                                <th>(<strong class="pricesymbol"> </strong>)Total</th>
                                 <th>Ordered Date </th>
                             </tr>
                         </thead>
@@ -427,7 +425,6 @@ function Handleorderdetail(id) {
             $('#quick-view').html(html);
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
-            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);

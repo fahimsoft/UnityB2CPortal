@@ -439,6 +439,7 @@
     <Content Include="Views\Payment\PaymentStatus.cshtml" />
     <Content Include="Views\Payment\PaymentStatusCOD.cshtml" />
     <Content Include="Views\Payment\_DownloadPDF.cshtml" />
+    <Content Include="Views\Orders\ManagePayment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

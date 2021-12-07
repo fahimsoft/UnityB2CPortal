@@ -17,11 +17,11 @@ namespace B2C_Models.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public ProductMaster()
         {
-            this.OrderDetails = new HashSet<OrderDetail>();
             this.ProductDetails = new HashSet<ProductDetail>();
             this.ProductPrices = new HashSet<ProductPrice>();
             this.CommentAndRatings = new HashSet<CommentAndRating>();
             this.Carts = new HashSet<Cart>();
+            this.OrderDetails = new HashSet<OrderDetail>();
         }
     
         public int Id { get; set; }
@@ -40,8 +40,6 @@ namespace B2C_Models.Models
         public string MasterImageUrl { get; set; }
         public bool IsFeatured { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         public virtual ProductBrand ProductBrand { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductDetail> ProductDetails { get; set; }
@@ -54,5 +52,7 @@ namespace B2C_Models.Models
         public virtual ProductCategory ProductCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

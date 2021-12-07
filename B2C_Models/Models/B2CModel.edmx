@@ -96,6 +96,11 @@
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="FK_Customer" Type="int" />
+          <Property Name="DiscountedPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TotalPrice" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Currency" Type="varchar" MaxLength="50" />
+          <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="OrderMaster">
           <Key>
@@ -125,6 +130,7 @@
           <Property Name="Currency" Type="varchar" MaxLength="50" />
           <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
           <Property Name="PaymentMode" Type="varchar" MaxLength="50" />
+          <Property Name="PaymentStatus" Type="bit" />
         </EntityType>
         <EntityType Name="ProductBrand">
           <Key>
@@ -476,7 +482,6 @@
         <EntityContainer Name="B2CEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Tests" EntityType="B2CModel.Test" />
           <EntitySet Name="Cities" EntityType="B2CModel.City" />
-          <EntitySet Name="OrderDetails" EntityType="B2CModel.OrderDetail" />
           <EntitySet Name="ProductBrands" EntityType="B2CModel.ProductBrand" />
           <EntitySet Name="ProductDetails" EntityType="B2CModel.ProductDetail" />
           <EntitySet Name="ProductMasters" EntityType="B2CModel.ProductMaster" />
@@ -484,10 +489,6 @@
           <EntitySet Name="ProductVariants" EntityType="B2CModel.ProductVariant" />
           <EntitySet Name="Users" EntityType="B2CModel.User" />
           <EntitySet Name="Userinfoes" EntityType="B2CModel.Userinfo" />
-          <AssociationSet Name="FK_OrderDetail_ProductMaster" Association="B2CModel.FK_OrderDetail_ProductMaster">
-            <End Role="ProductMaster" EntitySet="ProductMasters" />
-            <End Role="OrderDetail" EntitySet="OrderDetails" />
-          </AssociationSet>
           <AssociationSet Name="FK_ProductMaster_ProductBrand" Association="B2CModel.FK_ProductMaster_ProductBrand">
             <End Role="ProductBrand" EntitySet="ProductBrands" />
             <End Role="ProductMaster" EntitySet="ProductMasters" />
@@ -529,6 +530,8 @@
             <End Role="ProductMaster" EntitySet="ProductMasters" />
             <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
+          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
+          <EntitySet Name="OrderDetails" EntityType="B2CModel.OrderDetail" />
           <EntitySet Name="OrderMasters" EntityType="B2CModel.OrderMaster" />
           <AssociationSet Name="FK_OrderMaster_Customer" Association="B2CModel.FK_OrderMaster_Customer">
             <End Role="customer" EntitySet="customers" />
@@ -538,7 +541,10 @@
             <End Role="OrderMaster" EntitySet="OrderMasters" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
           </AssociationSet>
-          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
+          <AssociationSet Name="FK_OrderDetail_ProductMaster" Association="B2CModel.FK_OrderDetail_ProductMaster">
+            <End Role="ProductMaster" EntitySet="ProductMasters" />
+            <End Role="OrderDetail" EntitySet="OrderDetails" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -558,24 +564,6 @@
           <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
-        </EntityType>
-        <EntityType Name="OrderDetail">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Quantity" Type="Int32" />
-          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="FK_OrderMaster" Type="Int32" Nullable="false" />
-          <Property Name="FK_ProductMaster" Type="Int32" Nullable="false" />
-          <Property Name="Discount" Type="Decimal" Precision="18" Scale="2" />
-          <Property Name="CreatedOn" Type="DateTime" Precision="0" />
-          <Property Name="CreatedBy" Type="Int32" />
-          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
-          <Property Name="ModifiedBy" Type="Int32" />
-          <Property Name="IsActive" Type="Boolean" />
-          <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="OrderDetail" ToRole="ProductMaster" />
-          <NavigationProperty Name="OrderMaster" Relationship="B2CModel.FK_OrderDetail_OrderMaster" FromRole="OrderDetail" ToRole="OrderMaster" />
         </EntityType>
         <EntityType Name="ProductBrand">
           <Key>
@@ -622,7 +610,6 @@
           <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
-          <NavigationProperty Name="OrderDetails" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="ProductMaster" ToRole="OrderDetail" />
           <NavigationProperty Name="ProductBrand" Relationship="B2CModel.FK_ProductMaster_ProductBrand" FromRole="ProductMaster" ToRole="ProductBrand" />
           <NavigationProperty Name="ProductDetails" Relationship="B2CModel.FK_ProductDetail_ProductMaster" FromRole="ProductMaster" ToRole="ProductDetail" />
           <NavigationProperty Name="ProductPackSize" Relationship="B2CModel.FK_ProductMaster_ProductPackSize" FromRole="ProductMaster" ToRole="ProductPackSize" />
@@ -633,6 +620,7 @@
           <Property Name="IsFeatured" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="ProductCategory" Relationship="B2CModel.FK_ProductMaster_ProductCategory" FromRole="ProductMaster" ToRole="ProductCategory" />
           <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="ProductMaster" ToRole="Cart" />
+          <NavigationProperty Name="OrderDetails" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="ProductMaster" ToRole="OrderDetail" />
         </EntityType>
         <EntityType Name="ProductPackSize">
           <Key>
@@ -678,18 +666,6 @@
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="PhoneNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
-        <Association Name="FK_OrderDetail_ProductMaster">
-          <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="1" />
-          <End Type="B2CModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="ProductMaster">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="OrderDetail">
-              <PropertyRef Name="FK_ProductMaster" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProductMaster_ProductBrand">
           <End Type="B2CModel.ProductBrand" Role="ProductBrand" Multiplicity="1" />
           <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="*" />
@@ -896,6 +872,39 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="OrderDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Price" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="FK_OrderMaster" Type="Int32" Nullable="false" />
+          <Property Name="FK_ProductMaster" Type="Int32" Nullable="false" />
+          <Property Name="Discount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="0" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
+          <Property Name="ModifiedBy" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="FK_Customer" Type="Int32" />
+          <Property Name="DiscountedPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TotalPrice" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
+          <NavigationProperty Name="OrderMaster" Relationship="B2CModel.FK_OrderDetail_OrderMaster" FromRole="OrderDetail" ToRole="OrderMaster" />
+          <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="OrderDetail" ToRole="ProductMaster" />
+        </EntityType>
         <EntityType Name="OrderMaster">
           <Key>
             <PropertyRef Name="Id" />
@@ -924,6 +933,7 @@
           <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="PaymentMode" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PaymentStatus" Type="Boolean" />
           <NavigationProperty Name="customer" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="OrderMaster" ToRole="customer" />
           <NavigationProperty Name="OrderDetails" Relationship="B2CModel.FK_OrderDetail_OrderMaster" FromRole="OrderMaster" ToRole="OrderDetail" />
         </EntityType>
@@ -951,16 +961,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
+        <Association Name="FK_OrderDetail_ProductMaster">
+          <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="1" />
+          <End Type="B2CModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderDetail">
+              <PropertyRef Name="FK_ProductMaster" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -984,23 +996,6 @@
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
                 <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="OrderDetails">
-            <EntityTypeMapping TypeName="B2CModel.OrderDetail">
-              <MappingFragment StoreEntitySet="OrderDetail">
-                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
-                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
-                <ScalarProperty Name="Discount" ColumnName="Discount" />
-                <ScalarProperty Name="FK_ProductMaster" ColumnName="FK_ProductMaster" />
-                <ScalarProperty Name="FK_OrderMaster" ColumnName="FK_OrderMaster" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -1196,9 +1191,43 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="B2CModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OrderDetails">
+            <EntityTypeMapping TypeName="B2CModel.OrderDetail">
+              <MappingFragment StoreEntitySet="OrderDetail">
+                <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+                <ScalarProperty Name="DiscountedPrice" ColumnName="DiscountedPrice" />
+                <ScalarProperty Name="FK_Customer" ColumnName="FK_Customer" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Discount" ColumnName="Discount" />
+                <ScalarProperty Name="FK_ProductMaster" ColumnName="FK_ProductMaster" />
+                <ScalarProperty Name="FK_OrderMaster" ColumnName="FK_OrderMaster" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="OrderMasters">
             <EntityTypeMapping TypeName="B2CModel.OrderMaster">
               <MappingFragment StoreEntitySet="OrderMaster">
+                <ScalarProperty Name="PaymentStatus" ColumnName="PaymentStatus" />
                 <ScalarProperty Name="PaymentMode" ColumnName="PaymentMode" />
                 <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
                 <ScalarProperty Name="Currency" ColumnName="Currency" />
@@ -1223,17 +1252,6 @@
                 <ScalarProperty Name="TotalQuantity" ColumnName="TotalQuantity" />
                 <ScalarProperty Name="OrderDescription" ColumnName="OrderDescription" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="B2CModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

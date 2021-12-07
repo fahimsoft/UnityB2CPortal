@@ -91,10 +91,10 @@ namespace B2CPortal.Controllers
                         OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
                         var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
                         dd.OrderNo = result;
-                        dd.Price = dd.Price;
-                        dd.SubTotalPrice = dd.SubTotalPrice;
-                        dd.DiscountAmount = dd.DiscountAmount;
-                        dd.TotalPrice = dd.TotalPrice;
+                        //dd.Price = dd.Price;
+                        //dd.SubTotalPrice = dd.SubTotalPrice;
+                        //dd.DiscountAmount = dd.DiscountAmount;
+                        //dd.TotalPrice = dd.TotalPrice;
 
                         list.Add((OrderVM)dd);
                     }
@@ -142,7 +142,8 @@ namespace B2CPortal.Controllers
                         orderVM.City = customer.City;
                         orderVM.Address = customer.Address;
 
-                        var cartlist = await _cart.GetCartProducts("", customerId);
+                       var cartguid =  HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId);
                         if (cartlist != null)
                         {
                             foreach (var item in cartlist)
@@ -161,7 +162,7 @@ namespace B2CPortal.Controllers
                                 {
                                     Name = productData.Name,
                                     Quantity = item.Quantity,
-                                    TotalPrice = discountedprice //(int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
+                                    SubTotalPrice = discountedprice //(int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
                                 };
                                 orderVMs.Add(Order);
 
@@ -216,6 +217,7 @@ namespace B2CPortal.Controllers
                 decimal subTotal = 0;
                 var customerId = 0;
                 var tQuantity = 0;
+               string currency =  string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                 decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 if (Session["UserId"] != null)
                 {
@@ -232,9 +234,11 @@ namespace B2CPortal.Controllers
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var DiscountedPrice = price * (1 - (discount / 100));
+                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                                 var ActualPrice = (decimal)(price * item.Quantity);
-                                OrderTotal = (decimal)(OrderTotal + item.TotalPrice);
+                                
+                                OrderTotal += Convert.ToDecimal(discountedprice);
                                 subTotal = (subTotal + ActualPrice);
                                 tQuantity = (int)(tQuantity + item.Quantity);
                                 var Order = new OrderVM
@@ -243,25 +247,25 @@ namespace B2CPortal.Controllers
                                     Quantity = item.Quantity,
                                     // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
                                     //no need of conversion already converted into cart
-                                    TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
+                                    SubTotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
 
                                 };
                                 orderVMs.Add(Order);
                             }
                             Billing.orderVMs = orderVMs;
+                            Billing.PaymentStatus= false;
                             Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
-                            //no need of conversion already converted
-                            // Billing.OrderTotal = Math.Round(OrderTotal / conversionvalue, 2);
                             Billing.OrderTotal = Math.Round(OrderTotal, 2);
 
                             Billing.TotalQuantity = tQuantity;
-                            Billing.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
+                            Billing.Currency = currency;
                             Billing.ConversionRate = conversionvalue;
                             Billing.PaymentMode = Billing.paymenttype.ToString();
                             Billing.Status = OrderStatus.InProcess.ToString();
                             Billing.Country = Billing.Country;
                             Billing.City = Billing.City;
                             Billing.ShippingAddress = Billing.ShippingAddress;
+                            Billing.OrderDescription = "order has been genrated successfully";//Billing.OrderDescription;
                         }
                         // Insert order Master
                         var res = await _orders.CreateOrder(Billing);
@@ -275,8 +279,10 @@ namespace B2CPortal.Controllers
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var DiscountedPrice = price * (1 - (discount / 100));
+                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                                 var ActualPrice = (decimal)(price * item.Quantity);
+                                
                                 OrderTotal = (int)(OrderTotal + item.TotalPrice);
                                 subTotal = (int)(subTotal + ActualPrice);
                                 tQuantity = (int)(tQuantity + item.Quantity);
@@ -284,9 +290,15 @@ namespace B2CPortal.Controllers
                                 {
                                     FK_OrderMaster = ordermasterId,
                                     FK_ProductMaster = item.FK_ProductMaster,
+                                    SubTotalPrice = discountedprice,
+                                    DiscountAmount = totalDiscountAmount,
+                                    Price = price,
+                                    Discount = discount,
                                     Quantity = item.Quantity,
-                                    TotalPrice = item.TotalPrice,
-                                    Discount = discount
+                                    FK_Customer = customerId,
+                                    ConversionRate = conversionvalue,
+                                    Currency = currency,
+
                                 };
                                 var response = await _ordersDetail.CreateOrderDetail(Order);
                             }
@@ -381,5 +393,153 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
+        [HttpPost]
+        [ActionName("UpdateOrder")]
+        public async Task<ActionResult> UpdateOrder(OrderVM Billing)
+        { 
+            try
+            {
+                OrderVM orderVM = new OrderVM();
+                List<OrderVM> orderVMs = new List<OrderVM>();
+                decimal OrderTotal = 0;
+                decimal subTotal = 0;
+                var customerId = 0;
+                var tQuantity = 0;
+               string currency =  string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
+                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                if (Session["UserId"] != null)
+                {
+                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    if (customerId > 0)
+                    {
+                        // Billing Details Add
+                        var ordervm = new OrderVM
+                        {
+                            Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
+                            Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString(),
+                            ConversionRate = conversionvalue,
+                            PaymentMode = PaymentType.Stripe.ToString(),
+                            Status = OrderStatus.Confirmed.ToString(),
+                            TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
+                            PaymentStatus = true,
+                        };
+                        var ordermodel = await _orders.UpdateOrderMAster(ordervm);
+
+                        if (Billing.paymenttype == PaymentType.Stripe)
+                        {
+                            Session["ordermasterId"] = ordervm.Id;
+                            string url = Url.Action("Stripe", "Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                        else if (Billing.paymenttype == PaymentType.COD)
+                        {
+
+                            Session["ordermasterId"] = ordervm.Id;
+                            Session["ordertotal"] = orderVM.OrderTotal;
+
+                            var result = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
+                            Billing.OrderNo = result;
+                            Session["orderdata"] = Billing;
+                            string url = Url.Action("PaymentStatusCOD", "Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login", "Account");
+                    }
+                }
+                else
+                {
+                    return Json(new { data = "", msg = "Something bad happened", success = false }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadResponse(ex);
+            }
+        }
+
+        [HttpGet]
+        [ActionName("ManagePayment")]
+        public async Task<ActionResult> ManagePayment(int id)
+        {
+            try
+            {
+                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                OrderVM orderVM = new OrderVM();
+                List<OrderVM> orderVMs = new List<OrderVM>();
+                decimal OrderTotal = 0;
+                var totalDiscount = 0;
+                var customerId = 0;
+                var subTotal = 0;
+                if (Session["UserId"] != null)
+                {
+                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    if (customerId > 0)
+                    {
+                        // customer data for billing and shipment
+                        var customer = await _orders.GetCustomerById(customerId);
+                        orderVM.FK_Customer = customer.Id;
+                        orderVM.FirstName = customer.FirstName;
+                        orderVM.LastName = customer.LastName;
+                        orderVM.EmailId = customer.EmailId;
+                        orderVM.PhoneNo = customer.PhoneNo;
+                        orderVM.Country = customer.Country;
+                        orderVM.City = customer.City;
+                        orderVM.Address = customer.Address;
+
+                        var cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                        //var cartlist = await _cart.GetCartProducts(cartguid, customerId);
+                        var ordermodel = await _orders.GetOrderMasterById(id);
+                        orderVM = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, orderVM);
+                        foreach (var item in ordermodel.OrderDetails)
+                        {
+                            var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                            var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                            var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                            var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                            var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+
+                            var Order = new OrderVM
+                            {
+                                Name = productData.Name,
+                                Quantity = item.Quantity,
+                                Price = price,
+                                Discount = discount,
+                                SubTotalPrice = discountedprice ,
+                                DiscountAmount = totalDiscountAmount,
+                            };
+                            orderVMs.Add(Order);
+                            orderVM.DiscountAmount += totalDiscountAmount;
+                        }
+
+                        orderVM.orderVMs = orderVMs;
+                        return View(orderVM);
+                    }
+                    else
+                    {
+                        string ReturnUrl = Convert.ToString(Request.QueryString["url"]);
+                        return RedirectToAction("Login", "Account");
+                    }
+                }
+                else
+                {
+                    string CurrentURL = Request.Url.AbsoluteUri;
+                    TempData["returnurl"] = CurrentURL;
+                    return RedirectToAction("Login", "Account");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return BadResponse(ex);
+            }
+        }
+
     }
 }

@@ -1,18 +1,14 @@
 ﻿@model B2CPortal.Models.OrderVM
-@{ ViewBag.Title = "Checkout"; }
-
-
+@{
+    ViewBag.Title = "ManagePayment";
+}
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
         <div class="row">
             <div class="col-xs-12">
                 <div class="pages-title-text text-center">
-                    <h2>Chcekout</h2>
-                    <ul class="text-left">
-                        <li><a href="/Home/Index">Home </a></li>
-                        <li><span> // </span>Chcekout</li>
-                    </ul>
+                    <h2>Manage Payment</h2>
                 </div>
             </div>
         </div>
@@ -23,7 +19,7 @@
 <section class="pages checkout section-padding">
 
     <div class="container">
-        <div class="row">
+        @*<div class="row">
             <div class="col-sm-6">
                 <div class="main-input single-cart-form padding60">
                     <div class="log-title">
@@ -133,7 +129,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>*@
 
         <div class="row margin-top">
             <div class="col-xs-12 col-sm-6">
@@ -157,20 +153,21 @@
                                     foreach (var item in Model.orderVMs)
                                     {
                                         <tr>
-                                            <th>@item.Name  x @item.Quantity</th>
+                                            <th>@item.Name<br /> @item.Price x @item.Quantity (%@item.Discount)  </th>
                                             <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
                                         </tr>
                                     }
                                 }
 
                                 <tr>
-                                    <th>Cart Subtotal</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
+                                    <th>Order Subtotal</th>
+                                    <td><strong class="pricesymbol"> </strong> 
+                                        <input type="hidden"  id="orderid" name="name" value="@Model.Id" /> @Model.orderVMs.Sum(x=>x.Price)</td>
 
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
+                                    <td> <strong class="pricesymbol"> </strong> @Model.orderVMs.Sum(x => x.DiscountAmount) </td>
                                 </tr>
 
                                 <tr>
@@ -185,7 +182,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Order total</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -201,51 +198,51 @@
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-                        <input class="form-check-input" value="Stripe"  type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input class="form-check-input" value="Stripe" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
-                        <input class="form-check-input" value="HBL" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input class="form-check-input" value="HBL" type="radio" name="paymode">
+                        <label class="form-check-label">
                             HBL (Habib Bank Limited)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
-                        <input class="form-check-input" value="JazzCash" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input class="form-check-input" value="JazzCash" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Jazz Cash (Mobilink)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
-                        <input class="form-check-input" value="EasyPaisa" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input class="form-check-input" value="EasyPaisa" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Easypaisa (Telenor)
                         </label>
                     </div>
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input class="form-check-input" value="COD" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input class="form-check-input" value="COD" type="radio" name="paymode">
+                        <label class="form-check-label">
                             COD (Cash On Delivery)
                         </label>
                     </div>
 
 
-                    @if (Model.OrderTotal > 0)
+                    @if (Model.TotalPrice > 0)
                     {
-                        <div class="submit-text">
-                            <a id="order">place order</a>
-                        </div>
+            <div class="submit-text">
+                <a id="order">Update Order</a>
+            </div>
                     }
                     else
                     {
-                        <a class="btn btn-primary" style="margin-left: 357px;" href="/Product/PorductList">Shop Now</a>
+            <a class="btn btn-primary" style="margin-left: 357px;" href="/Product/PorductList">Shop Now</a>
                     }
                 </div>
             </div>
@@ -284,20 +281,20 @@
                                         foreach (var item in Model.orderVMs)
                                         {
                                             <tr>
-                                                <th>@item.Name  x @item.Quantity</th>
+                                                <th>@item.Name<br /> @item.Price x @item.Quantity (%@item.Discount)  </th>
                                                 <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
                                             </tr>
                                         }
                                     }
 
                                     <tr>
-                                        <th>Cart Subtotal</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
+                                        <th>Order Subtotal</th>
+                                        <td><strong class="pricesymbol"> </strong>  @Model.orderVMs.Sum(x => x.Price)</td>
 
                                     </tr>
                                     <tr>
                                         <th>Total Discount</th>
-                                        <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
+                                        <td> <strong class="pricesymbol"> </strong> @Model.orderVMs.Sum(x => x.DiscountAmount) </td>
                                     </tr>
 
                                     <tr>
@@ -312,7 +309,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>Order total</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
+                                        <td><strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -336,60 +333,11 @@
 
 @section scripts
 {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+    @*<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>*@
     <script>
-        jQuery('#billing').validate({
-            rules: {
-                FirstName: {
-                    required: true,
-
-                    maxlength: 50
-                },
-                LastName: {
-                    required: true
-
-                }, EmailId: {
-                    required: true,
-                    email: true
-
-                }, PhoneNo: {
-                    required: true
-                }, Country: {
-                    required: true
-                }, City: {
-                    required: true
-
-                }
-                , Address: {
-                    required: true
-
-                }
-
-            },
-            messages: {
-                FirstName: {
-                    required: "First Name Is Required"
-                }, LastName: {
-                    required: "Last Name Is Required"
-                }, EmailId: {
-                    required: "Email Is Required",
-                    uniqueEmail: "Your Email address is already registered on our system."
-                }, Country: {
-                    required: "Country Is Required"
-                }, City: {
-                    required: "City Is Required"
-                }, Address: {
-                    required: "Address Is Required"
-                }, PhoneNo: {
-                    required: "Phone No Is Required"
-                }
-
-            }
-        });
-
 
 
         $('#order').click(function () {
@@ -403,26 +351,10 @@
             // Only Billing Form Data
             // alert("No");
             var paymenttype = $("input[name='paymode']:checked").val();
-           
+
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
-                var form = $("#billing");
-                var datatosend = {
-                    Billing: {
-                        /*Id: $('#Id').val(),*/
-                        PhoneNo: $('#PhoneNo').val(),
-                        EmailId: $('#EmailId').val(),
-                        Country: $('#Country').val(),
-                        City: $('#City').val(),
-                        BillingAddress: $('#Address').val(),
-                        ShippingAddress: $('.SAddress').val(),
-                        PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
-                    }
-                }
-
-                console.log(JSON.stringify(datatosend));
-                console.log(datatosend);
 
                 $('.modal').show();
                 $('.cancelBtn').click(function () {
@@ -444,57 +376,42 @@
                 var form = $("#billing");
                 var datatosend = {
                     Billing: {
-                        /*Id: $('#Id').val(),*/
-                        PhoneNo: $('#PhoneNo').val(),
-                        EmailId: $('#EmailId').val(),
-                        Country: $('#Country').val(),
-                        City: $('#City').val(),
-                        BillingAddress: $('#Address').val(),
-                        ShippingAddress: $('.SAddress').val(),
-                        PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
+                        PaymentType: paymenttype,
+                        id: $('#orderid').val()
+
                     }
                 }
 
                 document.getElementsByClassName("loader-container")[0].style.display = "block";
-                $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-                $.validator.unobtrusive.parse($(this));//add the form validation
-                $.validator.unobtrusive.parse(form);
-                //if ($(form).valid()) // using not operator for a time being
-                if ($(form.valid())) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Orders/AddBillingDetails",
-                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                        contentType: 'application/json',
-                        dataType: 'json',
-                        success: function (data) {
-                            if (data.success == true) {
-                                window.location.href = data.data;// reload();
-                                toastr.success(data.msg);
-                            }
-                            else if (data.success == false) {
-                                toastr.error("Failed.");
-                            }
-                            document.getElementsByClassName("loader-container")[0].style.display = "none";
-                        },
-                        failure: function (data) {
-                            console.log(data);
-                        },
-                        err: function (data) {
-                            console.log(data);
-                        }
-                    })
-                }
-                else {
-                    $(this).removeAttr('disabled');
-                    $('.order').removeAttr('disabled');
 
-                    return false;
-                }
+                $.ajax({
+                    type: "POST",
+                    url: "/Orders/UpdateOrder",
+                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.success == true) {
+                            window.location.href = data.data;// reload();
+                            toastr.success(data.msg);
+                        }
+                        else if (data.success == false) {
+                            toastr.error("Failed.");
+                        }
+                        document.getElementsByClassName("loader-container")[0].style.display = "none";
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                    },
+                    err: function (data) {
+                        console.log(data);
+                    }
+                })
+
 
             }
 
-        })
+        });
 
     </script>
 }

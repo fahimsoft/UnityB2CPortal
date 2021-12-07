@@ -21,14 +21,18 @@ namespace B2CPortal.Services
                 if (Current == null)
                 {
                     New();
-                    Current.CreatedOn = DateTime.Now;
+                    Current.CreatedOn = DateTime.Now;   
                     Current.FK_OrderMaster = Billing.FK_OrderMaster;
                     Current.FK_ProductMaster = Billing.FK_ProductMaster;
-                    Current.Price = Billing.TotalPrice;
+                    Current.FK_Customer = Billing.FK_Customer;
+                    Current.Price = Billing.Price;
                     Current.Quantity = Billing.Quantity;
                     Current.Discount = Billing.Discount;
                     Current.IsActive = true;
-
+                    Current.TotalPrice = Billing.SubTotalPrice;
+                    Current.DiscountedPrice = Billing.DiscountAmount;
+                    Current.ConversionRate = Billing.ConversionRate;
+                    Current.Currency = Billing.Currency;
                 }
                 else
                 {

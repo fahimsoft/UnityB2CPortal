@@ -60,6 +60,7 @@ namespace B2CPortal.Controllers
                         PaymentMode = PaymentType.Stripe.ToString(),
                         Status = OrderStatus.Confirmed.ToString(),
                         TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
+                        PaymentStatus = true,
                     };
                     var dd = await _orders.UpdateOrderMAster(ordervm);
                     var model = new PaymentViewModel();

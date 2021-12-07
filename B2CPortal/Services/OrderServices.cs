@@ -61,6 +61,9 @@ namespace B2CPortal.Services
                     Current.Country = Billing.Country;
                     Current.City = Billing.City;
                     Current.ShippingAddress = Billing.ShippingAddress;
+                    Current.PaymentStatus = Billing.PaymentStatus;
+                    Current.OrderDescription= Billing.OrderDescription;
+
 
 
 
@@ -106,6 +109,7 @@ namespace B2CPortal.Services
                     Current.PaymentMode= ordervm.PaymentMode;
                     Current.Status= ordervm.Status;
                     Current.TotalPrice =(int) ordervm.TotalPrice;
+                    Current.PaymentStatus = ordervm.PaymentStatus;
                 }
                 Save();
                 return true;

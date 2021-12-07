@@ -30,6 +30,7 @@ namespace B2CPortal.Models
         public string Currency { get; set; }
         public decimal ConversionRate { get; set; }
         public PaymentType paymenttype { get; set; }
+        public bool PaymentStatus { get; set; }
         public Nullable<System.DateTime> DateOfBirth { get; set; }
         public string CNIC { get; set; }
         public string City { get; set; }

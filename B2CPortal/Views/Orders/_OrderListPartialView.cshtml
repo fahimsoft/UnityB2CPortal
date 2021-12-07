@@ -31,9 +31,10 @@
                                         <th>Billing</th>
                                         <th>Description</th>
                                         <th>Quantity</th>
-                                        <th> Price</th>
+                                        <th>  (<strong class="pricesymbol"> </strong>)  Price</th>
                                         <th> Payment Mode</th>
                                         <th> Status</th>
+                                        <th> Payment </th>
                                         <th> Action</th>
                                     </tr>
                                 </thead>
@@ -47,7 +48,7 @@
                                                     @item.OrderNo
                                                     @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
                                                     <!--<div class="items-dsc">
-                                                     <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>-->
+                                                     <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id })"> @item.Name </a></h5>-->
                                                     @*<p class="itemcolor">Color : <span>Blue</span></p>*@
                                                     @*<p class="itemcolor">Size   : <span>SL</span></p>*@
                                                     <!--</div>-->
@@ -70,7 +71,7 @@
                                                 </td>*@
                                                 <td>
                                                     @*@item.CreatedOn*@
-                                                    @Html.DisplayFor(i=> item.CreatedOn)
+                                                    @Html.DisplayFor(i => item.CreatedOn)
                                                 </td>
                                                 <td>
                                                     @item.ShippingAddress
@@ -87,7 +88,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <strong class="pricesymbol"> </strong>   @item.TotalPrice
+                                                     @item.TotalPrice
                                                 </td>
                                                 <td>
                                                     @item.PaymentMode
@@ -95,29 +96,33 @@
                                                 <td style="color:rebeccapurple">
                                                     @item.Status
                                                 </td>
+                                                
+                                                <td style="color:rebeccapurple">
+                                                    @{ if (item.PaymentStatus == true)
+                                                        {
+
+
+                                                            <span style="color:green">&#10003;</span>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <span style="color:red" >&#10539;</span>
+
+                                                            }
+                                                        }
+                                                    </td>
 
                                                 <td>
-                                                    @*<a href="#" data-toggle="modal" id="19" data-target="#quick-view"> <i class="mdi mdi-eye"></i></a>*@
-                                                    <a  href="#" data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
+                                                    <a href="#" data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
+                                                   @if (item.PaymentMode.ToLower() != "cod" && item.Status.ToLower() == "inprocess" && item.PaymentStatus == false)
+                                                   {
+                                                    <a href="@Url.Action("ManagePayment","Orders",new { id = item.Id })"  class="btn-info" onclick="Handleorderdetail(@item.Id)"> Manage </a>
+                                                   }
+
+
                                                 </td>
 
-                                                @*<td>
-                                                        <div class="plus-minus">
-                                                            <a class="dec qtybutton">-</a>
-                                                            <input type="number" value="@item.Quantity" name="qtybutton" class="plus-minus-box">
-                                                            <a class="inc qtybutton">+</a>
-                                                        </div>
-                                                    </td>
-                                                    <td class="totalpricecol" style="text-decoration:line-through;">
-                                                        @item.ShipingAndHostring
-                                                    </td>
-                                                    <td class="totalpricecol">
-                                                         @item.ShippingAddress
-
-                                                    </td>
-                                                    <td class="totalpricecol">
-                                                        <b style="font-weight:bolder;">@item.TotalPrice</b>
-                                                    </td>*@
                                                 <td>@*<i class="mdi mdi-close removecartbtn" title="Remove this product"></i>*@</td>
                                             </tr>
                                         }

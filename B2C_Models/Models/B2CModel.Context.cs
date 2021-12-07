@@ -27,7 +27,6 @@ namespace B2C_Models.Models
     
         public virtual DbSet<Test> Tests { get; set; }
         public virtual DbSet<City> Cities { get; set; }
-        public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductDetail> ProductDetails { get; set; }
         public virtual DbSet<ProductMaster> ProductMasters { get; set; }
@@ -40,7 +39,8 @@ namespace B2C_Models.Models
         public virtual DbSet<CommentAndRating> CommentAndRatings { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
-        public virtual DbSet<OrderMaster> OrderMasters { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<OrderDetail> OrderDetails { get; set; }
+        public virtual DbSet<OrderMaster> OrderMasters { get; set; }
     }
 }
