@@ -2,6 +2,7 @@
 using API_Base.Common;
 using B2C_Models.Models;
 using B2CPortal.Interfaces;
+using B2CPortal.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,11 +54,18 @@ namespace B2CPortal.Controllers
                 {
                     //string Uri = Request.Url.AbsoluteUri;
                     //string url = HttpContext.Current.Request.Url.AbsoluteUri;
+
+
+                    var genral = new GenralClass();
+
                     string cookie = string.Empty;
+                    
                     Session["UserAccount"] = res;
                     Session["UserId"] = res.Id;
                     Session["UserName"] = res.FirstName;
                     Session["email"] = res.EmailId;
+
+
                     if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                     {
                         cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);

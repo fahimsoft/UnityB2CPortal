@@ -181,6 +181,7 @@
     <Compile Include="Models\BrandCategoryVM.cs" />
     <Compile Include="Models\CartViewModel.cs" />
     <Compile Include="Models\CommentAndRatingVM.cs" />
+    <Compile Include="Models\GenralClass.cs" />
     <Compile Include="Models\PaymentViewModel.cs" />
     <Compile Include="Models\OrderVM.cs" />
     <Compile Include="Models\ProductsVM.cs" />
@@ -279,6 +280,7 @@
     <Content Include="Content\Asset\img\glyphicons\glyphicons_163_iphone.png" />
     <Content Include="Content\Asset\img\glyphicons\glyphicons_214_resize_small.png" />
     <Content Include="Content\Asset\img\glyphicons\glyphicons_266_book_open.png" />
+    <Content Include="Content\Asset\img\logo-print-screen.PNG" />
     <Content Include="Content\Asset\img\logo.png" />
     <Content Include="Content\Asset\img\logo2.png" />
     <Content Include="Content\Asset\img\maga1.png" />

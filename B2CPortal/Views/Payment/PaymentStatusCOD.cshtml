@@ -6,15 +6,82 @@
 @{
     if (Model != null)
     {
-        <section class="pages checkout section-padding" id="pdfordertable">
+
+
+        <style>
+            .logo-print-screen, .print-line-break {
+                display: none;
+            }
+                .logo-print-screen img {
+                    width: 100px !important;
+                }
+
+            @@media print {
+                /* All your print styles go here */
+
+                .header-one, footer, .my-print-btn-group {
+                    display: none;
+                }
+
+
+
+                .checkout, .container, #pdfordertable, #pdfordertable table {
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                }
+
+                    #pdfordertable table thead > tr th, #pdfordertable table thead > tr td, #pdfordertable table tfoot > tr th, #pdfordertable table tfoot > tr td {
+                        /*display: none !important;*/
+                        font-weight: bold;
+                        background-color: #ccc !important;
+                        border-radius:4px;
+                    }
+                .print-line-break {
+                    width:100%;
+                    display: block;
+                    padding-top: 20px;
+                    margin-top:10px;
+                    border-top:1px solid #ccc;
+                    float:left;
+                }
+
+                .logo-print-screen {
+                    display: block;
+                    padding-bottom: 30px;
+                    
+                }
+
+                    .logo-print-screen > div{
+                        width:50%;
+                        float:left;
+                        text-align:left;
+                    }
+                    .logo-print-screen > div:last-child {
+                        text-align: right;
+                        padding-top:40px;
+                    }
+                    
+            }
+        </style>
+
+        <section class="pages checkout section-padding">
             <div class="container">
-                <div class="row margin-top">
+                <div class="row margin-top" id="pdfordertable">
                     <div class="col-xs-12 col-sm-12">
                         <div class="padding60">
                             <div class="log-title">
+                                <div class="logo-print-screen">
+                                    <div><img width="50px" height="35px" style="width:100px;" src="~/Content/Asset/img/logo-print-screen.PNG" alt="Alternate Text" /></div>
+                                    <div>Printed On: @DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")</div>
+                                </div>
+                                <div class="print-line-break">
+
+                                </div>
+                                <div style="clear:both;"></div>
                                 <center>
-                                    <h2>Congratulation @Model.FirstName !</h2>
-                                    <h3>Your [COD] Order Has Been Placed Successfully !</h3>
+                                    @*<h2>Congratulation @Model.FirstName !</h2>*@
+                                    <h3>Your Order Has Been Placed Successfully !</h3>
                                     <h4>Order No. @Model.OrderNo</h4>
                                 </center>
                             </div>
@@ -45,7 +112,7 @@
                                             <td> @Model.PaymentMode</td>
                                         </tr>
                                         <tr>
-                                            <th>Cart Subtotal</th>
+                                            <th>Order Subtotal</th>
                                             <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
 
                                         </tr>
@@ -66,130 +133,164 @@
                                     <tfoot>
                                         <tr>
                                             <th>Order total</th>
-                                            <td><strong class="pricesymbol"> </strong>  @Model.orderVMs.Sum(x=>x.).OrderTotal</td>
+                                            <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
                                         </tr>
                                     </tfoot>
                                 </table>
-                                <button class="btn btn-primary" id="btnPrint" download> Print </button>
-
                             </div>
                         </div>
                     </div>
 
                 </div>
-            </div>
+                <div class="my-print-btn-group">
+                    <button class="btn btn-primary" id="btnPrint" download> Print </button>
+                    <a class="btn btn-primary" href="javascript:generatePDF()">Dowload PDF</a>
+                    <a class="btn btn-primary" href="@Url.Action("Index","Orders")">Order History</a>
 
+
+                </div>
+
+            </div>
         </section>
 
     }
 }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
 <script>
+    function generatePDF() {
+        var doc = new jsPDF();
+        doc.fromHTML(document.getElementById("pdfordertable"), // page element which you want to print as PDF
+            15,
+            15,
+            {
+                'width': 170
+            },
+            function (a) {
+                doc.save("HTML2PDF.pdf");
+            });
+    }
     $(document).ready(function () {
         $("#btnPrint").bind("click", function () {
-            var divContents = $("#pdfordertable").html();
-        var printWindow = window.open('', '', 'height=400,width=800');
-        printWindow.document.write('<html><head><title>DIV Contents</title>');
-        printWindow.document.write('</head><body >');
-        printWindow.document.write(divContents);
-        printWindow.document.write('</body></html>');
-        printWindow.document.close();
-        printWindow.print();
-        //var datapdf = '';
-        //var orderdetails  = '';
-        //$.ajax({
-        //    url: "/Payment/DownloadPDFOrder",
-        //    type: "GET",
-        //    contentType: "application/json;charset=utf-8",
-        //    dataType: "json",
-        //    success: function (result) {
-        //        debugger
-        //        //$.each(data, (index, item) => {
-        //        //    orderdetails += `
-        //        //    <tr>
-        //        //    <th>${item.Name} x ${item.Quantity}</th>
-        //        //    <td> <strong class="pricesymbol"> </strong> ${item.TotalPrice}</td>
-        //        //    </tr>
-        //        //    `;
-        //        //});
-        //        //var data = JSON.parse(result.data);
-        //        var divContents = $("#pdfordertable").html();
-        //        var printWindow = window.open('', '', 'height=400,width=800');
-        //        printWindow.document.write('<html><head><title>DIV Contents</title>');
-        //        printWindow.document.write('</head><body >');
-        //        printWindow.document.write(divContents);
-        //        printWindow.document.write('</body></html>');
-        //        printWindow.document.close();
-        //        printWindow.print();
-
-
-        ////        datapdf = ` <section class="pages checkout section-padding">
-        ////    <div class="container">
-        ////        <div class="row margin-top">
-        ////            <div class="col-xs-12 col-sm-12">
-        ////                <div class="padding60">
-        ////                    <div class="log-title">
-        ////                        <center>
-        ////                            <h2>Congratulation ${data.EmailId}!</h2>
-        ////                            <h3>Your [COD] Order Genrated Successfully !</h3>
-        ////                        </center>
-        ////                    </div>
-        ////                    <div class="cart-form-text pay-details table-responsive">
-        ////                        <table>
-        ////                            <thead>
-        ////                                <tr>
-        ////                                    <th>Product</th>
-        ////                                    <td>Total</td>
-        ////                                </tr>
-        ////                            </thead>
-
-        ////                            <tbody>
-
-        ////                         ${orderdetails }
-
-        ////                                <tr>
-        ////                                    <th>Cart Subtotal</th>
-        ////                                    <td><strong class="pricesymbol"> </strong>  ${data.CartSubTotal}</td>
-
-        ////                                </tr>
-        ////                                <tr>
-        ////                                    <th>Total Discount</th>
-        ////                                    <td> <strong class="pricesymbol"> </strong>${data.CartSubTotalDiscount}</td>
-        ////                                </tr>
-
-        ////                                <tr>
-        ////                                    <th>Shipping and Handing</th>
-        ////                                    <td><strong class="pricesymbol"> </strong>  00.00</td>
-        ////                                </tr>
-        ////                                <tr>
-        ////                                    <th>Vat</th>
-        ////                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
-        ////                                </tr>
-        ////                            </tbody>
-        ////                            <tfoot>
-        ////                                <tr>
-        ////                                    <th>Order total</th>
-        ////                                    <td><strong class="pricesymbol"> </strong> ${data.OrderTotal}</td>
-        ////                                </tr>
-        ////                            </tfoot>
-        ////                        </table>
-        ////                        <button class="btn btn-primary" onclick="window.print();"> Print </button>
-
-        ////                    </div>
-        ////                </div>
-        ////            </div>
-
-        ////        </div>
-        ////    </div>
-
-        ////</section>`;
-
-        ////        $("#pdfordertable").html(datapdf);
-        //    }
-        //    });
-        //$("#pdfordertable").load('@Url.Action("DownloadPDFOrder", "Payment")')
+            window.print();
+            //var divContents = $("#pdfordertable").html();
+            //var printWindow = window.open('', '', 'height=400,width=800');
+            //printWindow.document.write('<html><head><title></title>');
+            //printWindow.document.write('</head><body >');
+            //printWindow.document.write(divContents);
+            //printWindow.document.write('</body></html>');
+            //printWindow.document.close();
+            //printWindow.print();
+            //printWindow.close();
+        });
     });
-});
 </script>
+@*<script>
+        $(document).ready(function () {
+            $("#btnPrint").bind("click", function () {
+                var divContents = $("#pdfordertable").html();
+            var printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><title>DIV Contents</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(divContents);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+            //var datapdf = '';
+            //var orderdetails  = '';
+            //$.ajax({
+            //    url: "/Payment/DownloadPDFOrder",
+            //    type: "GET",
+            //    contentType: "application/json;charset=utf-8",
+            //    dataType: "json",
+            //    success: function (result) {
+            //        debugger
+            //        //$.each(data, (index, item) => {
+            //        //    orderdetails += `
+            //        //    <tr>
+            //        //    <th>${item.Name} x ${item.Quantity}</th>
+            //        //    <td> <strong class="pricesymbol"> </strong> ${item.TotalPrice}</td>
+            //        //    </tr>
+            //        //    `;
+            //        //});
+            //        //var data = JSON.parse(result.data);
+            //        var divContents = $("#pdfordertable").html();
+            //        var printWindow = window.open('', '', 'height=400,width=800');
+            //        printWindow.document.write('<html><head><title>DIV Contents</title>');
+            //        printWindow.document.write('</head><body >');
+            //        printWindow.document.write(divContents);
+            //        printWindow.document.write('</body></html>');
+            //        printWindow.document.close();
+            //        printWindow.print();
+
+
+            ////        datapdf = ` <section class="pages checkout section-padding">
+            ////    <div class="container">
+            ////        <div class="row margin-top">
+            ////            <div class="col-xs-12 col-sm-12">
+            ////                <div class="padding60">
+            ////                    <div class="log-title">
+            ////                        <center>
+            ////                            <h2>Congratulation ${data.EmailId}!</h2>
+            ////                            <h3>Your [COD] Order Genrated Successfully !</h3>
+            ////                        </center>
+            ////                    </div>
+            ////                    <div class="cart-form-text pay-details table-responsive">
+            ////                        <table>
+            ////                            <thead>
+            ////                                <tr>
+            ////                                    <th>Product</th>
+            ////                                    <td>Total</td>
+            ////                                </tr>
+            ////                            </thead>
+
+            ////                            <tbody>
+
+            ////                         ${orderdetails }
+
+            ////                                <tr>
+            ////                                    <th>Cart Subtotal</th>
+            ////                                    <td><strong class="pricesymbol"> </strong>  ${data.CartSubTotal}</td>
+
+            ////                                </tr>
+            ////                                <tr>
+            ////                                    <th>Total Discount</th>
+            ////                                    <td> <strong class="pricesymbol"> </strong>${data.CartSubTotalDiscount}</td>
+            ////                                </tr>
+
+            ////                                <tr>
+            ////                                    <th>Shipping and Handing</th>
+            ////                                    <td><strong class="pricesymbol"> </strong>  00.00</td>
+            ////                                </tr>
+            ////                                <tr>
+            ////                                    <th>Vat</th>
+            ////                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
+            ////                                </tr>
+            ////                            </tbody>
+            ////                            <tfoot>
+            ////                                <tr>
+            ////                                    <th>Order total</th>
+            ////                                    <td><strong class="pricesymbol"> </strong> ${data.OrderTotal}</td>
+            ////                                </tr>
+            ////                            </tfoot>
+            ////                        </table>
+            ////                        <button class="btn btn-primary" onclick="window.print();"> Print </button>
+
+            ////                    </div>
+            ////                </div>
+            ////            </div>
+
+            ////        </div>
+            ////    </div>
+
+            ////</section>`;
+
+            ////        $("#pdfordertable").html(datapdf);
+            //    }
+            //    });
+            //$("#pdfordertable").load('@Url.Action("DownloadPDFOrder", "Payment")')
+        });
+    });
+    </script>*@
 
 @*<script>
         $(document).ready(function () {
