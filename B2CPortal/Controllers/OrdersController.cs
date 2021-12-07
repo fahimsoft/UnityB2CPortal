@@ -207,7 +207,7 @@ namespace B2CPortal.Controllers
         [HttpPost]
         [ActionName("AddBillingDetails")]
         public async Task<ActionResult> AddBillingDetails(OrderVM Billing)
-        {
+        { 
             try
             {
                 OrderVM orderVM = new OrderVM();

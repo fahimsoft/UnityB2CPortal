@@ -201,37 +201,37 @@
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-                        <input class="form-check-input" value="Stripe"  type="radio" name="paymenttype" >
-                        <label class="form-check-label" for="paymenttype1">
+                        <input class="form-check-input" value="Stripe"  type="radio" name="paymode" >
+                        <label class="form-check-label" >
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
-                        <input class="form-check-input" value="HBL" type="radio" name="paymenttype" >
-                        <label class="form-check-label" for="paymenttype1">
+                        <input class="form-check-input" value="HBL" type="radio" name="paymode" >
+                        <label class="form-check-label" >
                             HBL (Habib Bank Limited)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
-                        <input class="form-check-input" value="JazzCash" type="radio" name="paymenttype" >
-                        <label class="form-check-label" for="paymenttype1">
+                        <input class="form-check-input" value="JazzCash" type="radio" name="paymode" >
+                        <label class="form-check-label" >
                             Jazz Cash (Mobilink)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
-                        <input class="form-check-input" value="EasyPaisa" type="radio" name="paymenttype" >
-                        <label class="form-check-label" for="paymenttype1">
+                        <input class="form-check-input" value="EasyPaisa" type="radio" name="paymode" >
+                        <label class="form-check-label" >
                             Easypaisa (Telenor)
                         </label>
                     </div>
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input class="form-check-input" value="COD" type="radio" name="paymenttype" >
-                        <label class="form-check-label" for="paymenttype1">
+                        <input class="form-check-input" value="COD" type="radio" name="paymode" >
+                        <label class="form-check-label" >
                             COD (Cash On Delivery)
                         </label>
                     </div>
@@ -240,7 +240,7 @@
                     @if (Model.OrderTotal > 0)
                     {
                         <div class="submit-text">
-                            <a class="order">place order</a>
+                            <a id="order">place order</a>
                         </div>
                     }
                     else
@@ -320,7 +320,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="confirmBtn btn btn-primary">Confirm</button>
+                        <button type="button" id="confirmBtn" class="btn btn-primary">Confirm</button>
                         <button type="button" class="cancelBtn btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -392,7 +392,7 @@
 
 
 
-        $('.order').click(function () {
+        $('#order').click(function () {
             $(this).attr('disabled', 'disabled');
 
             // Both Form Data
@@ -402,11 +402,11 @@
             }
             // Only Billing Form Data
             // alert("No");
-            var paymenttype = $('input[name="paymenttype"]:checked').val();
+            var paymenttype = $("input[name='paymode']:checked").val();
+           
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
-
                 var form = $("#billing");
                 var datatosend = {
                     Billing: {
@@ -417,7 +417,7 @@
                         City: $('#City').val(),
                         BillingAddress: $('#Address').val(),
                         ShippingAddress: $('.SAddress').val(),
-                        PaymentType: $('input[name="paymenttype"]:checked').val()
+                        PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
                     }
                 }
 
@@ -425,50 +425,6 @@
                 console.log(datatosend);
 
                 $('.modal').show();
-
-                $('.confirmBtn').click(function () {
-                    $(this).attr('disabled', 'disabled');
-                    document.getElementsByClassName("loader-container")[0].style.display = "block";
-                    $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-                    $.validator.unobtrusive.parse($(this));//add the form validation
-                    $.validator.unobtrusive.parse(form);
-                    //if ($(form).valid()) // using not operator for a time being
-                    if ($(form.valid())) {
-                        $.ajax({
-                            type: "POST",
-                            url: "/Orders/AddBillingDetails",
-                            data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                            contentType: 'application/json',
-                            dataType: 'json',
-                            success: function (data) {
-                                if (data.success == true) {
-                                    window.location.href = data.data;// reload();
-                                    toastr.success(data.msg);
-                                }
-                                else if (data.success == false) {
-                                    toastr.error("Failed.");
-                                }
-                                document.getElementsByClassName("loader-container")[0].style.display = "none";
-                            },
-                            failure: function (data) {
-                                console.log(data);
-                            },
-                            err: function (data) {
-                                console.log(data);
-                            }
-                        })
-                    }
-                    else {
-                        $(this).removeAttr('disabled');
-                        $('.order').removeAttr('disabled');
-
-                        return false;
-                    }
-
-
-
-                })
-
                 $('.cancelBtn').click(function () {
                     $('confirmBtn').removeAttr('disabled');
                     $('.order').removeAttr('disabled');
@@ -478,7 +434,67 @@
                 })
             }
         });
+        $('#confirmBtn').click(function () {
+            $(this).attr('disabled', 'disabled');
+            var paymenttype = $("input[name='paymode']:checked").val();
 
+            if (paymenttype == undefined || paymenttype == "") {
+                toastr.error("Please Select Payment Type.");
+            } else {
+                var form = $("#billing");
+                var datatosend = {
+                    Billing: {
+                        /*Id: $('#Id').val(),*/
+                        PhoneNo: $('#PhoneNo').val(),
+                        EmailId: $('#EmailId').val(),
+                        Country: $('#Country').val(),
+                        City: $('#City').val(),
+                        BillingAddress: $('#Address').val(),
+                        ShippingAddress: $('.SAddress').val(),
+                        PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
+                    }
+                }
+
+                document.getElementsByClassName("loader-container")[0].style.display = "block";
+                $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+                $.validator.unobtrusive.parse($(this));//add the form validation
+                $.validator.unobtrusive.parse(form);
+                //if ($(form).valid()) // using not operator for a time being
+                if ($(form.valid())) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Orders/AddBillingDetails",
+                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.success == true) {
+                                window.location.href = data.data;// reload();
+                                toastr.success(data.msg);
+                            }
+                            else if (data.success == false) {
+                                toastr.error("Failed.");
+                            }
+                            document.getElementsByClassName("loader-container")[0].style.display = "none";
+                        },
+                        failure: function (data) {
+                            console.log(data);
+                        },
+                        err: function (data) {
+                            console.log(data);
+                        }
+                    })
+                }
+                else {
+                    $(this).removeAttr('disabled');
+                    $('.order').removeAttr('disabled');
+
+                    return false;
+                }
+
+            }
+
+        })
 
     </script>
 }
