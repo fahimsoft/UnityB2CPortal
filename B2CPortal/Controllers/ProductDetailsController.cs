@@ -64,28 +64,8 @@ namespace B2CPortal.Controllers
         public async Task<JsonResult> GetProductCommentWithPaggination(long id, int nextPage = 10, int prevPage = 0)
         {
             List<CommentAndRatingVM> commentAndRatingVM = new List<CommentAndRatingVM>();
-
-            var commentReult = await _IProductDetail.GetProductCommentWithPaggination(id);
-            var totalComment = commentReult.Count();
-            var commentAndRateReult = commentReult.OrderBy(x => x.CreatedOn).Skip(prevPage).Take(nextPage).Where(x => x.FK_ProductMaster == id).ToList();
-
-            foreach (var item in commentAndRateReult)
-            {
-                var commentObj = new CommentAndRatingVM
-                {
-                    CustomerName = item.AnonymousName,
-                    CustomerComment = item.Comment,
-                    CustomerRate = item.Rate,
-                    totalComment = totalComment,
-
-                    CommentDate = item.CreatedOn,
-
-                };
-                commentAndRatingVM.Add(commentObj);
-            }
-
-
-            return SuccessResponse(commentAndRatingVM);
+            var obj = await _IProductDetail.GetProductCommentWithPaggination(id, nextPage, prevPage);
+            return SuccessResponse(obj);
         }
     }
 }

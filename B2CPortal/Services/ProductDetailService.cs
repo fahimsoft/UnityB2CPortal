@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API_Base.Common;
 using System.Web;
+using B2CPortal.Models;
 
 namespace B2CPortal.Services
 {
@@ -113,18 +114,42 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-        public async Task<IEnumerable<CommentAndRating>> GetProductCommentWithPaggination(long Id)
+        public async Task<IEnumerable<CommentAndRatingVM>> GetProductCommentWithPaggination(long Id, int nextPage = 10, int prevPage = 0)
         {
             try
             {
+                List<CommentAndRatingVM> commentAndRatingVM = new List<CommentAndRatingVM>();
 
-                var obj = await _dxcontext.CommentAndRatings.Include(x => x.ProductMaster).OrderBy(X => X.CreatedOn).Where(x => x.FK_ProductMaster == Id).ToListAsync();
+                var totalComment = _dxcontext.CommentAndRatings.Count(x => x.FK_ProductMaster == Id);
+                var commentAndRateResult = await _dxcontext.CommentAndRatings.OrderByDescending(X => X.CreatedOn).Skip(prevPage).Take(nextPage).Where(x => x.FK_ProductMaster == Id).ToListAsync();
+
+                foreach (var item in commentAndRateResult)
+                {
+                    var commentObj = new CommentAndRatingVM
+                    {
+                        CustomerName = item.AnonymousName,
+                        CustomerComment = item.Comment,
+                        CustomerRate = item.Rate,
+                        totalComment = totalComment,
 
 
-                return obj;
+
+                        CommentDate = item.CreatedOn,
+
+
+
+                    };
+                    commentAndRatingVM.Add(commentObj);
+                }
+
+
+
+                return commentAndRatingVM.ToList();
             }
             catch (Exception Ex)
             {
+
+
 
                 throw Ex;
             }

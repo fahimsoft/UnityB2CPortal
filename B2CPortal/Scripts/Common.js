@@ -919,10 +919,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
             $('#htmlListAndGrid').html(htmldata);
             $('#htmlProdListPaggination').html(htmlPaggination);
-
-
             $('#htmlProdListPaggination').find('.btn-Prod-Paggination').eq(((oprevPage / nextPage))).addClass('btn-Prod-Paggination-active');
-
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             if (filterList != null && filterList != undefined && filterList != '[[]]' && filterList.length > 0) {
@@ -1493,8 +1490,8 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
                 });
                 var htmlPaggination = htmlPrevButton + htmlbtn + htmlNextButton;
                 $('#commentAndRating').html(html);
-
                 $('#div-paggination').html(htmlPaggination);
+                $('#div-paggination').find('.btn-paggination').eq(((currentPrevPage / nextPage))).addClass('btn-Prod-Paggination-active');
 
             },
             error: function (errorMessage) {

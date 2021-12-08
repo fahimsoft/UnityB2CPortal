@@ -331,6 +331,7 @@ namespace B2CPortal.Controllers
         #endregion
         [HttpGet]
         [ActionName("GetProductbyIdWithRating")]
+      ///  [OutputCache(CacheProfile = "SetCache", VaryByParam = "Id")]
         public async Task<JsonResult> GetProductbyIdWithRating(long Id)
         {
             try
@@ -351,6 +352,7 @@ namespace B2CPortal.Controllers
         } //Updated 1-Dec
         [HttpPost]
         [ActionName("GetProductListbySidebar")]
+        [OutputCache(CacheProfile = "SetCache", VaryByParam = "*")]
         public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
         {
             try
@@ -365,6 +367,7 @@ namespace B2CPortal.Controllers
         }
         [HttpGet]
         [ActionName("GetFeaturedProduct")]
+        [OutputCache(CacheProfile = "SetCache")]
         public async Task<JsonResult> GetFeaturedProduct()
         {
             try
