@@ -72,14 +72,22 @@ namespace API_Base.Common
         }
         public static object CopyPropertiesTo(object fromObject, object toObject)
         {
-            PropertyInfo[] toObjectProperties = toObject.GetType().GetProperties();
-            foreach (PropertyInfo propTo in toObjectProperties)
+            try
             {
-                PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
-                if (propFrom != null && propFrom.CanWrite)
-                    propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
+                PropertyInfo[] toObjectProperties = toObject.GetType().GetProperties();
+                foreach (PropertyInfo propTo in toObjectProperties)
+                {
+                    PropertyInfo propFrom = fromObject.GetType().GetProperty(propTo.Name);
+                    if (propFrom != null && propFrom.CanWrite)
+                        propTo.SetValue(toObject, propFrom.GetValue(fromObject, null), null);
+                }
+                return toObject;
             }
-            return toObject;
+            catch (Exception ex)
+            {
+
+                return null;
+            }
         }
         public static string GenrateOrderNumber(string num)
         {

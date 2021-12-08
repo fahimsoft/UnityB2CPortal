@@ -101,8 +101,8 @@
                                             foreach (var item in Model.orderVMs)
                                             {
                                                 <tr>
-                                                    <th>@item.Name  x @item.Quantity</th>
-                                                    <td> <strong class="pricesymbol"> </strong> @item.TotalPrice</td>
+                                                    <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
+                                                    <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
                                                 </tr>
                                             }
                                         }
@@ -118,7 +118,7 @@
                                         </tr>
                                         <tr>
                                             <th>Total Discount</th>
-                                            <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
+                                            <td> <strong class="pricesymbol"> </strong> @Model.orderVMs.Sum(x=>x.CartSubTotalDiscount) </td>
                                         </tr>
 
                                         <tr>
@@ -161,9 +161,9 @@
         var doc = new jsPDF();
         doc.fromHTML(document.getElementById("pdfordertable"), // page element which you want to print as PDF
             15,
-            15,
+            10,
             {
-                'width': 170
+                'width': 200
             },
             function (a) {
                 doc.save("HTML2PDF.pdf");

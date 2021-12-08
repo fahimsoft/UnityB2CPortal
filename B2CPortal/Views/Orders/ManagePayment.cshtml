@@ -148,9 +148,9 @@
 
                             <tbody>
 
-                                @if (Model.orderVMs != null)
+                                @if (Model.OrderDetailsViewModels != null)
                                 {
-                                    foreach (var item in Model.orderVMs)
+                                    foreach (var item in Model.OrderDetailsViewModels)
                                     {
                                         <tr>
                                             <th>@item.Name<br /> @item.Price x @item.Quantity (%@item.Discount)  </th>
@@ -162,12 +162,12 @@
                                 <tr>
                                     <th>Order Subtotal</th>
                                     <td><strong class="pricesymbol"> </strong> 
-                                        <input type="hidden"  id="orderid" name="name" value="@Model.Id" /> @Model.orderVMs.Sum(x=>x.Price)</td>
+                                        <input type="hidden"  id="orderid" name="name" value="@Model.Id" /> @Model.OrderDetailsViewModels.Sum(x=>x.Price * x.Quantity)</td>
 
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> <strong class="pricesymbol"> </strong> @Model.orderVMs.Sum(x => x.DiscountAmount) </td>
+                                    <td> <strong class="pricesymbol"> </strong> @Model.OrderDetailsViewModels.Sum(x => x.DiscountAmount) </td>
                                 </tr>
 
                                 <tr>
@@ -182,7 +182,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Order total</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.OrderDetailsViewModels.Sum(x=> x.SubTotalPrice)</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -276,9 +276,9 @@
 
                                 <tbody>
 
-                                    @if (Model.orderVMs != null)
+                                    @if (Model.OrderDetailsViewModels != null)
                                     {
-                                        foreach (var item in Model.orderVMs)
+                                        foreach (var item in Model.OrderDetailsViewModels)
                                         {
                                             <tr>
                                                 <th>@item.Name<br /> @item.Price x @item.Quantity (%@item.Discount)  </th>
@@ -289,12 +289,15 @@
 
                                     <tr>
                                         <th>Order Subtotal</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.orderVMs.Sum(x => x.Price)</td>
+                                        <td>
+                                            <strong class="pricesymbol"> </strong>
+                                            <input type="hidden" id="orderid" name="name" value="@Model.Id" /> @Model.OrderDetailsViewModels.Sum(x => x.Price * x.Quantity)
+                                        </td>
 
                                     </tr>
                                     <tr>
                                         <th>Total Discount</th>
-                                        <td> <strong class="pricesymbol"> </strong> @Model.orderVMs.Sum(x => x.DiscountAmount) </td>
+                                        <td> <strong class="pricesymbol"> </strong> @Model.OrderDetailsViewModels.Sum(x => x.DiscountAmount) </td>
                                     </tr>
 
                                     <tr>
@@ -309,7 +312,7 @@
                                 <tfoot>
                                     <tr>
                                         <th>Order total</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
+                                        <td><strong class="pricesymbol"> </strong>  @Model.OrderDetailsViewModels.Sum(x => x.SubTotalPrice)</td>
                                     </tr>
                                 </tfoot>
                             </table>

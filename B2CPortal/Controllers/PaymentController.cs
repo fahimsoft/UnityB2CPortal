@@ -25,7 +25,13 @@ namespace B2CPortal.Controllers
         public ActionResult Stripe()
         {
             ViewBag.Amount = Session["ordertotal"];
+            if (ViewBag.Amount <= 0 || ViewBag.Amount == null)
+            {
+                return RedirectToAction("Checkout", "Orders");
+            }
             return View();
+
+
         }
         [HttpPost]
         public async Task<ActionResult> StripeAsync(string stripeToken, Payment payment)
@@ -113,6 +119,10 @@ namespace B2CPortal.Controllers
         public ActionResult PaymentStatusCOD(OrderVM orderVM)
         {
             orderVM = (OrderVM)Session["orderdata"];
+            if (orderVM ==  null)
+            {
+                return RedirectToAction("Index","Orders");
+            }
             return View(orderVM);
         }
         [HttpGet]

@@ -54,5 +54,37 @@ namespace B2CPortal.Services
         {
            return await _dxcontext.OrderDetails.Where(x => x.FK_OrderMaster == id && x.IsActive == true).ToListAsync();
         }
+        public async Task<OrderDetail> UpdateOrderDetails(OrderDetailsViewModel ordervm)
+        {
+            try
+            {
+                Current = await _dxcontext.OrderDetails.Where(x => x.Id == ordervm.Id && x.IsActive == true).FirstOrDefaultAsync();
+                if (Current == null)
+                {
+                    Current.CreatedOn = DateTime.Now;
+                    New();
+                }
+                else
+                {
+                    PrimaryKeyValue = Current.Id;
+                    Current.ModifiedOn = DateTime.Now;
+                    Current.Currency = ordervm.Currency;
+                    Current.ConversionRate = ordervm.ConversionRate;
+                    Current.Quantity = ordervm.Quantity;
+                    Current.Price = ordervm.Price;
+                    Current.Discount = ordervm.Discount;
+                    Current.TotalPrice = ordervm.SubTotalPrice;
+                    Current.DiscountedPrice = ordervm.DiscountAmount;
+                    Current.Currency = ordervm.Currency;
+                }
+                Save();
+                return Current;
+            }
+            catch (Exception ex)
+            {
+                return null;
+                throw;
+            }
+        }
     }
 }

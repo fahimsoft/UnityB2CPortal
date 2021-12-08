@@ -157,9 +157,14 @@
                                     foreach (var item in Model.orderVMs)
                                     {
                                         <tr>
+                                            <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
+                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+                                        </tr>
+
+                                        @*<tr>
                                             <th>@item.Name  x @item.Quantity</th>
                                             <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
-                                        </tr>
+                                        </tr>*@
                                     }
                                 }
 
@@ -284,8 +289,8 @@
                                         foreach (var item in Model.orderVMs)
                                         {
                                             <tr>
-                                                <th>@item.Name  x @item.Quantity</th>
-                                                <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
+                                                <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
+                                                <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
                                             </tr>
                                         }
                                     }

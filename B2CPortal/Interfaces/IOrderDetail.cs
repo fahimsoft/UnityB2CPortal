@@ -12,6 +12,7 @@ namespace B2CPortal.Interfaces
     {
         Task<OrderDetail> CreateOrderDetail(OrderVM Billing);
         Task<IEnumerable<OrderDetail>> GetOrderDetailsById(int id);
+        Task<OrderDetail> UpdateOrderDetails(OrderDetailsViewModel ordervm);
 
     }
 }

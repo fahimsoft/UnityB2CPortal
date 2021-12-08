@@ -64,9 +64,6 @@ namespace B2CPortal.Services
                     Current.PaymentStatus = Billing.PaymentStatus;
                     Current.OrderDescription= Billing.OrderDescription;
 
-
-
-
                 }
                 else
                 {
@@ -104,9 +101,9 @@ namespace B2CPortal.Services
                     Current.ModifiedOn = DateTime.Now;
                     Current.Currency = ordervm.Currency;
                     Current.ConversionRate = ordervm.ConversionRate;
-                    Current.PaymentMode= ordervm.PaymentMode;
-                    Current.Status= ordervm.Status;
-                    Current.TotalPrice =(int) ordervm.TotalPrice;
+                    Current.PaymentMode= string.IsNullOrEmpty(ordervm.PaymentMode) ? Current.PaymentMode : ordervm.PaymentMode;
+                    Current.Status= string.IsNullOrEmpty(ordervm.Status) ? Current.Status: ordervm.Status; 
+                    Current.TotalPrice = (int) ordervm.TotalPrice;
                     Current.PaymentStatus = ordervm.PaymentStatus;
                 }
                 Save();
