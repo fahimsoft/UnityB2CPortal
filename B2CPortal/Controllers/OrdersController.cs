@@ -363,21 +363,10 @@ namespace B2CPortal.Controllers
                             }
                             else if (Billing.paymenttype == PaymentType.COD)
                             {
-                                // var model = new OrderVM();
-                                //var ordermaster = await _orders.GetOrderMasterById(ordermasterId);
-                                // var paymentobj =  HelperFunctions.CopyPropertiesTo(ordermaster, model);
-                                // model = (OrderVM)paymentobj;
+
                                 Session["ordermasterId"] = ordermasterId;
                                 Session["ordertotal"] = orderVM.OrderTotal;
-                                //model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
-                                //var customer = await _orders.GetCustomerById(customerId);
-                                //model.FirstName = customer.FirstName;
-                                //model.LastName = customer.LastName;
-                                //model.EmailId = customer.EmailId;
-                                //model.PhoneNo = customer.PhoneNo;
-                                //model.Country = customer.Country;
-                                //model.City = customer.City;
-                                //model.Address = customer.Address;
+       
                                 var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
                                 Billing.OrderNo = result;
                                 Session["orderdata"] = Billing;
@@ -429,7 +418,6 @@ namespace B2CPortal.Controllers
                     if (customerId > 0)
                     {
                         var ordermodel = await _orders.GetOrderMasterById(Billing.Id);
-                        // Billing Details Add=============================================
                         var ordervm = new OrderVM
                         {
                             Id = Billing.Id,
@@ -441,6 +429,48 @@ namespace B2CPortal.Controllers
                             PaymentStatus = false,
                         };
                         var orderresponse = await _orders.UpdateOrderMAster(ordervm);
+                        // Billing Details Add=============================================
+                        foreach (var item in ordermodel.OrderDetails)
+                        {
+                            var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                            var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                            var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                            var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                            var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                            var ActualPrice = (decimal)(price * item.Quantity);
+
+                            OrderTotal += Convert.ToDecimal(discountedprice);
+                            subTotal = (subTotal + ActualPrice);
+                            tQuantity = (int)(tQuantity + item.Quantity);
+                            var Order = new OrderVM
+                            {
+                                Name = productData.Name,
+                                Quantity = item.Quantity,
+                                Discount = discount,
+                                Price = price,
+                                CartSubTotalDiscount = totalDiscountAmount,
+                                // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
+                                //no need of conversion already converted into cart
+                                SubTotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
+
+                            };
+                            orderVMs.Add(Order);
+                        }
+                        Billing.orderVMs = orderVMs;
+                        Billing.PaymentStatus = false;
+                        Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
+                        Billing.OrderTotal = Math.Round(OrderTotal, 2);
+
+                        Billing.TotalQuantity = tQuantity;
+                        Billing.Currency = currency;
+                        Billing.ConversionRate = conversionvalue;
+                        Billing.PaymentMode = Billing.paymenttype.ToString();
+                        Billing.Status = OrderStatus.InProcess.ToString();
+                        Billing.Country = Billing.Country;
+                        Billing.City = Billing.City;
+                        Billing.ShippingAddress = Billing.ShippingAddress;
+                        Billing.OrderDescription = "order has been genrated successfully";
+
 
                         if (Billing.paymenttype == PaymentType.Stripe)
                         {
