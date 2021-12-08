@@ -1,7 +1,8 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "ContactUs";
 }
+
+
 
 
 <!-- pages-title-start -->
@@ -26,6 +27,8 @@
     <div class="container text-center">
         <div class="row">
 
+
+
             <div class="googleMap-info">
                 <div class="googleMap">
                     <div class="container-fluid contact_us_section p-0">
@@ -34,6 +37,8 @@
                                 <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1810.063729498063!2d67.062819!3d24.859496!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x6f160d378443ddb4!2sUnity%20Foods%20ltd!5e0!3m2!1sen!2sus!4v1634473597923!5m2!1sen!2sus"
                                         height="600" width="1000" style="position:center; border:0;" allowfullscreen="true" loading="lazy"></iframe>
                             </div>
+
+
 
                         </div>
                     </div>
@@ -66,6 +71,8 @@
                                 <i class="mdi mdi-email"></i>
                                 <p>info@unityfoods.pk</p>
 
+
+
                             </div>
                         </div>
                     </div>
@@ -83,102 +90,224 @@
                             </div>
                             <br />
                         </div>
-                        <div style="text-align:center" class="custom-input">
-                            <form style="background-color: white; border-width: thin" id="contact" class="row g-3">
-                                <div style="background-color:white" class="col-md-6">
-                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="fullname" placeholder="Full Name">
+                        <div style="text-align:center" class="">
+                            <form border-width: thin" id="contact" class="con row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" class="leftF form-control border-blue-color" name="fname" id="fullname" placeholder="Full Name">
                                 </div>
-                                <div style="background-color:white" class="col-md-6">
-                                    <input style="background-color:white" type="email" class="form-control border-blue-color" id="emailaddress" placeholder="E-mail Address">
+                                <div class=" col-md-6">
+                                    <input type="email" class="rightE form-control border-blue-color" name="email" id="emailaddress" placeholder="E-mail Address">
                                 </div>
-                                <div style="background-color:white" class="col-md-6">
-                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="subject" placeholder="Message Subject">
+                                <div class=" col-md-6">
+                                    <input type="text" class="leftS form-control border-blue-color" name="Subject" id="subject" placeholder="Message Subject">
                                 </div>
-                                <div style="background-color:white" class="col-md-6">
-                                    <input style="background-color:white" type="text" class="form-control border-blue-color" id="number" placeholder="Mobile Number">
+                                <div class=" col-md-6">
+                                    <input type="text" class="rightP form-control border-blue-color" name="Pnumber" id="number" placeholder="Mobile Number">
                                 </div>
+
+
+
                                 <div class="col-12">
-                                    <textarea class="form-control border-blue-color" id="message" rows="8" placeholder="Type Your Message Here"></textarea>
+<textarea class="form-control areaT border-blue-color" name="Message" id="message" rows="8" placeholder="Type Your Message Here"></textarea>
                                 </div>
+                                <input type="hidden" value="" id="recaptcha" name="recaptcha" />
+                                <div class="areaR g-recaptcha" data-callback="imNotARobot" data-sitekey="6LfEZoAdAAAAALhYGkcp8KgAB6Pd0j_j1Ckwa8pA"></div>
+
+
+
                                 <div class="col-12 text-center">
-                                    <button type="submit" class="sendmail btn btn-success">Send Email</button>
+                                    <button style="width:130px" type="submit" class="sendmail btn btn-success">Send Email</button>
                                 </div>
+
+
+
+
                             </form>
                         </div>
+
+
 
                     </div>
                 </div>
 
+
+
             </div>
         </div>
 
+
+
     </div>
+
+
 
 
 </div>
 
 
+
+
 <!-- contact content section end -->
 
+
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
 @section scripts
 {
-    <script>
-        $('.sendmail').click(function () {
-             
-            var form = $("#contact");
-            var datatosend = {
-                contact: {
-                    /*Id: $('#Id').val(),*/
-                    fullname: $('#fullname').val(),
-                    emailaddress: $('#emailaddress').val(),
-                    subject: $('#subject').val(),
-                    PhoneNo: $('#number').val(),
-                    message: $('#message').val()
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
 
+
+
+    $('.sendmail').click(function () {
+        debugger
+
+        $('.con').validate({
+
+            rules: {
+                fname: {
+                    required: true,
+                }, email: {
+                    required: true,
+                }, Subject: {
+                    required: true,
+                }, Pnumber: {
+                    required: true,
+                }, Message: {
+                    required: true,
                 }
+
+
+
+            },
+            messages: {
+                fname: {
+                    required: "Name Is Required"
+                }, email: {
+                    required: "Email Is Required"
+                }, Subject: {
+                    required: "Subject Is Required"
+                }, Pnumber: {
+                    required: "Contact Number Is Required"
+                }, Message: {
+                    required: "Message Is Required"
+                }
+
+
+
             }
-
-            console.log(datatosend)
-            //$(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-            //$.validator.unobtrusive.parse($(this));//add the form validation
-            //$.validator.unobtrusive.parse(form);
-            //if ($(form).valid()) // using not operator for a time being
-            /*if ($(form)) {*/
-                $.ajax({
-                    type: "POST",
-                    url: "/Contact/SendContactEmail",
-                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                    contentType: 'application/json',
-                    dataType: 'json',
-
-                    success: function (data) {
-
-                        // alert(data);
-                        console.log(data);
-                        if (data.success == true) {
-                            toastr.success("Email sent successfully.");
-                           // window.location.href = "/Account/Login";
-                        }
-                        else if (data.success == false) {
-                            toastr.error("Email Failed.");
-                        }
-                    },
-                    failure: function (res) {
-                        console.log(res);
-                    },
-                    err: function (res) {
-                        console.log(res);
-                    }
-                })
-            //}
-            //else {
-            //    return false;
-            //}
 
         });
 
 
-    </script>
+
+        var res = grecaptcha.getResponse();
+        // alert(res);
+
+
+
+        var obj = {
+            res: res
+        }
+
+
+
+        $.ajax({
+            type: "POST",
+            data: obj,
+            url: "/Account/Recaptcha",
+
+
+
+            success: function (data) {
+                debugger
+                // alert(data);
+                console.log(data);
+                if (data.success == true) {
+                    toastr.success(data.msg);
+                    var form = $("#contact");
+                    var datatosend = {
+                        contact: {
+                            /*Id: $('#Id').val(),*/
+                            fullname: $('#fullname').val(),
+                            emailaddress: $('#emailaddress').val(),
+                            subject: $('#subject').val(),
+                            PhoneNo: $('#number').val(),
+                            message: $('#message').val()
+
+
+
+                        }
+                    }
+
+
+
+                    console.log(datatosend)
+
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/Contact/SendContactEmail",
+                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                        contentType: 'application/json',
+                        dataType: 'json',
+
+
+
+                        success: function (data) {
+
+
+
+                            // alert(data);
+                            console.log(data);
+                            if (data.success == true) {
+                                toastr.success("Email sent successfully.");
+                                // window.location.href = "/Account/Login";
+                            }
+                            else if (data.success == false) {
+                                toastr.error("Email Failed.");
+                            }
+                        },
+                        failure: function (res) {
+                            console.log(res);
+                        },
+                        err: function (res) {
+                            console.log(res);
+                        }
+                    })
+
+
+
+
+                }
+                else if (data.success == false) {
+                    debugger
+                    toastr.error(data.msg);
+                }
+            },
+            failure: function (data) {
+                console.log(data);
+                toastr.error(data.msg);
+            },
+            err: function (data) {
+                console.log(data);
+            }
+        })
+
+
+
+    });
+
+
+
+
+
+
+</script>
+
+
 
 
 }

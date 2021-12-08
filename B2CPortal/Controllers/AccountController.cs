@@ -427,5 +427,29 @@ namespace B2CPortal.Controllers
 
 
         }
+        // Recaptcha
+        [HttpPost]
+        public JsonResult Recaptcha(string res)
+        {
+            // CaptchaResponse response = HelperFunctions.ValidateCaptcha(Request["g-recaptcha-response"]);
+            CaptchaResponse response = HelperFunctions.ValidateCaptcha(res);
+            
+            if (response.Success)
+            {
+                return Json(new { data = response, msg = "", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+
+
+
+                // return RedirectToAction("Index");
+            }
+            else
+            {
+                return Json(new { data = response, msg = "Fill out Recaptcha!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
+                //return Content("Error From Google ReCaptcha : " + response.ErrorMessage[0].ToString());
+            }
+        }
     }
 }

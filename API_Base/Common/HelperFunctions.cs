@@ -1,4 +1,5 @@
 ﻿using B2CPortal.Models;
+using Newtonsoft.Json;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -175,6 +176,29 @@ namespace API_Base.Common
                 throw e;
             }
         }
+        public static CaptchaResponse ValidateCaptcha(string response)
+        {
+            string secret = System.Web.Configuration.WebConfigurationManager.AppSettings["recaptchaPrivateKey"];
+            var client = new WebClient();
+            var jsonResult = client.DownloadString(string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, response));
+            return JsonConvert.DeserializeObject<CaptchaResponse>(jsonResult.ToString());
+        }
+    }
+    public class CaptchaResponse
+    {
+        [JsonProperty("success")]
+        public bool Success
+        {
+            get;
+            set;
+        }
+        [JsonProperty("error-codes")]
+        public List<string> ErrorMessage
+        {
+            get;
+            set;
+        }
+        public string Recaptcha { get; set; }
     }
     public class Result
     {
