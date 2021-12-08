@@ -54,8 +54,17 @@
                                 <button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>
                                 <a href="@Url.Action("Checkout","Orders")" class="btn btn-success" id="btnBack">Go Back</a>
                             </div>
+                            @if (TempData["error"] != null)
+                            {
+                                <div class="form-group" style="background-color: #fde0e5; text-align: center;">
 
-                        </form>
+                                    <div class="submit-text coupon">
+                                        <strong> @(TempData["error"] != null ? TempData["error"].ToString() : "")</strong>
+                                    </div>
+                                    </div>
+                            }
+
+                            </form>
                     </div>
                 </div>
             </div>
@@ -89,6 +98,8 @@
 
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;
+                document.getElementsByClassName("loader-container")[0].style.display = "none";
+
             } else {
                 toastr.info("Please Wait !");
                 stripeTokenHandler(result.token);

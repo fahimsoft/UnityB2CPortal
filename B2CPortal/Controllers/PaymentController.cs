@@ -1,4 +1,5 @@
-﻿using API_Base.PaymentMethod;
+﻿using API_Base.Common;
+using API_Base.PaymentMethod;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using Stripe;
@@ -38,6 +39,7 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                ViewBag.error = "";
                 if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()))
                 {
                     return RedirectToAction("Checkout", "Orders");
@@ -56,7 +58,9 @@ namespace B2CPortal.Controllers
 
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
-                if (result != null && ((Charge)result).Amount > 0)
+                //ResponseViewModel resmodel  =  HelperFunctions.ResponseHandler(result);
+                Charge chargeobj =  (Charge)result;
+                if (result != null && chargeobj.Paid == true)
                 {
                     var ordervm = new OrderVM
                     {
@@ -69,44 +73,20 @@ namespace B2CPortal.Controllers
                         PaymentStatus = true,
                     };
                     var dd = await _orders.UpdateOrderMAster(ordervm);
-                    var model = new PaymentViewModel();
-                    model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
-                    return View("PaymentStatus", model);
+                    //var model = new PaymentViewModel();
+                    //model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
+                    return View("PaymentStatus", paymentmodel);
                 }
                 else
                 {
-                    return RedirectToAction("Checkout", "Orders");
-                }
-                #region stripe comment code
-
-                //var customeroptions = new CustomerCreateOptions
-                //{
-                //    Email = payment.Email,
-                //    Name = payment.Name,
-                //    Phone = payment.Phone,
-                //    Description = "Stripe payment",
-                //    Source = stripeToken
-                //};
-                //var customerservice = new CustomerService();
-                // var customer = customerservice.Create(customeroptions);
-                //payment.Description = "this payment from stripe";
-                //var options = new ChargeCreateOptions
-                //{
-                //    Amount = long.Parse(Session["ordertotal"].ToString()) * 100 ,
-                //    Currency = "usd",
-                //    Description = payment.Description,
-                //  //  Source = stripeToken,
-                //    Customer = customer.Id,
-                //};
-                //var service = new ChargeService();
-                //var charge = service.Create(options);
-                #endregion
-
-
+                    TempData["error"] = chargeobj.FailureMessage;
+                    return RedirectToAction("Stripe");
+                }   
             }
-            catch (Exception ex)
+            catch (StripeException ex)
             {
-                throw ex;
+                TempData["error"] = ex.Message;
+                return RedirectToAction("Stripe");
             }
 
         }

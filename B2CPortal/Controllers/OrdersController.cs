@@ -119,6 +119,7 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                string currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                 decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
@@ -175,6 +176,8 @@ namespace B2CPortal.Controllers
                             orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
                             orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
                             orderVM.OrderTotal = OrderTotal;
+                            orderVM.Currency = currency ;
+
                             Session["ordertotal"] = OrderTotal;
                         }
                         return View(orderVM);
@@ -539,6 +542,7 @@ namespace B2CPortal.Controllers
                                 ordertoal += discountedprice;
                             }
                             orderVM.TotalPrice = ordertoal;
+                            Session["ordertotal"] = orderVM.TotalPrice;
                             orderVM.Currency = currency;
                             orderVM.ConversionRate = conversionvalue;
                             orderVM.Id = id;

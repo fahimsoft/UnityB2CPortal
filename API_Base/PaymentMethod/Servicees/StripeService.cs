@@ -15,7 +15,6 @@ namespace API_Base.PaymentMethod.Servicees
             try
             {
                 StripeConfiguration.ApiKey = "sk_test_51K02zhHN8ZNk6QpY0XRnHeR44USPCKbNMY18HocZVMQ7BB0u2NA7xhzJum8kc1wZTJKiUWEVbOp6gwPA26eHF4Hh008jjfgFGZ";
-
                 var customeroptions = new CustomerCreateOptions
                 {
                     Email = payment.Email,
@@ -39,10 +38,9 @@ namespace API_Base.PaymentMethod.Servicees
                 dynamic charge = service.Create(options);
                 return charge;
             }
-            catch (Exception ex)
+            catch (StripeException ex)
             {
-
-                return null;
+                throw ex;
             }
         }
     }

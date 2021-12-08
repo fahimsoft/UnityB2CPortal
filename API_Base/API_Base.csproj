@@ -106,6 +106,7 @@
     <Compile Include="PaymentMethod\Interfaces\IEasyPaisa.cs" />
     <Compile Include="PaymentMethod\Interfaces\IHBL.cs" />
     <Compile Include="PaymentMethod\Interfaces\IStripe.cs" />
+    <Compile Include="PaymentMethod\ResponseViewModel.cs" />
     <Compile Include="PaymentMethod\PaymentVM.cs" />
     <Compile Include="PaymentMethod\PaymentMethodFacade.cs" />
     <Compile Include="PaymentMethod\Servicees\EasyPaisaService.cs" />

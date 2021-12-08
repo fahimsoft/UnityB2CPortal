@@ -1,4 +1,5 @@
-﻿using B2CPortal.Models;
+﻿using API_Base.PaymentMethod;
+using B2CPortal.Models;
 using Newtonsoft.Json;
 using Stripe;
 using System;
@@ -133,6 +134,26 @@ namespace API_Base.Common
              root = jsonObject.Deserialize<Root>(result);
             return root.result.PKR.ToString();
         }
+
+        public static  ResponseViewModel ResponseHandler(dynamic dynamicmodel)
+        {
+
+            var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var json = serializer.Serialize(dynamicmodel);
+            ResponseViewModel responsemodel = serializer.Deserialize<ResponseViewModel>(json);
+            return responsemodel;
+            //var properties = dynamicmodel.GetType().GetProperties();
+            //foreach (var property in properties)
+            //{
+            //    var PropertyName = property.Name;
+            //    //You get "Property1" as a result
+
+            //    var PropetyValue = dynamicmodel.GetType().GetProperty(property.Name).GetValue(dynamicmodel, null);
+            //    //You get "Value1" as a result
+
+            //    // you can use the PropertyName and Value here
+            //}
+        }
         // Email configuration
         public static bool EmailSend(string SenderEmail, string Subject, string Message, bool IsBodyHtml = false)
         {
@@ -184,6 +205,9 @@ namespace API_Base.Common
             return JsonConvert.DeserializeObject<CaptchaResponse>(jsonResult.ToString());
         }
     }
+
+
+
     public class CaptchaResponse
     {
         [JsonProperty("success")]

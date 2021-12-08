@@ -1,4 +1,4 @@
-﻿@model B2CPortal.Models.PaymentViewModel
+﻿@model API_Base.PaymentMethod.PaymentVM
 @{
     ViewBag.Title = "PaymentStatus";
 }
@@ -42,12 +42,12 @@
 </style>
 
 <div class="card">
-        <h1>Payment Successfully Done !</h1>
+        <h1>Payment Successfully Done By @Model.Name!</h1>
     <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
        <i class="checkmark">✓</i>
     </div>
-    <h1> (<strong class="pricesymbol"> </strong> @Model.TotalPrice )</h1>
-    <p class="contentdetails">We received your purchase request ( <strong class="pricesymbol"> </strong> @Model.TotalPrice) <br /> we'll be in touch shortly!</p>
+    <h1> (<strong class="pricesymbol"> </strong> @Model.Amount )</h1>
+    <p class="contentdetails">We received your purchase request ( <strong class="pricesymbol"> </strong> @Model.Amount) <br /> we'll be in touch shortly!</p>
     <br />
     <a class="btn btn-primary" href="@Url.Action("Index","Orders")">Go To Orders</a>
 </div>
