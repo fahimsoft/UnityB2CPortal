@@ -412,18 +412,19 @@ namespace B2CPortal.Controllers
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     if (customerId > 0)
                     {
+                      var ordermodel = await _orders.GetOrderMasterById(Billing.Id);
                         // Billing Details Add
                         var ordervm = new OrderVM
                         {
-                            Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
-                            Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString(),
-                            ConversionRate = conversionvalue,
-                            PaymentMode = PaymentType.Stripe.ToString(),
+                            Id = Billing.Id,
+                            Currency = ordermodel.Currency,
+                            ConversionRate = (decimal)ordermodel.ConversionRate,
+                            PaymentMode = Billing.paymenttype.ToString(),
                             Status = OrderStatus.Confirmed.ToString(),
-                            TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
+                            TotalPrice = ordermodel.TotalPrice,
                             PaymentStatus = true,
                         };
-                        var ordermodel = await _orders.UpdateOrderMAster(ordervm);
+                        var orderresponse = await _orders.UpdateOrderMAster(ordervm);
 
                         if (Billing.paymenttype == PaymentType.Stripe)
                         {
