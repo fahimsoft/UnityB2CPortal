@@ -152,9 +152,12 @@
                                     <li><a href="about.html">About</a></li>
                                     <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
                                     <li>
-                                        Conversion Rate
-                                        @{string rate =  string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "null" : Session["ConversionRate"]?.ToString();  }
-                                       <br /> @rate
+                                        <a href="javascrip:void(0)">
+                                            Conversion Rate
+                                            @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "null" : Session["ConversionRate"]?.ToString(); }
+                                            <b> : @rate</b>
+                                            
+                                        </a>
                                     </li>
 
 

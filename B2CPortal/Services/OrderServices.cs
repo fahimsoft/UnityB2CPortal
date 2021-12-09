@@ -115,6 +115,47 @@ namespace B2CPortal.Services
                 throw;
             }
         }
+
+        public async Task<OrderMaster> ExestingOrder(int customerId)
+        {
+            try
+            {
+                var obj = await _dxcontext.OrderMasters.FirstOrDefaultAsync(x => x.FK_Customer == customerId
+                && x.IsActive == true 
+                && x.Status == "InProcess"//OrderStatus.InProcess.ToString()
+                && x.PaymentMode.ToLower() != "cod"
+                && x.PaymentStatus == false);
+                return obj;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<bool> DeleteOrderMAster(int id)
+        {
+            try
+            {
+                Current = await _dxcontext.OrderMasters.Where(x => x.Id == id && x.IsActive == true).FirstOrDefaultAsync();
+                if (Current == null)
+                {
+                    return false;
+                    Current.CreatedOn = DateTime.Now;
+                    New();
+                }
+                else
+                {
+                    PrimaryKeyValue = Current.Id;
+                    Current.IsActive = false;
+                Save();
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
  
 }

@@ -1,6 +1,7 @@
 ﻿using API_Base.Base;
 using API_Base.Common;
 using API_Base.PaymentMethod;
+using B2C_Models.Models;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using B2CPortal.Services;
@@ -84,6 +85,7 @@ namespace B2CPortal.Controllers
                 if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
                 {
                     int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
+
                     var orderlist = await _orders.GetOrderList(userid);
 
                     foreach (var item in orderlist)
@@ -176,7 +178,7 @@ namespace B2CPortal.Controllers
                             orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
                             orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
                             orderVM.OrderTotal = OrderTotal;
-                            orderVM.Currency = currency ;
+                            orderVM.Currency = currency;
 
                             Session["ordertotal"] = OrderTotal;
                         }
@@ -192,18 +194,8 @@ namespace B2CPortal.Controllers
                 {
                     string CurrentURL = Request.Url.AbsoluteUri;
                     TempData["returnurl"] = CurrentURL;
-
-
-
-
-
                     return RedirectToAction("Login", "Account");
                 }
-
-
-
-
-
             }
             catch (Exception ex)
             {
@@ -227,6 +219,12 @@ namespace B2CPortal.Controllers
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    //------------existing order remove-----------------
+                    OrderMaster Omaster = await _orders.ExestingOrder(customerId);
+                    if (Omaster != null)
+                    {
+                        var result = await _orders.DeleteOrderMAster(Omaster.Id);
+                    }
                     if (customerId > 0)
                     {
                         // Billing Details Add
@@ -351,9 +349,10 @@ namespace B2CPortal.Controllers
 
                             }
 
-                            // Remove from cart
-                            HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
-                            var removeCart = await _cart.DisableCart(customerId, cookie.Value);
+                            //// Remove from cart
+                            //HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
+                            //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
+                     
 
                             if (Billing.paymenttype == PaymentType.Stripe)
                             {
@@ -363,6 +362,9 @@ namespace B2CPortal.Controllers
                             }
                             else if (Billing.paymenttype == PaymentType.COD)
                             {
+                                //-------------remvoe from cart-------------
+                                var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                                var removeCart = await _cart.DisableCart(customerId, cookie);
 
                                 Session["ordermasterId"] = ordermasterId;
                                 Session["ordertotal"] = orderVM.OrderTotal;

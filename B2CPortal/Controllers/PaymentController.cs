@@ -40,7 +40,7 @@ namespace B2CPortal.Controllers
             try
             {
                 ViewBag.error = "";
-                if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()))
+                if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()) || HttpContext.Session["UserId"] == null)
                 {
                     return RedirectToAction("Checkout", "Orders");
                 }
@@ -73,8 +73,11 @@ namespace B2CPortal.Controllers
                         PaymentStatus = true,
                     };
                     var dd = await _orders.UpdateOrderMAster(ordervm);
-                    //var model = new PaymentViewModel();
-                    //model.TotalPrice = Convert.ToDecimal(Session["ordertotal"]);
+                    // ------------Remove from cart------------
+                    var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                    var removeCart = await _cart.DisableCart(customerId, cookie);
+
                     return View("PaymentStatus", paymentmodel);
                 }
                 else
