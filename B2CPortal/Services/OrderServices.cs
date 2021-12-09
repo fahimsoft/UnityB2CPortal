@@ -82,8 +82,9 @@ namespace B2CPortal.Services
         }
         public async Task<IEnumerable<OrderMaster>> GetOrderList(int userid)
         {
-            //return await _dxcontext.OrderMasters.Include(x=> x.OrderDetails).ToListAsync();
-            return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true && x.FK_Customer == userid).OrderByDescending(x =>x.Id).ToListAsync();
+            return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true && 
+            x.FK_Customer == userid
+            ).OrderByDescending(x => x.CreatedOn).OrderByDescending(x =>x.Status.ToLower() == "inprocess").ToListAsync();
         }
         public async Task<bool> UpdateOrderMAster(OrderVM ordervm)
         {

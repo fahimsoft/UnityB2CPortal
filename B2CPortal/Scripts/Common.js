@@ -55,7 +55,7 @@ $(document).ready(function () {
             DiscountAmount = actualTotal - totalvalue;
 
             $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+            $(row).find('td')[5].textContent =  DiscountAmount.toLocaleString();
             $(row).find('td')[6].textContent = totalvalue.toLocaleString();
             $button.parent().find("input").val(newVal);
         } else {
@@ -115,7 +115,7 @@ $(document).ready(function () {
             DiscountAmount = actualTotal - totalvalue;
 
             $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent = '- ' + DiscountAmount.toLocaleString();
+            $(row).find('td')[5].textContent =  DiscountAmount.toLocaleString();
             $(row).find('td')[6].textContent = totalvalue.toLocaleString();
 
             $button.parent().find("input").val(newVal);

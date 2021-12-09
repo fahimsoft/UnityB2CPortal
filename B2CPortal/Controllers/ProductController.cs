@@ -122,7 +122,7 @@ namespace B2CPortal.Controllers
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity/ conversionvalue) - discountedprice), 2);
+                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                 var cartobj = new CartViewModel
                 {
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
@@ -133,7 +133,7 @@ namespace B2CPortal.Controllers
                     MasterImageUrl = MasterImageUrl,
                     Discount = discount,
                     TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
-                    FK_ProductMaster = item.FK_ProductMaster ,
+                    FK_ProductMaster = item.FK_ProductMaster,
                 };
                 cartViewModels.Add(cartobj);
                 totalprice += discountedprice;
@@ -146,7 +146,7 @@ namespace B2CPortal.Controllers
                 cartproducts = cartViewModels,
                 cartproductscount = totalquentity,
                 totalprice = totalprice
-            }) ;
+            });
 
         }
         public async Task<ActionResult> GetCartList()
@@ -249,45 +249,52 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-                int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
-                string cookie = string.Empty;
-                string msg = string.Empty;
-                if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+                if (quentity > 0)
                 {
-                    cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+
+                    decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                    int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    string cookie = string.Empty;
+                    string msg = string.Empty;
+                    if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+                    {
+                        cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                    } 
+                    else
+                    {
+                        cookie = Guid.NewGuid().ToString();
+                        HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
+                    }
+                    var productobj = await _IProductMaster.GetProductById(proid);
+                    var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
+                    var cart = new Cart();
+                    cart.Quantity = quentity;
+                    cart.Guid = cookie;
+                    cart.IsWishlist = false;
+                    cart.IsActive = true;
+                    cart.TotalPrice = discountedprice;
+                    cart.TotalQuantity = quentity;
+                    cart.FK_ProductMaster = proid;
+                    cart.Currency = Session["currency"].ToString().ToLower();
+                    cart.ConversionRate = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+
+                    if (userid > 0)
+                    {
+                        cart.FK_Customer = userid;
+                    }
+                    var obj = await _cart.CreateCart(cart);
+
+                    var cartproducts = await _cart.GetCartProducts(cookie, userid);
+                    var totalquentity = cartproducts.Sum(x => x.Quantity);
+                    msg = obj == null ? "You Can't Add to Cart more then 10 times" : "Add to Cart Successfully !";
+                    return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    cookie = Guid.NewGuid().ToString();
-                    HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
+                    return Json(new { data = "", msg = "Not Insert 0 Quentity in Cart", success =false}, JsonRequestBehavior.AllowGet);
                 }
-                var productobj = await _IProductMaster.GetProductById(proid);
-                var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue,2);
-                var cart = new Cart();
-                cart.Quantity = quentity;
-                cart.Guid = cookie;
-                cart.IsWishlist = false;
-                cart.IsActive = true;
-                cart.TotalPrice = discountedprice;
-                cart.TotalQuantity = quentity;
-                cart.FK_ProductMaster = proid;
-                cart.Currency = Session["currency"].ToString().ToLower();
-                cart.ConversionRate = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-
-                if (userid > 0)
-                {
-                    cart.FK_Customer = userid;
-                }
-                var obj = await _cart.CreateCart(cart);
-
-                var cartproducts = await _cart.GetCartProducts(cookie, userid);
-                var totalquentity = cartproducts.Sum(x => x.Quantity);
-                msg = obj == null ? "You Can't Add to Cart more then 10 times" : "AdD to Cart Successfully !";
-                return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
-
             }
             catch (Exception Ex)
             {
@@ -320,7 +327,7 @@ namespace B2CPortal.Controllers
                     var productmasetr = await _IProductMaster.GetProductById(cartproducts.FK_ProductMaster);
                     var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * cartproducts.Quantity) * (1 - (discount / 100))) / conversionvalue,2);
+                    cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * cartproducts.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
                     updateresult = await _cart.UpdateCart(cartproducts);
                 }
             }
@@ -331,7 +338,7 @@ namespace B2CPortal.Controllers
         #endregion
         [HttpGet]
         [ActionName("GetProductbyIdWithRating")]
-      ///  [OutputCache(CacheProfile = "SetCache", VaryByParam = "Id")]
+        ///  [OutputCache(CacheProfile = "SetCache", VaryByParam = "Id")]
         public async Task<JsonResult> GetProductbyIdWithRating(long Id)
         {
             try
@@ -638,7 +645,7 @@ namespace B2CPortal.Controllers
                         var CartId = item.Id;
                         var productId = item.FK_ProductMaster;
 
-                         cart.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
+                        cart.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                         cart.ConversionRate = Convert.ToDecimal(string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString());
                         if (cart.Currency == "PKR")
                         {
@@ -711,7 +718,7 @@ namespace B2CPortal.Controllers
             }
         }
         [HttpPost]
-       public async Task<JsonResult> UpdateToCart(WishlistVM obj)
+        public async Task<JsonResult> UpdateToCart(WishlistVM obj)
         {
             try
             {
@@ -887,7 +894,7 @@ namespace B2CPortal.Controllers
             }
             return pricesymbolvalue;
         }
-      
+
 
     }
     public class SideBarVM

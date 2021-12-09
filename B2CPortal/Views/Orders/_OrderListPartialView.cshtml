@@ -4,7 +4,32 @@
 @{ 
     Layout = null;
 }
+<style>
+/*    .ellipsiscontent {
+        display: -webkit-box;
+        max-width: 200px;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }*/
+    .overflow {
+        overflow: hidden;
+        -ms-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 
+        .overflow:hover {
+            overflow: visible;
+        }
+
+            .overflow:hover span {
+                position: relative;
+                background-color: white;
+                box-shadow: 0 0 4px 0 black;
+                border-radius: 1px;
+            }
+</style>
 
 <div class="quickviewdialog">
 </div>
@@ -27,11 +52,11 @@
                                         @*<th> DOB</th>*@
                                         @*<th>CNIC</th>*@
                                         <th>Order Date</th>
-                                        <th>Shipping</th>
-                                        <th>Billing</th>
-                                        <th>Description</th>
-                                        <th>Quantity</th>
-                                        <th>  (<strong class="pricesymbol"> </strong>)  Price</th>
+                                        <th width="10%">Shipping</th>
+                                        <th width="10%">Billing</th>
+                                        <th width="10%">Description</th>
+                                        <th>Items</th>
+                                        <th>  Total Amount</th>
                                         <th> Payment Mode</th>
                                         <th> Status</th>
                                         <th> Payment </th>
@@ -74,21 +99,29 @@
                                                     @Html.DisplayFor(i => item.CreatedOn)
                                                 </td>
                                                 <td>
-                                                    @item.ShippingAddress
+                                                        <span class="overflow"  style="float: left; width: 50px">
+                                                            <span>@item.ShippingAddress </span>
+                                                        </span>
                                                 </td>
 
                                                 <td>
-                                                    @item.BillingAddress
+                                                    <span class="overflow" style="float: left; width: 50px">
+                                                        <span>  @item.BillingAddress</span>
+                                                    </span>
+                                                   
                                                 </td>
                                                 <td>
-                                                    @item.OrderDescription
+
+                                                    <span class="overflow" style="float: left; width: 50px">
+                                                        <span>   @item.OrderDescription</span>
+                                                    </span>
                                                 </td>
                                                 <td>
                                                     @item.TotalQuantity
                                                 </td>
 
                                                 <td>
-                                                     @item.TotalPrice
+                                                    @item.Currency @item.TotalPrice
                                                 </td>
                                                 <td>
                                                     @item.PaymentMode

@@ -50,7 +50,7 @@
                                             @item.ActualPrice
                                         </td>
                                         <td class="totalpricecol">
-                                            - @item.DiscountAmount
+                                             @item.DiscountAmount
 
                                         </td>
                                         <td class="totalpricecol">
@@ -119,19 +119,19 @@
                             <tbody>
                                 <tr>
                                     <th>Cart Subtotal</th>
-                                    <td><strong class="pricesymbol"> </strong>  @Model.Select(x => x.CartSubTotal).FirstOrDefault()</td>
+                                    <td> @Model.Select(x => x.CartSubTotal).FirstOrDefault()</td>
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> <strong class="pricesymbol"> </strong> ( @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() )</td>
+                                    <td> ( @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() )</td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
-                                    <td> <strong class="pricesymbol"> </strong>   @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
+                                    <td>   @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
                                     <th>Vat</th>
-                                    <td> <strong class="pricesymbol"> </strong> . @Model.Select(x => x.VatTax).FirstOrDefault()</td>
+                                    <td>  @Model.Select(x => x.VatTax).FirstOrDefault()</td>
                                 </tr>
                             </tbody>
                             <tfoot>
