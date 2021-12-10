@@ -241,6 +241,11 @@
     <Content Include="Content\Asset\img\brand\3.png" />
     <Content Include="Content\Asset\img\brand\4.png" />
     <Content Include="Content\Asset\img\brand\5.png" />
+    <Content Include="Content\Asset\img\brand\d.png" />
+    <Content Include="Content\Asset\img\brand\e.png" />
+    <Content Include="Content\Asset\img\brand\l.png" />
+    <Content Include="Content\Asset\img\brand\s.png" />
+    <Content Include="Content\Asset\img\brand\z.png" />
     <Content Include="Content\Asset\img\cart\1.png" />
     <Content Include="Content\Asset\img\cart\2.png" />
     <Content Include="Content\Asset\img\cart\3.png" />
@@ -501,6 +506,7 @@
     <Content Include="Views\Payment\PaymentStatusCOD.cshtml" />
     <Content Include="Views\Payment\_DownloadPDF.cshtml" />
     <Content Include="Views\Orders\ManagePayment.cshtml" />
+    <Content Include="Views\Contact\About.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

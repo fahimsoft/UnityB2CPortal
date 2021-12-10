@@ -17,6 +17,11 @@ namespace B2CPortal.Controllers
         {
             return View();
         }
+        [HttpGet]
+        public ActionResult About()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult SendContactEmail(ContactUsVM contact)
