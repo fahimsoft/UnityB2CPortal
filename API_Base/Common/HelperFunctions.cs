@@ -127,7 +127,6 @@ namespace API_Base.Common
         }
         public static string GetConvertedCurrencyAmount(string from, string to)
         {
-            //var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-all?api_key=/convert?from="+from+"&to="+to+"&amount="+amount+"&api_key=b75242ac8a-e6d2b7e4c3-r3frds");
             try
             {
                 Root root = new Root();

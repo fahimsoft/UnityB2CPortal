@@ -157,14 +157,10 @@ function autocomplete(inp, arr) {
                 }
                 $(data).map((index, item) => {
                     b = document.createElement("DIV");
-                    /*make the matching letters bold:*/
                     b.innerHTML = "<img class='searchimg' src='" + item.MasterImageUrl + "' />";
                     b.innerHTML += "<strong class='searchnametxt'>" + item.Name + "</strong>";
-                    b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
-                    //b.innerHTML += item.;
-                    /*insert a input field that will hold the current array item's value:*/
+                    //b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
-                    /*execute a function when someone clicks on the item value (DIV element):*/
                     b.addEventListener("click", function (e) {
                         
                         var id = $('input[type = hidden]').val();
@@ -309,6 +305,11 @@ function RemoveCartProduct(id) {
                     $(element).remove();
                 }
             });
+            //if checkout remove cart products-----
+            if (window.location.href.indexOf("Orders/Checkout") > -1) {
+                window.location.reload();
+            }
+
             return false;
         }
     });

@@ -89,7 +89,6 @@ namespace B2CPortal.Controllers
         #region cart handling
         public async Task<JsonResult> GetCartCount()
         {
-
             GetCountryByIP(Request);
             Session["currency"] = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
             if (Session["currency"].ToString().ToLower() == "pkr")
@@ -102,7 +101,8 @@ namespace B2CPortal.Controllers
                 var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
                 Session["ConversionRate"] = conversionrate;
             }
-            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            Session["ConversionRate"] = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            decimal conversionvalue = Convert.ToDecimal(Session["ConversionRate"]);
             string cartguid = string.Empty;
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
