@@ -65,7 +65,7 @@
                             @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
 
-                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
                             @Html.ValidationMessageFor(model => model.PhoneNo, "", new { @class = "text-danger" })
 
                             @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", Type = "date" } })
@@ -201,7 +201,7 @@
                     required: "Confirm Password Is Required",
                     equalTo: "Confirm Password must be equal to Password"
                 }, PhoneNo: {
-                    required: "Phone No Is Required"
+                    required: "Phone # Is Required"
                 }
 
 

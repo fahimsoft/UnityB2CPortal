@@ -104,7 +104,7 @@
                                                     </div>}
 
                                                 <p class="red-color">** You must register at least one phone number.</p>
-                                                @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+                                                @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
 
                                                 @*<input type="text" name="text" placeholder="Mobile Phone" />*@
                                                 @*<div class="custom-mess">
@@ -191,7 +191,7 @@
 
                                                 @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
                                                 @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
-                                                @Html.EditorFor(m => m.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone No:", @class = "form-control" } })
+                                                @Html.EditorFor(m => m.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
                                                 @Html.EditorFor(m => m.DateOfBirth, new { htmlAttributes = new { @placeholder = "Date Of Birth:", @class = "form-control", @type = "date" } })
                                                 @Html.EditorFor(m => m.Gender, new { htmlAttributes = new { @placeholder = "Gender:", @class = "form-control" } })
                                                 @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
@@ -345,7 +345,7 @@
                     required: "Confirm Password Is Required",
                     equalTo: "Confirm Password must be equal to Password"
                 }, PhoneNo: {
-                    required: "Phone No Is Required"
+                    required: "Phone # Is Required"
                 }
 
 
@@ -408,7 +408,7 @@
                     required: "Confirm Password Is Required",
                     equalTo: "Confirm Password must be equal to Password"
                 }, PhoneNo: {
-                    required: "Phone No Is Required"
+                    required: "Phone # Is Required"
                 }
 
             }

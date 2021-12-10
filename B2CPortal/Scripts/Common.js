@@ -1733,38 +1733,38 @@ function GetfilterListDummy() { //Updated 2-Dec-2021 -- Move Product List to Com
     return filterList_Dummy;
 }
 // Set Local Storage For Filter -- Updated 2-Dec-2021
-function loadFooterFeatureProduct() {
-    $.ajax({
-        url: "/Product/GetFeaturedProduct",
-        type: "GET",
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        success: function (result) {
-            debugger
-            var html = '';
-            var data = JSON.parse(result.data);
+//function loadFooterFeatureProduct() {
+//    $.ajax({
+//        url: "/Product/GetFeaturedProduct",
+//        type: "GET",
+//        contentType: "application/json;charset=utf-8",
+//        dataType: "json",
+//        success: function (result) {
+//            debugger
+//            var html = '';
+//            var data = JSON.parse(result.data);
 
 
 
-            $.each(data, function (key, item) {
-                html += `<li>
-<a href="/ProductDetails/Index?productId=${item.Id}" ><img src="${[item.MasterImageUrl]}" alt="Instagram" /></a>
+//            $.each(data, function (key, item) {
+//                html += `<li>
+//<a href="/ProductDetails/Index?productId=${item.Id}" ><img src="${[item.MasterImageUrl]}" alt="Instagram" /></a>
 
-</li>`;
-
-
-
-            });
-            $('#ulLoadFooterFeatureProduct').html(html);
+//</li>`;
 
 
 
-        },
-        error: function (errorMessage) {
-            alert(errorMessage.responseText);
-        }
-    });
-}
+//            });
+//            $('#ulLoadFooterFeatureProduct').html(html);
+
+
+
+//        },
+//        error: function (errorMessage) {
+//            alert(errorMessage.responseText);
+//        }
+//    });
+//}
 
 
 function SetLocalStorageForFilter(FilterCateAndBrand, filterSearchByName, filterNextPage, filterPrevpage) {

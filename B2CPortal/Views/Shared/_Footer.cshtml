@@ -129,16 +129,21 @@
                     <div class="col-xs-12 col-sm-6 col-md-3 r-margin-top wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
-                                <h4>Featured Products </h4>
+                                <h4>Best Products </h4>
                             </div>
-                            <div style="width:50px;" class="clearfix instagram">
-                                <ul id="ulLoadFooterFeatureProduct">
-                                    @*@for (int i = 0; i < 6; i++)
-                                        {
-                                            <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
+                            <div  class="clearfix instagram">
+                                <ul>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80" src="~/ProductImg/1.png" alt="Instagram" /></a></li>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80"src="~/ProductImg/10.png" alt="Instagram" /></a></li>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80"src="~/ProductImg/2.png" alt="Instagram" /></a></li>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80"src="~/ProductImg/6.png" alt="Instagram" /></a></li>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80"src="~/ProductImg/3.png" alt="Instagram" /></a></li>
+                                    <li><a href="javascript:void(0)"><img width="60" height="80"src="~/ProductImg/4.png" alt="Instagram" /></a></li>
 
-                                        }*@
-
+                                    @*<li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
+                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
+                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
+                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>*@
                                 </ul>
 
                             </div>
@@ -157,20 +162,17 @@
                     <p>&copy; Copyright 2021 Unity Foods.</p>
                 </div>
                 <div class="col-xs-12 col-sm-6 text-right">
-                    <a href="#"><img src="~/Content/Asset/img/footer/payment.png" alt="" /></a>
+                    <a href="#">
+                        <img width="40" height="50" src="~/Content/logos/ccc.png" alt="COD"/>
+                        <img width="40" height="50" src="~/Content/logos/stripe.png" alt="Stripe"/>
+                        <img width="40" height="50" src="~/Content/logos/hbl.png" alt="HBL"/>
+                        <img width="40" height="50" src="~/Content/logos/ey.png" alt="Easypaisa"/>
+                        <img width="40" height="50" src="~/Content/logos/j.png" alt="Jazz Cash"/>
+
+                    </a>
                 </div>
             </div>
         </div>
     </div>
     <!-- footer-bottom area end -->
 </footer>
-
-<script>
-    window.localStorage;
-    $(document).ready(function () {
-        loadFooterFeatureProduct();
-
-
-    });
-
-</script>

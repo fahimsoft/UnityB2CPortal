@@ -308,7 +308,7 @@ namespace B2CPortal.Controllers
         {
             string msg = string.Empty;
             var cartproducts = await _cart.DeleteCart(id);
-            msg = cartproducts == true ? "Delete Cart Product Successfully !" : "Error: Cart Not Deleted !";
+            msg = cartproducts == true ? "Removed from Cart !" : "Error: Cart Not Removed!";
             return Json(new { data = "", msg = msg, success = cartproducts }, JsonRequestBehavior.AllowGet);
 
         }
