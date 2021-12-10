@@ -29,7 +29,7 @@
                         <a href="https://twitter.com/sunridgefoods"><i class="mdi mdi-twitter"></i></a>
                         <a href="https://www.instagram.com/sunridgefoods/"><i class="mdi mdi-instagram"></i></a>
                         <a href="https://www.youtube.com/channel/UCMsFV9GrJgQYfmUiLqyhaaA"><i class="mdi mdi-youtube-play"></i></a>
-                        
+
                     </div>
                 </div>
                 <div class="col-sm-6">
@@ -83,11 +83,11 @@
                             <div class="footer-menu">
                                 <ul>
                                     <li><a href="/Account/Login"><i class="mdi mdi-menu-right"></i>My Account</a></li>
-                                    <li><a href="wishlist.html"><i class="mdi mdi-menu-right"></i>My Wishlist</a></li>
-                                    <li><a href="cart.html"><i class="mdi mdi-menu-right"></i>My Cart</a></li>
+                                    <li><a href="~/Product/WishList"><i class="mdi mdi-menu-right"></i>My Wishlist</a></li>
+                                    <li><a href="/Product/AddToCart"><i class="mdi mdi-menu-right"></i>My Cart</a></li>
                                     <li><a href="/Account/Login"><i class="mdi mdi-menu-right"></i>Sign In</a></li>
-                                    <li><a href="checkout.html"><i class="mdi mdi-menu-right"></i>Check out</a></li>
-                                    <li><a href="#"><i class="mdi mdi-menu-right"></i>Track My Order</a></li>
+                                    <li><a href="/Orders/Checkout"><i class="mdi mdi-menu-right"></i>Check out</a></li>
+                                    <li><a href="/Orders/GetOrderList"><i class="mdi mdi-menu-right"></i>Track My Order</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -95,16 +95,16 @@
                     <div class="col-xs-12 col-sm-3 col-md-2 wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
-                                <h4>shipping</h4>
+                                <h4>Products/shipping</h4>
                             </div>
                             <div class="footer-menu">
                                 <ul>
-                                    <li><a href="contact.html"><i class="mdi mdi-menu-right"></i>New Products</a></li>
+                                    <li><a href="/Product/PorductList"><i class="mdi mdi-menu-right"></i>New Products</a></li>
                                     <li><a href="#"><i class="mdi mdi-menu-right"></i>Top Sellers</a></li>
                                     @*<li><a href="#"><i class="mdi mdi-menu-right"></i>Manufactirers</a></li>
-                                    <li><a href="#"><i class="mdi mdi-menu-right"></i>Suppliers</a></li>
-                                    <li><a href="#"><i class="mdi mdi-menu-right"></i>Specials</a></li>
-                                    <li><a href="#"><i class="mdi mdi-menu-right"></i>Availability</a></li>*@
+                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Suppliers</a></li>
+                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Specials</a></li>
+                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Availability</a></li>*@
                                 </ul>
                             </div>
                         </div>
@@ -129,17 +129,18 @@
                     <div class="col-xs-12 col-sm-6 col-md-3 r-margin-top wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
-                                <h4>instagram</h4>
+                                <h4>Featured Products </h4>
                             </div>
-                            <div class="clearfix instagram">
-                                <ul>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in2.png" alt="Instagram" /></a></li>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in3.png" alt="Instagram" /></a></li>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in4.png" alt="Instagram" /></a></li>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in5.png" alt="Instagram" /></a></li>
-                                    <li><a href="#"><img src="~/Content/Asset/img/footer/in6.png" alt="Instagram" /></a></li>
-                                </ul>                         
+                            <div style="width:50px;" class="clearfix instagram">
+                                <ul id="ulLoadFooterFeatureProduct">
+                                    @*@for (int i = 0; i < 6; i++)
+                                        {
+                                            <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
+
+                                        }*@
+
+                                </ul>
+
                             </div>
                         </div>
                     </div>
@@ -163,3 +164,13 @@
     </div>
     <!-- footer-bottom area end -->
 </footer>
+
+<script>
+    window.localStorage;
+    $(document).ready(function () {
+        loadFooterFeatureProduct();
+
+
+    });
+
+</script>

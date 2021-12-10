@@ -81,7 +81,7 @@
                                         <span>|</span>
                                     </li>
                                     <li>
-                                        <a href="javascript:void(0)" class="product-rating" rating="5" onclick="(this)">
+                                        <a href="javascript:void(0)" class="product-rating" style="color:red" rating="5" onclick="(this)">
                                             <i class="mdi mdi-star-outline"></i>
                                             <i class="mdi mdi-star-outline"></i>
                                             <i class="mdi mdi-star-outline"></i>
@@ -134,13 +134,8 @@
 <script>
     $(document).ready(function () {
 
-
-
         GetProductByIdWithRating();
 
-
-
-        
         let CurrentProductId = localStorage.getItem('CurrentProductId');
         if (CurrentProductId != GetProductIdFromURL()) {
 

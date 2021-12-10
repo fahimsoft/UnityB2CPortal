@@ -433,7 +433,9 @@ namespace B2CPortal.Controllers
         {
             // CaptchaResponse response = HelperFunctions.ValidateCaptcha(Request["g-recaptcha-response"]);
             CaptchaResponse response = HelperFunctions.ValidateCaptcha(res);
-            
+
+
+
             if (response.Success)
             {
                 return Json(new { data = response, msg = "", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
