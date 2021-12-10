@@ -289,25 +289,29 @@ function RemoveCartProduct(id) {
             id: id,
         },
         success: function (data) {
-            ShowCartProducts();
-            toastr.success(data.msg);
-            var tb = $('#myTable tbody');
-            if (tb.find("tr").length == 1) {
-                $('#cartmanagebtn').replaceWith(`
+            if (data.success == true) {
+                ShowCartProducts();
+                toastr.success(data.msg);
+                var tb = $('#myTable tbody');
+                if (tb.find("tr").length == 1) {
+                    $('#cartmanagebtn').replaceWith(`
                     <div class="text-right">
                             <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
                     </div>
                 `);
-            }
-            tb.find("tr").each(function (index, element) {
-                var trvalue = parseInt($(element).attr('data-id'));
-                if (trvalue == parseInt(id)) {
-                    $(element).remove();
                 }
-            });
-            //if checkout remove cart products-----
-            if (window.location.href.indexOf("Orders/Checkout") > -1) {
-                window.location.reload();
+                tb.find("tr").each(function (index, element) {
+                    var trvalue = parseInt($(element).attr('data-id'));
+                    if (trvalue == parseInt(id)) {
+                        $(element).remove();
+                    }
+                });
+                //if checkout remove cart products-----
+                if (window.location.href.indexOf("Orders/Checkout") > -1) {
+                    window.location.reload();
+                }
+            } else {
+                toastr.error(data.msg);
             }
 
             return false;

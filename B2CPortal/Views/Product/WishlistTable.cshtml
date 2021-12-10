@@ -186,9 +186,6 @@
                 console.log(data);
                 if (data.success) {
                     toastr.success(data.msg);
-
-                    ShowCartProducts();
-
                 }
                 else if (data.success == false) {
                     toastr.error(data.msg);

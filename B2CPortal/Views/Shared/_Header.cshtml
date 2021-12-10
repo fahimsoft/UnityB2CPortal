@@ -154,7 +154,7 @@
                                     <li>
                                         <a href="javascrip:void(0)">
                                             Conversion Rate
-                                            @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "null" : Session["ConversionRate"]?.ToString(); }
+                                            @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString(); }
                                             <b> : @rate</b>
                                             
                                         </a>
@@ -311,6 +311,8 @@
 
 
 <script>
+    ShowCartProducts();
+
     window.localStorage;
     function SetLocalStorage(elem) {
 
