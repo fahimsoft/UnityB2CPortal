@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "About";
 }
+
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
@@ -18,54 +19,52 @@
 <!-- pages-title-end -->
 <!-- about-us-section-start -->
 
-    <div class="pages about-us section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="main-padding section-padding-top clearfix">
-                    <div class="col-sm-12 col-md-5">
-                        <div class="about-img">
-                            <img src="~/Content/Asset/img/Unity-Logo.gif" alt="" />
-                        </div>
+<div class="pages about-us section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="main-padding section-padding-top clearfix">
+                <div class="col-sm-12 col-md-5">
+                    <div class="about-img">
+                        <img src="~/Content/Asset/img/Unity-Logo.gif" alt="" />
                     </div>
-                    <div class="col-sm-12 col-md-6">
-                        <div class="about-text">
-                            <div class="about-author">
-                                <h4>Unity Foods Limited</h4>
-                            </div>
-                            <p class="gothamNarrow-book fs-4 mt-5 text-lightgray-theme lh-base">
-                                Unity Foods Limited aims to provide food for life. We transform crops into products that serve the vital global needs of
-                                the food sector in this ever-growing world. We have diversified our business portfolio to operate in an assorted agro
-                                product mix for a global breadbasket, handling various agro commodities to connect them from the farm to the dining
-                                table.
-                                <br /> Our products include Edible Oil, Staples (Flour, Rice, Lentils, Pulses), Industrial Fats and various feed ingredients
-                                for poultry and livestock sector. Along with innovation, we provide customised solutions to industries handling food and
-                                feed products to help them enhance their performance and profitability.
-                            </p>
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <div class="about-text">
+                        <div class="about-author">
+                            <h4>Unity Foods Limited</h4>
                         </div>
+                        <p class="gothamNarrow-book fs-4 mt-5 text-lightgray-theme lh-base">
+                            Unity Foods Limited aims to provide food for life. We transform crops into products that serve the vital global needs of
+                            the food sector in this ever-growing world. We have diversified our business portfolio to operate in an assorted agro
+                            product mix for a global breadbasket, handling various agro commodities to connect them from the farm to the dining
+                            table.
+                            <br /> Our products include Edible Oil, Staples (Flour, Rice, Lentils, Pulses), Industrial Fats and various feed ingredients
+                            for poultry and livestock sector. Along with innovation, we provide customised solutions to industries handling food and
+                            feed products to help them enhance their performance and profitability.
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-    <!-- about-us section end -->
-    <!-- team-member section start -->
-    @*<div class="row mx-0 justify-content-center my-5">
-            <div class="col-12 col-md-10 col-lg-10 text-center">
-                <h1 class="second_heading_after_head gothamNarrow-book letterspacer_3 text-lightgray-theme">
-                    <div class="display-3">
-                        ABOUT <br>
-                        <span class="gothamNarrow-bold" style="color: #257BB1;">UNITY FOODS LIMITED</span>
-                    </div>
-                </h1>
-                <p class="gothamNarrow-book fs-4 mt-5 text-lightgray-theme lh-base">
-                    Unity Foods Limited aims to provide food for life. We transform crops into products that serve the vital global needs of
-                    the food sector in this ever-growing world. We have diversified our business portfolio to operate in an assorted agro
-                    product mix for a global breadbasket, handling various agro commodities to connect them from the farm to the dining
-                    table.
-                    Our products include Edible Oil, Staples (Flour, Rice, Lentils, Pulses), Industrial Fats and various feed ingredients
-                    for poultry and livestock sector. Along with innovation, we provide customised solutions to industries handling food and
-                    feed products to help them enhance their performance and profitability.
-                </p>
-            </div>
-        </div>*@
+    </div>
+</div>
+
+@*<script>
+    $(window).on('load', function () {
+        var cookieresult = are_cookies_enabled();
+        if (cookieresult == false) {
+            $('#myModal').modal('show');
+        }
+    });
+
+    function are_cookies_enabled() {
+        var cookieEnabled = (navigator.cookieEnabled) ? true : false;
+
+        if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
+            document.cookie = "testcookie";
+            cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
+        }
+        return (cookieEnabled);
+    }
+</script>*@
 

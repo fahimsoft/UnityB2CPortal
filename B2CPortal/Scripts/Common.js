@@ -61,7 +61,7 @@ $(document).ready(function () {
             DiscountAmount = actualTotal - totalvalue;
 
             $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent =  DiscountAmount.toLocaleString();
+            $(row).find('td')[5].textContent = DiscountAmount.toLocaleString();
             $(row).find('td')[6].textContent = totalvalue.toLocaleString();
             $button.parent().find("input").val(newVal);
         } else {
@@ -121,7 +121,7 @@ $(document).ready(function () {
             DiscountAmount = actualTotal - totalvalue;
 
             $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent =  DiscountAmount.toLocaleString();
+            $(row).find('td')[5].textContent = DiscountAmount.toLocaleString();
             $(row).find('td')[6].textContent = totalvalue.toLocaleString();
 
             $button.parent().find("input").val(newVal);
@@ -168,7 +168,7 @@ function autocomplete(inp, arr) {
                     //b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
                     b.addEventListener("click", function (e) {
-                        
+
                         var id = $('input[type = hidden]').val();
                         var name = $('.searchnametxt').text();
                         inp.value = $(this).find('.searchnametxt').text();
@@ -525,8 +525,15 @@ function loadProductList() {
             var data = JSON.parse(result.data);
             $('#lblTotalCount').text('Total Records: ' + data.length);
             $.each(data, function (key, item) {
+
+
+
+
+
                 //List Html
                 $(item.ProductPrices).each(function (productPricesIndex, productPricesValue) {
+
+
 
 
 
@@ -555,7 +562,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<h5><del>${productPricesValue.Price} <strong class="pricesymbol"> </strong></del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} <strong class="pricesymbol"> </strong></h5 >
+<h5><del class="numbers">${productPricesValue.Price} <strong class="pricesymbol"> </strong></del>&nbsp<span class="numbers">${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} </span><strong class="pricesymbol"> </strong></h5 >
 <p>${item.LongDescription}</p>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -566,6 +573,8 @@ function loadProductList() {
 </div>
 </div >
 </div >`;
+
+
 
 
 
@@ -591,7 +600,7 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<span><del style='color:silver'>${productPricesValue.Price} <strong class="pricesymbol"> </strong></del>&nbsp${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))} <strong class="pricesymbol"> </strong></span>
+<span><del style='color:silver'><span class="numbers">${productPricesValue.Price}</span> <strong class="pricesymbol"> </strong></del>&nbsp<span class="numbers">${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))}</span> <strong class="pricesymbol"> </strong></span>
 </div>
 </div>
 </div>`;
@@ -599,9 +608,15 @@ function loadProductList() {
 
 
 
+
+
             });
 
+
+
             var gl1 = ""; var gl2 = "";
+
+
 
 
 
@@ -623,6 +638,8 @@ function loadProductList() {
 
 
 
+
+
             htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
 ${htmlProductGrid}
 </div>
@@ -632,7 +649,10 @@ ${htmlProductList}
 
 
 
+
+
             $('#htmlListAndGrid').html(htmldata);
+            $(".numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
@@ -1054,6 +1074,8 @@ ${htmlProductSize}
 //Single Function Using ..on Load ,Filtering, Paggination,Search
 function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
+
+
     var htmldata = '';
     var htmlProductList = '';
     var countBtn = 1;
@@ -1064,6 +1086,8 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
 
 
+
+
     var postData = {
         filterList: filterList,
         search: search,
@@ -1071,7 +1095,11 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         prevPage: prevPage
     };
 
+
+
     $.ajax({
+
+
 
         url: "/Product/GetProductListbySidebar",
         type: "POST",
@@ -1080,7 +1108,11 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         dataType: "json",
         traditional: true,
 
+
+
         success: function (result) {
+
+
 
 
             var data = JSON.parse(result.data);
@@ -1089,91 +1121,115 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
             else
                 totalProductList = data[0].totalProduct;
 
+
+
             $('#lblTotalCount').text('Total Records: ' + totalProductList);
             $.each(data, function (key, item) {
 
+
+
                 //List Html
                 htmlProductList += `<div class="col - xs - 12">
-                            <div class="single-list-view">
-                                <div class="row">
-                                    <div class="col-xs-12 col-md-4">
-                                        <div class="list-img listinge">
-                                            <div class="product-img">
-                                                <div class="pro-type sell">
-                                                    <span>${item.Discount}%</span>
-                                                </div>
-                                                    <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-12 col-md-8">
-                                        <div class="list-text listingtext">
-                                            <h3>${item.Name}&nbsp;${item.UOM}</h3>
-                                            <span>${item.ShortDescription}</span>
-                                            <div class="ratting floatright">
-                                                <p>( ${item.TotalRating} Rating )</p>
-                                                ${GetProductRating(item.AvgRating)}
-                                            </div>
-                                            <h5><del> <strong class="pricesymbol"> </strong> ${item.Price}</del>&nbsp <strong class="pricesymbol"> </strong> ${item.Price * (1 - (item.Discount / 100))} </h5 >
-                                            <p>${item.LongDescription}</p>
-                                            <div class="list-btn">
-                                            <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
-                                            <a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div >
-                           </div >`;
+<div class="single-list-view">
+<div class="row">
+<div class="col-xs-12 col-md-4">
+<div class="listinge list-img">
+<div class="product-img">
+<div class="pro-type sell">
+<span>${item.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+</div>
+</div>
+</div>
+<div class="col-xs-12 col-md-8">
+<div class="listingtext list-text">
+<h3>${item.Name}&nbsp;${item.UOM}</h3>
+<span>${item.ShortDescription}</span>
+<div class="ratting floatright">
+<p>( ${item.TotalRating} Rating )</p>
+${GetProductRating(item.AvgRating)}
+</div>
+<h5><del> <strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span></del>&nbsp <strong class="pricesymbol"> </strong><span class="numbers"> ${item.Price * (1 - (item.Discount / 100))}</span> </h5 >
+<p>${item.LongDescription}</p>
+<div class="list-btn">
+<a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" href="javascript:void(0)" productIdList=${item.Id}>wishlist</a>
+</div>
+</div>
+</div>
+</div>
+</div >
+</div >`;
+
+
 
                 htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
-                                                <div class="single-product">
-                                                    <div class="product-img">
-                                                        <div class="pro-type">
-                                                      <span>${item.Discount}%</span>
-                                                        </div>
-                                                        <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                                        <div class="actions-btn">
-                                                        <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
-                                                        <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-                                                        <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product-dsc">
-                                                        <p><a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}">${item.Name}&nbsp;${item.UOM}</a></p>
-                                                        <div class="ratting">
-                                                           ${GetProductRating(item.AvgRating)}
-                                                        </div>
-                                                        <span><del style='color:silver'> <strong class="pricesymbol"></strong>${item.Price}</del>&nbsp <strong class="pricesymbol"></strong>${item.Price * (1 - (item.Discount / 100))} </span>
-                                                    </div>
-                                                </div>
-                                            </div>`;
+<div class="single-product">
+<div class="product-img">
+<div class="pro-type">
+<span>${item.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<div class="actions-btn">
+<a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
+<a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} href="javascript:void(0)"><i class="mdi mdi-heart"></i></a>
+</div>
+</div>
+<div class="product-dsc">
+<p><a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}">${item.Name}&nbsp;${item.UOM}</a></p>
+<div class="ratting">
+${GetProductRating(item.AvgRating)}
+</div>
+<span><del style='color:silver'><span class="numbers">${item.Price} </span><strong class="pricesymbol"> </strong></del>&nbsp<span class="numbers">${item.Price * (1 - (item.Discount / 100))} </span><strong class="pricesymbol"> </strong></span>
+</div>
+</div>
+</div>`;
             });
+
+
 
             if (totalProductList <= 10 || totalProductList == undefined) {
 
+
+
                 countBtn = 1;
             } else {
+
+
 
                 countBtn = totalProductList / 10;
                 countBtn = Math.ceil(countBtn);
             }
 
+
+
             htmlPrevButton = `<span> <input type="button" Class="btn-Prod-PrevAndNext" value="Previous" class="btn-Prod-Paggination" /></span>`;
             htmlNextButton = `<span> <input type="button" Class="btn-Prod-PrevAndNext" value="Next" class="btn-Prod-Paggination" /></span>`;
+
+
 
             let prevCount = 0;
             let oprevPage = prevPage;
             for (i = 1; i <= countBtn; i++) {
 
+
+
                 prevPage = parseInt(prevCount) * 10;
                 htmlbtn += `<span> <input type="button" value="${i}" class="btn-Prod-Paggination" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
                 prevCount += 1;
 
+
+
             }
+
+
 
             var gl1 = ""; var gl2 = "";
             var activeclassfor = localStorage.getItem("my-list-grid-btn");
+
+
 
             switch (activeclassfor) {
                 case "list":
@@ -1190,33 +1246,58 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
                     break;
             }
 
+
+
             htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
-                                  ${htmlProductGrid}
-                                  </div>
-                                  <div class="tab-pane fade in ${gl1}" id="list">
-                                      ${htmlProductList}
-                                  </div>`;
+${htmlProductGrid}
+</div>
+<div class="tab-pane fade in ${gl1}" id="list">
+${htmlProductList}
+</div>`;
+
+
 
             let htmlPaggination = htmlPrevButton + htmlbtn + htmlNextButton;
 
+
+
             $('#htmlListAndGrid').html(htmldata);
             $('#htmlProdListPaggination').html(htmlPaggination);
+
+
+
+
             $('#htmlProdListPaggination').find('.btn-Prod-Paggination').eq(((oprevPage / nextPage))).addClass('btn-Prod-Paggination-active');
+
+
+
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             if (filterList != null && filterList != undefined && filterList != '[[]]' && filterList.length > 0) {
 
+
+
                 $.each(filterList, function (index, value) {
+
+
 
                     var filterListslides = document.getElementsByClassName("filter");
 
+
+
                     for (var i = 0; i < filterListslides.length; i++) {
+
+
 
                         if ($(filterListslides.item(i)).attr("myfilter").toString() == value.Name.toString() && $(filterListslides.item(i)).attr("categoryid").toString() == value.ID.toString()) {
                             $(filterListslides.item(i)).prop("checked", true);
                         }
 
+
+
                     }
+
+
 
                 });
             }
@@ -1226,8 +1307,9 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         }
     });
 
-}
 
+
+}
 //updated 1-Dec-2021
 
 $('.main-filter-container').on("change", ".filter", function () {
@@ -1246,7 +1328,7 @@ $('.main-filter-container').on("change", ".filter", function () {
     var filterCategoryAndBrandarray;
 
     if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
-        
+
         // if (typeof (filterList)=='string')
         var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
         filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
@@ -1267,35 +1349,36 @@ function loadFeatureProduct() {
         success: function (result) {
             var html = '';
             var data = JSON.parse(result.data);
-             
+
             $.each(data, function (key, item) {
                 html += `<li>
-                    <div class="text-center">
-                        <div class="col-xs-12 col-sm-6 col-md-3">
-                            <div class="single-product">
-                                <div class="product-img">
-                                    <div class="pro-type">
-                                        <span>${item.Discount}%</span>
-                                    </div>
-                                    <a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
-                                    <div class="actions-btn">
-                                        <a onclick="HandleAddtocart(this)" productIdList=${item.Id}  ><i class="mdi mdi-cart"></i></a>
-                                        <a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
-                                        <a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}><i class="mdi mdi-heart"></i></a>
-                                    </div>
-                                </div>
-                                <div class="product-dsc">
-                                    <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-                                    <span><del style='color: silver'> <strong class="pricesymbol"> </strong>${item.Price} </del>&nbsp <strong class="pricesymbol"></strong>${item.DiscountedAmount} </span>
-                                </div>
-                            </div>
-                        </div>
-                        </div></div>
-                </li>`;
+<div class="text-center">
+<div class="col-xs-12 col-sm-6 col-md-3">
+<div class="single-product">
+<div class="product-img">
+<div class="pro-type">
+<span>${item.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<div class="actions-btn">
+<a onclick="HandleAddtocart(this)" productIdList=${item.Id} ><i class="mdi mdi-cart"></i></a>
+<a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}><i class="mdi mdi-heart"></i></a>
+</div>
+</div>
+<div class="product-dsc">
+<p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
+<span ><del class="numbers" style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp<span class="numbers">${item.DiscountedAmount} </span><strong class="pricesymbol"> </strong></span>
+</div>
+</div>
+</div>
+</div></div>
+</li>`;
 
             });
+
             $('#ulLoadFeatureProduct').html(html);
-            
+            $("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
         },
@@ -1303,6 +1386,7 @@ function loadFeatureProduct() {
             alert(errorMessage.responseText);
         }
     });
+
 }
 function loadRecentViewProduct() {
 
@@ -1384,7 +1468,7 @@ $("#btnSave").click(function (e) {
         rate: rating,
 
     }
-    
+
     var validate = CommentValidate(commentAndRating.AnonymousName, commentAndRating.EmailId, commentAndRating.Comment);
     if (validate) {
 
@@ -1495,7 +1579,7 @@ function GetProductCommentAndRating() {
                     htmlNextButton = `<span> <input type="button" Class="btn-PrevAndNext" value="Next" class="btn-paggination" /></span>`;
                     let prevCount = 0;
                     for (var i = 1; i <= countBtn; i++) {
-                        
+
                         prevPage = parseInt(prevCount) * 10;
                         if (i == 1)
                             htmlbtn += `<span> <input type="button"  value="${i}" class="btn-paggination applyActiveBtn" next-page="${nextPage}" prev-page="${prevPage}" /></span>`;
@@ -1542,7 +1626,7 @@ function GetProductCommentAndRating() {
 // Get Product Comment And Rating with Paggination
 function GetProductCommentWithPaggination(nextPage, prevPage) {
 
-    
+
     var htmlPrevButton = '';
     var htmlNextButton = '';
     let urlstr = location.href;
@@ -1673,7 +1757,7 @@ function SetLocalStorageInArray(key, value) {
 
 // Set Local Storage--- Store Multiple values on Single Key ( Generalize Fn)
 function SetLocalStorageInSingleKey(key, value) {
-    
+
     if (key != undefined) {
         var pushValue = [];
         for (var i = 0; i < value.length; i++) {
@@ -1720,7 +1804,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                 var htmlProductDetail = '';
                 var htmlProductPriceDetail = '';
                 var htmlProductSize = '';
-                
+
                 var item = JSON.parse(result.data);
                 var rating = item[0].AvgRating;
 
@@ -1939,18 +2023,12 @@ function GetProductRating(rating) {
             htlmRating += `<i class="mdi mdi-star"></i>`;
         }
     }
-
-
-
     if (isDecimalRatingAssign) { //true
         for (var i = 0; i < remainingRating; i++) {
             //half star
             htlmRating += `<i class="mdi mdi-star-outline"></i>`;
         }
     }
-
-
-
     if (!isDecimalRating) { //false
         for (var i = 0; i < remainingRating; i++) {
             // Empty Star

@@ -112,6 +112,11 @@ namespace B2CPortal.Controllers
             {
                 cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
             }
+            else
+            {
+                cookie = Guid.NewGuid().ToString();
+                HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
+            }
             var cartproducts = await _cart.GetCartProducts(cookie, userid);
             foreach (var item in cartproducts)
             {

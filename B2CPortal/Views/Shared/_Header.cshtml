@@ -268,54 +268,33 @@
     </header>
 
 
-@*<script>
-
-
-    $(document).ready(function () {
-        //alert("Done");
-    });
-    $('ul.log li').click(function () {
-       
-        var pathname = window.location.pathname; // Returns path only (/path/example.html)
-        var address = window.location.href;     // Returns full URL (https://example.com/path/example.html)
-        var origin = window.location.origin;   // Returns base URL (https://example.com)
-        $.ajax({
-            url: "/Account/Login?address=" + address,
-            data: JSON.stringify(address),
-            success: function (data) {
-                ;
-               
-                if (data.isSuccessful == true) {
-                    alert("Done");
-                   // toastr.success("L.");
-                    //window.location.href = "/Account/Login";
-                }
-                else if (data.isSuccessful == false) {
-                    //toastr.error("Registration Failed.");
-                    alert("Failed");
-                }
-            },
-            failure: function (res) {
-                console.log(res);
-            },
-            err: function (res) {
-                console.log(res);
-            }
-
-
-        
-    });
-    })
-    
-</script>*@
-
-
 <script>
-    ShowCartProducts();
+    //try {
+    //    localStorage.setItem('name', 'Hello World!');
+    //} catch (e) {
+    //    debugger
+    //    if (e.include("")) {
+    //        alert('Quota exceeded!');
+    //    }
+    //}
 
-    window.localStorage;
+    $(window).on('load', function () {
+        var cookieresult = are_cookies_enabled();
+        if (cookieresult == false) {
+            $('#cookiemyModal').modal('show');
+        }
+    });
+
+    function are_cookies_enabled() {
+        var cookieEnabled = (navigator.cookieEnabled) ? true : false;
+        if (typeof navigator.cookieEnabled == "undefined" && !cookieEnabled) {
+            document.cookie = "testcookie";
+            cookieEnabled = (document.cookie.indexOf("testcookie") != -1) ? true : false;
+        }
+        return (cookieEnabled);
+    }
+    //window.localStorage;
     function SetLocalStorage(elem) {
-
         if (localStorage.Id != undefined)
             var id = JSON.parse(localStorage.Id);
 

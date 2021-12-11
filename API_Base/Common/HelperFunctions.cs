@@ -32,21 +32,20 @@ namespace API_Base.Common
         public static void SetCookie(string cookieName, string cookieValue, int days)
         {
             //HttpContext.Current.Response.Cookies[cookieName].Expires = DateTime.Now.AddDays(-1);
-
             cookieName = cookieName.ToLower();
             var cookie = new HttpCookie(cookieName)
             {
                 Value = cookieValue,
                 Expires = DateTime.Now.AddDays(days)
             };
-
             HttpContext.Current.Response.Cookies.Add(cookie);
+            HttpContext.Current.Session.Add(cookieName,cookieValue);
         }
 
-        public static string GetCookie(object commentguid)
-        {
-            throw new NotImplementedException();
-        }
+        //public static string GetCookie(object commentguid)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public static String GetCookie(string cookieName)
         {
@@ -56,7 +55,12 @@ namespace API_Base.Common
                 if (HttpContext.Current.Request.Cookies[cookieName] == null)
                     return string.Empty;
 
-                return HttpContext.Current.Request.Cookies[cookieName].Value;
+                    var cookieres = HttpContext.Current.Request.Cookies[cookieName].Value;
+                if (string.IsNullOrEmpty(cookieres))
+                {
+                    cookieres =  HttpContext.Current.Session[cookieName]?.ToString();
+                }
+                return cookieres;
             }
             catch
             {
