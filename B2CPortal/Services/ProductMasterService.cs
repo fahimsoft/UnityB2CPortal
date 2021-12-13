@@ -405,8 +405,6 @@ namespace B2CPortal.Services
                         obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true &&
                         brand.Contains(x.FK_ProductBrand))
 
-
-
                         .Include(x => x.ProductPrices)
                         .Include(x => x.ProductPackSize)
                         .OrderByDescending(x => x.Id)
