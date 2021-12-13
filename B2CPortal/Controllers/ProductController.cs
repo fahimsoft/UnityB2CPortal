@@ -109,7 +109,7 @@ namespace B2CPortal.Controllers
             string cartguid = string.Empty;
             decimal totalprice = 0;
             cartguid =   HelperFunctions.GetCookie(HelperFunctions.cartguid);
-            if (string.IsNullOrEmpty(cartguid) || cartguid != "undefined")
+            if (string.IsNullOrEmpty(cartguid) || cartguid == "undefined")
             {
                 cartguid = Guid.NewGuid().ToString();
                 HelperFunctions.SetCookie(HelperFunctions.cartguid, cartguid, 1);
