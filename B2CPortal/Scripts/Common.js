@@ -318,7 +318,7 @@ function ShowCartProducts() {
             $('#cartdrop').html(html);
             $(".numbers").digits();
             $('#productaddtocart').html(dataobj.cartproductscount);
-            $('#totalprice').html(dataobj.totalprice);
+            $('#totalprice').html(dataobj.totalprice.toLocaleString("en-US"));
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             document.getElementsByClassName("loader-container")[0].style.display = "none";

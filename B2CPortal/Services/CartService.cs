@@ -27,7 +27,7 @@ namespace B2CPortal.Services
                 }
                 else
                 {
-                    if ((cart.Quantity + Current.Quantity) > 9)
+                    if ((cart.Quantity + Current.Quantity) > 10)
                     {
                         return null;
                     }
