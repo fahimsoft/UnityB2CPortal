@@ -5,6 +5,15 @@ namespace API_Base.Base
 {
     public class BaseController : Controller
     {
+        protected override void OnActionExecuting(ActionExecutingContext filterContext)
+        {
+            base.OnActionExecuting(filterContext);
+
+            var url = filterContext.HttpContext.Request.Url;
+
+            ViewBag.URL = url;
+
+        }
         public BaseController()
         {
 
