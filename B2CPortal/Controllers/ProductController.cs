@@ -103,21 +103,18 @@ namespace B2CPortal.Controllers
             }
             Session["ConversionRate"] = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
             decimal conversionvalue = Convert.ToDecimal(Session["ConversionRate"]);
-            string cartguid = string.Empty;
+           
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
-            string cookie = string.Empty;
+            string cartguid = string.Empty;
             decimal totalprice = 0;
-            if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+            cartguid =   HelperFunctions.GetCookie(HelperFunctions.cartguid);
+            if (string.IsNullOrEmpty(cartguid) || cartguid != "undefined")
             {
-                cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                cartguid = Guid.NewGuid().ToString();
+                HelperFunctions.SetCookie(HelperFunctions.cartguid, cartguid, 1);
             }
-            else
-            {
-                cookie = Guid.NewGuid().ToString();
-                HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
-            }
-            var cartproducts = await _cart.GetCartProducts(cookie, userid);
+            var cartproducts = await _cart.GetCartProducts(cartguid, userid);
             foreach (var item in cartproducts)
             {
                 var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
@@ -256,19 +253,16 @@ namespace B2CPortal.Controllers
             {
                 if (quentity > 0)
                 {
-
+                    var Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                     decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
                     int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
-                    string cookie = string.Empty;
+                    string cookieid = string.Empty;
                     string msg = string.Empty;
-                    if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+                    cookieid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                    if (string.IsNullOrEmpty(cookieid) || cookieid == "undefined")
                     {
-                        cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                    } 
-                    else
-                    {
-                        cookie = Guid.NewGuid().ToString();
-                        HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
+                        cookieid = Guid.NewGuid().ToString();
+                        HelperFunctions.SetCookie(HelperFunctions.cartguid, cookieid, 1);
                     }
                     var productobj = await _IProductMaster.GetProductById(proid);
                     var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -276,22 +270,22 @@ namespace B2CPortal.Controllers
                     var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
                     var cart = new Cart();
                     cart.Quantity = quentity;
-                    cart.Guid = cookie;
+                    cart.Guid = cookieid;
                     cart.IsWishlist = false;
                     cart.IsActive = true;
                     cart.TotalPrice = discountedprice;
                     cart.TotalQuantity = quentity;
                     cart.FK_ProductMaster = proid;
-                    cart.Currency = Session["currency"].ToString().ToLower();
-                    cart.ConversionRate = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                    cart.Currency = Currency;// Session["currency"].ToString().ToLower();
+                    cart.ConversionRate = conversionvalue;// Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
 
                     if (userid > 0)
                     {
                         cart.FK_Customer = userid;
                     }
-                    var obj = await _cart.CreateCart(cart);
+                    var obj = await _cart.CreateCart(cart); 
 
-                    var cartproducts = await _cart.GetCartProducts(cookie, userid);
+                    var cartproducts = await _cart.GetCartProducts(cookieid, userid);
                     var totalquentity = cartproducts.Sum(x => x.Quantity);
                     msg = obj == null ? "You Can't Add to Cart more then 10 times" : "Add to Cart Successfully !";
                     return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
