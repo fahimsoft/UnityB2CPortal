@@ -131,6 +131,8 @@
 
             // var searchProduct = $('#textProductName').val();
             loadProductListById(GetfilterListDummy(), searchProduct, nextPage, prevPage);
+            ScrollTop();
+
 
         });
 
@@ -163,6 +165,7 @@
 
             SetLocalStorageForFilter(null, searchProduct, NextProdClickValue, PrevProdClickValue);
             loadProductListById(GetfilterListDummy(), searchProduct, NextProdClickValue, PrevProdClickValue);
+            ScrollTop();
         });
 
     });

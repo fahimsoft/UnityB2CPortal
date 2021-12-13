@@ -232,7 +232,10 @@ namespace B2CPortal.Services
                         LongDescription = item.LongDescription,
                         UOM = item.ProductPackSize.UOM,
                         TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
-                        AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault()
+                        AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
+                        ImageUrl2 = item.ProductDetails.Select(x => x.ImageUrl).ToList(),
+
+
                     };
                     productsVM.Add(producVMList);
                 }
@@ -266,12 +269,13 @@ namespace B2CPortal.Services
                     filterList = new SideBarVM[] { };
                 }
 
-
-
                 int[] cat = new int[filterList.Count(x => x.Name == "Category")];
                 int[] brand = new int[filterList.Count(x => x.Name == "Brand")];
+                int[] packSize = new int[filterList.Count(x => x.Name == "PackSize")];
                 int catI = 0;
                 int brandI = 0;
+                int packSizeI = 0;
+
                 foreach (var item in filterList)
                 {
                     switch (item.Name)
@@ -283,6 +287,10 @@ namespace B2CPortal.Services
                         case "Brand":
                             brand[brandI] = item.ID;
                             brandI++;
+                            break;
+                        case "PackSize":
+                            packSize[packSizeI] = item.ID;
+                            packSizeI++;
                             break;
                         default:
                             break;
@@ -324,9 +332,7 @@ namespace B2CPortal.Services
                         .Skip(prevPage).Take(nextPage)
                         .ToListAsync();
 
-
-
-                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                          totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
                         && (cat.Contains(x.FK_ProductCategory)
                         && brand.Contains(x.FK_ProductBrand))
                         );
@@ -469,11 +475,6 @@ namespace B2CPortal.Services
                     AvgRating = s.Sum(x => (decimal)x.Rate) / s.Count(),
                     TotalRatingCount = s.Count()
                 }).AsNoTracking().ToList();
-
-
-
-
-
                 foreach (var item in obj)
                 {
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -481,38 +482,30 @@ namespace B2CPortal.Services
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
-                        Name = item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price)/ conversionvalue,2),
+                        Name = item.Name == null ? "" : item.Name,
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
                         Discount = discount,// item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
-                        ShortDescription = item.ShortDescription,
-                        LongDescription = item.LongDescription,
+                        ShortDescription = item.ShortDescription == null ? "" : item.ShortDescription,
+                        LongDescription = item.LongDescription == null ? "" : item.LongDescription,
                         totalProduct = totalProduct,
-                        UOM = item.ProductPackSize.UOM,
-
-
-
+                        UOM = item.ProductPackSize.UOM == null ? "" : item.ProductPackSize.UOM,
+                        UnitInNumeric = item.ProductPackSize.UnitInNumeric,
                         TotalRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).TotalRatingCount,
                         AvgRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).AvgRating
                     };
                     productsVM.Add(producVMList);
                 }
 
-
-
-
+                if (packSize.Length > 1)
+                {
+                    productsVM.Where(x => x.UnitInNumeric >= packSize[0] && x.UnitInNumeric <= packSize[1]).ToList();
+                }
                 return productsVM;
-
-
-
-
             }
             catch (Exception Ex)
             {
-
-
-
                 throw Ex;
             }
         }

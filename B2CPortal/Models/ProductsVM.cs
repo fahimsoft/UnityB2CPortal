@@ -15,6 +15,7 @@ namespace B2CPortal.Models
         public decimal? Discount { get; set; }
         public  string ImageUrl { get; set; }
         public string MasterImageUrl { get; set; }
+        public List<string> ImageUrl2 { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
         public decimal? DiscountedAmount { get; set; }
@@ -24,6 +25,9 @@ namespace B2CPortal.Models
         public decimal? TotalRating { get; set; }
         public decimal? AvgRating { get; set; }
         public int TotalRatingCount { get; set; }
+public int? UnitInNumeric { get; set; }
+
+
     }
     public class ProductsCommentVM
     {
