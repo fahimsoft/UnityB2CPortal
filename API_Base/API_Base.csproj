@@ -101,6 +101,7 @@
     <Compile Include="Base\BaseController.cs" />
     <Compile Include="Base\DALBase.cs" />
     <Compile Include="Base\DTO.cs" />
+    <Compile Include="Common\AppEnvironment.cs" />
     <Compile Include="Common\HelperFunctions.cs" />
     <Compile Include="Common\Connection.cs" />
     <Compile Include="PaymentMethod\Interfaces\IEasyPaisa.cs" />

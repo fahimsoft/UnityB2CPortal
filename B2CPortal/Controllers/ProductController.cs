@@ -868,12 +868,9 @@ namespace B2CPortal.Controllers
         //}
         public static string GetCountryByIP(HttpRequestBase request)
         {
-            string pricesymbolvalue = "PKR";
-            if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.pricesymbol)) && HelperFunctions.GetCookie(HelperFunctions.pricesymbol) != "undefined")
-            {
-                pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
-            }
-            else
+            string pricesymbolvalue = "";
+            pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
+            if (string.IsNullOrEmpty(pricesymbolvalue)  || pricesymbolvalue  != "undefined")
             {
                 IpInfo ipInfo = new IpInfo();
                 string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
