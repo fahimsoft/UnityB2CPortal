@@ -44,8 +44,8 @@ namespace B2CPortal.Controllers
                 {
                     return RedirectToAction("Checkout", "Orders");
                 }
-                var ConversionRate = "";
-                ConversionRate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString();
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
                 var paymentmodel = new PaymentVM
                 {
@@ -65,8 +65,8 @@ namespace B2CPortal.Controllers
                     var ordervm = new OrderVM
                     {
                         Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
-                        Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString(),
-                        ConversionRate = decimal.Parse(ConversionRate),
+                        Currency =currency,
+                        ConversionRate = conversionvalue,
                         PaymentMode = PaymentType.Stripe.ToString(),
                         Status = OrderStatus.Confirmed.ToString(),
                         TotalPrice = Convert.ToDecimal(Session["ordertotal"]),

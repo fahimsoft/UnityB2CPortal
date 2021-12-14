@@ -1,4 +1,5 @@
 ﻿using API_Base.Base;
+using API_Base.Common;
 using B2C_Models.Models;
 using B2CPortal.Controllers;
 using B2CPortal.Interfaces;
@@ -205,7 +206,8 @@ namespace B2CPortal.Services
         {
             try
             {
-                decimal conversionvalue = HttpContext.Current.Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(HttpContext.Current.Session["ConversionRate"]);
+                //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
                 var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + Id + "").ToList<ProductsVM>();
 
@@ -261,8 +263,8 @@ namespace B2CPortal.Services
             try
             {
                 var totalProduct = 0;
-
-                decimal conversionvalue = HttpContext.Current.Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(HttpContext.Current.Session["ConversionRate"]);
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
                 if (filterList == null)
                 {
@@ -507,6 +509,5 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
     }
 }

@@ -45,7 +45,7 @@ namespace B2CPortal.Controllers
         public async Task<JsonResult> GetOrderDetailsById(int id)
         {
             List<OrderVM> orderdetailslist = new List<OrderVM>();
-            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             var detailslist = await _ordersDetail.GetOrderDetailsById(id);
             foreach (var item in detailslist)
             {
@@ -80,7 +80,8 @@ namespace B2CPortal.Controllers
 
             try
             {
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 List<OrderVM> list = new List<OrderVM>();
                 if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
                 {
@@ -121,8 +122,8 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                string currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
                 decimal OrderTotal = 0;
@@ -214,9 +215,10 @@ namespace B2CPortal.Controllers
                 decimal subTotal = 0;
                 var customerId = 0;
                 var tQuantity = 0;
-                string currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-                if (Session["UserId"] != null)
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
+            if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     //------------existing order remove-----------------
@@ -412,8 +414,9 @@ namespace B2CPortal.Controllers
                 decimal subTotal = 0;
                 var customerId = 0;
                 var tQuantity = 0;
-                string currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -519,9 +522,8 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                string currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-                OrderVM orderVM = new OrderVM();
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate)); OrderVM orderVM = new OrderVM();
                 List<OrderDetailsViewModel> orderDetailsVM = new List<OrderDetailsViewModel>();
                 var customerId = 0;
                 decimal ordertoal = 0;

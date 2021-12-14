@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using B2CPortal.Models;
 using B2CPortal.Controllers;
+using API_Base.Base;
 
 namespace B2CPortal.Interfaces
 {

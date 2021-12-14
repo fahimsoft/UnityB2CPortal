@@ -1,4 +1,8 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using API_Base.Common;
 using Newtonsoft.Json;
 
 namespace API_Base.Base
@@ -7,12 +11,46 @@ namespace API_Base.Base
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
+            GetCountryByIP(Request);
+            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            if (currency.ToLower() == "pkr")
+            {
+                HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, "1", true);
+            }
+            else
+            {
+                var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
+                conversionrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, conversionrate, true);
+            }
+
+            //------------------url for common js----------------------
             base.OnActionExecuting(filterContext);
-
             var url = filterContext.HttpContext.Request.Url;
-
             ViewBag.URL = url;
-
+        }
+        public static string GetCountryByIP(HttpRequestBase request)
+        {
+            string pricesymbolvalue = "";
+            //pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
+            pricesymbolvalue = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            if (string.IsNullOrEmpty(pricesymbolvalue) || pricesymbolvalue != "undefined")
+            {
+                IpInfo ipInfo = new IpInfo();
+                string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
+                JavaScriptSerializer jsonObject = new JavaScriptSerializer();
+                ipInfo = jsonObject.Deserialize<IpInfo>(info);
+                if (ipInfo.Country == null || (ipInfo.Country?.ToLower() == "pakistan" || ipInfo.Country?.ToLower() == "pk"))
+                {
+                    pricesymbolvalue = "PKR";
+                    HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
+                }
+                else
+                {
+                    pricesymbolvalue = "$";
+                    HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
+                }
+            }
+            return pricesymbolvalue;
         }
         public BaseController()
         {
@@ -89,5 +127,15 @@ namespace API_Base.Base
         //    base.OnActionExecuting(filterContext);
         //    //Thread.Sleep(1000);
         //}
+    }
+    public class SideBarVM
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+    }
+    public class IpInfo
+    {
+        //country
+        public string Country { get; set; }
     }
 }

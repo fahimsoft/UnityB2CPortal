@@ -47,7 +47,7 @@ namespace B2CPortal.Controllers
             }
         }
         [HttpGet]
-        [ActionName("GetProductwithPaggination")] //updated
+        [ActionName("GetProductwithPaggination")] 
         public async Task<JsonResult> GetProductwithPaggination(int nextPage, int prevPage)
         {
             try
@@ -89,20 +89,17 @@ namespace B2CPortal.Controllers
         #region cart handling
         public async Task<JsonResult> GetCartCount()
         {
-            GetCountryByIP(Request);
-            Session["currency"] = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
-            if (Session["currency"].ToString().ToLower() == "pkr")
-            {
-                Session["ConversionRate"] = "1";
-            }
-            else
-            if (Session["currency"].ToString().ToLower() != "pkr" && Session["ConversionRate"] == null)
-            {
-                var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
-                Session["ConversionRate"] = conversionrate;
-            }
-            Session["ConversionRate"] = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-            decimal conversionvalue = Convert.ToDecimal(Session["ConversionRate"]);
+           // GetCountryByIP(Request);
+           //string currency =    HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+           // if (currency.ToLower() == "pkr")
+           // {
+           //      HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, "1",true);
+           // }
+           // else
+           // {   var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
+           //     conversionrate =  HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, conversionrate,true);
+           // }
+            decimal  conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
            
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -153,7 +150,8 @@ namespace B2CPortal.Controllers
         }
         public async Task<ActionResult> GetCartList()
         {
-            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
             string cookie = string.Empty;
@@ -253,8 +251,8 @@ namespace B2CPortal.Controllers
             {
                 if (quentity > 0)
                 {
-                    var Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                    decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                    string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                    decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                     int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
                     string cookieid = string.Empty;
                     string msg = string.Empty;
@@ -276,8 +274,8 @@ namespace B2CPortal.Controllers
                     cart.TotalPrice = discountedprice;
                     cart.TotalQuantity = quentity;
                     cart.FK_ProductMaster = proid;
-                    cart.Currency = Currency;// Session["currency"].ToString().ToLower();
-                    cart.ConversionRate = conversionvalue;// Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                    cart.Currency = currency;// Session["currency"].ToString().ToLower();
+                    cart.ConversionRate = conversionvalue;
 
                     if (userid > 0)
                     {
@@ -316,7 +314,8 @@ namespace B2CPortal.Controllers
         {
             string msg = string.Empty;
             bool updateresult = false;
-            decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             for (int i = 0; i < cartids.Count(); i++)
             {
                 var cartproducts = await _cart.GetCartById(cartids[i]);
@@ -358,7 +357,7 @@ namespace B2CPortal.Controllers
         } //Updated 1-Dec
         [HttpPost]
         [ActionName("GetProductListbySidebar")]
-        [OutputCache(CacheProfile = "SetCache", VaryByParam = "*")]
+       // [OutputCache(CacheProfile = "SetCache", VaryByParam = "*")]
         public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
         {
             try
@@ -373,12 +372,13 @@ namespace B2CPortal.Controllers
         }
         [HttpGet]
         [ActionName("GetFeaturedProduct")]
-        [OutputCache(CacheProfile = "SetCache")]
+       // [OutputCache(CacheProfile = "SetCache")]
         public async Task<JsonResult> GetFeaturedProduct()
         {
             try
             {
-                decimal conversionvalue = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 var obj = await _IProductMaster.GetFeaturedProduct();
                 List<ProductsVM> productsVM = new List<ProductsVM>();
                 foreach (var item in obj)
@@ -425,8 +425,9 @@ namespace B2CPortal.Controllers
             try
             {
                 var obj = await _IProductMaster.GetProductById(Id);
-                var Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                var ConversionRate = Convert.ToDecimal(string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString());
+                //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                //decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
                 List<ProductsVM> productsVM = new List<ProductsVM>();
                 var producVMList = new ProductsVM
                 {
@@ -559,8 +560,8 @@ namespace B2CPortal.Controllers
             try
             {
                 string msg = string.Empty;
-                decimal usdRate = Session["ConversionRate"] == null ? 1 : Convert.ToDecimal(Session["ConversionRate"]);
-                //var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 string cookie = string.Empty;
                 if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                 {
@@ -590,15 +591,15 @@ namespace B2CPortal.Controllers
                 cart.IsActive = true;
                 cart.Quantity = quentity;
                 cart.TotalQuantity = quentity;
-                cart.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                cart.ConversionRate = Convert.ToDecimal(string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString());
+                cart.Currency = currency;
+                cart.ConversionRate = conversionvalue;
                 if (cart.Currency == "PKR")
                 {
                     cart.TotalPrice = DiscountedPrice;
                 }
                 else
                 {
-                    cart.TotalPrice = DiscountedPrice / Convert.ToDecimal(usdRate);
+                    cart.TotalPrice = DiscountedPrice / Convert.ToDecimal(conversionvalue);
                 }
                 var obj = await _cart.CreateWishList(cart);
 
@@ -627,6 +628,8 @@ namespace B2CPortal.Controllers
                 HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
                 if (cookie != null || customerId > 0)
                 {
+                    string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                    decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
                     Cart cart = new Cart();
                     var ProductIds = await _cart.GetWishListProducts(cookie.Value, customerId);
@@ -644,8 +647,8 @@ namespace B2CPortal.Controllers
                         var CartId = item.Id;
                         var productId = item.FK_ProductMaster;
 
-                        cart.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                        cart.ConversionRate = Convert.ToDecimal(string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString());
+                        cart.Currency = currency;
+                        cart.ConversionRate = conversionvalue;
                         if (cart.Currency == "PKR")
                         {
                             var wishlistVM = new WishlistVM
@@ -866,42 +869,53 @@ namespace B2CPortal.Controllers
         //        throw Ex;
         //    }
         //}
-        public static string GetCountryByIP(HttpRequestBase request)
-        {
-            string pricesymbolvalue = "";
-            pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
-            if (string.IsNullOrEmpty(pricesymbolvalue)  || pricesymbolvalue  != "undefined")
-            {
-                IpInfo ipInfo = new IpInfo();
-                string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
-                JavaScriptSerializer jsonObject = new JavaScriptSerializer();
-                ipInfo = jsonObject.Deserialize<IpInfo>(info);
-                if (ipInfo.Country == null || (ipInfo.Country?.ToLower() == "pakistan" || ipInfo.Country?.ToLower() == "pk"))
-                {
-                    pricesymbolvalue = "PKR";
-                    HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
-                }
-                else
-                {
-                    pricesymbolvalue = "$";
-
-                    HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
-                }
-            }
-            return pricesymbolvalue;
-        }
+        //public static string GetCountryByIP(HttpRequestBase request)
+        //{
+        //    string pricesymbolvalue = "";
+        //    //pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
+        //    pricesymbolvalue = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+        //    if (string.IsNullOrEmpty(pricesymbolvalue)  || pricesymbolvalue  != "undefined")
+        //    {
+        //        IpInfo ipInfo = new IpInfo();
+        //        string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
+        //        JavaScriptSerializer jsonObject = new JavaScriptSerializer();
+        //        ipInfo = jsonObject.Deserialize<IpInfo>(info);
+        //        if (ipInfo.Country == null || (ipInfo.Country?.ToLower() == "pakistan" || ipInfo.Country?.ToLower() == "pk"))
+        //        {
+        //            pricesymbolvalue = "PKR";
+        //            HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
+        //            //HelperFunctions.SetCookie(HkelperFunctions.pricesymbol, pricesymbolvalue, 1);
+        //        }
+        //        else
+        //        {
+        //            pricesymbolvalue = "$";
+        //            HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
+        //            //HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
+        //        }
+        //    }
+        //    return pricesymbolvalue;
+        //}
 
 
     }
-    public class SideBarVM
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-    }
-    public class IpInfo
-    {
-        //country
-        public string Country { get; set; }
-    }
+    //public class SideBarVM
+    //{
+    //    public int ID { get; set; }
+    //    public string Name { get; set; }
+    //}
+    //public class IpInfo
+    //{
+    //    //country
+    //    public string Country { get; set; }
+    //}    //public class SideBarVM
+    //{
+    //    public int ID { get; set; }
+    //    public string Name { get; set; }
+    //}
+    //public class IpInfo
+    //{
+    //    //country
+    //    public string Country { get; set; }
+    //}
 
 }
