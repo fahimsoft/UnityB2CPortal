@@ -15,7 +15,7 @@ namespace B2CPortal.Interfaces
         Task<IEnumerable<OrderMaster>> GetOrderList(int userid);
 
         Task<OrderMaster> CreateOrder(OrderVM Billing);
-        Task<bool> UpdateOrderMAster(OrderVM Billing);
+        Task<OrderMaster> UpdateOrderMAster(OrderVM Billing);
         Task<OrderMaster> ExestingOrder(int customerId);
         Task<bool> DeleteOrderMAster(int id);
     }

@@ -13,15 +13,22 @@ namespace API_Base.PaymentMethod
         private IStripe _stripe;
         private IHBL _hbl;
         private IEasyPaisa _easypaisa;
+        private IPaypal _paypal;
+
         public PaymentMethodFacade()
         {
             _stripe = new StripeService();
             _easypaisa = new  EasyPaisaService();
             _hbl = new  HBLService();
+            _paypal = new  PaypalService();
         }
         public dynamic CreateStripePayment(PaymentVM paymentViewModel)
         {
           return  _stripe.CreatePayment(paymentViewModel);
+        }
+        public dynamic CreatePaypalPayment(PaymentVM paymentViewModel)
+        {
+          return  _paypal.CreatePayment(paymentViewModel);
         }
 
 

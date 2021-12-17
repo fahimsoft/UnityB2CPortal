@@ -86,7 +86,7 @@ namespace B2CPortal.Services
             x.FK_Customer == userid
             ).OrderByDescending(x =>x.Status.ToLower() == "inprocess").OrderByDescending(x => x.CreatedOn).ToListAsync();
         }
-        public async Task<bool> UpdateOrderMAster(OrderVM ordervm)
+        public async Task<OrderMaster> UpdateOrderMAster(OrderVM ordervm)
         {
             try
             {
@@ -108,11 +108,11 @@ namespace B2CPortal.Services
                     Current.PaymentStatus = ordervm.PaymentStatus;
                 }
                 Save();
-                return true;
+                return Current;
             }
             catch (Exception ex)
             {
-                return false;
+                return null;
                 throw;
             }
         }

@@ -206,41 +206,47 @@
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-                        <input  @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="Stripe"  type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="Stripe" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
+                        <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/paypal.png" />
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="Paypal" type="radio" name="paymode">
+                        <label class="form-check-label">
+                            Paypal Payment
+                        </label>
+                    </div>
+                    <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled")   class="form-check-input" value="HBL" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="HBL" type="radio" name="paymode">
+                        <label class="form-check-label">
                             HBL (Habib Bank Limited)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="JazzCash" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="JazzCash" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Jazz Cash (Mobilink)
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="EasyPaisa" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="EasyPaisa" type="radio" name="paymode">
+                        <label class="form-check-label">
                             Easypaisa (Telenor)
                         </label>
                     </div>
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="COD" type="radio" name="paymode" >
-                        <label class="form-check-label" >
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="COD" type="radio" name="paymode">
+                        <label class="form-check-label">
                             COD (Cash On Delivery)
                         </label>
                     </div>
-
 
                     @if (Model.OrderTotal > 0)
                     {

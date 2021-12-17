@@ -1,11 +1,13 @@
 ﻿using API_Base.Common;
 using API_Base.PaymentMethod;
+using B2C_Models.Models;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using Stripe;
 using System;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Linq;
 
 namespace B2CPortal.Controllers
 {
@@ -23,6 +25,7 @@ namespace B2CPortal.Controllers
             _cart = cart;
             _PaymentMethodFacade = new PaymentMethodFacade();
         }
+
         public ActionResult Stripe()
         {
             ViewBag.Amount = Session["ordertotal"];
@@ -72,13 +75,14 @@ namespace B2CPortal.Controllers
                         TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
                         PaymentStatus = true,
                     };
-                    var dd = await _orders.UpdateOrderMAster(ordervm);
+                    var ordermodel = await _orders.UpdateOrderMAster(ordervm);
+                    ordervm = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
+                    ordervm.OrderNo = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
                     // ------------Remove from cart------------
                     var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                     var removeCart = await _cart.DisableCart(customerId, cookie);
-
-                    return View("PaymentStatus", paymentmodel);
+                    return RedirectToAction("PaymentStatus", ordervm);
                 }
                 else
                 {
@@ -93,10 +97,43 @@ namespace B2CPortal.Controllers
             }
 
         }
-        [HttpGet]
-        public ActionResult PaymentStatus(PaymentVM paymentViewModel)
+      [HttpGet]
+        public async Task<ActionResult> PaymentStatus(OrderVM model =  null)
         {
-            return View(paymentViewModel);
+            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                string conrate =  HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
+            if (!string.IsNullOrEmpty(conrate))
+            {
+                decimal conversionvalue = Convert.ToDecimal(conrate);
+
+                if (model == null || model.TotalPrice == null)
+                {
+                    string orderid = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+                    OrderMaster ordermodel = await _orders.GetOrderMasterById(Convert.ToInt32(orderid));
+
+                    model = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, model);
+                    model.DiscountAmount =  model.OrderDetails.Sum(x => x.DiscountedPrice);
+                    model.SubTotalPrice =  model.OrderDetails.Sum(x => x.Price);
+
+                    model.Id = ordermodel.Id;
+                    model.Status = OrderStatus.Confirmed.ToString();
+                    model.TotalPrice = model.TotalPrice;
+                    model.PaymentStatus = true;
+
+                    var ordermodelresponse = await _orders.UpdateOrderMAster(model);
+                    // orderVM =  (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
+                    // ------------Remove from cart------------
+                    var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                    var removeCart = await _cart.DisableCart(customerId, cookie);
+                }
+                model.OrderNo = HelperFunctions.GenrateOrderNumber(model.Id.ToString());
+                return View(model);
+            }
+            else
+            {
+                return RedirectToAction("Checkout","Orders");
+            }
         }
         [HttpGet]
         public ActionResult PaymentStatusCOD(OrderVM orderVM)
@@ -114,6 +151,44 @@ namespace B2CPortal.Controllers
            var  orderVM = (OrderVM)Session["orderdata"];
             return Json(new { data = orderVM, msg = "", success = true },JsonRequestBehavior.AllowGet);
         }
+        #region Paypal paymemnt method in PaypalPaymentMethodController
+        public ActionResult Paypal()
+        {
+            ViewBag.Amount = Session["ordertotal"];
+            if (ViewBag.Amount <= 0 || ViewBag.Amount == null)
+            {
+                return RedirectToAction("Checkout", "Orders");
+            }
+            return View();
+
+        }
+        [HttpPost]
+        public ActionResult PaypalAsync(Payment payment)
+        {
+
+            ViewBag.error = "";
+            if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()) || HttpContext.Session["UserId"] == null)
+            {
+                return RedirectToAction("Checkout", "Orders");
+            }
+            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
+            var paymentmodel = new PaymentVM
+            {
+                Name = payment.Name,
+                Email = payment.Email,
+                Phone = payment.Phone,
+                Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
+                Amount = (Session["ordertotal"] == null ? 1 : Convert.ToDecimal(Session["ordertotal"]) * 100) < 50 ? 100 : Convert.ToDecimal(Session["ordertotal"]) * 100,
+
+            };
+            dynamic result = _PaymentMethodFacade.CreatePaypalPayment(paymentmodel);
+
+            return View();
+
+        }
+        #endregion
     }
     public class Payment
     {

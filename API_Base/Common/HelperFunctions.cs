@@ -1,7 +1,5 @@
 ﻿using API_Base.PaymentMethod;
-using B2CPortal.Models;
 using Newtonsoft.Json;
-using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -24,6 +22,7 @@ namespace API_Base.Common
         public static string cartguid = "cartguid";
         public static string pricesymbol = "pricesymbol";
         public static string ConversionRate = "ConversionRate";
+        public static string ordermasterId = "ordermasterId";
         //---------------readonly data-----------
         public static string from = "USD";
         public static string to = "PKR";

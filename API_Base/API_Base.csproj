@@ -31,10 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="B2CPortal">
-      <HintPath>..\B2CPortal\bin\B2CPortal.dll</HintPath>
-    </Reference>
-    <Reference Include="B2C_Models">
+    <Reference Include="B2C_Models, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\B2C_Models\bin\Debug\B2C_Models.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -52,6 +50,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="PayPalHttp-Dotnet, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PayPalHttp.1.0.1\lib\netstandard2.0\PayPalHttp-Dotnet.dll</HintPath>
+    </Reference>
     <Reference Include="Stripe.net, Version=39.80.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Stripe.net.39.80.0\lib\net461\Stripe.net.dll</HintPath>
     </Reference>
@@ -67,6 +68,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -106,12 +108,72 @@
     <Compile Include="Common\Connection.cs" />
     <Compile Include="PaymentMethod\Interfaces\IEasyPaisa.cs" />
     <Compile Include="PaymentMethod\Interfaces\IHBL.cs" />
+    <Compile Include="PaymentMethod\Interfaces\IPaypal.cs" />
     <Compile Include="PaymentMethod\Interfaces\IStripe.cs" />
     <Compile Include="PaymentMethod\ResponseViewModel.cs" />
     <Compile Include="PaymentMethod\PaymentVM.cs" />
     <Compile Include="PaymentMethod\PaymentMethodFacade.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\AccessToken.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\AccessTokenRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\RefreshToken.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\RefreshTokenRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PaypalService.cs" />
     <Compile Include="PaymentMethod\Servicees\EasyPaisaService.cs" />
     <Compile Include="PaymentMethod\Servicees\HBLService.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Core\PaypalEnvironment.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Core\PaypalHttpClient.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Core\UserAgent.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Core\Version.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AddressDetails.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AddressPortable.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AmountBreakdown.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AmountWithBreakdown.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\ApplicationContext.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Authorization.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AuthorizationStatusDetails.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\AuthorizeRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Capture.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\CaptureStatusDetails.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Card.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Item.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\LinkDescription.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\LinkSchema.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Media.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\MerchantPayableBreakdown.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\MerchantReceivableBreakdown.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Money.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Name.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\NetAmountBreakdownItem.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Order.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrderActionRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrderCaptureRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrderRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersAuthorizeRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersCaptureRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersCreateRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersGetRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersPatchRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\OrdersValidateRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Patch.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Payee.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PayeeBase.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PayeeDisplayable.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Payer.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PaymentCollection.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PaymentInstruction.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PaymentMethod.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PaymentSource.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Phone.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PhoneWithType.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PurchaseUnit.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\PurchaseUnitRequest.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Refund.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\RefundStatusDetails.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\SellerProtection.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\ShippingDetail.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\ShippingOption.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\TaxInfo.cs" />
+    <Compile Include="PaymentMethod\Servicees\PayPalCheckoutSdk\Orders\Token.cs" />
     <Compile Include="PaymentMethod\Servicees\StripeService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -119,5 +181,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -45,9 +45,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="B2C_Models">
-      <HintPath>..\B2C_Models\bin\Debug\B2C_Models.dll</HintPath>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -60,6 +57,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PayPalHttp-Dotnet, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\PayPalHttp.1.0.1\lib\netstandard2.0\PayPalHttp-Dotnet.dll</HintPath>
     </Reference>
     <Reference Include="Stripe.net, Version=39.80.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Stripe.net.39.80.0\lib\net461\Stripe.net.dll</HintPath>
@@ -75,6 +75,7 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
@@ -161,6 +162,7 @@
     <Compile Include="Controllers\ContactController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
+    <Compile Include="Controllers\PaypalPaymentMethodController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ProductDetailsController.cs" />
@@ -368,6 +370,7 @@
     <Content Include="Content\logos\ey.png" />
     <Content Include="Content\logos\hbl.png" />
     <Content Include="Content\logos\j.png" />
+    <Content Include="Content\logos\paypal.png" />
     <Content Include="Content\logos\stripe.png" />
     <Content Include="Content\toastr.css" />
     <Content Include="Content\toastr.min.css" />
@@ -507,6 +510,8 @@
     <Content Include="Views\Payment\_DownloadPDF.cshtml" />
     <Content Include="Views\Orders\ManagePayment.cshtml" />
     <Content Include="Views\Contact\About.cshtml" />
+    <Content Include="Views\Payment\Paypal.cshtml" />
+    <Content Include="Views\PaypalPaymentMethod\Paypal.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -529,6 +534,10 @@
     <ProjectReference Include="..\API_Base\API_Base.csproj">
       <Project>{dbbcca8c-f0da-471e-814b-9787c0594081}</Project>
       <Name>API_Base</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\B2C_Models\B2C_Models.csproj">
+      <Project>{8889ac82-6264-4455-909a-a1b9121bdcf7}</Project>
+      <Name>B2C_Models</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

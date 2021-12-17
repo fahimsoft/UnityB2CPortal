@@ -61,7 +61,7 @@ namespace B2CPortal.Models
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
         public  ICollection<OrderDetail> OrderDetails { get; set; }
-
+        public string GivenName { get; internal set; }
     }
     public class OrderDetailsViewModel
     {
@@ -120,10 +120,11 @@ namespace B2CPortal.Models
     public enum PaymentType
     {
         Stripe = 1,
-        HBL = 2,
-        JazzCash = 3,
-        EasyPaisa = 4,
-        COD = 5
+        Paypal = 2,
+        HBL = 3,
+        JazzCash = 4,
+        EasyPaisa = 5,
+        COD = 6
     }
     public enum OrderStatus
     {

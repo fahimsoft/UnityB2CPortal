@@ -397,7 +397,7 @@ namespace B2CPortal.Services
                 ||
                 (x.Guid == guid && x.IsWishlist == false && x.IsActive == true))
                 .ToListAsync();
-                if (db != null)
+                if (db != null && db.Count > 0)  
                 {
                     foreach (var item in db)
                     {

@@ -1,53 +1,354 @@
-﻿@model API_Base.PaymentMethod.PaymentVM
+﻿@model B2CPortal.Models.OrderVM
 @{
     ViewBag.Title = "PaymentStatus";
 }
-
 <style>
-    body {
-        text-align: center;
-        padding: 40px 0;
+    .logo-print-screen, .print-line-break {
+        display: none;
     }
 
-    h1 {
-        color: #337ab7;
-        font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-        font-weight: 900;
-        font-size: 40px;
-        margin-bottom: 10px;
-    }
+        .logo-print-screen img {
+            width: 100px !important;
+        }
 
-    .contentdetails {
-        color: #404F5E;
-        font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-        font-size: 20px;
-        margin: 0;
-    }
+    @@media print {
+        /* All your print styles go here */
 
-    .checkmark {
-        color: #337ab7;
-        font-size: 100px;
-        line-height: 200px;
-        margin-left: -15px;
-    }
+        .header-one, footer, .my-print-btn-group {
+            display: none;
+        }
 
-    .card {
-        background: white;
-        padding: 60px;
-        border-radius: 4px;
-        box-shadow: 0 2px 3px #C8D0D8;
-        display: inline-block;
-        margin: 0 auto;
+
+
+        .checkout, .container, #pdfordertable, #pdfordertable table {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+            #pdfordertable table thead > tr th, #pdfordertable table thead > tr td, #pdfordertable table tfoot > tr th, #pdfordertable table tfoot > tr td {
+                /*display: none !important;*/
+                font-weight: bold;
+                background-color: #ccc !important;
+                border-radius: 4px;
+            }
+
+        .print-line-break {
+            width: 100%;
+            display: block;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 1px solid #ccc;
+            float: left;
+        }
+
+        .logo-print-screen {
+            display: block;
+            padding-bottom: 30px;
+        }
+
+            .logo-print-screen > div {
+                width: 50%;
+                float: left;
+                text-align: left;
+            }
+
+                .logo-print-screen > div:last-child {
+                    text-align: right;
+                    padding-top: 40px;
+                }
     }
 </style>
-
-<div class="card">
-        <h1>Payment Successfully Done By @Model.Name!</h1>
-    <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
-       <i class="checkmark">✓</i>
+<!-- pages-title-start -->
+<div class="pages-title section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="pages-title-text text-center">
+                    <h2>@Model.PaymentMode Payment</h2>
+                </div>
+            </div>
+        </div>
     </div>
-    <h1> (<strong class="pricesymbol"> </strong> @Model.Amount )</h1>
-    <p class="contentdetails">We received your purchase request ( <strong class="pricesymbol"> </strong> @Model.Amount) <br /> we'll be in touch shortly!</p>
-    <br />
-    <a class="btn btn-primary" href="@Url.Action("Index","Orders")">Go To Orders</a>
 </div>
+<section class="pages checkout section-padding">
+    <div class="container">
+        <div class="row margin-top" id="pdfordertable">
+            <div class="col-xs-12 col-sm-12">
+                <div class="padding60">
+                    <div class="log-title">
+                        <div class="logo-print-screen">
+                            <div><img width="50px" height="35px" style="width:100px;" src="~/Content/Asset/img/logo-print-screen.PNG" alt="Alternate Text" /></div>
+                            <div>Printed On: @DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")</div>
+                        </div>
+                        <div class="print-line-break">
+
+                        </div>
+                        <div style="clear:both;"></div>
+                        <center>
+                            @*<h2>Congratulation @Model.FirstName !</h2>*@
+                            <h3>Your Order Has Been Placed Successfully !</h3>
+                            <h4>Order # @Model.OrderNo</h4>
+                        </center>
+                    </div>
+                    <div class="cart-form-text pay-details table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <td>Total</td>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @if (Model.orderVMs != null)
+                                {
+                                    foreach (var item in Model.OrderDetails)
+                                    {
+                                        <tr>
+                                            <th>Purchase Items : @item.Price x @item.Quantity (% @item.Discount)  </th>
+                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+                                        </tr>
+                                    }
+                                }
+
+                                <tr>
+                                    <th>Payment Mode</th>
+                                    <td> @Model.PaymentMode</td>
+                                </tr>
+                                <tr>
+                                    <th>Order Subtotal</th>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.SubTotalPrice</td>
+
+                                </tr>
+                                <tr>
+                                    <th>Total Discount</th>
+                                    <td> <strong class="pricesymbol"> </strong> @Model.DiscountAmount </td>
+                                </tr>
+
+                                <tr>
+                                    <th>Shipping and Handing</th>
+                                    <td><strong class="pricesymbol"> </strong>  00.00</td>
+                                </tr>
+                                <tr>
+                                    <th>Vat</th>
+                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Order total</th>
+                                    <td><strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
+                        @*<table>
+                            <thead>
+                                <tr>
+                                    <th colspan="3" style="text-align:center;">Order Billing  Detail </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr>
+                                    <th>Order Date</th>
+                                    <td> @Model.CreatedOn</td>
+                                </tr>
+                                <tr>
+                                    <th>Shipping Address</th>
+                                    <td> @Model.ShippingAddress</td>
+                                </tr>
+                                <tr>
+                                    <th>Billing Address</th>
+                                    <td> @Model.BillingAddress</td>
+                                </tr>
+                                </tbody>
+                        </table>*@
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="my-print-btn-group">
+            <button class="btn btn-primary" id="btnPrint" download> Print </button>
+            <a class="btn btn-primary" href="javascript:generatePDF()">Dowload PDF</a>
+            <a class="btn btn-primary" href="@Url.Action("Index","Orders")">Order History</a>
+
+
+        </div>
+
+    </div>
+</section>
+<!--<div style="margin: 0 !important; padding: 0 !important; ">
+    <div style="display: none; font-size: 1px; color: #fefefe; line-height: 1px; font-family: Open Sans, Helvetica, Arial, sans-serif; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden;">
+        For what reason would it be advisable for me to think about business content? That might be little bit risky to have crew member like them.
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" id="pdfordertable">
+        <tr>
+            <td align="center" style="background-color: #eeeeee;" bgcolor="#eeeeee">
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+                    <tr>
+                        <td valign="top" style=" padding: 35px;" bgcolor="#4b77be">
+                            <div style="display:inline-block; vertical-align:top; width:100%;">
+                                <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr>
+                                        <td valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 36px; font-weight: 800; line-height: 48px;" class="mobile-center">
+                                            <h1 style="text-transform: capitalize; color: #eeeeee; ">@Model.PaymentMode Payment Done</h1>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>-->
+@*<div style="display:inline-block; max-width:50%; min-width:100px; vertical-align:top; width:100%;" class="mobile-hide">
+        <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+            <tr>
+                <td align="right" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 48px; font-weight: 400; line-height: 48px;">
+                    <table cellspacing="0" cellpadding="0" border="0" align="right">
+                        <tr>
+                            <td style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 18px; font-weight: 400; line-height: 24px;"> <a href="@Url.Action("PorductList","Product")" target="_blank" style="color: #ffffff; text-decoration: none;"><img src="https://img.icons8.com/color/48/000000/small-business.png" width="27" height="23" style="display: block; border: 0px;" /></a> </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>*@
+<!--</td>
+                    </tr>
+                    <tr>
+                        <td align="center" style="padding: 35px 35px 20px 35px; background-color: #ffffff;" bgcolor="#ffffff">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+                                <tr>
+                                    <td align="center" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 25px;">
+                                        <img src="https://img.icons8.com/carbon-copy/100/000000/checked-checkbox.png" width="125" height="120" style="display: block; border: 0px;" /><br>
+                                        <h2 style="font-size: 30px; font-weight: 800; line-height: 36px; color: #333333; margin: 0;"> Thank You For Your Order! </h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding-top: 10px;">
+                                        <p style="font-size: 16px; font-weight: 400; line-height: 24px; color: #777777;"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Praesentium iste ipsa numquam odio dolores, nam. </p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding-top: 20px;">
+                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td width="75%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;"> Order Confirmation # </td>
+                                                <td width="25%" align="left" bgcolor="#eeeeee" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px;"> @Model.OrderNo </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;"> Purchased Item (@Model.TotalQuantity) </td>
+                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 15px 10px 5px 10px;"> @Model.SubTotalPrice </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> Total Discount </td>
+                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> @(Model.DiscountAmount == null ? 00 : Model.DiscountAmount)</td>
+                                            </tr>
+
+                                            <tr>
+                                                <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> Shipping + Handling </td>
+                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> 0.00 </td>
+                                            </tr>
+                                            <tr>
+                                                <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> Vat </td>
+                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px; padding: 5px 10px;"> 0.00 </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="left" style="padding-top: 20px;">
+                                        <table cellspacing="0" cellpadding="0" border="0" width="100%">
+                                            <tr>
+                                                <td width="75%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> TOTAL </td>
+                                                <td width="25%" align="left" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 800; line-height: 24px; padding: 10px; border-top: 3px solid #eeeeee; border-bottom: 3px solid #eeeeee;"> <strong class="pricesymbol"> </strong>  @Model.TotalPrice</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" height="100%" valign="top" width="100%" style="padding: 0 35px 35px 35px; background-color: #ffffff;" bgcolor="#ffffff">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:660px;">
+                                <tr>
+                                    <td align="center" valign="top" style="font-size:0;">
+                                        <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
+                                            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+                                                <tr>
+                                                    <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
+                                                        <p style="font-weight: 800;">Delivery Address</p>
+                                                        <p>@Model.ShippingAddress</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div style="display:inline-block; max-width:50%; min-width:240px; vertical-align:top; width:100%;">
+                                            <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:300px;">
+                                                <tr>
+                                                    <td align="left" valign="top" style="font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 400; line-height: 24px;">
+                                                        <p style="font-weight: 800;">Order Date</p>
+                                                        <p>@Model.CreatedOn</p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" style=" padding: 35px; background-color: #ff7361;" bgcolor="#1b9ba3">
+                            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+                                <tr>
+                                    <td align="center" style="padding: 25px 0 15px 0;">
+                                        <table border="0" cellspacing="0" cellpadding="0">
+                                            <tr>
+                                                <td align="center" style="border-radius: 5px;" bgcolor="#66b3b7">
+                                                    <a href="@Url.Action("Index","Orders")" target="_blank" style="font-size: 18px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 5px; background-color: #F44336; padding: 15px 30px; border: 1px solid #F44336; display: block;">Shop Again</a>
+                                                    <button class="btn btn-primary" id="btnPrint" download> Print </button>
+                                                    <button class="btn btn-primary" onclick="javascript:generatePDF()">Dowload PDF</button>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script>
+    function generatePDF() {
+        var doc = new jsPDF();
+        doc.fromHTML(document.getElementById("pdfordertable"), // page element which you want to print as PDF
+            15,
+            10,
+            {
+                'width': 200
+            },
+            function (a) {
+                doc.save("HTML2PDF.pdf");
+            });
+    }
+    $(document).ready(function () {
+        $("#btnPrint").bind("click", function () {
+            window.print();
+            //var divContents = $("#pdfordertable").html();
+            //var printWindow = window.open('', '', 'height=400,width=800');
+            //printWindow.document.write('<html><head><title></title>');
+            //printWindow.document.write('</head><body >');
+            //printWindow.document.write(divContents);
+            //printWindow.document.write('</body></html>');
+            //printWindow.document.close();
+            //printWindow.print();
+            //printWindow.close();
+        });
+    });
+</script>

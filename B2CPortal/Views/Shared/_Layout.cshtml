@@ -436,30 +436,30 @@
             </div>
         </div>
     </div>
-    <input type="hidden" name="name" value="@ViewBag.URL.Authority" id="myurl" />
+    @*<input type="hidden" name="name" value="@ViewBag.URL.Authority" id="myurl" />*@
     @RenderBody()
     @Html.Partial("_Footer")
 
-        <!--cookie Modal -->
-        <!--<div class="modal fade" id="cookiemyModal" role="dialog">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Your privacy</h4>
-                    </div>
-                    <div class="modal-body">
-                        <strong>
-                            By clicking “Accept all cookies”, you agree Stack Exchange can store cookies on your device and disclose information in accordance with our <a target="_blank" href="https://support.google.com/chrome/answer/95617?hl=en">Cookie Policy.</a>
-                        </strong><br />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        <a class="btn btn-primary" target="_blank" href="https://support.google.com/chrome/answer/95617?hl=en">Enable Cookie </a> 
-                    </div>
+    <!--cookie Modal -->
+    <!--<div class="modal fade" id="cookiemyModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Your privacy</h4>
+                </div>
+                <div class="modal-body">
+                    <strong>
+                        By clicking “Accept all cookies”, you agree Stack Exchange can store cookies on your device and disclose information in accordance with our <a target="_blank" href="https://support.google.com/chrome/answer/95617?hl=en">Cookie Policy.</a>
+                    </strong><br />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <a class="btn btn-primary" target="_blank" href="https://support.google.com/chrome/answer/95617?hl=en">Enable Cookie </a>
                 </div>
             </div>
-        </div>-->
+        </div>
+    </div>-->
     <script>
         $(document).ready(function () {
             toastr.options = {
@@ -513,6 +513,7 @@
     <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")"></script>
     <script src="@Url.Content("~/Scripts/Common.js")"></script>
     <script src="~/Scripts/Helper.js"></script>
+
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha512-uto9mlQzrs59VwILcLiRYeLKPPbS/bT71da/OEBYEwcdNUk8jYIy+D176RYoop1Da+f9mvkYrmj5MCLZWEtQuA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />*@
     @Scripts.Render("~/bundles/jquery")

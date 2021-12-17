@@ -1,5 +1,5 @@
 ﻿using API_Base.PaymentMethod;
-using B2CPortal.Models;
+//using B2CPortal.Models;
 using Newtonsoft.Json;
 using Stripe;
 using System;

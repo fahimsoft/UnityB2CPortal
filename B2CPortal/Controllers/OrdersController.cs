@@ -354,12 +354,17 @@ namespace B2CPortal.Controllers
                             //// Remove from cart
                             //HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
                             //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
-                     
+
+                            HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);
 
                             if (Billing.paymenttype == PaymentType.Stripe)
                             {
-                                Session["ordermasterId"] = ordermasterId;
                                 string url = Url.Action("Stripe", "Payment");
+                                return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                            }
+                            else if (Billing.paymenttype == PaymentType.Paypal)
+                            {
+                                string url = Url.Action("Paypal", "PaypalPaymentMethod");
                                 return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                             }
                             else if (Billing.paymenttype == PaymentType.COD)
@@ -368,7 +373,6 @@ namespace B2CPortal.Controllers
                                 var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                                 var removeCart = await _cart.DisableCart(customerId, cookie);
 
-                                Session["ordermasterId"] = ordermasterId;
                                 Session["ordertotal"] = orderVM.OrderTotal;
        
                                 var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
