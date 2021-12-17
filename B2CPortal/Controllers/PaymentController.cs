@@ -78,6 +78,8 @@ namespace B2CPortal.Controllers
                     var ordermodel = await _orders.UpdateOrderMAster(ordervm);
                     ordervm = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
                     ordervm.OrderNo = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
+                    ordervm.DiscountAmount = ordervm.OrderDetails.Sum(x => x.DiscountedPrice);
+                    ordervm.SubTotalPrice = ordervm.OrderDetails.Sum(x => x.Price);
                     // ------------Remove from cart------------
                     var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
