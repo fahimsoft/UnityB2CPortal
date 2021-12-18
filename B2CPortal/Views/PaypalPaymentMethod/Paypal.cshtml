@@ -20,13 +20,72 @@
         </div>
     </div>
 </div>
-<div class="pages contact-page section-padding">
-    <div class="container text-center">
+<section class="pages login-page section-padding">
+    <div class="container">
         <div class="row">
+            <div class="col-sm-3">
+            </div>
+
+            <div class="col-sm-6">
+                <div class="main-input padding60 new-customer">
+                    <div class="log-title">
+                        <h3>
+                            <strong>
+                                Paypal Payment Information
+                                <b style="background-color:antiquewhite"> <br /> (<strong class="pricesymbol"> </strong> @ViewBag.Amount )</b>
+                            </strong>
+                        </h3>
+                    </div>
+                    <div class="custom-input">
+                        <form class="register" action="@Url.Action("StripeAsync","Payment")" method="post" id="payment-form">
+                            <div class="form-group">
+                                <input required class="form-control text-box single-line" id="Name" name="Name" placeholder="Full Name:" type="text" value="">
+                            </div>
+                            <div class="form-group">
+                                <input required class="form-control text-box single-line" id="Phone" name="Phone" placeholder="Phone #:" type="text" value="">
+                            </div>
+                            <div class="form-group">
+                                <input required class="email form-control text-box single-line valid" id="EmailId" name="Email" placeholder="Email Address:" type="text" value="" aria-describedby="EmailId-error" aria-invalid="false">
+                            </div>
+                            <div class="form-group">
+                                
+                                <div id="paypal-button-container"></div>
+                                <div style="color:red" id="errormessage"></div>
+
+                                @*<div id="card-element" class="email form-control text-box single-line valid">
+                                </div>
+                                <div id="card-errors" role="alert"></div>*@
+                            </div>
+                            <div class="submit-text coupon">
+                                @*<button type="submit" value="Submit Payment" class="btn btn-success" id="btnAddSale">Submit Payment </button>*@
+                                <a href="@Url.Action("Checkout","Orders")" class="btn btn-success" id="btnBack">Go Back</a>
+                            </div>
+                            @if (TempData["error"] != null)
+                            {
+                                <div class="form-group" style="background-color: #fde0e5; text-align: center;">
+
+                                    <div class="submit-text coupon">
+                                        <strong> @(TempData["error"] != null ? TempData["error"].ToString() : "")</strong>
+                                    </div>
+                                </div>
+                            }
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+            </div>
+        </div>
+    </div>
+</section>
+<!--<div class="pages contact-page section-padding">
+    <div class="container text-center">
+        <div class="row">-->
             <!-- pages-title-end -->
             <!-- contact content section start -->
             <!-- Set up a container element for the button -->
-            <div id="paypal-button-container"></div>
+            <!--<div id="paypal-button-container"></div>
             <div style="color:red" id="errormessage"></div>
 
         </div>
@@ -34,7 +93,7 @@
     </div>
 
 
-</div>
+</div>-->
 <!-- Include the PayPal JavaScript SDK -->
 
 <script src="https://www.paypal.com/sdk/js?client-id=AXvAhr8mO93ZzIkj8chLQYzC-pcblG-tnIyZYNMT2iAHh98QZHP__mfFMkMIVL-z1jIAf4fNS-xsJBA_&disable-funding=credit"></script>

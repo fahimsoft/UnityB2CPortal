@@ -27,6 +27,11 @@ namespace B2CPortal.Controllers
         public ActionResult Paypal()
         {
             ViewBag.ClientId = PayPalClient.ClientId;
+            ViewBag.Amount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+            if (string.IsNullOrEmpty(ViewBag.Amount))
+            {
+                return RedirectToAction("Checkout", "Orders");
+            }
             //ViewBag.CurrencyCode = "GBP"; // Get from a data store
             //ViewBag.CurrencySign = "£";   // Get from a data store
 

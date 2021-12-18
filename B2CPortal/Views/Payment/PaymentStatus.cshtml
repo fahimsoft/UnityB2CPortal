@@ -71,7 +71,7 @@
         </div>
     </div>
 </div>
-<section class="pages checkout section-padding">
+<section class="pages checkout">
     <div class="container">
         <div class="row margin-top" id="pdfordertable">
             <div class="col-xs-12 col-sm-12">
@@ -86,8 +86,9 @@
                         </div>
                         <div style="clear:both;"></div>
                         <center>
-                            @*<h2>Congratulation @Model.FirstName !</h2>*@
-                            <h3>Your Order Has Been Placed Successfully !</h3>
+                            @*<h2>Congratulation @Model.FirstName !</h2>
+                                *@
+                            <h3>Your Order Has Been Placed Successfully  </h3>
                             <h4>Order # @Model.OrderNo</h4>
                         </center>
                     </div>
@@ -126,7 +127,6 @@
                                     <th>Total Discount</th>
                                     <td> <strong class="pricesymbol"> </strong> @Model.DiscountAmount </td>
                                 </tr>
-
                                 <tr>
                                     <th>Shipping and Handing</th>
                                     <td><strong class="pricesymbol"> </strong>  00.00</td>

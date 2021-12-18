@@ -28,8 +28,8 @@ namespace B2CPortal.Controllers
 
         public ActionResult Stripe()
         {
-            ViewBag.Amount = Session["ordertotal"];
-            if (ViewBag.Amount <= 0 || ViewBag.Amount == null)
+            ViewBag.Amount =  HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+            if (string.IsNullOrEmpty(ViewBag.Amount))
             {
                 return RedirectToAction("Checkout", "Orders");
             }
@@ -43,7 +43,10 @@ namespace B2CPortal.Controllers
             try
             {
                 ViewBag.error = "";
-                if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()) || HttpContext.Session["UserId"] == null)
+               string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+               string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+
+                if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || HttpContext.Session["UserId"] == null)
                 {
                     return RedirectToAction("Checkout", "Orders");
                 }
@@ -57,7 +60,8 @@ namespace B2CPortal.Controllers
                     Phone = payment.Phone,
                     Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
                     StripeToken = stripeToken,
-                    Amount = (Session["ordertotal"] == null ? 1 : Convert.ToDecimal(Session["ordertotal"]) * 100) < 50 ? 100 : Convert.ToDecimal(Session["ordertotal"]) * 100,
+                    //Amount = Convert.ToDecimal(OrderTotalAmount) * 100 < 50 ? 100 : Convert.ToDecimal(OrderTotalAmount) * 100,
+                    Amount = Convert.ToDecimal(OrderTotalAmount),
 
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
@@ -67,12 +71,12 @@ namespace B2CPortal.Controllers
                 {
                     var ordervm = new OrderVM
                     {
-                        Id = Convert.ToInt32(Session["ordermasterId"]?.ToString()),
+                        Id = Convert.ToInt32(ordermasterId),
                         Currency =currency,
                         ConversionRate = conversionvalue,
                         PaymentMode = PaymentType.Stripe.ToString(),
                         Status = OrderStatus.Confirmed.ToString(),
-                        TotalPrice = Convert.ToDecimal(Session["ordertotal"]),
+                        TotalPrice = Convert.ToDecimal(OrderTotalAmount),
                         PaymentStatus = true,
                     };
                     var ordermodel = await _orders.UpdateOrderMAster(ordervm);
@@ -84,7 +88,7 @@ namespace B2CPortal.Controllers
                     var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                     var removeCart = await _cart.DisableCart(customerId, cookie);
-                    return RedirectToAction("PaymentStatus", ordervm);
+                    return RedirectToAction("PaymentStatus");
                 }
                 else
                 {
@@ -156,7 +160,6 @@ namespace B2CPortal.Controllers
         #region Paypal paymemnt method in PaypalPaymentMethodController
         public ActionResult Paypal()
         {
-            ViewBag.Amount = Session["ordertotal"];
             if (ViewBag.Amount <= 0 || ViewBag.Amount == null)
             {
                 return RedirectToAction("Checkout", "Orders");
@@ -168,8 +171,12 @@ namespace B2CPortal.Controllers
         public ActionResult PaypalAsync(Payment payment)
         {
 
+            string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+            string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+
+
             ViewBag.error = "";
-            if (string.IsNullOrEmpty(Session["ordertotal"]?.ToString()) || string.IsNullOrEmpty(Session["ordermasterId"]?.ToString()) || HttpContext.Session["UserId"] == null)
+            if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || HttpContext.Session["UserId"] == null)
             {
                 return RedirectToAction("Checkout", "Orders");
             }
@@ -182,8 +189,7 @@ namespace B2CPortal.Controllers
                 Email = payment.Email,
                 Phone = payment.Phone,
                 Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
-                Amount = (Session["ordertotal"] == null ? 1 : Convert.ToDecimal(Session["ordertotal"]) * 100) < 50 ? 100 : Convert.ToDecimal(Session["ordertotal"]) * 100,
-
+                Amount = Convert.ToDecimal(OrderTotalAmount),
             };
             dynamic result = _PaymentMethodFacade.CreatePaypalPayment(paymentmodel);
 

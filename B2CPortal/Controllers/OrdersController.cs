@@ -80,7 +80,7 @@ namespace B2CPortal.Controllers
 
             try
             {
-                
+
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 List<OrderVM> list = new List<OrderVM>();
                 if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
@@ -124,6 +124,7 @@ namespace B2CPortal.Controllers
             {
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
                 OrderVM orderVM = new OrderVM();
                 List<OrderVM> orderVMs = new List<OrderVM>();
                 decimal OrderTotal = 0;
@@ -181,7 +182,8 @@ namespace B2CPortal.Controllers
                             orderVM.OrderTotal = OrderTotal;
                             orderVM.Currency = currency;
 
-                            Session["ordertotal"] = OrderTotal;
+                            HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, OrderTotal.ToString(), true);
+
                         }
                         return View(orderVM);
                     }
@@ -218,7 +220,7 @@ namespace B2CPortal.Controllers
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-            if (Session["UserId"] != null)
+                if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     //------------existing order remove-----------------
@@ -232,7 +234,7 @@ namespace B2CPortal.Controllers
                         // Billing Details Add
                         Billing.FK_Customer = customerId;
                         var cartlist = await _cart.GetCartProducts("", customerId);
-                        if (cartlist != null)
+                        if (cartlist != null && cartlist.Count() > 0)
                         {
                             foreach (var item in cartlist)
                             {
@@ -276,11 +278,10 @@ namespace B2CPortal.Controllers
                             Billing.OrderDescription = "order has been genrated successfully";//Billing.OrderDescription;
                         }
                         // Insert order Master
-                        
-                        var orderresult = Billing.TotalQuantity <= 0 ? null :  await _orders.CreateOrder(Billing);
+
+                        var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
                         if (orderresult != null)
                         {
-
                             // Insert order Detail
                             var ordermasterId = orderresult.Id;
                             var orderNo = orderresult.OrderNo;
@@ -356,6 +357,7 @@ namespace B2CPortal.Controllers
                             //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
 
                             HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);
+                            HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, Billing.OrderTotal.ToString(), true);
 
                             if (Billing.paymenttype == PaymentType.Stripe)
                             {
@@ -372,9 +374,6 @@ namespace B2CPortal.Controllers
                                 //-------------remvoe from cart-------------
                                 var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                                 var removeCart = await _cart.DisableCart(customerId, cookie);
-
-                                Session["ordertotal"] = orderVM.OrderTotal;
-       
                                 var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
                                 Billing.OrderNo = result;
                                 Session["orderdata"] = Billing;
@@ -388,7 +387,7 @@ namespace B2CPortal.Controllers
                         }
                         else
                         {
-                            return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false}, JsonRequestBehavior.AllowGet);
+                            return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
                         }
                     }
                     else
@@ -480,19 +479,21 @@ namespace B2CPortal.Controllers
                         Billing.ShippingAddress = Billing.ShippingAddress;
                         Billing.OrderDescription = "order has been genrated successfully";
 
+                        HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordervm.Id.ToString(), true);
+                        HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, orderVM.OrderTotal.ToString(), true);
 
                         if (Billing.paymenttype == PaymentType.Stripe)
                         {
-                            Session["ordermasterId"] = ordervm.Id;
                             string url = Url.Action("Stripe", "Payment");
+                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                        }
+                        if (Billing.paymenttype == PaymentType.Paypal)
+                        {
+                            string url = Url.Action("Paypal", "PaypalPaymentMethod");
                             return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                         }
                         else if (Billing.paymenttype == PaymentType.COD)
                         {
-
-                            Session["ordermasterId"] = ordervm.Id;
-                            Session["ordertotal"] = orderVM.OrderTotal;
-
                             var result = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
                             Billing.OrderNo = result;
                             Session["orderdata"] = Billing;
@@ -580,18 +581,17 @@ namespace B2CPortal.Controllers
                                 ordertoal += discountedprice;
                             }
                             orderVM.TotalPrice = ordertoal;
-                            Session["ordertotal"] = orderVM.TotalPrice;
                             orderVM.Currency = currency;
                             orderVM.ConversionRate = conversionvalue;
                             orderVM.Id = id;
                             var orderresult = await _orders.UpdateOrderMAster(orderVM);
-
+                            HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, orderVM.TotalPrice.ToString(), true);
                             orderVM.OrderDetailsViewModels = orderDetailsVM;
                             return View(orderVM);
                         }
                         else
                         {
-                            return RedirectToAction("Index") ;
+                            return RedirectToAction("Index");
                         }
 
                     }

@@ -23,6 +23,7 @@ namespace API_Base.Common
         public static string pricesymbol = "pricesymbol";
         public static string ConversionRate = "ConversionRate";
         public static string ordermasterId = "ordermasterId";
+        public static string OrderTotalAmount = "OrderTotalAmount";
         //---------------readonly data-----------
         public static string from = "USD";
         public static string to = "PKR";
