@@ -79,10 +79,22 @@
     <Compile Include="Models\customer.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\GetProductRating_Result.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\OrderDetail.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\OrderDetailLog.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\OrderMaster.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrderMasterLog.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\OrderTransection.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductBrand.cs">
@@ -104,6 +116,12 @@
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\ProductVariant.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\sp_helpdiagrams_Result.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\sysdiagram.cs">

@@ -284,23 +284,13 @@
 
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
-            debugger
-
-
-
             var userinput = $('.email').val();
             var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
-
-
-
             if (!pattern.test(userinput)) {
                 toastr.error('not a valid e-mail address');
                 alert('not a valid e-mail address');
             } else {
                 email = $('.email').val();
-
-
-
                 let emailOrgName = "/Account/uniqueEmailCheck?email=" + email;
                 var Email = $('.email').val();
                 // alert(Email);
@@ -317,9 +307,6 @@
                             toastr.error(data.msg);
                             $('#btnAddSale').attr('disabled', true);
                         }
-
-
-
                     },
                     async: false
                 });
@@ -329,11 +316,6 @@
 
             e.preventDefault();
             var form = $("#register");
-
-
-
-
-
             var datatosend = {
                 customer: {
                     /* idx: $('#idx').val(),*/
@@ -359,9 +341,6 @@
                     contentType: 'application/json',
                     dataType: 'json',
                     success: function (data) {
-                        debugger
-                        // alert(data);
-                        console.log(data);
                         if (data.success == true) {
                             toastr.success("Registered successfully.");
                             window.location.href = "/Account/Login";
@@ -404,10 +383,7 @@
         $('#loginbtn').click(function (e) {
             e.preventDefault();
             var form = $("#login");
-
-
-
-
+            document.getElementsByClassName("loader-container")[0].style.display = "block";
 
             $.validator.unobtrusive.parse(form);
             if ($(form).valid()) {
@@ -418,7 +394,7 @@
                     //cache : false,
                     //processData: false,
                     success: function (data) {
-                        debugger
+                        document.getElementsByClassName("loader-container")[0].style.display = "none";
                         if (data.success == true /*&& res.count > 0*/) {
                             toastr.success("Login successfully.");
                             window.location = data.data;

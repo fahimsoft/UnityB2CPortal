@@ -70,7 +70,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.qtybuttonquickview', function () {
-        debugger
+        
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
@@ -282,10 +282,7 @@ function ShowCartProducts() {
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             document.getElementsByClassName("loader-container")[0].style.display = "none";
-
-
-
-            //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
+            
         }
     });
 }
@@ -327,7 +324,7 @@ function RemoveCartProduct(id) {
     });
 }
 function HandleAddtocart(id) {
-    debugger
+    
     var proid = $(id).attr("productIdList");
     var quentity = $('#quentityvalue').val();
     $.ajax({
@@ -623,17 +620,8 @@ ${htmlProductList}
     });
 }
 function LoadQuickViewWithRating(elem) {
-
-
-
-
-
+    
     var Id = elem.id;
-
-
-
-
-
     $.ajax({
         url: '/Product/GetProductbyIdWithRating?Id=' + Id + '',
         type: "GET",
@@ -796,8 +784,8 @@ ${htmlProductSize}
 <strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"><span class="numbers"> ${productPrice * (1 - (productDiscount / 100))}</span></labal></strong>
 </div>
 <div class="list-btn">
-<a onclick="HandleAddtocart(this)" productIdList=${item.Id} >add to cart</a>
-<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id} >wishlist</a>
+<a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item[0].Id} >wishlist</a>
 
 
 
@@ -1659,23 +1647,16 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                        <p>( ${item[0].TotalRating} Rating )</p>
 
                         ${htlmRating}
-             
                        </div>
-                       <h5><del><strong class="pricesymbol"></strong>${productPrice}</del> <labal style="color:#999"> ${productDiscount}% </labal> <strong class="pricesymbol"></strong><b id="discoountedprice">${productPrice * (1 - (productDiscount / 100))} </h5>
-                       <p>${item[0].LongDescription}</p>
+                       <h5><del><strong class="pricesymbol"></strong> ${productPrice}</del> <labal style="color:#999"> ${productDiscount}% </labal> <strong class="pricesymbol"></strong> <b id="discoountedprice">${productPrice * (1 - (productDiscount / 100))} </h5>
                        <div class="all-choose">
-                       <div class="s-shoose"> </div>
-                       <div class="s-shoose">
-                       <h5>size</h5> <div class="size-drop">
-                       <h5> ${htmlProductSize}</h5> </div>
-                       </div>
                        </div>
                                    <div class="plus-minus">
                                    <a class="dec qtybuttonquickview qtybutton">-</a>
                                    <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
-                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong>. <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))}</labal></strong>
+                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong> <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))} </labal> </strong>
 
                        <div class="list-btn">
                        <a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>
@@ -1703,6 +1684,8 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                        </div>
                        `;
                 $('#quick-view').html(html);
+                var symbolvalue = GetCookieByName(pricesymbol);
+                $('.pricesymbol').text(symbolvalue);
             },
             error: function (errorMessage) {
                 alert(errorMessage.responseText);
@@ -1820,7 +1803,7 @@ function GetProductRating(rating) {
 }
 
 function GetfilterListDummy() {
-    debugger
+    
     //Updated 9-Dec-
     var slides = document.getElementsByClassName("filter");
     let filterList_Dummy = [];

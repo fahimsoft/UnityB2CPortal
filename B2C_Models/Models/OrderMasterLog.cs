@@ -12,16 +12,8 @@ namespace B2C_Models.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class OrderMaster
+    public partial class OrderMasterLog
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public OrderMaster()
-        {
-            this.OrderDetails = new HashSet<OrderDetail>();
-            this.OrderDetailLogs = new HashSet<OrderDetailLog>();
-            this.OrderTransections = new HashSet<OrderTransection>();
-        }
-    
         public int Id { get; set; }
         public string OrderDescription { get; set; }
         public Nullable<int> TotalQuantity { get; set; }
@@ -48,13 +40,8 @@ namespace B2C_Models.Models
         public string PaymentMode { get; set; }
         public Nullable<bool> PaymentStatus { get; set; }
         public Nullable<bool> IsPriceChanged { get; set; }
+        public Nullable<System.DateTime> LogDate { get; set; }
     
         public virtual customer customer { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderDetailLog> OrderDetailLogs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<OrderTransection> OrderTransections { get; set; }
     }
 }

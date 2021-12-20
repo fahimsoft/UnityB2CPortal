@@ -22,6 +22,7 @@ namespace B2C_Models.Models
             this.CommentAndRatings = new HashSet<CommentAndRating>();
             this.Carts = new HashSet<Cart>();
             this.OrderDetails = new HashSet<OrderDetail>();
+            this.OrderDetailLogs = new HashSet<OrderDetailLog>();
         }
     
         public int Id { get; set; }
@@ -54,5 +55,7 @@ namespace B2C_Models.Models
         public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderDetailLog> OrderDetailLogs { get; set; }
     }
 }

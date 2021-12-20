@@ -148,7 +148,7 @@
                     if (orderData.debug_id) msg += ' (' + orderData.debug_id + ')';
                     return alert(msg); // Show a failure message (try to avoid alerts in production environments)
                 }
-                debugger
+                
                 // Successful capture! For demo purposes:
                 console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
                 //var transaction = orderData.purchase_units[0].payments.captures[0];

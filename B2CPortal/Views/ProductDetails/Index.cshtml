@@ -139,16 +139,10 @@
         let CurrentProductId = localStorage.getItem('CurrentProductId');
         if (CurrentProductId != GetProductIdFromURL()) {
 
-
-
             localStorage.removeItem('CurrentProductId');
             localStorage.removeItem('CommentSection');
         }
-
-
-
-
-        
+  
         let commentArray = [];
         let commentStorage = localStorage.getItem('CommentSection');
 

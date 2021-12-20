@@ -5,13 +5,10 @@ using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 
 namespace B2CPortal.Controllers
 {
@@ -342,9 +339,6 @@ namespace B2CPortal.Controllers
             try
             {
                 var obj = await _IProductMaster.GetProductByIdWithRating(Id);
-
-
-
                 return SuccessResponse(obj);
             }
             catch (Exception Ex)

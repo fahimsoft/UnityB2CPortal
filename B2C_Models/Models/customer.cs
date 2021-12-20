@@ -19,6 +19,8 @@ namespace B2C_Models.Models
         {
             this.Carts = new HashSet<Cart>();
             this.OrderMasters = new HashSet<OrderMaster>();
+            this.OrderMasterLogs = new HashSet<OrderMasterLog>();
+            this.OrderTransections = new HashSet<OrderTransection>();
         }
     
         public int Id { get; set; }
@@ -46,5 +48,9 @@ namespace B2C_Models.Models
         public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderMaster> OrderMasters { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderMasterLog> OrderMasterLogs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<OrderTransection> OrderTransections { get; set; }
     }
 }

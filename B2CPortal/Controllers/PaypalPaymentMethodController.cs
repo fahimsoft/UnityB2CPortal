@@ -161,11 +161,11 @@ namespace B2CPortal.Controllers
                 AmountWithBreakdown amount = result.PurchaseUnits[0].AmountWithBreakdown;
                 Console.WriteLine("Buyer:");
                 //Console.WriteLine("\tEmail Address: {0}\n\tName: {1}\n\tPhone Number: {2}{3}", result.Payer.Email, result.Payer.Name.FullName, result.Payer.PhoneWithType.PhoneType, result.Payer.PhoneWithType.PhoneNumber);
-                var ordermodel = await GetOrder(result.Id);
+               // var ordermodel = await GetOrder(result.Id);
 
 
                 //return RedirectToAction("PaymentStatus", "Payment",);
-                return Json(ordermodel);
+                return Json(result);
             }
             catch (Exception ex)
             {

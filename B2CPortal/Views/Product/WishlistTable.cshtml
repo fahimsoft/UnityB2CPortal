@@ -28,50 +28,50 @@
                             {
                                 foreach (var item in Model)
                                 {
-                            <tr data-id="@item.Id">
+                                    <tr data-id="@item.Id">
 
-                                <td class="td-img text-left">
-                                    <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
-                                    <div class="items-dsc">
-                                        <h5><a href="#">@item.Name</a></h5>
-                                    </div>
-                                </td>
-                                <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
-                                <td>@item.Price</td>
+                                        <td class="td-img text-left">
+                                            <a href="#"><img src=@item.MasterImageUrl alt="Add Product" /></a>
+                                            <div class="items-dsc">
+                                                <h5><a href="#">@item.Name</a></h5>
+                                            </div>
+                                        </td>
+                                        <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
+                                        <td>@item.Price</td>
 
-                                <td>
-                                    <div class="plus-minus">
-                                        <a class="dec qtybutton">-</a>
-                                        <input type="number" value="@item.TotalQuantity" name="qtybutton" class="plus-minus-box">
-                                        <a class="inc qtybutton">+</a>
-                                    </div>
-                                </td>
+                                        <td>
+                                            <div class="plus-minus">
+                                                <a class="dec qtybutton">-</a>
+                                                <input type="number" value="@item.TotalQuantity" name="qtybutton" class="plus-minus-box">
+                                                <a class="inc qtybutton">+</a>
+                                            </div>
+                                        </td>
 
-                                <td class="totalpricecol">
-                                    <del> @item.ActualPrice   </del>
-                                </td>
+                                        <td class="totalpricecol">
+                                            <del> @item.ActualPrice   </del>
+                                        </td>
 
-                                <td class="totalpricecol">
-                                     @item.DiscountAmount
+                                        <td class="totalpricecol">
+                                            @item.DiscountAmount
 
-                                </td>
+                                        </td>
 
 
-                                <td><strong> @item.TotalPrice </strong></td>
+                                        <td><strong> @item.TotalPrice </strong></td>
 
-                                <td style="display:none">@item.FK_ProductMaster</td>
+                                        <td style="display:none">@item.FK_ProductMaster</td>
 
-                                <td style="display:none">@item.Id</td>
-                                <td>
+                                        <td style="display:none">@item.Id</td>
+                                        <td>
 
-                                    <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
-                                    @*<a href="cart.html">Add to cart</a>*@
+                                            <button type="button" class="addtocart btn btn-success" value="@item.Id" id="addtocart">Add To Cart</button>
+                                            @*<a href="cart.html">Add to cart</a>*@
 
-                                </td>
-                                @*<td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>*@
-                                <td><i class="mdi mdi-close delete" title="Remove this product"></i></td>
+                                        </td>
+                                        @*<td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>*@
+                                        <td><i id="delete" class="mdi mdi-close delete" title="Remove this product"></i></td>
 
-                            </tr>
+                                    </tr>
                                 }
                             }
                             else
@@ -153,7 +153,7 @@
     // Add To Cart Update button
     $(".addtocart").click(function () {
 
-
+        document.getElementsByClassName("loader-container")[0].style.display = "block";
         var datatosend;
         var $row = $(this).closest("tr"),
             $tds = $row.find("td:nth-child(2)");
@@ -183,7 +183,8 @@
             //contentType: 'application/json',
             //dataType: 'json',
             success: function (data) {
-                console.log(data);
+                document.getElementsByClassName("loader-container")[0].style.display = "none";
+        
                 if (data.success) {
                     toastr.success(data.msg);
                 }
@@ -191,7 +192,7 @@
                     toastr.error(data.msg);
                 }
                 $($row).remove();
-        $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+                $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")');
 
             },
             failure: function (data) {
@@ -205,7 +206,7 @@
     });
 
     // Remove from Wishlist
-    $(".delete").click(function () {
+    $("#delete").click(function () {
 
         //var id;
         //var $row = $(this).closest("tr"),        // Finds the closest row <tr>
@@ -257,7 +258,7 @@
     });
 
     // Update Wishlist
-     $("#updatewishlist").click(function () {
+    $("#updatewishlist").click(function () {
 
         var wishlistids = [];
         var wishlistquentites = [];
@@ -267,7 +268,7 @@
         //$('#myTable').on('click', 'tbody tr', function (event, it) {
         //    console.log(it.length);
         //});
-         var tb = $("#wishList tbody");//.closest("tr");
+        var tb = $("#wishList tbody");//.closest("tr");
         var size = tb.find("tr").length;
         tb.find("tr").each(function (index, element) {
             wishlistids.push(element.dataset["id"]);
@@ -277,8 +278,8 @@
                 }
             });
         });
-         console.log("Number of rows : " + wishlistquentites);
-         console.log("Number of  : " + wishlistids);
+        console.log("Number of rows : " + wishlistquentites);
+        console.log("Number of  : " + wishlistids);
         $.ajax({
             type: "POST",
             url: '@Url.Action("UpdateWishList", "Product")', //"/Product/DeleteCart",
@@ -294,10 +295,10 @@
                     toastr.error(data.msg);
 
                 }
-        $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
+                $("#WishlistTable").load('@Url.Action("WishlistTable", "Product")')
 
             }
         });
-     });
+    });
 
 </script>
