@@ -394,9 +394,6 @@
 
             }
         });
-
-
-
         $('#order').click(function () {
             $(this).attr('disabled', 'disabled');
 
@@ -446,7 +443,15 @@
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
+                debugger
                 var form = $("#billing");
+                //work for shipping detils.
+                var shippingdetails = {};
+                if ($('.myClass').css('display') != 'none') {
+                    var shippingdata = $("#shipping").serializeArray();
+                    shippingdetails =  FormDataToObject(shippingdata);
+                }
+
                 var datatosend = {
                     Billing: {
                         /*Id: $('#Id').val(),*/
@@ -456,10 +461,11 @@
                         City: $('#City').val(),
                         BillingAddress: $('#Address').val(),
                         ShippingAddress: $('.SAddress').val(),
-                        PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
-                    }
+                        PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
+                            shippingdetails : shippingdetails
+                        }
                 }
-
+       
                 document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
                 $.validator.unobtrusive.parse($(this));//add the form validation

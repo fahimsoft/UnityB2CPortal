@@ -21,11 +21,13 @@ namespace B2CPortal.Controllers
         private readonly IOrders _orders = null;
         private readonly IOrderDetail _ordersDetail = null;
         private readonly IProductMaster _IProductMaster = null;
+        private readonly IShippingDetails _IShippingDetails = null;
         private readonly ICart _cart = null;
         private readonly PaymentMethodFacade _paymentMethodFacade = null;
 
-        public OrdersController(PaymentMethodFacade paymentMethodFacade, IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
+        public OrdersController(IShippingDetails shippingDetails ,PaymentMethodFacade paymentMethodFacade, IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
         {
+            _IShippingDetails = shippingDetails;
             _IProductMaster = productMaster;
             _paymentMethodFacade = new PaymentMethodFacade();
             _cart = cart;
@@ -231,11 +233,25 @@ namespace B2CPortal.Controllers
                     }
                     if (customerId > 0)
                     {
+                       var shippingmodel = new ShippingDetail();
                         // Billing Details Add
                         Billing.FK_Customer = customerId;
                         var cartlist = await _cart.GetCartProducts("", customerId);
                         if (cartlist != null && cartlist.Count() > 0)
                         {
+                            //for shipping address table..
+                            if (Billing.shippingdetails != null)
+                            {
+                                shippingmodel.FirstName = Billing.shippingdetails.FirstName;
+                                shippingmodel.LastName = Billing.shippingdetails.LastName;
+                                shippingmodel.City = Billing.shippingdetails.City;
+                                shippingmodel.Country = Billing.shippingdetails.Country;
+                                shippingmodel.EmailId = Billing.shippingdetails.EmailId;
+                                shippingmodel.PhoneNo = Billing.shippingdetails.PhoneNo;
+                                shippingmodel.Address = Billing.shippingdetails.Address;
+                            };
+                            shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
+                        
                             foreach (var item in cartlist)
                             {
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
@@ -275,6 +291,8 @@ namespace B2CPortal.Controllers
                             Billing.Country = Billing.Country;
                             Billing.City = Billing.City;
                             Billing.ShippingAddress = Billing.ShippingAddress;
+                        Billing.FK_ShippingDetails = shippingmodel.Id;
+                        Billing.IsShipping = Billing.shippingdetails == null ? false : true;
                             Billing.OrderDescription = "order has been genrated successfully";//Billing.OrderDescription;
                         }
                         // Insert order Master

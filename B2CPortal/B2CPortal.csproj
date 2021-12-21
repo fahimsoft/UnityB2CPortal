@@ -171,6 +171,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Interfaces\IShippingDetails.cs" />
     <Compile Include="Interfaces\IOrderTransection.cs" />
     <Compile Include="Interfaces\IAccount.cs" />
     <Compile Include="Interfaces\ICart.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Models\OrderVM.cs" />
     <Compile Include="Models\ProductsVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ShippingDetailsService.cs" />
     <Compile Include="Services\OrderTransectionService.cs" />
     <Compile Include="Services\AccountServices.cs" />
     <Compile Include="Services\CartService.cs" />

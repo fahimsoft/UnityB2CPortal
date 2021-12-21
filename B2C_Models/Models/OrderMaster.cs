@@ -47,13 +47,16 @@ namespace B2C_Models.Models
         public Nullable<decimal> ConversionRate { get; set; }
         public string PaymentMode { get; set; }
         public Nullable<bool> PaymentStatus { get; set; }
-        public Nullable<bool> IsPriceChanged { get; set; }
+        public bool IsPriceChanged { get; set; }
+        public bool IsShipping { get; set; }
+        public Nullable<int> FK_ShippingDetails { get; set; }
     
         public virtual customer customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetailLog> OrderDetailLogs { get; set; }
+        public virtual ShippingDetail ShippingDetail { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderTransection> OrderTransections { get; set; }
     }

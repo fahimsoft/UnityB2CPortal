@@ -21,6 +21,10 @@ namespace B2C_Models.Models
         public bool IsActive { get; set; }
         public string StripePaymentID { get; set; }
         public string PaypalPaymentID { get; set; }
+        public Nullable<System.DateTime> CreatedOn { get; set; }
+        public string CreatedBy { get; set; }
+        public Nullable<System.DateTime> ModifiedOn { get; set; }
+        public string ModifiedBy { get; set; }
     
         public virtual customer customer { get; set; }
         public virtual OrderMaster OrderMaster { get; set; }

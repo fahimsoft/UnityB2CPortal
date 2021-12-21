@@ -651,7 +651,7 @@ function LoadQuickViewWithRating(elem) {
             });
 
             for (i = 0; i <= item.length; i++) {
-
+                debugger
                 if (item[0].ImageUrl2[i] != undefined) {
                     if (i == 1) {
                         htmlProductDetail += `<li class="detail-image active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[0].ImageUrl2[i]}" alt="quick view" /> </a></li>`;

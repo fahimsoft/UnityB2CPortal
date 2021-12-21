@@ -118,6 +118,9 @@
     <Compile Include="Models\ProductVariant.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ShippingDetail.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\sp_helpdiagramdefinition_Result.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>

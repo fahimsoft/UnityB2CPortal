@@ -25,6 +25,7 @@ namespace B2CPortal
             container.RegisterType<ICart, CartService>();
             container.RegisterType<IOrders, OrderServices>();
             container.RegisterType<IOrderDetail, OrderDetailServices>();
+            container.RegisterType<IShippingDetails, ShippingDetailsService>();
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }

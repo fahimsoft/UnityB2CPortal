@@ -61,7 +61,10 @@ namespace B2CPortal.Models
         public decimal? SubTotalPrice { get; internal set; }
         public decimal? DiscountAmount { get; internal set; }
         public  ICollection<OrderDetail> OrderDetails { get; set; }
+        public  ShippingDetail shippingdetails { get; set; }
         public string GivenName { get; internal set; }
+        public bool IsShipping { get; internal set; }
+        public int FK_ShippingDetails { get; internal set; }
     }
     public class OrderDetailsViewModel
     {
