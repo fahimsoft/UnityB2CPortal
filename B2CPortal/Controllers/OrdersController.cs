@@ -253,7 +253,7 @@ namespace B2CPortal.Controllers
                                 shippingmodel.IsActive = true;
                                 shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
                             }
-                        
+
                             foreach (var item in cartlist)
                             {
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
@@ -293,56 +293,55 @@ namespace B2CPortal.Controllers
                             Billing.Country = Billing.Country;
                             Billing.City = Billing.City;
                             Billing.ShippingAddress = Billing.ShippingAddress;
-                        Billing.FK_ShippingDetails = shippingmodel.Id;
-                        Billing.IsShipping = Billing.shippingdetails == null ? false : true;
+                            Billing.FK_ShippingDetails = shippingmodel.Id;
+                            Billing.IsShipping = Billing.shippingdetails == null ? false : true;
                             Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
-                        }
-                        // Insert order Master
+                            var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
+                            // Insert order Master
 
-                        var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
-                        if (orderresult != null)
-                        {
-                            // Insert order Detail
-                            var ordermasterId = orderresult.Id;
-                            var orderNo = orderresult.OrderNo;
-                            if (cartlist != null)
+                            if (orderresult != null)
                             {
-                                foreach (var item in cartlist)
+                                // Insert order Detail
+                                var ordermasterId = orderresult.Id;
+                                var orderNo = orderresult.OrderNo;
+                                if (cartlist != null)
                                 {
-                                    var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-                                    var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                                    var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                    var ActualPrice = (decimal)(price * item.Quantity);
-
-                                    OrderTotal = (int)(OrderTotal + item.TotalPrice);
-                                    subTotal = (int)(subTotal + ActualPrice);
-                                    tQuantity = (int)(tQuantity + item.Quantity);
-                                    var Order = new OrderVM
+                                    foreach (var item in cartlist)
                                     {
-                                        FK_OrderMaster = ordermasterId,
-                                        FK_ProductMaster = item.FK_ProductMaster,
-                                        SubTotalPrice = discountedprice,
-                                        DiscountAmount = totalDiscountAmount,
-                                        Price = price,
-                                        Discount = discount,
-                                        Quantity = item.Quantity,
-                                        FK_Customer = customerId,
-                                        ConversionRate = conversionvalue,
-                                        Currency = currency,
+                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                                        var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                                        var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                        var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                                        var ActualPrice = (decimal)(price * item.Quantity);
 
-                                    };
-                                    var response = await _ordersDetail.CreateOrderDetail(Order);
+                                        OrderTotal = (int)(OrderTotal + item.TotalPrice);
+                                        subTotal = (int)(subTotal + ActualPrice);
+                                        tQuantity = (int)(tQuantity + item.Quantity);
+                                        var Order = new OrderVM
+                                        {
+                                            FK_OrderMaster = ordermasterId,
+                                            FK_ProductMaster = item.FK_ProductMaster,
+                                            SubTotalPrice = discountedprice,
+                                            DiscountAmount = totalDiscountAmount,
+                                            Price = price,
+                                            Discount = discount,
+                                            Quantity = item.Quantity,
+                                            FK_Customer = customerId,
+                                            ConversionRate = conversionvalue,
+                                            Currency = currency,
+
+                                        };
+                                        var response = await _ordersDetail.CreateOrderDetail(Order);
+                                    }
                                 }
-                            }
 
-                            // Sending Mail
-                            try
-                            {
-                                var name = Session["UserName"].ToString();
-                                var email = Session["email"].ToString();
-                                string htmlString = @"<html>
+                                // Sending Mail
+                                try
+                                {
+                                    var name = Session["UserName"].ToString();
+                                    var email = Session["email"].ToString();
+                                    string htmlString = @"<html>
                            <body>
                            <img src=" + "~/Content/Asset/img/img.PNG" + @">
                            <h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
@@ -354,55 +353,60 @@ namespace B2CPortal.Controllers
                             <p>Unity Foods LTD!</p>
                             </body>
                             </html>";
-                                bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
-                                if (IsSendEmail)
+                                    bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
+                                    if (IsSendEmail)
+                                    {
+                                        // return SuccessResponse("true");
+                                        //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                                    }
+                                    else
+                                    {
+                                        //return BadResponse("Failed");
+                                        //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+                                    }
+                                }
+                                catch
                                 {
-                                    // return SuccessResponse("true");
-                                    //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+
+
+                                }
+
+                                //// Remove from cart
+                                //HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
+                                //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
+
+                                HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);
+                                HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, Billing.OrderTotal.ToString(), true);
+
+                                if (Billing.paymenttype == PaymentType.Stripe)
+                                {
+                                    string url = Url.Action("Stripe", "Payment");
+                                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                                }
+                                else if (Billing.paymenttype == PaymentType.Paypal)
+                                {
+                                    string url = Url.Action("Paypal", "PaypalPaymentMethod");
+                                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                                }
+                                else if (Billing.paymenttype == PaymentType.COD)
+                                {
+                                    //-------------remvoe from cart-------------
+                                    var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                                    var removeCart = await _cart.DisableCart(customerId, cookie);
+                                    var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
+                                    Billing.OrderNo = result;
+                                    Session["orderdata"] = Billing;
+                                    string url = Url.Action("PaymentStatusCOD", "Payment");
+                                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                                 }
                                 else
                                 {
-                                    //return BadResponse("Failed");
-                                    //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
+                                    return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                                 }
-                            }
-                            catch
-                            {
-
-
-                            }
-
-                            //// Remove from cart
-                            //HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
-                            //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
-
-                            HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);
-                            HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, Billing.OrderTotal.ToString(), true);
-
-                            if (Billing.paymenttype == PaymentType.Stripe)
-                            {
-                                string url = Url.Action("Stripe", "Payment");
-                                return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                            }
-                            else if (Billing.paymenttype == PaymentType.Paypal)
-                            {
-                                string url = Url.Action("Paypal", "PaypalPaymentMethod");
-                                return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                            }
-                            else if (Billing.paymenttype == PaymentType.COD)
-                            {
-                                //-------------remvoe from cart-------------
-                                var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                                var removeCart = await _cart.DisableCart(customerId, cookie);
-                                var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
-                                Billing.OrderNo = result;
-                                Session["orderdata"] = Billing;
-                                string url = Url.Action("PaymentStatusCOD", "Payment");
-                                return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                             }
                             else
                             {
-                                return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                                return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
                             }
                         }
                         else

@@ -212,6 +212,9 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="CreatedBy" Type="varchar" MaxLength="50" />
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
+          <Property Name="FullName" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="EmailId" Type="varchar" MaxLength="50" />
+          <Property Name="PhoneNo" Type="varchar" MaxLength="50" Nullable="false" />
         </EntityType>
         <EntityType Name="ProductBrand">
           <Key>
@@ -1455,6 +1458,9 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="customer" Relationship="B2CModel.FK_OrderTransection_Customer" FromRole="OrderTransection" ToRole="customer" />
           <NavigationProperty Name="OrderMaster" Relationship="B2CModel.FK_OrderTransection_OrderMAster" FromRole="OrderTransection" ToRole="OrderMaster" />
+          <Property Name="FullName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EmailId" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNo" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="ShippingDetail">
           <Key>
@@ -1887,6 +1893,9 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="OrderTransections">
             <EntityTypeMapping TypeName="B2CModel.OrderTransection">
               <MappingFragment StoreEntitySet="OrderTransection">
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
                 <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />

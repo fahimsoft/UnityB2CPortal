@@ -25,6 +25,9 @@ namespace B2C_Models.Models
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public string ModifiedBy { get; set; }
+        public string FullName { get; set; }
+        public string EmailId { get; set; }
+        public string PhoneNo { get; set; }
     
         public virtual customer customer { get; set; }
         public virtual OrderMaster OrderMaster { get; set; }

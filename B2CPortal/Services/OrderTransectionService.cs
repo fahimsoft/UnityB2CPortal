@@ -20,12 +20,16 @@ namespace B2CPortal.Services
                 if (Current == null)
                 {
                     New();
-                    //Current.CreatedOn = DateTime.Now;
-                    Current.Status = OrderTransection.Status;
+                    Current.CreatedOn = DateTime.Now;
                     Current.StripePaymentID = OrderTransection.StripePaymentID;
                     Current.PaypalPaymentID = OrderTransection.PaypalPaymentID;
-                    Current.IsActive = true;
+                    Current.IsActive = OrderTransection.IsActive;
                     Current.Status = OrderTransection.Status;
+                    Current.FullName = OrderTransection.FullName;
+                    Current.EmailId= OrderTransection.EmailId;
+                    Current.PhoneNo= OrderTransection.PhoneNo;
+                    Current.FK_OrderMAster= OrderTransection.FK_OrderMAster;
+                    Current.FK_Customer= OrderTransection.FK_Customer;
                 }
                 else
                 {

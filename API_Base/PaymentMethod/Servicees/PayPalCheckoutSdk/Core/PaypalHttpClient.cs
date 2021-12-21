@@ -43,25 +43,41 @@ namespace PayPalCheckoutSdk.Core
 
             public void Inject(HttpRequest request)
             {
-                if (!request.Headers.Contains("Authorization") && !(request is AccessTokenRequest || request is RefreshTokenRequest))
+                try
                 {
-                    if (this.accessToken == null || this.accessToken.IsExpired())
+                    if (!request.Headers.Contains("Authorization") && !(request is AccessTokenRequest || request is RefreshTokenRequest))
                     {
-                        var accessTokenResponse = fetchAccessToken();
-                        this.accessToken = accessTokenResponse.Result<AccessToken>();
+                        if (this.accessToken == null || this.accessToken.IsExpired())
+                        {
+                            var accessTokenResponse = fetchAccessToken();
+                            this.accessToken = accessTokenResponse.Result<AccessToken>();
+                        }
+                        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
                     }
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken.Token);
+                }
+                catch (System.Exception ex)
+                {
+
+                    throw;
                 }
             }
 
             private HttpResponse fetchAccessToken()
             {
-                //create a new client for access token.
-                HttpClient AccessTokenClient = new HttpClient(environment);
-                AccessTokenRequest request = new AccessTokenRequest(environment, refreshToken);
-                //make fetch access token call sync to avoid deadlock.
-                Task<HttpResponse> executeTask = Task.Run<HttpResponse>(async () => await AccessTokenClient.Execute(request));
-                return executeTask.Result;
+                try
+                {
+                    //create a new client for access token.
+                    HttpClient AccessTokenClient = new HttpClient(environment);
+                    AccessTokenRequest request = new AccessTokenRequest(environment, refreshToken);
+                    //make fetch access token call sync to avoid deadlock.
+                    Task<HttpResponse> executeTask = Task.Run<HttpResponse>(async () => await AccessTokenClient.Execute(request));
+                    return executeTask.Result;
+                }
+                catch (System.Exception ex)
+                {
+
+                    throw;
+                }
             }
         }
 

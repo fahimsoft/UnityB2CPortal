@@ -1,12 +1,15 @@
 ﻿using API_Base.Common;
+using B2C_Models.Models;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
+using Newtonsoft.Json;
 using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
 using PayPalHttp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Runtime.Serialization.Json;
@@ -19,9 +22,11 @@ namespace B2CPortal.Controllers
     public class PaypalPaymentMethodController : Controller
     {
         private readonly IOrders _orders = null;
-        public PaypalPaymentMethodController(IOrders orders)
+        private readonly IOrderTransection _orderTransection = null;
+        public PaypalPaymentMethodController(IOrders orders, IOrderTransection orderTransection)
         {
             _orders = orders;
+            _orderTransection = orderTransection;
 
         }
         public ActionResult Paypal()
@@ -76,8 +81,14 @@ namespace B2CPortal.Controllers
             }
             catch (Exception ex)
             {
+                ExceptionModel exceptionModel = JsonConvert.DeserializeObject<ExceptionModel>(ex.Message);
 
-                return Json(new { Status = false, message = ex.Message}, JsonRequestBehavior.AllowGet);
+                return Json(new {
+                    Status = false,
+                    message =  (exceptionModel == null 
+                    || string.IsNullOrEmpty(exceptionModel.DETAILS.FirstOrDefault().DESCRIPTION )
+                    ? ex.Message : exceptionModel.DETAILS.FirstOrDefault().DESCRIPTION)
+                }, JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -130,45 +141,70 @@ namespace B2CPortal.Controllers
         //}
 
         [HttpPost]
-        public async Task<JsonResult> captureOrder(string orderid)
+        public async Task<JsonResult> captureOrder(TransectionModel model)
         {
             try
             {
-                var request = new OrdersCaptureRequest(orderid);
-                request.Prefer("return=representation");
-                request.RequestBody(new OrderActionRequest());
-                //3. Call PayPal to capture an order
-                var response = await PayPalClient.Client().Execute(request);
-                //4. Save the capture ID to your database. Implement logic to save capture to your database for future reference.
+                if (model != null && !string.IsNullOrEmpty(model.OrderId))
+                {
+                    var request = new OrdersCaptureRequest(model.OrderId);
+                    request.Prefer("return=representation");
+                    request.RequestBody(new OrderActionRequest());
+                    //3. Call PayPal to capture an order
+                    var response = await PayPalClient.Client().Execute(request);
+                    //4. Save the capture ID to your database. Implement logic to save capture to your database for future reference.
 
-                var result = response.Result<Order>();
-                Console.WriteLine("Status: {0}", result.Status);
-                Console.WriteLine("Order Id: {0}", result.Id);
-                Console.WriteLine("Intent: {0}", result.CheckoutPaymentIntent);
-                Console.WriteLine("Links:");
-                foreach (LinkDescription link in result.Links)
-                {
-                    Console.WriteLine("\t{0}: {1}\tCall Type: {2}", link.Rel, link.Href, link.Method);
-                }
-                Console.WriteLine("Capture Ids: ");
-                foreach (PurchaseUnit purchaseUnit in result.PurchaseUnits)
-                {
-                    foreach (Capture capture in purchaseUnit.Payments.Captures)
+                    var result = response.Result<Order>();
+                    Console.WriteLine("Status: {0}", result.Status);
+                    Console.WriteLine("Order Id: {0}", result.Id);
+                    Console.WriteLine("Intent: {0}", result.CheckoutPaymentIntent);
+                    Console.WriteLine("Links:");
+                    foreach (LinkDescription link in result.Links)
                     {
-                        Console.WriteLine("\t {0}", capture.Id);
+                        Console.WriteLine("\t{0}: {1}\tCall Type: {2}", link.Rel, link.Href, link.Method);
                     }
+                    Console.WriteLine("Capture Ids: ");
+                    foreach (PurchaseUnit purchaseUnit in result.PurchaseUnits)
+                    {
+                        foreach (Capture capture in purchaseUnit.Payments.Captures)
+                        {
+                            Console.WriteLine("\t {0}", capture.Id);
+                        }
+                    }
+                    AmountWithBreakdown amount = result.PurchaseUnits[0].AmountWithBreakdown;
+                    Console.WriteLine("Buyer:");
+                    //Console.WriteLine("\tEmail Address: {0}\n\tName: {1}\n\tPhone Number: {2}{3}", result.Payer.Email, result.Payer.Name.FullName, result.Payer.PhoneWithType.PhoneType, result.Payer.PhoneWithType.PhoneNumber);
+                    // var ordermodel = await GetOrder(result.Id);
+                    if (result.Status.ToLower() == PaypalOrderStatus.COMPLETED.ToString().ToLower())
+                    {
+                        OrderTransection mod3el = new OrderTransection();
+                        mod3el.EmailId = result.Payer.Email;
+                        mod3el.FullName = result.Payer.Name.GivenName;
+                        mod3el.PhoneNo = string.IsNullOrEmpty(result.Payer.PhoneWithType?.PhoneNumber.NationalNumber?.ToString()) ? "" : result.Payer.PhoneWithType.PhoneNumber.ToString();
+                        mod3el.PaypalPaymentID = result.Id;
+                        mod3el.IsActive= true;
+                        mod3el.Status= result.Status.ToLower();
+                        mod3el.FK_Customer = Convert.ToInt32(Session["UserId"]);
+                        mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
+
+                        var dd =  await _orderTransection.CreateOrderTransection(mod3el);
+
+                        return Json(result);
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "Try Again" }, JsonRequestBehavior.AllowGet);
+                    }
+
                 }
-                AmountWithBreakdown amount = result.PurchaseUnits[0].AmountWithBreakdown;
-                Console.WriteLine("Buyer:");
-                //Console.WriteLine("\tEmail Address: {0}\n\tName: {1}\n\tPhone Number: {2}{3}", result.Payer.Email, result.Payer.Name.FullName, result.Payer.PhoneWithType.PhoneType, result.Payer.PhoneWithType.PhoneNumber);
-               // var ordermodel = await GetOrder(result.Id);
-
-
-                //return RedirectToAction("PaymentStatus", "Payment",);
-                return Json(result);
+                else
+                {
+                    return Json(new { success = false, message = "Please Fill the Correct Information !"}, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
+                ExceptionModel exceptionModel =  JsonConvert.DeserializeObject<ExceptionModel>(ex.Message);
                 return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -405,7 +441,6 @@ namespace B2CPortal.Controllers
             return sr.ReadToEnd();
         }
     }
-
     public class SmartButtonHttpResponse
     {
         readonly PayPalCheckoutSdk.Orders.Order _result;
@@ -427,4 +462,45 @@ namespace B2CPortal.Controllers
         public string orderID { get; set; }
 
     }
+    public class TransectionModel
+    {
+        public string   Name{ get; set; }
+        public string   EmailId{ get; set; }
+        public string   PhoneNo{ get; set; }
+        public string   OrderId { get; set; }
+    }
+    public enum PaypalOrderStatus   
+    {
+        COMPLETED = 1,
+        APPROVED = 2,
+        FAILED = 3,
+        CREATED = 4,
+    }
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
+    public class DETAIL
+    {
+        public string FIELD { get; set; }
+        public string VALUE { get; set; }
+        public string ISSUE { get; set; }
+        public string DESCRIPTION { get; set; }
+    }
+
+    public class LINK
+    {
+        public string HREF { get; set; }
+        public string REL { get; set; }
+        public string METHOD { get; set; }
+    }
+
+    public class ExceptionModel
+    {
+        public string NAME { get; set; }
+        public List<DETAIL> DETAILS { get; set; }
+        public string MESSAGE { get; set; }
+        public string DEBUG_ID { get; set; }
+        public List<LINK> LINKS { get; set; }
+    }
+
+
+
 }

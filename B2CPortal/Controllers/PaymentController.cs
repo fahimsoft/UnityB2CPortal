@@ -17,12 +17,15 @@ namespace B2CPortal.Controllers
         //private readonly IOrderDetail _ordersDetail = null;
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
+        private readonly IOrderTransection _orderTransection = null;
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
-        public PaymentController(IOrders order, IProductMaster productMaster, ICart cart)
+
+        public PaymentController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection)
         {
             _orders = order;
             _IProductMaster = productMaster;
             _cart = cart;
+            _orderTransection = orderTransection;
             _PaymentMethodFacade = new PaymentMethodFacade();
         }
 
@@ -88,6 +91,18 @@ namespace B2CPortal.Controllers
                     var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                     var removeCart = await _cart.DisableCart(customerId, cookie);
+                    //-------------------add order transection record--------------
+                    OrderTransection mod3el = new OrderTransection();
+                    mod3el.FullName = payment.Name;
+                    mod3el.EmailId = payment.Email;
+                    mod3el.PhoneNo = payment.Phone;
+                    mod3el.StripePaymentID = chargeobj.Id;
+                    mod3el.IsActive = true;
+                    mod3el.Status = chargeobj.Status.ToLower();
+                    mod3el.FK_Customer = Convert.ToInt32(Session["UserId"]);
+                    mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
+
+                    var dd = await _orderTransection.CreateOrderTransection(mod3el);
                     return RedirectToAction("PaymentStatus");
                 }
                 else
