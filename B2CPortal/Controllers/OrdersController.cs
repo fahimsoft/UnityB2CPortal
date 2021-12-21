@@ -236,7 +236,8 @@ namespace B2CPortal.Controllers
                        var shippingmodel = new ShippingDetail();
                         // Billing Details Add
                         Billing.FK_Customer = customerId;
-                        var cartlist = await _cart.GetCartProducts("", customerId);
+                        string cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId);
                         if (cartlist != null && cartlist.Count() > 0)
                         {
                             //for shipping address table..
@@ -411,7 +412,7 @@ namespace B2CPortal.Controllers
                         }
                         else
                         {
-                            return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
+                            return Json(new { data = "", msg = "Your Cart is Empty.", success = false }, JsonRequestBehavior.AllowGet);
                         }
                     }
                     else

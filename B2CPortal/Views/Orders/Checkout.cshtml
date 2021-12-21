@@ -493,7 +493,7 @@
                                 toastr.success(data.msg);
                             }
                             else if (data.success == false) {
-                                toastr.error("Failed.");
+                                toastr.error(data.msg);
                             }
                             document.getElementsByClassName("loader-container")[0].style.display = "none";
                         },
