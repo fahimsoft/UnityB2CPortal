@@ -21,7 +21,6 @@
 <!-- pages-title-end -->
 <!-- Checkout content section start -->
 <section class="pages checkout section-padding">
-
     <div class="container">
         <div class="row">
             <div class="col-sm-6">
@@ -67,6 +66,11 @@
                                 </div>}
                             @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
 
+                            <div class="custom-select">
+                                <label>Order Description</label>
+                                <textarea  id="OrderDescription" name="OrderDescription" class="form-control">
+                                </textarea>
+                            </div>
                             <div class="row">
                                 <label class="switch">
                                     <input class="shipto" id="shipto" type="checkbox" onclick="toggle('.myClass', this)">
@@ -83,7 +87,7 @@
 
             </div>
 
-      <div style="display:none" class="myClass col-sm-6">
+            <div style="display:none" class="myClass col-sm-6">
                 <div class="main-input single-cart-form padding60">
                     <div class="log-title">
                         <h3><strong>Shipiping Details</strong></h3>
@@ -159,9 +163,9 @@
                                         </tr>
 
                                         @*<tr>
-                                            <th>@item.Name  x @item.Quantity</th>
-                                            <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
-                                        </tr>*@
+                                                <th>@item.Name  x @item.Quantity</th>
+                                                <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice</td>
+                                            </tr>*@
                                     }
                                 }
 
@@ -239,7 +243,7 @@
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="COD" type="radio" name="paymode">
+                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") checked class="form-check-input" value="COD" type="radio" name="paymode">
                         <label class="form-check-label">
                             COD (Cash On Delivery)
                         </label>
@@ -248,15 +252,18 @@
                     @if (Model.OrderTotal > 0)
                     {
                         <div class="submit-text">
-                            <a id="order">place order</a>
+                            <a id="order" class="btn btn-primary btn-lg btn-block">place order</a>
                         </div>
+
                     }
                     else
                     {
-                        <a class="btn btn-primary" style="margin-left: 357px;" href="/Product/PorductList">Shop Now</a>
+                        <div class="form-check">
+                            <a class="btn btn-primary btn-lg btn-block" href="/Product/PorductList">Shop Now</a>
+                        </div>
                     }
                 </div>
-            </div>
+                    </div>
 
 
         </div>
@@ -268,8 +275,8 @@
                     <div class="modal-header">
                         <h3 class="modal-title">Confirm Order</h3>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
                     <div class="modal-body cartdrop-sin-container">
 
@@ -405,7 +412,7 @@
             // Only Billing Form Data
             // alert("No");
             var paymenttype = $("input[name='paymode']:checked").val();
-           
+
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
@@ -416,6 +423,7 @@
                         PhoneNo: $('#PhoneNo').val(),
                         EmailId: $('#EmailId').val(),
                         Country: $('#Country').val(),
+                        OrderDescription: $('#OrderDescription').val(),
                         City: $('#City').val(),
                         BillingAddress: $('#Address').val(),
                         ShippingAddress: $('.SAddress').val(),
@@ -443,13 +451,13 @@
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
-                debugger
+                
                 var form = $("#billing");
                 //work for shipping detils.
                 var shippingdetails = {};
                 if ($('.myClass').css('display') != 'none') {
                     var shippingdata = $("#shipping").serializeArray();
-                    shippingdetails =  FormDataToObject(shippingdata);
+                    shippingdetails = FormDataToObject(shippingdata);
                 }
 
                 var datatosend = {
@@ -458,14 +466,15 @@
                         PhoneNo: $('#PhoneNo').val(),
                         EmailId: $('#EmailId').val(),
                         Country: $('#Country').val(),
+                        OrderDescription: $('#OrderDescription').val(),
                         City: $('#City').val(),
                         BillingAddress: $('#Address').val(),
                         ShippingAddress: $('.SAddress').val(),
                         PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
-                            shippingdetails : shippingdetails
-                        }
+                        shippingdetails: shippingdetails
+                    }
                 }
-       
+
                 document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
                 $.validator.unobtrusive.parse($(this));//add the form validation
@@ -506,6 +515,9 @@
             }
 
         })
+        $(document).on('change', 'input[name=paymode]', function () {
+            $('#order').removeAttr("disabled");
 
+        })
     </script>
 }

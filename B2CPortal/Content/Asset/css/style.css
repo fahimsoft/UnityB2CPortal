@@ -2456,14 +2456,14 @@ select {
 	cursor: pointer;
 }
 
-.custom-select::after, .checkout .categories .medium-a::after {
+/*.custom-select::after, .checkout .categories .medium-a::after {
 	background: rgba(0, 0, 0, 0) url("~/Content/Asset/img/drop-down.png") no-repeat scroll 0 0;
 	margin-top: -3px;
 	pointer-events: none;
 	position: absolute;
 	right: -5px;
 	top: 50%;
-}
+}*/
 
 .pages .custom-select option {
 	border: 1px solid #f5f5f5;

@@ -84,7 +84,7 @@
                 return (e.fn.button = n), this;
             }),
             e(document).on("click.button.data-api", "[data-toggle^=button]", function (t) {
-                debugger
+                
                 var n = e(t.target);
                 n.hasClass("btn") || (n = n.closest(".btn")), n.button("toggle");
             });
@@ -255,7 +255,7 @@
                 return (e.fn.collapse = n), this;
             }),
             e(document).on("click.collapse.data-api", "[data-toggle=collapse]", function (t) {
-                debugger
+                
                 var n = e(this),
                     r,
                     i = n.attr("data-target") || t.preventDefault() || ((r = n.attr("href")) && r.replace(/.*(?=#[^\s]+$)/, "")),
@@ -430,7 +430,7 @@
                 return (e.fn.modal = n), this;
             }),
             e(document).on("click.modal.data-api", '[data-toggle="modal"]', function (t) {
-                debugger
+                
                 var n = e(this),
                     r = n.attr("href"),
                     i = e(n.attr("data-target") || (r && r.replace(/.*(?=#[^\s]+$)/, ""))),

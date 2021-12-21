@@ -249,8 +249,10 @@ namespace B2CPortal.Controllers
                                 shippingmodel.EmailId = Billing.shippingdetails.EmailId;
                                 shippingmodel.PhoneNo = Billing.shippingdetails.PhoneNo;
                                 shippingmodel.Address = Billing.shippingdetails.Address;
-                            };
-                            shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
+                                shippingmodel.Address = Billing.shippingdetails.Address;
+                                shippingmodel.IsActive = true;
+                                shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
+                            }
                         
                             foreach (var item in cartlist)
                             {
@@ -293,7 +295,7 @@ namespace B2CPortal.Controllers
                             Billing.ShippingAddress = Billing.ShippingAddress;
                         Billing.FK_ShippingDetails = shippingmodel.Id;
                         Billing.IsShipping = Billing.shippingdetails == null ? false : true;
-                            Billing.OrderDescription = "order has been genrated successfully";//Billing.OrderDescription;
+                            Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
                         }
                         // Insert order Master
 
