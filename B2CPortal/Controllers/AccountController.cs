@@ -31,11 +31,12 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                if (Session["UserId"] != null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
                 customer customer = new customer();
-
                 return View(customer);
-
-
             }
             catch (Exception ex)
             {
@@ -52,10 +53,6 @@ namespace B2CPortal.Controllers
                 var res = await _account.SelectByIdPassword(customer);
                 if (res != null)
                 {
-                    //string Uri = Request.Url.AbsoluteUri;
-                    //string url = HttpContext.Current.Request.Url.AbsoluteUri;
-
-
                     var genral = new GenralClass();
 
                     string cookie = string.Empty;

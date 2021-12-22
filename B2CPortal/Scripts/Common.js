@@ -924,7 +924,7 @@ ${GetProductRating(item.AvgRating)}
 
 
 
-                htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-4">
+                htmlProductGrid += `<div class="col-xs-12 col-sm-6 col-md-3">
 <div class="single-product">
 <div class="product-img">
 <div class="pro-type">
