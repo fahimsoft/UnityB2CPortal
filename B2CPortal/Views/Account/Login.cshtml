@@ -3,6 +3,36 @@
     ViewBag.Title = "Login";
 }
 
+
+<style>
+
+    .nav-tabs, .tab-content {
+        width: 51%;
+    }
+
+    /*.tab-content {
+        width: 51%;
+    }*/
+
+    @@media screen and (max-width: 900px){
+        .nav-tabs, .tab-content {
+            width:100% !important;
+        }
+    }
+
+    @@media screen and (max-width: 900px) {
+        .nav-tabs, .tab-content {
+            width: 100% !important;
+        }
+    }
+
+    @@media (max-width: 767px) {
+        .main-input.new-customer {
+            margin-top: 0px;
+        }
+    }
+</style>
+
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
@@ -24,15 +54,14 @@
 <section class="pages login-page section-padding">
     <div class="container">
         <div class="row ">
-            <div class="d-flex justify-content-center">
-            <ul class="nav nav-tabs">
+            <div class="d-flex justify-content-center" style="display: flex; justify-content: center; flex-flow: row wrap;">
+            <ul class="nav nav-tabs" >
                 <li class="active"><a data-toggle="tab" href="#home">Login</a></li>
                 <li><a data-toggle="tab" href="#menu1">Register</a></li>
             </ul>
 
             <div class="tab-content  ">
                 <div id="home" class="tab-pane fade in active">
-                    <div class="col-sm-6">
                         <div class="main-input padding60">
                             <div class="log-title">
                                 <h3><strong>Login Customer</strong></h3>
@@ -56,10 +85,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
                 <div id="menu1" class="tab-pane fade">
-                    <div class="col-sm-6">
                         <div class="main-input padding60 new-customer">
                             <div class="log-title">
                                 <h3><strong>new Customer</strong></h3>
@@ -76,7 +103,7 @@
                                     @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.PhoneNo, "", new { @class = "text-danger" })
 
-                                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", Type = "date" } })
+                                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", id = "dateinput", Type = "date" } })
                                     @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
 
                                     @{
@@ -100,21 +127,19 @@
 
                                     <br />
 
-                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
+                                    @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:",  autocomplete = "off", @class = "email form-control" } })
                                     @Html.ValidationMessageFor(model => model.EmailId, "", new { @class = "text-danger" })
 
-                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Password:", @class = "Password form-control", Type = "Password" } })
+                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { autocomplete = "off", @placeholder = "Password:", @class = "Password form-control", id = "password", Type = "Password" } })
                                     @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
-
-                                    <input class="form-control" type="password" name="ConfirmPassword" placeholder="Confirm Password" required />
-
+                                    <input class="form-control" type="password" name="ConfirmPassword" id="ConfirmPassword" placeholder="Confirm Password" required />
+                                    <span id='message'></span>
                                     <div class="submit-text coupon">
 
                                         <button type="button" class="btn btn-success" id="btnAddSale">Sign up</button>
                                     </div>
                                 </form>
                             </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -140,59 +165,27 @@
             rules: {
                 FirstName: {
                     required: true,
-
-
-
-
-
                     maxlength: 50
                 },
                 LastName: {
                     required: true
 
-
-
-
-
                 }, EmailId: {
                     required: true,
                     uniqueEmail: true
-
-
-
-
 
                 }, DateOfBirth: {
                     required: true
                 }, Gender: {
                     required: true
-
-
-
-
-
                 }, password: {
                     required: true
-
-
-
-
-
                 }, ConfirmPassword: {
                     required: true,
                     equalTo: ".Password"
-
-
-
-
-
                 }, PhoneNo: {
                     required: true
                 }
-
-
-
-
 
             },
             messages: {
@@ -215,18 +208,8 @@
                 }, PhoneNo: {
                     required: "Phone # Is Required"
                 }
-
-
-
-
-
             }
         });
-
-
-
-
-
         jQuery('#login').validate({
             rules: {
                 EmailId: {
@@ -264,12 +247,6 @@
 
             }
         });
-
-
-
-
-
-
         $('input[name="ConfirmPassword"]').keypress(function (e) {
             if (e.which == 13) {
                 $('#btnAddSale').click();
@@ -343,7 +320,7 @@
                     success: function (data) {
                         if (data.success == true) {
                             toastr.success("Registered successfully.");
-                            window.location.href = "/Account/Login";
+                            window.location.reload();
                         }
                         else if (data.success == false || data.isSuccessful == false) {
                             toastr.error("Registration Failed.");

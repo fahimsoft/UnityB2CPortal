@@ -222,7 +222,11 @@ namespace B2CPortal.Controllers
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-                if (Session["UserId"] != null)
+                if (Session["UserId"] != null && 
+                    (Billing.paymenttype == PaymentType.Stripe
+                    || Billing.paymenttype== PaymentType.COD
+                   || Billing.paymenttype == PaymentType.Paypal)
+                    )
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     //------------existing order remove-----------------
@@ -422,7 +426,8 @@ namespace B2CPortal.Controllers
                 }
                 else
                 {
-                    return Json(new { data = "", msg = "Something bad happened", success = false }, JsonRequestBehavior.AllowGet);
+                   string msg =  Session["UserId"] != null ? string.Format("Sorry ! Currently {0} Not Supported", Billing.paymenttype.ToString()) : "Something bad happened";
+                    return Json(new { data = "", msg = msg, success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)

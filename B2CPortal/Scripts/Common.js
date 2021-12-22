@@ -1210,7 +1210,7 @@ function toggle(className, obj) {
 $("#btnSave").click(function (e) {
     e.preventDefault();
     rating = rating == 0 ? 5 : rating;
-    alert(rating);
+    //alert(rating);
     let urlstr = location.href;
     let url = new URL(urlstr);
     let searchparams = url.searchParams;
@@ -1351,7 +1351,7 @@ function GetProductCommentAndRating() {
                         <img src="#" alt="" />
 
                         <div class="author-des">
-                        <h4><a href="#">${item[index].CustomerName == null ? 'Anonymous' : item[index].CustomerName}</a></h4>
+                        <h4><a href="javascript:void(0)">${item[index].CustomerName == null ? 'Anonymous' : item[index].CustomerName}</a></h4>
                         <span class="floatright ratting" id="assign-rating">
                         ${htlmRating}
                         </span>
