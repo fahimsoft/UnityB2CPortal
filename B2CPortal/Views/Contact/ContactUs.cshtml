@@ -101,10 +101,11 @@
                                     <textarea class="form-control areaT border-blue-color" name="Message" id="message" rows="8" placeholder="Type Your Message Here"></textarea>
                                 </div>
                                 <input type="hidden" value="" id="recaptcha" name="recaptcha" />
-                                <div class="areaR g-recaptcha" data-callback="imNotARobot" data-sitekey="6LfEZoAdAAAAALhYGkcp8KgAB6Pd0j_j1Ckwa8pA"></div>
-
+                                <div class="areaR g-recaptcha" data-callback="imNotARobot" data-sitekey="6LfEZoAdAAAAALhYGkcp8KgAB6Pd0j_j1Ckwa8pA">
+                                </div>
+                                <span  style="float:left" id="capturemessage"></span>
                                 <div class="col-12 text-center">
-                                    <button style="width:130px" type="submit" id="sendmail"  class="sendmail btn btn-success">Send Email</button>
+                                    <button style="width:130px" type="button" id="sendmail" class="sendmail btn btn-success">Send Email</button>
                                 </div>
 
 
@@ -130,164 +131,121 @@
 
 
 
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
-<script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script>
 
 
+        $('#sendmail').click(function (e) {
 
-    $('#sendmail').click(function (e) {
-        
-        e.preventDefault();
-        $('.con').validate({
+            $('#contact').validate({
 
-            rules: {
-                fname: {
-                    required: true,
-                }, email: {
-                    required: true,
-                }, Subject: {
-                    required: true,
-                }, Pnumber: {
-                    required: true,
-                }, Message: {
-                    required: true,
+                rules: {
+                    fname: {
+                        required: true,
+                    }, email: {
+                        required: true,
+                    }, Subject: {
+                        required: true,
+                    }, Pnumber: {
+                        required: true,
+                    }, Message: {
+                        required: true,
+                    }, capturemsg: {
+                        required: true,
+                    }
+
+                },
+                messages: {
+                    fname: {
+                        required: "Name Is Required"
+                    }, email: {
+                        required: "Email Is Required"
+                    }, Subject: {
+                        required: "Subject Is Required"
+                    }, Pnumber: {
+                        required: "Contact Number Is Required"
+                    }, Message: {
+                        required: "Message Is Required"
+                    }
+
                 }
 
-
-
-            },
-            messages: {
-                fname: {
-                    required: "Name Is Required"
-                }, email: {
-                    required: "Email Is Required"
-                }, Subject: {
-                    required: "Subject Is Required"
-                }, Pnumber: {
-                    required: "Contact Number Is Required"
-                }, Message: {
-                    required: "Message Is Required"
+            });
+            if ($('#contact').valid() == true) {
+                var res = grecaptcha.getResponse();
+                var obj = {
+                    res: res
                 }
+                document.getElementsByClassName("loader-container")[0].style.display = "block";
+                $.ajax({
+                    type: "POST",
+                    data: obj,
+                    url: "/Account/Recaptcha",
+                    success: function (data) {
+                        if (data.success == true) {
+                            var form = $("#contact");
+                            var datatosend = {
+                                contact: {
+                                    /*Id: $('#Id').val(),*/
+                                    fullname: $('#fullname').val(),
+                                    emailaddress: $('#emailaddress').val(),
+                                    subject: $('#subject').val(),
+                                    PhoneNo: $('#number').val(),
+                                    message: $('#message').val()
 
+                                }
+                            }
+                            $.ajax({
+                                type: "POST",
+                                url: "/Contact/SendContactEmail",
+                                data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                success: function (data) {
+                                    document.getElementsByClassName("loader-container")[0].style.display = "none";
+                                    if (data.success == true) {
+                                        toastr.success("Email sent successfully.");
+                                        window.location.reload();
+                                    }
+                                    else if (data.success == false && data.data != "") {
+                                        toastr.error("Email Failed.");
+                                        $('#capturemessage').html('Please Fill the Capture ').css('color', 'red');
+                                    } else {
+                                        window.location.reload();
+                                    }
+                                },
+                                failure: function (res) {
+                                    console.log(res);
+                                },
+                                err: function (res) {
+                                    console.log(res);
+                                }
+                            })
+                        }
+                        else if (data.success == false) {
+                            toastr.error(data.msg);
+                            $('#capturemessage').html('Please Fill the Capture ').css('color', 'red');
+                            document.getElementsByClassName("loader-container")[0].style.display = "none";
 
-
+                        }
+                    },
+                    failure: function (data) {
+                        console.log(data);
+                        toastr.error(data.msg);
+                    },
+                    err: function (data) {
+                        console.log(data);
+                    }
+                })
+            } else {
+                return false;
             }
 
         });
 
 
-
-        var res = grecaptcha.getResponse();
-        // alert(res);
-
-
-
-        var obj = {
-            res: res
-        }
-
-
-        document.getElementsByClassName("loader-container")[0].style.display = "block";
-
-        $.ajax({
-            type: "POST",
-            data: obj,
-            url: "/Account/Recaptcha",
-
-
-
-            success: function (data) {
-                document.getElementsByClassName("loader-container")[0].style.display = "none";
-
-                if (data.success == true) {
-                    //toastr.success(data.msg);
-                    var form = $("#contact");
-                    var datatosend = {
-                        contact: {
-                            /*Id: $('#Id').val(),*/
-                            fullname: $('#fullname').val(),
-                            emailaddress: $('#emailaddress').val(),
-                            subject: $('#subject').val(),
-                            PhoneNo: $('#number').val(),
-                            message: $('#message').val()
-
-
-
-                        }
-                    }
-
-
-
-                    console.log(datatosend)
-
-
-
-                    $.ajax({
-                        type: "POST",
-                        url: "/Contact/SendContactEmail",
-                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                        contentType: 'application/json',
-                        dataType: 'json',
-
-
-
-                        success: function (data) {
-
-
-
-                            // alert(data);
-                            console.log(data);
-                            if (data.success == true) {
-
-
-
-                                toastr.success("Email sent successfully.");
-
-
-
-                                // window.location.href = "/Account/Login";
-                            }
-                            else if (data.success == false) {
-                                toastr.error("Email Failed.");
-                            }
-                        },
-                        failure: function (res) {
-                            console.log(res);
-                        },
-                        err: function (res) {
-                            console.log(res);
-                        }
-                    })
-
-
-
-
-                }
-                else if (data.success == false) {
-                    
-                    toastr.error(data.msg);
-                }
-            },
-            failure: function (data) {
-                console.log(data);
-                toastr.error(data.msg);
-            },
-            err: function (data) {
-                console.log(data);
-            }
-        })
-
-
-
-    });
-
-
-
-
-
-
-</script>
+    </script>
 
 
 
