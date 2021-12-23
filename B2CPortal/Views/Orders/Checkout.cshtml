@@ -203,14 +203,14 @@
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="Stripe" type="radio" name="paymode">
+                        <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "checked") class="form-check-input" value="Stripe" type="radio" name="paymode">
                         <label class="form-check-label">
                             Stripe Payment
                         </label>
                     </div>
                     <div class="form-check">
                         <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/paypal.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") class="form-check-input" value="Paypal" type="radio" name="paymode">
+                        <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "") class="form-check-input" value="Paypal" type="radio" name="paymode">
                         <label class="form-check-label">
                             Paypal Payment
                         </label>
@@ -239,7 +239,7 @@
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
-                        <input @(Model.Currency.ToLower() == "pkr" ? "" : "disabled") checked class="form-check-input" value="COD" type="radio" name="paymode">
+                        <input @(Model.Currency.ToLower() == "pkr" ? "checked" : "disabled")  class="form-check-input" value="COD" type="radio" name="paymode">
                         <label class="form-check-label">
                             COD (Cash On Delivery)
                         </label>
@@ -293,7 +293,7 @@
                                         {
                                             <tr>
                                                 <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
-                                                <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+                                                <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice </td>
                                             </tr>
                                         }
                                     }

@@ -19,7 +19,14 @@ $(document).ready(function () {
     ShowCartProducts();
     $.fn.digits = function () {
         return this.each(function () {
-            $(this).text($(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+            var num = $(this).text();
+            var symbolvalue = GetCookieByName(pricesymbol);
+            if (symbolvalue.toLowerCase() == "pkr") {
+               var amountnumber =  parseFloat(num).toFixed(2);
+                $(this).text(amountnumber.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+            } else {
+                //$(this).text($(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$,"));
+            }
         })
     }
 
@@ -629,10 +636,6 @@ function LoadQuickViewWithRating(elem) {
         dataType: "json",
         success: function (result) {
 
-
-
-
-
             var html = '';
             var index = 1;
             var fade = 2;
@@ -647,7 +650,8 @@ function LoadQuickViewWithRating(elem) {
             $(item).each(function (i, v) {
 
                 productPrice = item[i].Price;
-                productDiscount = item[i].Discount;
+                Discount = item[i].Discount;
+                productDiscount = item[i].DiscountedAmount;
             });
 
             for (i = 0; i <= item.length; i++) {
@@ -670,22 +674,9 @@ function LoadQuickViewWithRating(elem) {
                 else {
                     htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${item[i].ImageUrl}" alt="quick view" /> </a></li>`
                 }
-
-
-
-
-
                 index += 1;
 
-
-
-
-
             });
-
-
-
-
 
             $(item).each(function (i, v) {
 
@@ -717,14 +708,7 @@ function LoadQuickViewWithRating(elem) {
                 fade += 1;
             });
 
-
-
-
-
             $(item).each(function (i, v) {
-
-
-
 
 
                 htmlProductSize += `<option value="${item[i].Id}"></option><h3>${item[i].Name}&nbsp;${item[i].UOM} </h3>
@@ -733,10 +717,6 @@ function LoadQuickViewWithRating(elem) {
 <p>( ${item[i].TotalRating} Rating )</p>
 ${GetProductRating(item[i].AvgRating)}`;
             });
-
-
-
-
 
             html = `<div class="container">
 <div class="row">
@@ -774,14 +754,14 @@ ${htmlProductPriceDetail}
 <div class="list-text">
 ${htmlProductSize}
 </div>
-<h5> <del > <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}  </del><labal style="color:gray">- ${productDiscount == undefined ? 0 : productDiscount}% </labal> <b class="numbers" id="discoountedprice"> ${productPrice * (1 - (productDiscount / 100))} </b> <strong class="pricesymbol"> </strong> </h5>
+<h5> <del > <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}  </del><labal style="color:gray"> ${Discount == undefined ? 0 : Discount}% </labal> <strong class="pricesymbol"> </strong> <b class="numbers" id="discoountedprice"> ${productDiscount} </b>  </h5>
 <p>${item[0].LongDescription}</p>
 <div class="plus-minus">
 <a class="dec qtybuttonquickview qtybutton">-</a>
 <input type="text" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
 <a class="inc qtybuttonquickview qtybutton">+</a>
 </div>
-<strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"><span class="numbers"> ${productPrice * (1 - (productDiscount / 100))}</span></labal></strong>
+<strong style="font-size:18px"> <strong class="pricesymbol"> </strong>. <labal id="labalprice"><span class="numbers"> ${productDiscount}</span></labal></strong>
 </div>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>
@@ -812,11 +792,6 @@ ${htmlProductSize}
 </div>
 </div>
 </div>`;
-
-
-
-
-
             $('#quick-view').html(html);
             $(".numbers").digits();
 
@@ -834,8 +809,6 @@ ${htmlProductSize}
 //Single Function Using ..on Load ,Filtering, Paggination,Search
 function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 
-
-
     var htmldata = '';
     var htmlProductList = '';
     var countBtn = 1;
@@ -844,10 +817,6 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
     var htmlbtn = '';
     var htmlProductGrid = '';
 
-
-
-
-
     var postData = {
         filterList: filterList,
         search: search,
@@ -855,11 +824,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         prevPage: prevPage
     };
 
-
-
     $.ajax({
-
-
 
         url: "/Product/GetProductListbySidebar",
         type: "POST",
@@ -867,28 +832,16 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         traditional: true,
-
-
-
         success: function (result) {
-
-
-
-
             var data = JSON.parse(result.data);
             if (data.length <= 0)
                 totalProductList = 0;
             else
                 totalProductList = data[0].totalProduct;
 
-
-
             $('#lblTotalCount').text('Total Records: ' + totalProductList);
             $.each(data, function (key, item) {
 
-
-
-                //List Html
                 htmlProductList += `<div class="col - xs - 12">
 <div class="single-list-view">
 <div class="row">
@@ -910,7 +863,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 <p>( ${item.TotalRating} Rating )</p>
 ${GetProductRating(item.AvgRating)}
 </div>
-<h5><del> <strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span></del>&nbsp <strong class="pricesymbol"> </strong><span class="numbers"> ${item.Price * (1 - (item.Discount / 100))}</span> </h5 >
+<h5><del> <strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span></del>&nbsp <strong class="pricesymbol"></strong> <span class="numbers"> ${item.DiscountedAmount}</span> </h5>
 <p></p>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -942,7 +895,7 @@ ${GetProductRating(item.AvgRating)}
 <div class="ratting">
 ${GetProductRating(item.AvgRating)}
 </div>
-<span><del style='color:silver'><span class="numbers">${item.Price} </span><strong class="pricesymbol"> </strong></del>&nbsp<span class="numbers">${item.Price * (1 - (item.Discount / 100))} </span><strong class="pricesymbol"> </strong></span>
+<span><del style='color:silver'><strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span></del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 </div>
 </div>
 </div>`;
@@ -1126,7 +1079,7 @@ function loadFeatureProduct() {
 </div>
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
-<span ><del class="numbers" style='color: silver'>${item.Price}<strong class="pricesymbol"> </strong> </del>&nbsp<span class="numbers">${item.DiscountedAmount} </span><strong class="pricesymbol"> </strong></span>
+ <del class="numbers" style='color: silver'><strong class="pricesymbol"></strong> ${item.Price} </del>&nbsp <strong class="pricesymbol"> </strong> <span class="numbers">${item.DiscountedAmount} </span>
 </div>
 </div>
 </div>
@@ -1559,6 +1512,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                 var fade = 1;
                 var productPrice = 0;
                 var productDiscount = 0;
+                var Discount = 0;
                 var htmlProductDetail = '';
                 var htmlProductPriceDetail = '';
                 var htmlProductSize = '';
@@ -1570,7 +1524,8 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
 
                 $(item).each(function (i, v) {
                     productPrice = item[i].Price;
-                    productDiscount = item[i].Discount;
+                    Discount = item[i].Discount;
+                    productDiscount = item[i].DiscountedAmount;
                 });
 
                 //$(item).each(function (i, v) {
@@ -1648,7 +1603,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
 
                         ${htlmRating}
                        </div>
-                       <h5><del><strong class="pricesymbol"></strong> ${productPrice}</del> <labal style="color:#999"> ${productDiscount}% </labal> <strong class="pricesymbol"></strong> <b id="discoountedprice">${productPrice * (1 - (productDiscount / 100))} </h5>
+                       <h5><del><strong class="pricesymbol"></strong> ${productPrice}</del> <labal style="color:#999"> ${Discount}% </labal> <strong class="pricesymbol"></strong> <b id="discoountedprice">${productDiscount} </h5>
                        <div class="all-choose">
                        </div>
                                    <div class="plus-minus">
@@ -1656,7 +1611,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                                    <input type="test" value="1" name="qtybuttonquickview" id="quentityvalue" class="plus-minus-box">
                                    <a class="inc qtybuttonquickview qtybutton">+</a>
                                    </div>
-                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong> <labal id="labalprice"> ${productPrice * (1 - (productDiscount / 100))} </labal> </strong>
+                                   <strong style="font-size:18px">  <strong class="pricesymbol"> </strong> <labal id="labalprice"> ${productDiscount} </labal> </strong>
 
                        <div class="list-btn">
                        <a onclick="HandleAddtocart(this)" productIdList=${item[0].Id} >add to cart</a>

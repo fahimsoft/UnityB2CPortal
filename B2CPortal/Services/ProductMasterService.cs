@@ -206,7 +206,6 @@ namespace B2CPortal.Services
         {
             try
             {
-                //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
                 var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + Id + "").ToList<ProductsVM>();
@@ -222,11 +221,13 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue,2),
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        DiscountedAmount = discountedprice,
                         Discount = discount,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
@@ -236,7 +237,6 @@ namespace B2CPortal.Services
                         TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
                         AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
                         ImageUrl2 = item.ProductDetails.Select(x => x.ImageUrl).ToList(),
-
 
                     };
                     productsVM.Add(producVMList);
@@ -457,13 +457,7 @@ namespace B2CPortal.Services
 
 
                 List<ProductsVM> productsVM = new List<ProductsVM>();
-
-
-
                 var ids = obj.Select(x => x.Id).ToArray();
-
-
-
                 var objRating = _dxcontext.CommentAndRatings
                 .GroupBy(w => new
                 {
@@ -479,12 +473,17 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal((price *  (1 - (discount / 100))) / conversionvalue), 2);
+                    //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+
+
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name == null ? "" : item.Name,
                         Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
-                        Discount = discount,// item.ProductPrices.Select(x => x.Discount).FirstOrDefault(),
+                        Discount = discount,
+                        DiscountedAmount = discountedprice,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
                         ShortDescription = item.ShortDescription == null ? "" : item.ShortDescription,

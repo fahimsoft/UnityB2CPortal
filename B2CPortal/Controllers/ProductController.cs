@@ -72,9 +72,7 @@ namespace B2CPortal.Controllers
                     };
                     productsVM.Add(producVMList);
                 }
-
                 return SuccessResponse(productsVM);
-
 
             }
             catch (Exception Ex)
@@ -86,18 +84,7 @@ namespace B2CPortal.Controllers
         #region cart handling
         public async Task<JsonResult> GetCartCount()
         {
-           // GetCountryByIP(Request);
-           //string currency =    HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
-           // if (currency.ToLower() == "pkr")
-           // {
-           //      HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, "1",true);
-           // }
-           // else
-           // {   var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
-           //     conversionrate =  HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, conversionrate,true);
-           // }
             decimal  conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-           
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
             string cartguid = string.Empty;

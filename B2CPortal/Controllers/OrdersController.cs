@@ -162,16 +162,16 @@ namespace B2CPortal.Controllers
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                                 //var DiscountedPrice = price * (1 - (discount / 100));
-                                var ActualPrice = (decimal)(price * item.Quantity);
+                                var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue) ;
                                 subTotal = (int)(subTotal + ActualPrice);
                                 totalDiscount = (int)(totalDiscount + discount);
                                 var Order = new OrderVM
                                 {
                                     Name = productData.Name,
-                                    Price = price,
+                                    Price = Math.Round((decimal)(price /conversionvalue),2),
                                     Quantity = item.Quantity,
                                     Discount = discount,
-                                    SubTotalPrice = discountedprice //(int?)(item.TotalPrice == null ? 0 : item.TotalPrice)
+                                    SubTotalPrice = Math.Round(ActualPrice,2),
                                 };
                                 orderVMs.Add(Order);
 
