@@ -398,10 +398,10 @@ namespace B2CPortal.Controllers
                                     //-------------remvoe from cart-------------
                                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                                     var removeCart = await _cart.DisableCart(customerId, cookie);
-                                    var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
-                                    Billing.OrderNo = result;
-                                    Session["orderdata"] = Billing;
-                                    string url = Url.Action("PaymentStatusCOD", "Payment");
+                                    //var result = HelperFunctions.GenrateOrderNumber(ordermasterId.ToString());
+                                    //Billing.OrderNo = result;
+                                    //Session["orderdata"] = Billing;
+                                    string url = Url.Action("PaymentStatus", "Payment");
                                     return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
                                 }
                                 else
@@ -435,121 +435,121 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-        [HttpPost]
-        [ActionName("UpdateOrder")]
-        public async Task<ActionResult> UpdateOrder(OrderVM Billing)
-        {
-            try
-            {
-                OrderVM orderVM = new OrderVM();
-                List<OrderVM> orderVMs = new List<OrderVM>();
-                decimal OrderTotal = 0;
-                decimal subTotal = 0;
-                var customerId = 0;
-                var tQuantity = 0;
-                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
-                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+        //[HttpPost]
+        //[ActionName("UpdateOrder")]
+        //public async Task<ActionResult> UpdateOrder(OrderVM Billing)
+        //{
+        //    try
+        //    {
+        //        OrderVM orderVM = new OrderVM();
+        //        List<OrderVM> orderVMs = new List<OrderVM>();
+        //        decimal OrderTotal = 0;
+        //        decimal subTotal = 0;
+        //        var customerId = 0;
+        //        var tQuantity = 0;
+        //        string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+        //        decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-                if (Session["UserId"] != null)
-                {
-                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-                    if (customerId > 0)
-                    {
-                        var ordermodel = await _orders.GetOrderMasterById(Billing.Id);
-                        var ordervm = new OrderVM
-                        {
-                            Id = Billing.Id,
-                            Currency = ordermodel.Currency,
-                            ConversionRate = (decimal)ordermodel.ConversionRate,
-                            PaymentMode = Billing.paymenttype.ToString(),
-                            Status = OrderStatus.InProcess.ToString(),
-                            TotalPrice = ordermodel.TotalPrice,
-                            PaymentStatus = false,
-                        };
-                        var orderresponse = await _orders.UpdateOrderMAster(ordervm);
-                        // Billing Details Add=============================================
-                        foreach (var item in ordermodel.OrderDetails)
-                        {
-                            var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
-                            var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                            var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                            var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                            var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                            var ActualPrice = (decimal)(price * item.Quantity);
+        //        if (Session["UserId"] != null)
+        //        {
+        //            customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+        //            if (customerId > 0)
+        //            {
+        //                var ordermodel = await _orders.GetOrderMasterById(Billing.Id);
+        //                var ordervm = new OrderVM
+        //                {
+        //                    Id = Billing.Id,
+        //                    Currency = ordermodel.Currency,
+        //                    ConversionRate = (decimal)ordermodel.ConversionRate,
+        //                    PaymentMode = Billing.paymenttype.ToString(),
+        //                    Status = OrderStatus.InProcess.ToString(),
+        //                    TotalPrice = ordermodel.TotalPrice,
+        //                    PaymentStatus = false,
+        //                };
+        //                var orderresponse = await _orders.UpdateOrderMAster(ordervm);
+        //                // Billing Details Add=============================================
+        //                foreach (var item in ordermodel.OrderDetails)
+        //                {
+        //                    var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+        //                    var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+        //                    var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+        //                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+        //                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+        //                    var ActualPrice = (decimal)(price * item.Quantity);
 
-                            OrderTotal += Convert.ToDecimal(discountedprice);
-                            subTotal = (subTotal + ActualPrice);
-                            tQuantity = (int)(tQuantity + item.Quantity);
-                            var Order = new OrderVM
-                            {
-                                Name = productData.Name,
-                                Quantity = item.Quantity,
-                                Discount = discount,
-                                Price = price,
-                                CartSubTotalDiscount = totalDiscountAmount,
-                                // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
-                                //no need of conversion already converted into cart
-                                SubTotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
+        //                    OrderTotal += Convert.ToDecimal(discountedprice);
+        //                    subTotal = (subTotal + ActualPrice);
+        //                    tQuantity = (int)(tQuantity + item.Quantity);
+        //                    var Order = new OrderVM
+        //                    {
+        //                        Name = productData.Name,
+        //                        Quantity = item.Quantity,
+        //                        Discount = discount,
+        //                        Price = price,
+        //                        CartSubTotalDiscount = totalDiscountAmount,
+        //                        // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
+        //                        //no need of conversion already converted into cart
+        //                        SubTotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
 
-                            };
-                            orderVMs.Add(Order);
-                        }
-                        Billing.orderVMs = orderVMs;
-                        Billing.PaymentStatus = false;
-                        Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
-                        Billing.OrderTotal = Math.Round(OrderTotal, 2);
+        //                    };
+        //                    orderVMs.Add(Order);
+        //                }
+        //                Billing.orderVMs = orderVMs;
+        //                Billing.PaymentStatus = false;
+        //                Billing.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
+        //                Billing.OrderTotal = Math.Round(OrderTotal, 2);
 
-                        Billing.TotalQuantity = tQuantity;
-                        Billing.Currency = currency;
-                        Billing.ConversionRate = conversionvalue;
-                        Billing.PaymentMode = Billing.paymenttype.ToString();
-                        Billing.Status = OrderStatus.InProcess.ToString();
-                        Billing.Country = Billing.Country;
-                        Billing.City = Billing.City;
-                        Billing.ShippingAddress = Billing.ShippingAddress;
-                        Billing.OrderDescription = "order has been genrated successfully";
+        //                Billing.TotalQuantity = tQuantity;
+        //                Billing.Currency = currency;
+        //                Billing.ConversionRate = conversionvalue;
+        //                Billing.PaymentMode = Billing.paymenttype.ToString();
+        //                Billing.Status = OrderStatus.InProcess.ToString();
+        //                Billing.Country = Billing.Country;
+        //                Billing.City = Billing.City;
+        //                Billing.ShippingAddress = Billing.ShippingAddress;
+        //                Billing.OrderDescription = "order has been genrated successfully";
 
-                        HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordervm.Id.ToString(), true);
-                        HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, orderVM.OrderTotal.ToString(), true);
+        //                HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordervm.Id.ToString(), true);
+        //                HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, orderVM.OrderTotal.ToString(), true);
 
-                        if (Billing.paymenttype == PaymentType.Stripe)
-                        {
-                            string url = Url.Action("Stripe", "Payment");
-                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                        }
-                        if (Billing.paymenttype == PaymentType.Paypal)
-                        {
-                            string url = Url.Action("Paypal", "PaypalPaymentMethod");
-                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                        }
-                        else if (Billing.paymenttype == PaymentType.COD)
-                        {
-                            var result = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
-                            Billing.OrderNo = result;
-                            Session["orderdata"] = Billing;
-                            string url = Url.Action("PaymentStatusCOD", "Payment");
-                            return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                        }
-                        else
-                        {
-                            return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
-                        }
-                    }
-                    else
-                    {
-                        return RedirectToAction("Login", "Account");
-                    }
-                }
-                else
-                {
-                    return Json(new { data = "", msg = "Something bad happened", success = false }, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadResponse(ex);
-            }
-        }
+        //                if (Billing.paymenttype == PaymentType.Stripe)
+        //                {
+        //                    string url = Url.Action("Stripe", "Payment");
+        //                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+        //                }
+        //                if (Billing.paymenttype == PaymentType.Paypal)
+        //                {
+        //                    string url = Url.Action("Paypal", "PaypalPaymentMethod");
+        //                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+        //                }
+        //                else if (Billing.paymenttype == PaymentType.COD)
+        //                {
+        //                    var result = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
+        //                    Billing.OrderNo = result;
+        //                    Session["orderdata"] = Billing;
+        //                    string url = Url.Action("PaymentStatusCOD", "Payment");
+        //                    return Json(new { data = url, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+        //                }
+        //                else
+        //                {
+        //                    return Json(new { data = "", msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("Login", "Account");
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return Json(new { data = "", msg = "Something bad happened", success = false }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadResponse(ex);
+        //    }
+        //}
 
         [HttpGet]
         [ActionName("ManagePayment")]

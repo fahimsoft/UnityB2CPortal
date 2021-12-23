@@ -21,7 +21,6 @@ namespace B2CPortal.Controllers
             _IProductMaster = productMaster;
             _cart = cart;
         }
-
         public ActionResult Index()
         {
             return View();
@@ -836,67 +835,5 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
-        //[HttpPost]
-        //[ActionName("GetProductListbySidebar")]
-        //public async Task<JsonResult> GetProductListbySidebar(SideBarVM[] filterList, string search = "", int nextPage = 10, int prevPage = 0) //int[] filterList
-        //{
-        //    try
-        //    {
-        //        var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
-        //        return SuccessResponse(filter);
-        //    }
-        //    catch (Exception Ex)
-        //    {
-        //        throw Ex;
-        //    }
-        //}
-        //public static string GetCountryByIP(HttpRequestBase request)
-        //{
-        //    string pricesymbolvalue = "";
-        //    //pricesymbolvalue = HelperFunctions.GetCookie(HelperFunctions.pricesymbol);
-        //    pricesymbolvalue = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
-        //    if (string.IsNullOrEmpty(pricesymbolvalue)  || pricesymbolvalue  != "undefined")
-        //    {
-        //        IpInfo ipInfo = new IpInfo();
-        //        string info = new WebClient().DownloadString("http://ip-api.com/json/" + request.ServerVariables["REMOTE_ADDR"]);
-        //        JavaScriptSerializer jsonObject = new JavaScriptSerializer();
-        //        ipInfo = jsonObject.Deserialize<IpInfo>(info);
-        //        if (ipInfo.Country == null || (ipInfo.Country?.ToLower() == "pakistan" || ipInfo.Country?.ToLower() == "pk"))
-        //        {
-        //            pricesymbolvalue = "PKR";
-        //            HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
-        //            //HelperFunctions.SetCookie(HkelperFunctions.pricesymbol, pricesymbolvalue, 1);
-        //        }
-        //        else
-        //        {
-        //            pricesymbolvalue = "$";
-        //            HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol, pricesymbolvalue, true);
-        //            //HelperFunctions.SetCookie(HelperFunctions.pricesymbol, pricesymbolvalue, 1);
-        //        }
-        //    }
-        //    return pricesymbolvalue;
-        //}
-
-
     }
-    //public class SideBarVM
-    //{
-    //    public int ID { get; set; }
-    //    public string Name { get; set; }
-    //}
-    //public class IpInfo
-    //{
-    //    //country
-    //    public string Country { get; set; }
-    //}    //public class SideBarVM
-    //{
-    //    public int ID { get; set; }
-    //    public string Name { get; set; }
-    //}
-    //public class IpInfo
-    //{
-    //    //country
-    //    public string Country { get; set; }
-    //}
-
 }
