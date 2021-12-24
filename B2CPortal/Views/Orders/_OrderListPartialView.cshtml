@@ -46,11 +46,6 @@
                                 <thead>
                                     <tr>
                                         <th>Order #</th>
-                                        @*<th>Email</th>*@
-                                        @*<th>Phone #.</th>*@
-                                        @*<th>Gender</th>*@
-                                        @*<th> DOB</th>*@
-                                        @*<th>CNIC</th>*@
                                         <th>Order Date</th>
                                         <th width="10%">Shipping</th>
                                         <th width="10%">Billing</th>
@@ -71,44 +66,21 @@
                                             <tr data-id="@item.Id">
                                                 <td class="td-img text-left">
                                                     @item.OrderNo
-                                                    @*  <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>*@
-                                                    <!--<div class="items-dsc">
-                                                     <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id })"> @item.Name </a></h5>-->
-                                                    @*<p class="itemcolor">Color : <span>Blue</span></p>*@
-                                                    @*<p class="itemcolor">Size   : <span>SL</span></p>*@
-                                                    <!--</div>-->
-                                                </td>
-                                                @*<td class="pricecol">
-                                                    @item.EmailId
-                                                </td>
-                                                <td class="pricecol">
-                                                    @item.PhoneNo
                                                 </td>
                                                 <td>
-                                                    @item.Gender
-                                                </td>
-                                                <td>
-                                                    @item.DateOfBirth
-                                                </td>*@
-
-                                                @*<td>
-                                                    @item.CNIC
-                                                </td>*@
-                                                <td>
-                                                    @*@item.CreatedOn*@
                                                     @Html.DisplayFor(i => item.CreatedOn)
                                                 </td>
                                                 <td>
-                                                        <span class="overflow"  style="float: left; width: 50px">
-                                                            <span>@item.ShippingAddress </span>
-                                                        </span>
+                                                    <span class="overflow" style="float: left; width: 50px">
+                                                        <span>@item.ShippingAddress </span>
+                                                    </span>
                                                 </td>
 
                                                 <td>
                                                     <span class="overflow" style="float: left; width: 50px">
                                                         <span>  @item.BillingAddress</span>
                                                     </span>
-                                                   
+
                                                 </td>
                                                 <td>
 
@@ -129,7 +101,7 @@
                                                 <td style="color:rebeccapurple">
                                                     @item.Status
                                                 </td>
-                                                
+
                                                 <td style="color:rebeccapurple">
                                                     @{ if (item.PaymentStatus == true)
                                                         {
@@ -140,18 +112,18 @@
                                                         }
                                                         else
                                                         {
-                                                            <span style="color:red" >&#10539;</span>
+                                                            <span style="color:red">&#10539;</span>
 
-                                                            }
                                                         }
-                                                    </td>
+                                                    }
+                                                </td>
 
                                                 <td>
                                                     <a href="#" data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
-                                                   @if (item.PaymentMode.ToLower() != "cod" && item.Status.ToLower() == "inprocess" && item.PaymentStatus == false)
-                                                   {
-                                                    <a href="@Url.Action("Checkout","Orders",new { id = item.Id })"  class="btn-info" onclick="Handleorderdetail(@item.Id)"> Manage </a>
-                                                   }
+                                                    @if (item.PaymentMode.ToLower() != "cod" && item.Status.ToLower() == "inprocess" && item.PaymentStatus == false)
+                                                    {
+                                                        <a href="@Url.Action("Checkout","Orders",new { id = item.Id })" class="btn-info" onclick="Handleorderdetail(@item.Id)"> Manage </a>
+                                                    }
 
 
                                                 </td>
@@ -159,9 +131,6 @@
                                                 <td>@*<i class="mdi mdi-close removecartbtn" title="Remove this product"></i>*@</td>
                                             </tr>
                                         }
-
-
-
                                     }
                                     else
                                     {
@@ -175,6 +144,7 @@
                                     }
                                 </tbody>
                             </table>
+                                    @*<a class="btn btn-primary btn-lg btn-block" href="/Product/PorductList">Shop Now</a>*@
                             @*<div class="text-right">
                                     @if (Model == null || Model.Count() <= 0)
                                     {
@@ -193,80 +163,3 @@
                 </div>
             </div>
         </section>
-
-
-
-        <!--<script>
-    //$(document).ready(function () {
-    //    jQuery('.plus-minus-box').keyup(function () {
-    //        this.value = this.value.replace(/[^0-9\.]/g, '');
-    //    });
-    //});-->
-    @*$(".removecartbtn").click(function () {
-        var row = $(this).closest("tr");
-        var id = $(row).attr('data-id');
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("DeleteCart", "Product")', //"/Product/DeleteCart",
-            data: {
-                id: id,
-            },
-            success: function (data) {
-                if (!data.success) {
-                    toastr.error(data.msg);
-                } else {
-                toastr.success(data.msg);
-                }
-                $("#CartTable").load('@Url.Action("GetCartList", "Product")');
-                ShowCartProducts();
-                $(row).remove();
-                return false;
-
-            }
-        });
-         //$(this).remove();
-        //return false;
-    });
-    $("#updatecart").click(function () {
-        toastr.info("Please Wait");
-        var cartids = [];
-        var cartquentites = [];
-        var array = $.makeArray($('tbody tr[id]').map(function () {
-            return this.id;
-        }));
-        //$('#myTable').on('click', 'tbody tr', function (event, it) {
-        //    console.log(it.length);
-        //});
-        var tb = $("#myTable tbody");//.closest("tr");
-        var size = tb.find("tr").length;
-        tb.find("tr").each(function (index, element) {
-            cartids.push(element.dataset["id"]);
-            $(element).find('td').each(function (index, element) {
-                if (parseInt($(element).find('input').val()) > 0) {
-                    cartquentites.push($(element).find('input').val());
-                }
-            });
-        });
-        console.log("Number of rows : " + cartquentites);
-        console.log("Number of  : " + cartids);
-        $.ajax({
-            type: "POST",
-            url: '@Url.Action("UpdateCartList", "Product")', //"/Product/DeleteCart",
-            data: {
-                cartquentites: cartquentites,
-                cartids: cartids
-            },
-            success: function (data) {
-                if (!data.success) {
-                    ShowCartProducts();
-                    $("#CartTable").load('@Url.Action("GetCartList", "Product")');
-                    toastr.success(data.msg);
-                } else {
-                    toastr.error(data.msg);
-                }
-
-            }
-        });
-    });*@
-
-        <!--</script>-->
