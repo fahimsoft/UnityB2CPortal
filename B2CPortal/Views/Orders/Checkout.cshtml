@@ -398,8 +398,6 @@
             }
         });
         $('#order').click(function () {
-            $(this).attr('disabled', 'disabled');
-
             var form = $("#billing");
             $.validator.unobtrusive.parse($(this));//add the form validation
             $.validator.unobtrusive.parse(form);
@@ -407,7 +405,6 @@
             if ($('input.shipto').is(':checked')) {
             }
             var paymenttype = $("input[name='paymode']:checked").val();
-
             if (paymenttype == undefined || paymenttype == "") {
                 toastr.error("Please Select Payment Type.");
             } else {
@@ -424,9 +421,80 @@
                         PaymentType: paymenttype// $('input[name="paymode"]:checked').val()
                     }
                 }
-
+                        //==============================confirm order===============================
                 if ($(form.valid())) {
-                    $('.modal').show();
+                    if (confirm("Are You Sure To Confirm Order !")) {
+                        $(this).attr('disabled', 'disabled');
+                        var paymenttype = $("input[name='paymode']:checked").val();
+                        if (paymenttype == undefined || paymenttype == "") {
+                            toastr.error("Please Select Payment Type.");
+                        } else {
+                            var form = $("#billing");
+                            //work for shipping detils.
+                            var shippingdetails = {};
+                            if ($('.myClass').css('display') != 'none') {
+                                var shippingdata = $("#shipping").serializeArray();
+                                shippingdetails = FormDataToObject(shippingdata);
+                            }
+
+                            var datatosend = {
+                                Billing: {
+                                    /*Id: $('#Id').val(),*/
+                                    PhoneNo: $('#PhoneNo').val(),
+                                    EmailId: $('#EmailId').val(),
+                                    Country: $('#Country').val(),
+                                    OrderDescription: $('#OrderDescription').val(),
+                                    City: $('#City').val(),
+                                    BillingAddress: $('#Address').val(),
+                                    ShippingAddress: $('.SAddress').val(),
+                                    PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
+                                    shippingdetails: shippingdetails
+                                }
+                            }
+
+                            document.getElementsByClassName("loader-container")[0].style.display = "block";
+                            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+                            $.validator.unobtrusive.parse($(this));//add the form validation
+                            $.validator.unobtrusive.parse(form);
+                            if ($(form.valid())) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Orders/AddBillingDetails",
+                                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                                    contentType: 'application/json',
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        if (data.success == true) {
+                                            window.location.href = data.data;// reload();
+                                            toastr.success(data.msg);
+                                        }
+                                        else if (data.success == false) {
+                                            toastr.error(data.msg);
+                                        }
+                                        document.getElementsByClassName("loader-container")[0].style.display = "none";
+                                    },
+                                    failure: function (data) {
+                                        console.log(data);
+                                    },
+                                    err: function (data) {
+                                        console.log(data);
+                                    }
+                                })
+                            }
+                            else {
+                                $(this).removeAttr('disabled');
+                                $('.order').removeAttr('disabled');
+
+                                return false;
+                            }
+
+                        }
+
+                    } else {
+
+                    }
+
+                    //$('.modal').show();
                 } else {
                     $("html, body").animate({ scrollTop: 0 }, 600);
                     return false;
@@ -438,82 +506,80 @@
                 });
             }
         });
-        $('#confirmBtn').click(function () {
-            $(this).attr('disabled', 'disabled');
-            var paymenttype = $("input[name='paymode']:checked").val();
+        //$('#confirmBtn').click(function () {
+        //    $(this).attr('disabled', 'disabled');
+        //    var paymenttype = $("input[name='paymode']:checked").val();
 
-            if (paymenttype == undefined || paymenttype == "") {
-                toastr.error("Please Select Payment Type.");
-            } else {
+        //    if (paymenttype == undefined || paymenttype == "") {
+        //        toastr.error("Please Select Payment Type.");
+        //    } else {
                 
-                var form = $("#billing");
-                //work for shipping detils.
-                var shippingdetails = {};
-                if ($('.myClass').css('display') != 'none') {
-                    var shippingdata = $("#shipping").serializeArray();
-                    shippingdetails = FormDataToObject(shippingdata);
-                }
+        //        var form = $("#billing");
+        //        //work for shipping detils.
+        //        var shippingdetails = {};
+        //        if ($('.myClass').css('display') != 'none') {
+        //            var shippingdata = $("#shipping").serializeArray();
+        //            shippingdetails = FormDataToObject(shippingdata);
+        //        }
 
-                var datatosend = {
-                    Billing: {
-                        /*Id: $('#Id').val(),*/
-                        PhoneNo: $('#PhoneNo').val(),
-                        EmailId: $('#EmailId').val(),
-                        Country: $('#Country').val(),
-                        OrderDescription: $('#OrderDescription').val(),
-                        City: $('#City').val(),
-                        BillingAddress: $('#Address').val(),
-                        ShippingAddress: $('.SAddress').val(),
-                        PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
-                        shippingdetails: shippingdetails
-                    }
-                }
+        //        var datatosend = {
+        //            Billing: {
+        //                /*Id: $('#Id').val(),*/
+        //                PhoneNo: $('#PhoneNo').val(),
+        //                EmailId: $('#EmailId').val(),
+        //                Country: $('#Country').val(),
+        //                OrderDescription: $('#OrderDescription').val(),
+        //                City: $('#City').val(),
+        //                BillingAddress: $('#Address').val(),
+        //                ShippingAddress: $('.SAddress').val(),
+        //                PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
+        //                shippingdetails: shippingdetails
+        //            }
+        //        }
 
-                document.getElementsByClassName("loader-container")[0].style.display = "block";
-                $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-                $.validator.unobtrusive.parse($(this));//add the form validation
-                $.validator.unobtrusive.parse(form);
-                //if ($(form).valid()) // using not operator for a time being
-                debugger
-                if ($(form.valid())) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Orders/AddBillingDetails",
-                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                        contentType: 'application/json',
-                        dataType: 'json',
-                        success: function (data) {
-                            if (data.success == true) {
-                                window.location.href = data.data;// reload();
-                                toastr.success(data.msg);
-                            }
-                            else if (data.success == false) {
-                                toastr.error(data.msg);
-                            }
-                            document.getElementsByClassName("loader-container")[0].style.display = "none";
-                        },
-                        failure: function (data) {
-                            console.log(data);
-                        },
-                        err: function (data) {
-                            console.log(data);
-                        }
-                    })
-                }
-                else {
-                    $(this).removeAttr('disabled');
-                    $('.order').removeAttr('disabled');
+        //        document.getElementsByClassName("loader-container")[0].style.display = "block";
+        //        $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+        //        $.validator.unobtrusive.parse($(this));//add the form validation
+        //        $.validator.unobtrusive.parse(form);
+        //        if ($(form.valid())) {
+        //            $.ajax({
+        //                type: "POST",
+        //                url: "/Orders/AddBillingDetails",
+        //                data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+        //                contentType: 'application/json',
+        //                dataType: 'json',
+        //                success: function (data) {
+        //                    if (data.success == true) {
+        //                        window.location.href = data.data;// reload();
+        //                        toastr.success(data.msg);
+        //                    }
+        //                    else if (data.success == false) {
+        //                        toastr.error(data.msg);
+        //                    }
+        //                    document.getElementsByClassName("loader-container")[0].style.display = "none";
+        //                },
+        //                failure: function (data) {
+        //                    console.log(data);
+        //                },
+        //                err: function (data) {
+        //                    console.log(data);
+        //                }
+        //            })
+        //        }
+        //        else {
+        //            $(this).removeAttr('disabled');
+        //            $('.order').removeAttr('disabled');
 
-                    return false;
-                }
+        //            return false;
+        //        }
 
-            }
+        //    }
 
-        })
+        //})
         $(document).on('change', 'input[name=paymode]', function () {
             $('#order').removeAttr("disabled");
             $('#confirmBtn').removeAttr("disabled");
 
-        })
+        });
     </script>
 }

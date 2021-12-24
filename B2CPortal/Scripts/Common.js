@@ -8,7 +8,7 @@ var NextProdClickValue = 10;
 var pricesymbol = "pricesymbol";
 
 window.onload = function () {
-    var divToHide = document.getElementById('quick-view');
+ /*   var divToHide = document.getElementById('quick-view');*/
     document.onclick = function (e) {
         $(e.target).find('.modal-content').remove();
         //$('body').addClass('body-pading-right');
