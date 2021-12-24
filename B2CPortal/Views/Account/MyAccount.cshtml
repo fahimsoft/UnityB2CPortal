@@ -10,10 +10,6 @@
             <div class="col-xs-12">
                 <div class="pages-title-text text-center">
                     <h2>My Account</h2>
-                    <ul class="text-left">
-                        <li><a href="/Home/Index">Home </a></li>
-                        <li><span> // </span>My Account</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -192,7 +188,7 @@
                                                 @Html.EditorFor(m => m.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
                                                 @Html.EditorFor(m => m.LastName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
                                                 @Html.EditorFor(m => m.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
-                                                @Html.EditorFor(m => m.DateOfBirth, new { htmlAttributes = new { @placeholder = "Date Of Birth:", @class = "form-control", @type = "date" } })
+                                                @Html.EditorFor(m => m.DateOfBirth, new { htmlAttributes = new { @placeholder = "Date Of Birth:", id= "dateinput" ,@class = "form-control", @type = "date" } })
                                                 @Html.EditorFor(m => m.Gender, new { htmlAttributes = new { @placeholder = "Gender:", @class = "form-control" } })
                                                 @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
                                                 @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @placeholder = "Current Password:", @class = "form-control", @type = "Password" } })

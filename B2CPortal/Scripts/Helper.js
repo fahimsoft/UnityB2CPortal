@@ -15,12 +15,12 @@ function GetCookieByName(name) {
     return sym;
 }
 //validate previous date.................
-function validDate() {
-    var today = new Date().toISOString().split('T')[0];
-    var nextWeekDate = new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-    document.getElementsByName("date")[0].setAttribute('min', today);
-    document.getElementsByName("date")[0].setAttribute('max', nextWeekDate)
-}
+//function validDate() {
+//    var today = new Date().toISOString().split('T')[0];
+//    var nextWeekDate = new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+//    document.getElementsByName("date")[0].setAttribute('min', today);
+//    document.getElementsByName("date")[0].setAttribute('max', nextWeekDate)
+//}
 var now = new Date(),
     // minimum date the user can choose, in this case now and in the future
     minDate = now.toISOString().substring(0, 10);
