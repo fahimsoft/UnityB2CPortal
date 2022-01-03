@@ -479,6 +479,7 @@ function HandleAddtoWishList(id) {
 //---------------Product management----------------
 //Load Product List
 function loadProductList() {
+    
     var htmldata = '', htmlProductList = '', htmlProductGrid = '';
     $.ajax({
         url: "/Product/GetProduct",
@@ -627,7 +628,7 @@ ${htmlProductList}
     });
 }
 function LoadQuickViewWithRating(elem) {
-    
+    debugger
     var Id = elem.id;
     $.ajax({
         url: '/Product/GetProductbyIdWithRating?Id=' + Id + '',
@@ -1225,7 +1226,7 @@ function SetLocalStorageCommentSection(nextPage, prevPage) {
 // Get Product Comment And Rating Default Record 0 to 10
 function GetProductCommentAndRating() {
 
-
+    
 
     let urlstr = location.href;
     let url = new URL(urlstr);
@@ -1497,7 +1498,7 @@ function GetProductIdFromURL() {
 
 function GetProductByIdWithRating() { //updated 30-Nov-2021
     var productId = GetProductIdFromURL();
-
+    debugger
     if (productId != null && productId != undefined) {
         $.ajax({
             url: "/Product/GetProductbyIdWithRating",
@@ -1538,7 +1539,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                 //});
                 for (i = 0; i <= item.length; i++) {
                     if (i == 1) {
-                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[0].ImageUrl2[i]}" alt="quick view" /> </a></li>`;
+                        htmlProductDetail += `<li class="active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[0].ImageUrl2[0]}" alt="quick view" /> </a></li>`;
                     } else {
                         htmlProductDetail += `<li><a data-toggle="tab" href="#sin-${index}"> <img src="${item[0].ImageUrl2[i]}" alt="quick view" /> </a></li>`;
                     }
