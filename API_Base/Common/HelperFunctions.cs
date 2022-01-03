@@ -151,7 +151,7 @@ namespace API_Base.Common
             try
             {
                 Root root = new Root();
-                var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-one?from=" + from + "&to=" + to + "&api_key=c5d28e202a-2efe05231d-r4in25");
+                var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-one?from=" + from + "&to=" + to + "&api_key=7410baef9f-d266d66d5f-r54wck");
                 JavaScriptSerializer jsonObject = new JavaScriptSerializer();
                 root = jsonObject.Deserialize<Root>(result);
                 return root.result.PKR.ToString();

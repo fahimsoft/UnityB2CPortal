@@ -624,6 +624,21 @@
                 color: #fff;
             }*/
 
+        @@media (min-width: 1170px) and (max-width: 1410px) {
+            .middel-top .center input {
+                width: 350px;
+            }
+        }
+
+        @@media (max-width: 1170px) {
+            .middel-top .center {
+                width: 70% !important;
+            }
+
+            .middel-top .left {
+                display: none;
+            }
+        }
     </style>
 
     @Html.Partial("_Header")
