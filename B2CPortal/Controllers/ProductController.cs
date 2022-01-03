@@ -513,7 +513,9 @@ namespace B2CPortal.Controllers
                         wishlistProducts.TotalQuantity = wishlistquentites[i]; var productmasetr = await _IProductMaster.GetProductById(wishlistProducts.FK_ProductMaster);
                         var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                         var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault(); wishlistProducts.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
-                        var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
+                       // var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
+                    decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
                         if (wishlistProducts.Currency == "PKR")
                         {
                             wishlistProducts.TotalPrice = (price * (1 - (discount / 100))) * wishlistProducts.Quantity;
@@ -521,7 +523,7 @@ namespace B2CPortal.Controllers
                         else
                         {
                             var totalUsd = (price * (1 - (discount / 100))) * wishlistProducts.Quantity;
-                            wishlistProducts.TotalPrice = Math.Round((decimal)(totalUsd / Convert.ToDecimal(usdRate)), 2);
+                            wishlistProducts.TotalPrice = Math.Round((decimal)(totalUsd / Convert.ToDecimal(conversionvalue)), 2);
                         }
                         updateresult = await _cart.UpdateWishlistQuantity(wishlistProducts);
                     }
@@ -656,26 +658,26 @@ namespace B2CPortal.Controllers
                         }
                         else
                         {
-                            var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
+                           // var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
                             var wishlistVM = new WishlistVM
                             {
                                 Id = CartId,
                                 FK_ProductMaster = productId,
                                 Name = Name,
                                 MasterImageUrl = mainImg,
-                                Price = Math.Round((decimal)price / Convert.ToDecimal(usdRate), 2),
+                                Price = Math.Round((decimal)price / Convert.ToDecimal(conversionvalue), 2),
                                 Discount = discount,
-                                DiscountedPrice = DiscountedPrice / Convert.ToDecimal(usdRate),
-                                ActualPrice = Math.Round((decimal)((price / Convert.ToDecimal(usdRate)) * Quantity), 2),
-                                TotalPrice = Math.Round((decimal)((DiscountedPrice / Convert.ToDecimal(usdRate)) * Quantity), 2),
-                                DiscountAmount = Math.Round(((decimal)((price / Convert.ToDecimal(usdRate)) * item.Quantity) - (item.TotalPrice == null ? 0 : (decimal)(item.TotalPrice))), 2),
+                                DiscountedPrice = DiscountedPrice / Convert.ToDecimal(conversionvalue),
+                                ActualPrice = Math.Round((decimal)((price / Convert.ToDecimal(conversionvalue)) * Quantity), 2),
+                                TotalPrice = Math.Round((decimal)((DiscountedPrice / Convert.ToDecimal(conversionvalue)) * Quantity), 2),
+                                DiscountAmount = Math.Round(((decimal)((price / Convert.ToDecimal(conversionvalue)) * item.Quantity) - (item.TotalPrice == null ? 0 : (decimal)(item.TotalPrice))), 2),
                                 ShipingAndHostring = 0,
                                 VatTax = 0,
                                 TotalQuantity = Quantity,
                             };
                             wishlistVMs.Add(wishlistVM);
-                            wishlistVMs.Select(c => { c.CartSubTotal += Math.Round((decimal)((price / Convert.ToDecimal(usdRate)) * item.Quantity), 2); return c; }).ToList();
-                            wishlistVMs.Select(c => { c.CartSubTotalDiscount += Math.Round(((decimal)((price / Convert.ToDecimal(usdRate)) * item.Quantity) - (decimal)(item.TotalPrice)), 2); return c; }).ToList();
+                            wishlistVMs.Select(c => { c.CartSubTotal += Math.Round((decimal)((price / Convert.ToDecimal(conversionvalue)) * item.Quantity), 2); return c; }).ToList();
+                            wishlistVMs.Select(c => { c.CartSubTotalDiscount += Math.Round(((decimal)((price / Convert.ToDecimal(conversionvalue)) * item.Quantity) - (decimal)(item.TotalPrice)), 2); return c; }).ToList();
                             wishlistVMs.Select(c => { c.OrderTotal += (decimal)(item.TotalPrice); return c; }).ToList();
 
                         }
@@ -709,7 +711,8 @@ namespace B2CPortal.Controllers
                 var customerId = 0;
                 decimal DiscountedPrice = 0;
                 var Quantity = obj.Quantity;
-                var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                //var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -748,7 +751,7 @@ namespace B2CPortal.Controllers
                                     DiscountedPrice = (decimal)(price * (1 - (discount / 100)));
                                     //Total = (decimal)(DiscountedPrice * Quantity);
                                 }
-                                cartData.TotalPrice = Math.Round(DiscountedPrice / Convert.ToDecimal(usdRate), 2);
+                                cartData.TotalPrice = Math.Round(DiscountedPrice / Convert.ToDecimal(conversionvalue), 2);
                                 cartData.Quantity = (cartData.Quantity + Quantity);
                                 cartData.TotalQuantity = (cartData.TotalQuantity + Quantity); var updated = await _cart.UpdateToCart(cartData);
                                 var res = await _cart.UpdateWishList(cartId);
