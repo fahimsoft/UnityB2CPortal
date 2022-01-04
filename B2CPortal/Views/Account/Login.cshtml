@@ -94,13 +94,13 @@
                             <div class="custom-input">
                                 <form class="register" id="register">
                                     @*action="mail.php" method="post*@
-                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control", @required = true } })
+                                    @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar", @required = true } })
                                     @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
 
-                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                                    @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control removespecialchar" } })
                                     @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
 
-                                    @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
+                                    @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control removespecialchar" } })
                                     @Html.ValidationMessageFor(model => model.PhoneNo, "", new { @class = "text-danger" })
 
                                     @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", Type = "date" } })
@@ -136,7 +136,7 @@
                                     <span id='message'></span>
                                     <div class="submit-text coupon">
 
-                                        <button type="button" class="btn btn-success" id="btnAddSale">Sign up</button>
+                                        <button type="submit" class="btn btn-success" id="btnAddSale">Sign up</button>
                                     </div>
                                 </form>
                             </div>

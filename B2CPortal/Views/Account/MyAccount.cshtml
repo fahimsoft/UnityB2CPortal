@@ -45,20 +45,20 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         @Html.HiddenFor(m => m.Id)
-                                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
+                                                        @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar" } })
 
                                                         @*<input type="text" name="name" placeholder="First Name" />*@
                                                     </div>
                                                     <div class="col-md-6">
-                                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                                                        @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control removespecialchar" } })
 
                                                         @*<input type="text" name="name" placeholder="Last Name" />*@
                                                     </div>
                                                 </div>
-                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
+                                                @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control removespecialchar" } })
                                                 @if (Model.Id > 0)
                                                 {
-                                                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" , id= "removespecialchar" } })
+                                                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control removespecialchar"} })
 
 
                                                 }
@@ -82,7 +82,7 @@
 
                                                 @if (Model.Id > 0)
                                                 {
-                                                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } })
+                                                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control removespecialchar" } })
 
 
                                                 }
@@ -100,7 +100,7 @@
                                                     </div>}
 
                                                 <p class="red-color">** You must register at least one phone number.</p>
-                                                @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
+                                                @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control removespecialchar" } })
 
                                                 @*<input type="text" name="text" placeholder="Mobile Phone" />*@
                                                 @*<div class="custom-mess">
