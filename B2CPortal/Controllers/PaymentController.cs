@@ -63,9 +63,8 @@ namespace B2CPortal.Controllers
                     Phone = payment.Phone,
                     Description = string.IsNullOrEmpty(payment.Description) ? "this payment from stripe" : payment.Description,
                     StripeToken = stripeToken,
-                    //Amount = Convert.ToDecimal(OrderTotalAmount) * 100 < 50 ? 100 : Convert.ToDecimal(OrderTotalAmount) * 100,
-                    Amount = Convert.ToDecimal(OrderTotalAmount),
-
+                    Amount = Convert.ToDecimal(OrderTotalAmount) * 100 < 50 ? 100 : Convert.ToDecimal(OrderTotalAmount) * 100,
+                    StripeAmount = Convert.ToDecimal(OrderTotalAmount),
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
                 //ResponseViewModel resmodel  =  HelperFunctions.ResponseHandler(result);

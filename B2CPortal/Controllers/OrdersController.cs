@@ -222,9 +222,15 @@ namespace B2CPortal.Controllers
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-                if (Session["UserId"] != null && 
+                if (Session["UserId"] != null  && currency.ToLower() == "pkr" &&
+                   ( Billing.paymenttype == PaymentType.Stripe ||
+                    Billing.paymenttype == PaymentType.Paypal))
+                {
+                    return Json(new { data = "", msg = $"You can not pay with {Billing.paymenttype}", success = false }, JsonRequestBehavior.AllowGet);
+                }
+                if (Session["UserId"] != null &&  
                     (Billing.paymenttype == PaymentType.Stripe
-                    || Billing.paymenttype== PaymentType.COD
+                    || Billing.paymenttype == PaymentType.COD
                    || Billing.paymenttype == PaymentType.Paypal)
                     )
                 {
@@ -432,7 +438,7 @@ namespace B2CPortal.Controllers
             }
             catch (Exception ex)
             {
-                return BadResponse(ex);
+                return Json(new { data = "", msg = ex.Message, success = false }, JsonRequestBehavior.AllowGet);
             }
         }
         //[HttpPost]

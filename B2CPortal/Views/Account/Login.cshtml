@@ -103,7 +103,7 @@
                                     @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
                                     @Html.ValidationMessageFor(model => model.PhoneNo, "", new { @class = "text-danger" })
 
-                                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", id = "dateinput", Type = "date" } })
+                                    @Html.EditorFor(model => model.DateOfBirth, new { htmlAttributes = new { @placeholder = "DOB:", @class = "form-control", Type = "date" } })
                                     @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
 
                                     @{
@@ -155,12 +155,6 @@
     <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
     <script type="text/javascript">
         var email;
-
-
-
-
-
-
         jQuery('#register').validate({
             rules: {
                 FirstName: {
@@ -256,11 +250,9 @@
         });
 
 
-
-
-
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
+            debugger
             var userinput = $('.email').val();
             var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
             if (!pattern.test(userinput)) {
@@ -279,6 +271,52 @@
                         if (data.success == true) {
                             toastr.success(data.msg);
                             $('#btnAddSale').attr('disabled', false);
+                            //-----------------------for sign up------------------------
+                            var form = $("#register");
+                            var datatosend = {
+                                customer: {
+                                    /* idx: $('#idx').val(),*/
+                                    FirstName: $('#FirstName').val(),
+                                    LastName: $('#LastName').val(),
+                                    PhoneNo: $('#PhoneNo').val(),
+                                    DateOfBirth: $('#DateOfBirth').val(),
+                                    Gender: $('#Gender').val(),
+                                    EmailId: $('.email').val(),
+                                    Password: $('.Password').val()
+                                }
+                            }
+                            $.validator.unobtrusive.parse(form);
+                            //if ($(form).valid()) // using not operator for a time being
+                            if ($(form)) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/Account/AddUpdate",
+                                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                                    contentType: 'application/json',
+                                    dataType: 'json',
+                                    success: function (data) {
+                                        if (data.success == true) {
+                                            toastr.success("Registered successfully.");
+                                            window.location.reload();
+                                        }
+                                        else if (data.success == false || data.isSuccessful == false) {
+                                            toastr.error("Registration Failed.");
+                                        }
+                                    },
+                                    failure: function (data) {
+                                        console.log(res);
+                                        toastr.error("Registration Failed.");
+                                    },
+                                    err: function (res) {
+                                        console.log(res);
+                                    }
+                                })
+                            }
+                            else {
+                                return false;
+                            }
+                            //-----------------------for sign up------------------------
+
                         }
                         else if (data.success == false) {
                             toastr.error(data.msg);
@@ -291,53 +329,7 @@
                 // return result;
             }
 
-            e.preventDefault();
-            var form = $("#register");
-            var datatosend = {
-                customer: {
-                    /* idx: $('#idx').val(),*/
-                    FirstName: $('#FirstName').val(),
-                    LastName: $('#LastName').val(),
-                    PhoneNo: $('#PhoneNo').val(),
-                    DateOfBirth: $('#DateOfBirth').val(),
-                    Gender: $('#Gender').val(),
-                    EmailId: $('.email').val(),
-                    Password: $('.Password').val()
-                }
-            }
-            console.log(JSON.stringify(datatosend));
-            // var form = $("#purchaseform");
-            console.log(datatosend)
-            $.validator.unobtrusive.parse(form);
-            //if ($(form).valid()) // using not operator for a time being
-            if ($(form)) {
-                $.ajax({
-                    type: "POST",
-                    url: "/Account/AddUpdate",
-                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                    contentType: 'application/json',
-                    dataType: 'json',
-                    success: function (data) {
-                        if (data.success == true) {
-                            toastr.success("Registered successfully.");
-                            window.location.reload();
-                        }
-                        else if (data.success == false || data.isSuccessful == false) {
-                            toastr.error("Registration Failed.");
-                        }
-                    },
-                    failure: function (data) {
-                        console.log(res);
-                        toastr.error("Registration Failed.");
-                    },
-                    err: function (res) {
-                        console.log(res);
-                    }
-                })
-            }
-            else {
-                return false;
-            }
+ 
         });
 
 

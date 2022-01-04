@@ -181,20 +181,11 @@ namespace B2CPortal.Controllers
                         customer.Guid = cookie;
                         var res = await _account.CreateCustomer(customer);
                         return Json(new { data = res, msg = "Updated!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
-
-
-
                     }
                     catch (Exception ex)
                     {
                         return Json(new { data = ex, msg = "Failed!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
-
-
-
                     }
-
-
-
                 }
                 else
                 {
@@ -221,10 +212,12 @@ namespace B2CPortal.Controllers
                         cookie = Guid.NewGuid().ToString();
                         HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
                     }
-                    customer.Guid = cookie;
-                    var res = await _account.CreateCustomer(customer);
-                    var name = customer.FirstName;
-                    string htmlString = @"<html>
+                    try
+                    {
+                        customer.Guid = cookie;
+                        var res = await _account.CreateCustomer(customer);
+                        var name = customer.FirstName;
+                        string htmlString = @"<html>
 <body>
 <img src=" + "~/Content/Asset/img/img.PNG" + @">
 <h1 style=" + "text-align:center;" + @">Thanks for joining us!</h1>
@@ -234,32 +227,26 @@ namespace B2CPortal.Controllers
 <p>Unity Foods LTD!</p>
 </body>
 </html>";
-
-
-
-                    bool IsSendEmail = HelperFunctions.EmailSend(customer.EmailId, "Confirm your account", htmlString, true);
-                    if (IsSendEmail)
-                    {
-                        return Json(new { data = "", msg = "Registeration Successful!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
-
-
-
-                        //return SuccessResponse("true");
-
-
-
+                        bool IsSendEmail = HelperFunctions.EmailSend(customer.EmailId, "Confirm your account", htmlString, true);
                     }
-                    else
+                    catch 
                     {
-                        return Json(new { data = "", msg = "Registeration Failed", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
-                        //return BadResponse("Failed");
-                    }
+
+                    }   
+                    return Json(new { data = "", msg = "Registeration Successful!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+                    //if (IsSendEmail)
+                    //{
+                    //}
+                    //else
+                    //{
+                    //    return Json(new { data = "", msg = "Registeration Failed", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+                    //}
                 }
 
             }
             catch (Exception ex)
             {
-                return BadResponse(ex);
+                return Json(new { data = "", msg = ex.Message, success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -276,7 +263,6 @@ namespace B2CPortal.Controllers
                 return BadResponse(ex);
             }
         }
-
 
         public async Task<JsonResult> uniqueEmailCheck(string email)
         {

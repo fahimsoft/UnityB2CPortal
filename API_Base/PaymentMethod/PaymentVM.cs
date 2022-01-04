@@ -19,5 +19,6 @@ namespace API_Base.PaymentMethod
         public string Phone { get; set; }
         public string OrderNo { get; set; }
         public string GivenName { get;  set; }
+        public decimal StripeAmount { get; set; }
     }
 }

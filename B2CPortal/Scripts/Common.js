@@ -688,7 +688,7 @@ function LoadQuickViewWithRating(elem) {
                 if (i == 0) {
                     htmlProductPriceDetail += `<div class="simpleLens-container tab-pane active fade in" id="sin-${fade}">
 <div class="pro-type">
-<span id="discountedvalue">${productDiscount} </span>%
+<span id="discountedvalue">${Discount} </span>%
 </div>
 <a class="simpleLens-image" data-lens-image="${item[i].ImageUrl}" href="#"><img src="${item[i].ImageUrl}" alt="" class="simpleLens-big-image"></a>
 </div>`
@@ -755,7 +755,7 @@ ${htmlProductPriceDetail}
 <div class="list-text">
 ${htmlProductSize}
 </div>
-<h5> <del > <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}  </del><labal style="color:gray"> ${Discount == undefined ? 0 : Discount}% </labal> <strong class="pricesymbol"> </strong> <b class="numbers" id="discoountedprice"> ${productDiscount} </b>  </h5>
+<h5> <del> <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}  </del><labal style="color:gray"> ${Discount == undefined ? 0 : Discount}% </labal> <strong class="pricesymbol"> </strong> <b id="discoountedprice"> ${productDiscount} </b>  </h5>
 <p>${item[0].LongDescription}</p>
 <div class="plus-minus">
 <a class="dec qtybuttonquickview qtybutton">-</a>
@@ -1080,7 +1080,7 @@ function loadFeatureProduct() {
 </div>
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
- <del class="numbers" style='color: silver'><strong class="pricesymbol"></strong> ${item.Price} </del>&nbsp <strong class="pricesymbol"> </strong> <span class="numbers">${item.DiscountedAmount} </span>
+ <del> <strong class="pricesymbol"></strong>  ${item.Price}  </del>&nbsp <strong class="pricesymbol"> </strong> ${item.DiscountedAmount} 
 </div>
 </div>
 </div>
