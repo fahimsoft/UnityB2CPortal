@@ -27,15 +27,15 @@
                     <div class="custom-input">
                         <form id="billing">
                             @Html.HiddenFor(m => m.FK_Customer)
-                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control" } })
-                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control"  ,id= "removespecialchar"  } })
+                            @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control" , id = "removespecialchar" } })
                             @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control" } })
-                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" } })
+                            @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control" , id = "removespecialchar" } })
 
                             @if (Model.FK_Customer > 0)
                             {
-                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
-                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" } }) }
+                                @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" , id = "removespecialchar" } })
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { @placeholder = "City:", @class = " form-control" , id = "removespecialchar" } }) }
                             else
                             {
                                 <div class="custom-select">
@@ -60,7 +60,7 @@
                                         <option value="Quetta"> Quetta </option>
                                     </select>
                                 </div>}
-                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" , id = "removespecialchar" } })
 
                             <div class="custom-select">
                                 <label>Order Description</label>

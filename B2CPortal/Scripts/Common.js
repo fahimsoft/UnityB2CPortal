@@ -1817,3 +1817,15 @@ var paymenttype = {
     EasyPaisa: "EasyPaisa",
 };
 //*******************************************************************
+
+//----------------------------for special charctar--------------------------
+$(document).ready(function () {
+    $(document).on('keypress', '#removespecialchar', function (event) {
+        var regex = RegExp("^[a-zA-Z0-9]+$");
+        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+        if (!regex.test(key)) {
+            return false;
+        }
+    })
+});
+

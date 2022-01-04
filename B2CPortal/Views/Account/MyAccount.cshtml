@@ -58,7 +58,7 @@
                                                 @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = "email form-control" } })
                                                 @if (Model.Id > 0)
                                                 {
-                                                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" } })
+                                                    @Html.EditorFor(model => model.Country, new { htmlAttributes = new { @placeholder = "Country:", @class = " form-control" , id= "removespecialchar" } })
 
 
                                                 }
@@ -78,7 +78,7 @@
                                                 }
                                                 @*<input type="text" name="email" placeholder="Email Address" />*@
 
-                                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" } })
+                                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" ,id= "removespecialchar" } })
 
                                                 @if (Model.Id > 0)
                                                 {
