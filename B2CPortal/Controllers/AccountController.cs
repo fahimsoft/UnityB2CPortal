@@ -96,19 +96,10 @@ namespace B2CPortal.Controllers
                         Current = TempData["returnurl"].ToString();
                     }
                     return Json(new { data = Current, msg = "Login Successfull", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
-
-
-
-                    //return SuccessResponse("true");
-
-
-
-
                 }
                 else
                 {
-                    return BadResponse("false");
-                    //return Json(new { data = "", msg = "Login Failed", success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
+                    return Json(new { data = "", msg = "Incorrect Email and Password ", success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
                 }
 
 
@@ -116,7 +107,7 @@ namespace B2CPortal.Controllers
             }
             catch (Exception ex)
             {
-                return BadResponse(ex);
+                return Json(new { data = "", msg = ex.Message, success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
             }
         }
         public async Task<ActionResult> MyAccount()

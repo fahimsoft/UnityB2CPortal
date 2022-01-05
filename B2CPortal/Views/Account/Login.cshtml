@@ -210,22 +210,10 @@
                     required: true,
                     email: true
 
-
-
-
-
                 }, Password: {
                     required: true
 
-
-
-
-
                 }
-
-
-
-
 
             },
             messages: {
@@ -234,11 +222,6 @@
                 }, Password: {
                     required: "Password Is Required"
                 }
-
-
-
-
-
             }
         });
         $('input[name="ConfirmPassword"]').keypress(function (e) {
@@ -331,12 +314,7 @@
 
  
         });
-
-
-
-
-
-        $('#Password, #EmailId').keypress(function (e) {
+         $('#Password, #EmailId').keypress(function (e) {
             if (e.which == 13) {
                 $('#loginbtn').click();
                 //$('form#login').submit();
@@ -344,18 +322,14 @@
             }
         });
 
-
-
-
-
         // Login Submit button
         $('#loginbtn').click(function (e) {
             e.preventDefault();
             var form = $("#login");
-            document.getElementsByClassName("loader-container")[0].style.display = "block";
 
             $.validator.unobtrusive.parse(form);
             if ($(form).valid()) {
+            document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $.ajax({
                     type: "POST",
                     url: "/Account/Login",
@@ -368,9 +342,9 @@
                             toastr.success("Login successfully.");
                             window.location = data.data;
                         }
-                        else if (data.isSuccessful == false) {
+                        else if (data.success == false) {
                             //alert("Login Failed");
-                            toastr.error("Login Failed.");
+                            toastr.error(data.msg);
                         }
                     },
                     failure: function (res) {

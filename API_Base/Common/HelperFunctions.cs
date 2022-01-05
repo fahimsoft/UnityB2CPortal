@@ -192,6 +192,7 @@ namespace API_Base.Common
                 string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
                 string Password = ConfigurationManager.AppSettings["Password"].ToString();
                 string Port = ConfigurationManager.AppSettings["Port"].ToString();
+
                 MailMessage mailMessage = new MailMessage();
 
                 mailMessage.From = new MailAddress(FormEmailId);
@@ -199,7 +200,6 @@ namespace API_Base.Common
                 mailMessage.Body = Message;
                 mailMessage.IsBodyHtml = IsBodyHtml;
                 mailMessage.To.Add(new MailAddress(SenderEmail));
-
 
 
                 using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
@@ -211,13 +211,7 @@ namespace API_Base.Common
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                     smtp.Send(mailMessage);
                     status = true;
-
-
-
                 }
-
-
-
                 return status;
             }
             catch (Exception e)
@@ -233,9 +227,6 @@ namespace API_Base.Common
             return JsonConvert.DeserializeObject<CaptchaResponse>(jsonResult.ToString());
         }
     }
-
-
-
     public class CaptchaResponse
     {
         [JsonProperty("success")]

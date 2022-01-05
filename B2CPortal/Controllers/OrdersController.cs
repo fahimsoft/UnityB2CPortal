@@ -5,8 +5,10 @@ using B2C_Models.Models;
 using B2CPortal.Interfaces;
 using B2CPortal.Models;
 using B2CPortal.Services;
+using B2CPortal.Services.EmailTemplates;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -222,7 +224,7 @@ namespace B2CPortal.Controllers
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-                if (Session["UserId"] != null  && currency.ToLower() == "pkr" &&
+                if (Session["UserId"] != null  && currency.ToLower() != "pkr" &&
                    ( Billing.paymenttype == PaymentType.Stripe ||
                     Billing.paymenttype == PaymentType.Paypal))
                 {
@@ -235,7 +237,7 @@ namespace B2CPortal.Controllers
                     )
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-                    //------------existing order remove-----------------
+                    //------------existing order remove (manage)-----------------
                     OrderMaster Omaster = await _orders.ExestingOrder(customerId);
                     if (Omaster != null)
                     {
@@ -272,9 +274,8 @@ namespace B2CPortal.Controllers
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                var ActualPrice = (decimal)(price * item.Quantity);
-
-                                OrderTotal += Convert.ToDecimal(discountedprice);
+                                var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue);
+                                OrderTotal = (OrderTotal + Convert.ToDecimal(discountedprice));
                                 subTotal = (subTotal + ActualPrice);
                                 tQuantity = (int)(tQuantity + item.Quantity);
                                 var Order = new OrderVM
@@ -286,7 +287,7 @@ namespace B2CPortal.Controllers
                                     CartSubTotalDiscount = totalDiscountAmount,
                                     // TotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice) / conversionvalue, 2),
                                     //no need of conversion already converted into cart
-                                    SubTotalPrice = Math.Round(Convert.ToDecimal(item.TotalPrice), 2),
+                                    SubTotalPrice = Math.Round(ActualPrice, 2),
 
                                 };
                                 orderVMs.Add(Order);
@@ -304,6 +305,7 @@ namespace B2CPortal.Controllers
                             Billing.Country = Billing.Country;
                             Billing.City = Billing.City;
                             Billing.ShippingAddress = Billing.ShippingAddress;
+                            Billing.BillingAddress = Billing.BillingAddress;
                             Billing.FK_ShippingDetails = shippingmodel.Id;
                             Billing.IsShipping = Billing.shippingdetails == null ? false : true;
                             Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
@@ -350,9 +352,13 @@ namespace B2CPortal.Controllers
                                 // Sending Mail
                                 try
                                 {
-                                    var name = Session["UserName"].ToString();
-                                    var email = Session["email"].ToString();
-                                    string htmlString = @"<html>
+                                    if (Billing.paymenttype != PaymentType.Stripe)
+                                    {
+
+                                        string recepit = string.Empty;
+                                        var name = Session["UserName"].ToString();
+                                        var email = Session["email"].ToString();
+                                        string htmlString = @"<html>
                            <body>
                            <img src=" + "~/Content/Asset/img/img.PNG" + @">
                            <h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
@@ -364,27 +370,42 @@ namespace B2CPortal.Controllers
                             <p>Unity Foods LTD!</p>
                             </body>
                             </html>";
-                                    bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", htmlString, true);
-                                    if (IsSendEmail)
-                                    {
-                                        // return SuccessResponse("true");
-                                        //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = true }, JsonRequestBehavior.AllowGet);
+                                        //Fetching Email Body Text from EmailTemplate File.  
+                                        string MailText = Templates.OrderEmail(name, orderresult.OrderDescription, orderresult.PhoneNo, orderresult.EmailId,
+                                           orderresult.CreatedOn.ToString(), orderresult.ShippingAddress, orderresult.BillingAddress, orderresult.PaymentMode,
+                                           orderresult.Status, orderresult.TotalQuantity.ToString(), currency,
+                                          orderresult.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
+                                          Billing.orderVMs.Sum(x => x.CartSubTotalDiscount).ToString(), Billing.orderVMs.Sum(x => x.SubTotalPrice).ToString(),
+                                         recepit);
+                                        bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
+
                                     }
-                                    else
-                                    {
-                                        //return BadResponse("Failed");
-                                        //return Json(new { data = IsSendEmail, msg = "Order Successfull !", success = false }, JsonRequestBehavior.AllowGet);
-                                    }
+                                    // MailText = MailText.Replace("[name]", name);
+                                    // MailText = MailText.Replace("[orderdescription]", orderresult.OrderDescription);
+                                    // MailText = MailText.Replace("[phoneno]", orderresult.PhoneNo);
+                                    // MailText = MailText.Replace("[email]", orderresult.EmailId);
+                                    // MailText = MailText.Replace("[orderno]", HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()));
+                                    // MailText = MailText.Replace("[orderdate]", orderresult.CreatedOn.ToString());
+                                    // MailText = MailText.Replace("[shippingaddress]", orderresult.ShippingAddress);
+                                    // MailText = MailText.Replace("[billingaddress]", orderresult.BillingAddress.ToString());
+                                    // MailText = MailText.Replace("[paymentmode]", orderresult.PaymentMode.ToString());
+                                    // MailText = MailText.Replace("[paymentstatus]", orderresult.Status.ToString());
+                                    // MailText = MailText.Replace("[quentity]", orderresult.TotalQuantity.ToString());
+                                    //// MailText = MailText.Replace("[ordertotalamount]", Billing.orderVMs.Sum(x => x.Price).ToString());
+                                    // MailText = MailText.Replace("[totaldiscount]", Billing.orderVMs.Sum(x => x.CartSubTotalDiscount).ToString());
+                                    // MailText = MailText.Replace("[subtotal]", Billing.orderVMs.Sum(x => x.SubTotalPrice).ToString());
+                                    // MailText = MailText.Replace("[ShippingandHanding]", "0.0");
+                                    // MailText = MailText.Replace("[Vat]", "0.0");
+                                    // MailText = MailText.Replace("[Ordertotal]",  currency + " "+ orderresult.TotalPrice.ToString());
+
+
+
                                 }
                                 catch
                                 {
 
 
                                 }
-
-                                //// Remove from cart
-                                //HttpCookie cookie = HttpContext.Request.Cookies.Get("cartguid");
-                                //var removeCart = await _cart.DisableCart(customerId, cookie.Value);
 
                                 HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);
                                 HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, Billing.OrderTotal.ToString(), true);
