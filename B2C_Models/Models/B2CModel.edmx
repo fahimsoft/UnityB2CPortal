@@ -5,6 +5,24 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="B2CModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="AdminUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+          <Property Name="PhoneNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="EmailId" Type="nvarchar(max)" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="Role" Type="nvarchar" MaxLength="50" />
+          <Property Name="CreatedOn" Type="smalldatetime" />
+          <Property Name="CreatedBy" Type="int" />
+          <Property Name="ModifiedOn" Type="smalldatetime" />
+          <Property Name="ModifiedBy" Type="int" />
+          <Property Name="IsActive" Type="bit" />
+        </EntityType>
         <EntityType Name="Cart">
           <Key>
             <PropertyRef Name="Id" />
@@ -80,6 +98,7 @@
           <Property Name="IsWebUser" Type="bit" />
           <Property Name="IsAppUser" Type="bit" />
           <Property Name="RegisteredFrom" Type="varchar" MaxLength="50" />
+          <Property Name="IsVerified" Type="bit" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -636,6 +655,21 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySet Name="Test" EntityType="Self.Test" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Userinfo" EntityType="Self.Userinfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AdminUser" EntityType="Self.AdminUser" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [AdminUser].[Id] AS [Id], 
+    [AdminUser].[Name] AS [Name], 
+    [AdminUser].[PhoneNo] AS [PhoneNo], 
+    [AdminUser].[EmailId] AS [EmailId], 
+    [AdminUser].[Password] AS [Password], 
+    [AdminUser].[Role] AS [Role], 
+    [AdminUser].[CreatedOn] AS [CreatedOn], 
+    [AdminUser].[CreatedBy] AS [CreatedBy], 
+    [AdminUser].[ModifiedOn] AS [ModifiedOn], 
+    [AdminUser].[ModifiedBy] AS [ModifiedBy], 
+    [AdminUser].[IsActive] AS [IsActive]
+    FROM [dbo].[AdminUser] AS [AdminUser]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="OrderDetailLogs" EntityType="Self.OrderDetailLogs" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [OrderDetailLogs].[Id] AS [Id], 
@@ -892,6 +926,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="OrderMaster" EntitySet="OrderMasters" />
             <End Role="OrderTransection" EntitySet="OrderTransections" />
           </AssociationSet>
+          <EntitySet Name="AdminUsers" EntityType="B2CModel.AdminUser" />
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -1118,6 +1153,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <NavigationProperty Name="OrderMasters" Relationship="B2CModel.FK_OrderMaster_Customer" FromRole="customer" ToRole="OrderMaster" />
           <NavigationProperty Name="OrderMasterLogs" Relationship="B2CModel.FK_OrderMasterLogs_Customer" FromRole="customer" ToRole="OrderMasterLog" />
           <NavigationProperty Name="OrderTransections" Relationship="B2CModel.FK_OrderTransection_Customer" FromRole="customer" ToRole="OrderTransection" />
+          <Property Name="IsVerified" Type="Boolean" />
         </EntityType>
         <EntityType Name="CommentAndRating">
           <Key>
@@ -1517,6 +1553,22 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="AdminUser">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EmailId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedOn" Type="DateTime" Precision="0" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
+          <Property Name="ModifiedBy" Type="Int32" />
+          <Property Name="IsActive" Type="Boolean" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1658,6 +1710,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="customers">
             <EntityTypeMapping TypeName="B2CModel.customer">
               <MappingFragment StoreEntitySet="customer">
+                <ScalarProperty Name="IsVerified" ColumnName="IsVerified" />
                 <ScalarProperty Name="RegisteredFrom" ColumnName="RegisteredFrom" />
                 <ScalarProperty Name="IsAppUser" ColumnName="IsAppUser" />
                 <ScalarProperty Name="IsWebUser" ColumnName="IsWebUser" />
@@ -1925,6 +1978,23 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
                 <ScalarProperty Name="EmailId" ColumnName="EmailId" />
                 <ScalarProperty Name="LastName" ColumnName="LastName" />
                 <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AdminUsers">
+            <EntityTypeMapping TypeName="B2CModel.AdminUser">
+              <MappingFragment StoreEntitySet="AdminUser">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+                <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+                <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

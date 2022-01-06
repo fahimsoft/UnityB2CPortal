@@ -280,7 +280,7 @@
                                     success: function (data) {
                                         if (data.success == true) {
                                             toastr.success("Registered successfully.");
-                                            window.location.reload();
+                                            //window.location.reload();
                                         }
                                         else if (data.success == false || data.isSuccessful == false) {
                                             toastr.error("Registration Failed.");

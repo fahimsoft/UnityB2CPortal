@@ -27,10 +27,14 @@ namespace B2CPortal.Controllers
         }
         #endregion
         [HttpGet]
-        public ActionResult Login()
+        public async Task<ActionResult> Login(string CODE = null, string email = null)
         {
             try
             {
+                if (CODE != null && email != null)
+                {
+                    var obj = await _account.verification(email);
+                }
                 if (Session["UserId"] != null)
                 {
                     return RedirectToAction("Index", "Home");
@@ -208,19 +212,52 @@ namespace B2CPortal.Controllers
                         customer.Guid = cookie;
                         var res = await _account.CreateCustomer(customer);
                         var name = customer.FirstName;
-                        string htmlString = @"<html>
-<body>
-<img src=" + "~/Content/Asset/img/img.PNG" + @">
-<h1 style=" + "text-align:center;" + @">Thanks for joining us!</h1>
-<p>Dear " + name + @",</p>
-<p>Hello, " + name + @"! Thanks for joining us! You are now on our mailing list. This means you'll be the first to hear about our fresh collections and offers!</p>
-<p>Thanks,</p>
-<p>Unity Foods LTD!</p>
-</body>
-</html>";
-                        bool IsSendEmail = HelperFunctions.EmailSend(customer.EmailId, "Confirm your account", htmlString, true);
+                        string To = res.EmailId;
+                        var allChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                        var random = new Random();
+                        var resultToken = new string(
+                        Enumerable.Repeat(allChar, 8)
+                        .Select(token => token[random.Next(token.Length)]).ToArray());
+
+
+
+
+
+                        string authToken = resultToken.ToString();
+
+
+
+                        //Create URL with above token
+                        var lnkHref = " <a href='" + Url.Action("Login", "Account", new { email = To, code = authToken }, "http") + "'>Account Verification</a>";
+
+
+
+                        //HTML Template for Send email
+                        string subject = "Account Verification";
+                        string body = "<b>Please find the Account Verification Link. </b><br/>" + lnkHref;
+
+
+
+                        //Call send email methods.
+                        bool IsSendEmail = HelperFunctions.EmailSend(To, subject, body, true);
+                        // return Json(new { data = IsSendEmail, msg = "Check Your Inbox!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+
+
+
+
+                        //bool IsSendEmail = HelperFunctions.EmailSend(customer.EmailId, "Confirm your account", htmlString, true);
+                        if (IsSendEmail)
+                        {
+                            return Json(new { data = "", msg = "Check Your Inbox!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+
+                        }
+                        else
+                        {
+                            return Json(new { data = "", msg = "Registeration Failed", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+                            //return BadResponse("Failed");
+                        }
                     }
-                    catch 
+                    catch
                     {
 
                     }   
@@ -289,8 +326,6 @@ namespace B2CPortal.Controllers
             customer customer = new customer();
             return View(customer);
         }
-
-
 
         [HttpPost]
         public async Task<ActionResult> ForgotPassword(string EmailId)
@@ -423,6 +458,47 @@ namespace B2CPortal.Controllers
 
                 return Json(new { data = "", msg = ex.Message, success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
             }
+        }
+        /// Is Verified check
+        [HttpPost]
+        public async Task<ActionResult> IsVerified(string EmailId)
+        {
+            if (ModelState.IsValid)
+            {
+                var res = await _account.uniqueEmailCheck(EmailId);
+                if (res != null)
+                {
+                    string To = EmailId;
+                    var allChar = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+                    var random = new Random();
+                    var resultToken = new string(
+                    Enumerable.Repeat(allChar, 8)
+                    .Select(token => token[random.Next(token.Length)]).ToArray());
+
+                    string authToken = resultToken.ToString();
+
+                    //Create URL with above token
+                    var lnkHref = " <a href='" + Url.Action("Login", "Account", new { email = EmailId, code = authToken }, "http") + "'>Account Verification</a>";
+
+                    //HTML Template for Send email
+                    string subject = "Account Verification";
+                    string body = "<b>Please find the Account Verification Link. </b><br/>" + lnkHref;
+
+                    //Call send email methods.
+                    bool IsSendEmail = HelperFunctions.EmailSend(EmailId, subject, body, true);
+                    return Json(new { data = IsSendEmail, msg = "Check Your Inbox!", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { data = "", msg = "You are Not Registered!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+                }
+            }
+            else
+            {
+                return Json(new { data = "", msg = "You are Not Registered!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+            }
+
         }
     }
 }

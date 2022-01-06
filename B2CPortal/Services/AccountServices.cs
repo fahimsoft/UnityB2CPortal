@@ -86,7 +86,7 @@ namespace B2CPortal.Services
         {
             try
             {
-                var obj = await _dxcontext.customers.Where(x => x.EmailId == customer.EmailId && x.Password == customer.Password).FirstOrDefaultAsync();
+                var obj = await _dxcontext.customers.Where(x => x.EmailId == customer.EmailId && x.Password == customer.Password && x.IsVerified == true).FirstOrDefaultAsync();
                 return obj;
 
             }
@@ -128,6 +128,24 @@ namespace B2CPortal.Services
                 Current = await _dxcontext.customers.Where(x => x.EmailId == customer.EmailId).FirstOrDefaultAsync();
                 PrimaryKeyValue = Current.Id;
                 Current.Password = customer.Password;
+                Save();
+                return Current;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<customer> verification(string email)
+        {
+            try
+            {
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.EmailId == email);
+                if (Current != null)
+                {
+                    PrimaryKeyValue = Current.Id;
+                    Current.IsVerified = true;
+                }
                 Save();
                 return Current;
             }

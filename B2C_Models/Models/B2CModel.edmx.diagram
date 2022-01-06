@@ -45,6 +45,7 @@
         <AssociationConnector Association="B2CModel.FK_OrderTransection_Customer" />
         <AssociationConnector Association="B2CModel.FK_OrderMaster_ShippingDetails" />
         <AssociationConnector Association="B2CModel.FK_OrderTransection_OrderMAster" />
+        <EntityTypeShape EntityType="B2CModel.AdminUser" Width="1.5" PointX="13.375" PointY="0.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

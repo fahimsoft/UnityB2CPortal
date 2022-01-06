@@ -352,8 +352,8 @@ namespace B2CPortal.Controllers
                                 // Sending Mail
                                 try
                                 {
-                                    if (Billing.paymenttype != PaymentType.Stripe)
-                                    {
+                                    //if (Billing.paymenttype != PaymentType.Stripe)
+                                    //{
 
                                         string recepit = string.Empty;
                                         var name = Session["UserName"].ToString();
@@ -379,7 +379,7 @@ namespace B2CPortal.Controllers
                                          recepit);
                                         bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
 
-                                    }
+                                    //}
                                     // MailText = MailText.Replace("[name]", name);
                                     // MailText = MailText.Replace("[orderdescription]", orderresult.OrderDescription);
                                     // MailText = MailText.Replace("[phoneno]", orderresult.PhoneNo);

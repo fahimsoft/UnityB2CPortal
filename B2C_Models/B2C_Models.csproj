@@ -51,6 +51,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Models\AdminUser.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\B2CEntities.cs" />
     <Compile Include="Models\B2CModel.Context.cs">
       <AutoGen>True</AutoGen>

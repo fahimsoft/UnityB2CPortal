@@ -105,17 +105,17 @@ namespace B2CPortal.Controllers
                     mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
                     var dd = await _orderTransection.CreateOrderTransection(mod3el);
                     //---------------order email------------------
-                    string recepit = string.Empty;
-                    var name = Session["UserName"].ToString();
-                    var email = Session["email"].ToString();
-                    //Fetching Email Body Text from EmailTemplate File.  
-                    string MailText = Templates.OrderEmail(name, ordermodel.OrderDescription, ordermodel.PhoneNo, ordermodel.EmailId,
-                       ordermodel.CreatedOn.ToString(), ordermodel.ShippingAddress, ordermodel.BillingAddress, ordermodel.PaymentMode,
-                       ordermodel.Status, ordermodel.TotalQuantity.ToString(), currency,
-                      ordermodel.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
-                      ordermodel.OrderDetails.Sum(x => x.DiscountedPrice).ToString(), ordermodel.OrderDetails.Sum(x => x.TotalPrice).ToString(),
-                     chargeobj.ReceiptUrl);
-                    bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
+                    //string recepit = string.Empty;
+                    //var name = Session["UserName"].ToString();
+                    //var email = Session["email"].ToString();
+                    ////Fetching Email Body Text from EmailTemplate File.  
+                    //string MailText = Templates.OrderEmail(name, ordermodel.OrderDescription, ordermodel.PhoneNo, ordermodel.EmailId,
+                    //   ordermodel.CreatedOn.ToString(), ordermodel.ShippingAddress, ordermodel.BillingAddress, ordermodel.PaymentMode,
+                    //   ordermodel.Status, ordermodel.TotalQuantity.ToString(), currency,
+                    //  ordermodel.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
+                    //  ordermodel.OrderDetails.Sum(x => x.DiscountedPrice).ToString(), ordermodel.OrderDetails.Sum(x => x.TotalPrice).ToString(),
+                    // chargeobj.ReceiptUrl);
+                    //bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
 
                     return RedirectToAction("PaymentStatus");
                 }

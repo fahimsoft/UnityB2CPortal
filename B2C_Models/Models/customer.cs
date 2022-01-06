@@ -43,6 +43,7 @@ namespace B2C_Models.Models
         public Nullable<bool> IsWebUser { get; set; }
         public Nullable<bool> IsAppUser { get; set; }
         public string RegisteredFrom { get; set; }
+        public Nullable<bool> IsVerified { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
