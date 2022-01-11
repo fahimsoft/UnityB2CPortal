@@ -1,5 +1,4 @@
-﻿using API_Base.Common;
-using API_Base.PaymentMethod.Interfaces;
+﻿using API_Base.PaymentMethod.Interfaces;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -18,15 +17,15 @@ namespace API_Base.PaymentMethod.Servicees
                 StripeConfiguration.ApiKey = "sk_test_51K02zhHN8ZNk6QpY0XRnHeR44USPCKbNMY18HocZVMQ7BB0u2NA7xhzJum8kc1wZTJKiUWEVbOp6gwPA26eHF4Hh008jjfgFGZ";
                 var customeroptions = new CustomerCreateOptions
                 {
-                    Email = string.IsNullOrEmpty(payment.Email) ? AppEnvironment.CustomerEmail : payment.Email,
-                    Name = string.IsNullOrEmpty(payment.Name) ? AppEnvironment.CustomerName : payment.Name,
-                    Phone = string.IsNullOrEmpty(payment.Phone) ? AppEnvironment.CustomerPhone : payment.Phone,
+                    Email = payment.Email,
+                    Name = payment.Name,
+                    Phone = payment.Phone,
                     Description = payment.Description,
                     Source = payment.StripeToken
                 };
                 var customerservice = new CustomerService();
                 var customer = customerservice.Create(customeroptions);
-                //payment.Description = "this payment from stripe";
+                payment.Description = "this payment from stripe";
                 var options = new ChargeCreateOptions
                 {
                     Amount = Convert.ToInt64(payment.Amount),
