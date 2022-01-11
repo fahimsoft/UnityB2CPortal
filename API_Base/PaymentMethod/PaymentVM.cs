@@ -10,6 +10,7 @@ namespace API_Base.PaymentMethod
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string UserId { get; set; }
         public string Type { get; set; }
         public string PaymentMode { get; set; }
         public string Email { get; set; }
@@ -19,6 +20,7 @@ namespace API_Base.PaymentMethod
         public string Phone { get; set; }
         public string OrderNo { get; set; }
         public string GivenName { get;  set; }
+        public string stripeToken { get;  set; }
         public decimal StripeAmount { get; set; }
     }
 }

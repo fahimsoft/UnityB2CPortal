@@ -40,10 +40,6 @@
             <div class="col-xs-12">
                 <div class="pages-title-text text-center">
                     <h2>Register</h2>
-                    <ul class="text-left">
-                        <li><a href="/Home/Index">Home </a></li>
-                        <li><span> // </span>Register</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -280,7 +276,7 @@
                                     success: function (data) {
                                         if (data.success == true) {
                                             toastr.success("Registered successfully.");
-                                            //window.location.reload();
+                                            window.location.href = '/Account/ThankYou';
                                         }
                                         else if (data.success == false || data.isSuccessful == false) {
                                             toastr.error("Registration Failed.");
