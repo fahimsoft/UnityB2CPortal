@@ -520,6 +520,7 @@
     <Content Include="Views\Contact\About.cshtml" />
     <Content Include="Views\Payment\Paypal.cshtml" />
     <Content Include="Views\PaypalPaymentMethod\Paypal.cshtml" />
+    <Content Include="Views\Account\ThankYou.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

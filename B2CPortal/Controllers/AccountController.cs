@@ -500,5 +500,20 @@ namespace B2CPortal.Controllers
             }
 
         }
+        [HttpGet]
+        public ActionResult ThankYou()
+        {
+            try
+            {
+                return PartialView();
+            }
+            catch (Exception ex)
+            {
+
+
+
+                return BadResponse(ex);
+            }
+        }
     }
 }

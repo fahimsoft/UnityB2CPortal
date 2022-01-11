@@ -280,7 +280,8 @@
                                     success: function (data) {
                                         if (data.success == true) {
                                             toastr.success("Registered successfully.");
-                                            //window.location.reload();
+                                            window.location.href = '/Account/ThankYou';
+
                                         }
                                         else if (data.success == false || data.isSuccessful == false) {
                                             toastr.error("Registration Failed.");
