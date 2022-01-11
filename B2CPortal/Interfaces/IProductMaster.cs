@@ -29,7 +29,7 @@ namespace B2CPortal.Interfaces
 
 
         Task<IEnumerable<ProductsVM>> GetProductByIdWithRating(long Id);
-
+        List<ProductsVM> GetProductRating(string Id);
         Task<List<ProductsVM>> SearchProducts(string name);
 
 

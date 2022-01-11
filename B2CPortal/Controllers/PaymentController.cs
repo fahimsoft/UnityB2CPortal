@@ -29,7 +29,6 @@ namespace B2CPortal.Controllers
             _orderTransection = orderTransection;
             _PaymentMethodFacade = new PaymentMethodFacade();
         }
-
         public ActionResult Stripe()
         {
             ViewBag.Amount =  HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
@@ -229,11 +228,20 @@ namespace B2CPortal.Controllers
     }
     public class Payment
     {
+        public int Id { get; set; }
         public decimal Amount { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
         public string Description { get; set; }
+        public string UserId { get; set; }
+        public string Type { get; set; }
+        public string PaymentMode { get; set; }
+        public string StripeToken { get; set; }
+        public string OrderId { get; set; }
+        public string stripeToken { get; set; }
+        public string currency { get; set; }
+        public string conversionrate { get; set; }
     }
 
 }

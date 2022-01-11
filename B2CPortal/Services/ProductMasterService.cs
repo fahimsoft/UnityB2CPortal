@@ -508,5 +508,11 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+        public List<ProductsVM> GetProductRating(string id)
+        {
+            var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + id + "").ToList<ProductsVM>();
+            return productRating;
+        }
+
     }
 }
