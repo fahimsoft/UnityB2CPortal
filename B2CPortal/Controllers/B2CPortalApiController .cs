@@ -20,14 +20,18 @@ namespace B2CPortal.Controllers
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
         private readonly IOrderTransection _orderTransection = null;
+        private readonly IOrderDetail _ordersDetail = null;
+
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
-        public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection)
+        public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection, IOrderDetail orderDetail)
         {
             _orders = order;
             _IProductMaster = productMaster;
             _cart = cart;
             _orderTransection = orderTransection;
             _PaymentMethodFacade = new PaymentMethodFacade();
+            _ordersDetail = orderDetail;
+
         }
 
         // GET: Country
@@ -77,6 +81,19 @@ namespace B2CPortal.Controllers
             {
 
                 return BadResponse(Ex);
+            }
+        }
+        [HttpGet]
+        public async Task<ActionResult> GetProductById(string id)
+        {
+            if (!string.IsNullOrEmpty(id))
+            {
+                var obj = await _IProductMaster.GetProductByIdWithRating(Convert.ToInt64(id));
+                return Json(new { success = true, data = obj }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false, msg = "Try Again" }, JsonRequestBehavior.AllowGet);
             }
         }
         [HttpPost]
@@ -154,6 +171,76 @@ namespace B2CPortal.Controllers
                 return Json(new { success = false, msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
 
+        }
+        //--------------------------------------------order--------------------------------------
+       [HttpGet]
+        public async Task<ActionResult> GetOrderListData(string customerid)
+        {
+            try
+            {
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                List<OrderVM> list = new List<OrderVM>();
+                if (Convert.ToInt32(customerid) > 0)
+                {
+                    var orderlist = await _orders.GetOrderList(Convert.ToInt32(customerid));
+                    foreach (var item in orderlist)
+                    {
+                        OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
+                        var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
+                        dd.OrderNo = result;
+                        list.Add((OrderVM)dd);
+                    }
+                    return Json(new { success = true, data = list, msg = "" }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { success = false, data = list, msg = "Please Re-Login for Order History" }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false,  msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+       [HttpGet]
+        public async Task<JsonResult> GetOrderDetailsByIdData(string orderid)
+        {
+            if (!string.IsNullOrEmpty(orderid))
+            {
+                List<OrderVM> orderdetailslist = new List<OrderVM>();
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                var detailslist = await _ordersDetail.GetOrderDetailsById(Convert.ToInt32(orderid));
+                foreach (var item in detailslist)
+                {
+                    var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                    string name = productmasetr.Name;
+                    string MasterImageUrl = productmasetr.MasterImageUrl;
+                    var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                    var detailsobj = new OrderVM
+                    {
+                        Name = name,
+                        Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                        Discount = item.Discount,
+                        SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
+                        DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
+                        Quantity = item.Quantity,
+                        TotalPrice = discountedprice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
+                        MasterImageUrl = MasterImageUrl,
+                        Date = item.CreatedOn.ToString(),
+                        FK_ProductMaster = item.FK_ProductMaster
+                    };
+                    orderdetailslist.Add(detailsobj);
+                }
+                return Json(new { success = true, data = orderdetailslist }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false, msg = "Please Re-Login for Order Details History" }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
     public class PaymentVMRequest
