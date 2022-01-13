@@ -21,9 +21,11 @@ namespace B2CPortal.Controllers
         private readonly ICart _cart = null;
         private readonly IOrderTransection _orderTransection = null;
         private readonly IOrderDetail _ordersDetail = null;
+        private readonly IAccount _account = null;
+
 
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
-        public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection, IOrderDetail orderDetail)
+        public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection, IOrderDetail orderDetail, IAccount account)
         {
             _orders = order;
             _IProductMaster = productMaster;
@@ -31,9 +33,10 @@ namespace B2CPortal.Controllers
             _orderTransection = orderTransection;
             _PaymentMethodFacade = new PaymentMethodFacade();
             _ordersDetail = orderDetail;
+            _account = account;
+
 
         }
-
         // GET: Country
         [HttpGet]
         public async Task<ActionResult> GetAllProducts()
@@ -241,6 +244,75 @@ namespace B2CPortal.Controllers
             {
                 return Json(new { success = false, msg = "Please Re-Login for Order Details History" }, JsonRequestBehavior.AllowGet);
             }
+        }
+        //----------------------------------account operation---------------------------------------
+       [HttpGet]
+        public async Task<ActionResult> LoginB2C(string EmailId, string password)
+        {
+            try
+            {
+                //string Current = "/Home/Index";
+                if (!string.IsNullOrEmpty(EmailId) && !string.IsNullOrEmpty(password))
+                {
+                    var res = await _account.SelectByIdPassword(
+                        new customer
+                        {
+                            EmailId = EmailId,
+                            Password = password
+                        });
+                    if (res != null)
+                    {
+                        var genral = new GenralClass();
+                        string cookie = string.Empty;
+                        Dictionary<string, string> accountdata = new Dictionary<string, string>()
+                        {
+                            { "userid", res.Id.ToString() },
+                            { "UserName", res.FirstName},
+                            {"email",res.EmailId }
+
+                        };
+                        if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
+                        {
+                            cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                            List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id) as List<Cart>;
+                            List<Cart> wishlist = await _cart.GetWishListProducts(cookie, res.Id) as List<Cart>;
+                            cartlsit.ForEach(x =>
+                            {
+                                if (x.FK_Customer == null || string.IsNullOrEmpty(x.Guid))
+                                {
+                                    x.FK_Customer = res.Id;
+                                    x.Guid = cookie;
+                                    _cart.UpdateCart(x);
+                                }
+                            });
+                            wishlist.ForEach(x =>
+                            {
+                                if (x.FK_Customer == null || string.IsNullOrEmpty(x.Guid))
+                                {
+                                    x.FK_Customer = res.Id;
+                                    x.Guid = cookie;
+                                    _cart.UpdateToCart(x);
+                                }
+                            });
+                            var duplicatelist = cartlsit.GroupBy(x => x).Where(y => y.Count() > 1).Select(z => z).ToList();
+                        }
+                        return Json(new { data = accountdata  ,msg = "Login Successfull", success = true, statuscode = 200 }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json(new { data = "", msg = "Incorrect Email and Password ", success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json(new { data = "", msg = "Incorrect Email and Password ", success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { data = "", msg = ex.Message, success = false, statuscode = 400, count = 0 }, JsonRequestBehavior.AllowGet);
+            }
+
         }
     }
     public class PaymentVMRequest
