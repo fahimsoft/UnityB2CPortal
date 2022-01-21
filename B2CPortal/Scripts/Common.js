@@ -479,7 +479,7 @@ function HandleAddtoWishList(id) {
 //---------------Product management----------------
 //Load Product List
 function loadProductList() {
-    
+    alert();
     var htmldata = '', htmlProductList = '', htmlProductGrid = '';
     $.ajax({
         url: "/Product/GetProduct",
@@ -628,7 +628,6 @@ ${htmlProductList}
     });
 }
 function LoadQuickViewWithRating(elem) {
-    debugger
     var Id = elem.id;
     $.ajax({
         url: '/Product/GetProductbyIdWithRating?Id=' + Id + '',
@@ -809,7 +808,6 @@ ${htmlProductSize}
 }
 //Single Function Using ..on Load ,Filtering, Paggination,Search
 function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
-
     var htmldata = '';
     var htmlProductList = '';
     var countBtn = 1;
@@ -884,7 +882,7 @@ ${GetProductRating(item.AvgRating)}
 <div class="pro-type">
 <span>${item.Discount}%</span>
 </div>
-<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<a href="/ProductDetails/Index?productId=${item.Id}" productName="${item.Name}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
 <div class="actions-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
 <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
@@ -892,7 +890,7 @@ ${GetProductRating(item.AvgRating)}
 </div>
 </div>
 <div class="product-dsc">
-<p><a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}">${item.Name}&nbsp;${item.UOM}</a></p>
+<p><a href="/ProductDetails/Index?productId=${item.Id}" productName="${item.Name}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}">${item.Name}&nbsp;${item.UOM}</a></p>
 <div class="ratting">
 ${GetProductRating(item.AvgRating)}
 </div>
@@ -1101,7 +1099,6 @@ function loadFeatureProduct() {
 
 }
 function loadRecentViewProduct() {
-
     if (localStorage.length > 0) {
         var html = '';
         //var index = 0;
@@ -1442,7 +1439,8 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
 
 // Set Local Storage (Array) Generalize Fn
 function SetLocalStorageInArray(key, value) {
-
+    debugger
+    alert();
     var keyValue = JSON.parse(localStorage.getItem(key)) || [];
     var ParamValue = JSON.parse(localStorage.getItem(value)) || [];
 
@@ -1498,7 +1496,6 @@ function GetProductIdFromURL() {
 
 function GetProductByIdWithRating() { //updated 30-Nov-2021
     var productId = GetProductIdFromURL();
-    debugger
     if (productId != null && productId != undefined) {
         $.ajax({
             url: "/Product/GetProductbyIdWithRating",

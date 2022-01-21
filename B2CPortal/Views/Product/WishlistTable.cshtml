@@ -69,7 +69,7 @@
 
                                         </td>
                                         @*<td><button class="delete" value="@item.Id" id="deleterow"><i class="mdi mdi-close" title="Remove this product"></i></button></td>*@
-                                        <td><i id="delete" class="mdi mdi-close delete" title="Remove this product"></i></td>
+                                        <td><i id="delete" class="mdi mdi-close deletewishlist" title="Remove this product"></i></td>
 
                                     </tr>
                                 }
@@ -207,7 +207,7 @@
     });
 
     // Remove from Wishlist
-    $("#delete").click(function () {
+    $(".deletewishlist").click(function () {
 
         //var id;
         //var $row = $(this).closest("tr"),        // Finds the closest row <tr>

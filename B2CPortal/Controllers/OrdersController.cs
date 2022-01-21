@@ -224,7 +224,7 @@ namespace B2CPortal.Controllers
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
-                if (Session["UserId"] != null  && currency.ToLower() != "pkr" &&
+                if (Session["UserId"] != null  && currency.ToLower() == "pkr" &&
                    ( Billing.paymenttype == PaymentType.Stripe ||
                     Billing.paymenttype == PaymentType.Paypal))
                 {

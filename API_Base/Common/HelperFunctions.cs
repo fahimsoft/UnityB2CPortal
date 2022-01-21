@@ -88,7 +88,6 @@ namespace API_Base.Common
         {
             return total += total;
         }
-
         public static List<T> ToNonNullList<T>(IEnumerable<T> obj)
         {
             return obj == null ? new List<T>() : obj.ToList();
@@ -151,7 +150,7 @@ namespace API_Base.Common
             try
             {
                 Root root = new Root();
-                var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-one?from=" + from + "&to=" + to + "&api_key=7410baef9f-d266d66d5f-r54wck");
+                var result = new WebClient().DownloadString("https://api.fastforex.io/fetch-one?from=" + from + "&to=" + to + "&api_key=2579a782cd-8833020115-r61uzq");
                 JavaScriptSerializer jsonObject = new JavaScriptSerializer();
                 root = jsonObject.Deserialize<Root>(result);
                 return root.result.PKR.ToString();
@@ -162,7 +161,6 @@ namespace API_Base.Common
                 throw;
             }
         }
-
         public static  ResponseViewModel ResponseHandler(dynamic dynamicmodel)
         {
 

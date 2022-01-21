@@ -22,8 +22,6 @@ namespace B2CPortal.Controllers
         private readonly IOrderTransection _orderTransection = null;
         private readonly IOrderDetail _ordersDetail = null;
         private readonly IAccount _account = null;
-
-
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
         public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection, IOrderDetail orderDetail, IAccount account)
         {
