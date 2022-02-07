@@ -29,8 +29,10 @@ namespace B2C_Models.Models
         public Nullable<bool> IsActive { get; set; }
         public string Currency { get; set; }
         public Nullable<decimal> ConversionRate { get; set; }
+        public Nullable<int> FK_CityId { get; set; }
     
         public virtual customer customer { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }
+        public virtual City City { get; set; }
     }
 }

@@ -47,6 +47,7 @@ namespace B2CPortal.Services
                 Current.IsWishlist = false;
                 Current.Currency= cart.Currency;
                 Current.ConversionRate= cart.ConversionRate;
+                Current.FK_CityId = cart.FK_CityId;
 
                 Save();
                 return Current;
@@ -136,13 +137,16 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-        public async Task<IEnumerable<Cart>> GetCartProducts(string guid, int customerid)
+        public async Task<IEnumerable<Cart>> GetCartProducts(string guid, int customerid,City city)
         {
             List<Cart> cartlist = new List<Cart>();
             _dxcontext.Configuration.LazyLoadingEnabled = false;
-            cartlist = await _dxcontext.Carts.Where(x => (x.Guid == guid && x.IsWishlist == false && x.IsActive == true)
+            cartlist = await _dxcontext.Carts.Where
+                (x => (x.Guid == guid && x.IsWishlist == false && x.IsActive == true)
             ||
-            (x.FK_Customer == customerid && x.IsWishlist == false && x.IsActive == true )).ToListAsync();
+            (x.FK_Customer == customerid && x.IsWishlist == false && x.IsActive == true)).ToListAsync();
+
+
             return cartlist;
         }
 
@@ -190,12 +194,16 @@ namespace B2CPortal.Services
                     Current.CreatedOn = DateTime.Now;
                     Current.Quantity = cart.Quantity;
                     Current.TotalQuantity = cart.TotalQuantity;
+                    Current.FK_CityId = cart.FK_CityId;
+
                 }
                 else
                 {
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
                     Current.FK_Customer = cart.FK_Customer;
+                    Current.FK_CityId = cart.FK_CityId;
+
                 }
                 Save();
                 return true;
@@ -279,14 +287,13 @@ namespace B2CPortal.Services
                 Current.Quantity = cart.Quantity + (Current.Quantity == null ? 0 : Current.Quantity);
                 Current.TotalPrice = (cart.TotalPrice * Current.Quantity);
                 Current.TotalQuantity = Current.Quantity;
-              
-              
                 Current.Currency = cart.Currency;
                 Current.ConversionRate = cart.ConversionRate;
                 Current.Guid = cart.Guid;
                 Current.IsWishlist = cart.IsWishlist;
                 Current.IsActive = cart.IsActive;
                 Current.FK_ProductMaster = cart.FK_ProductMaster;
+                Current.FK_CityId = cart.FK_CityId;
               
                 Save();
                 return Current;
@@ -314,7 +321,8 @@ namespace B2CPortal.Services
         {
             try
             {
-                _dxcontext.Configuration.LazyLoadingEnabled = false; if (wishlistVM.IsWishlist == true)
+                _dxcontext.Configuration.LazyLoadingEnabled = false;
+                if (wishlistVM.IsWishlist == true)
                 {
                     Current = await _dxcontext.Carts.Where(x =>
                     (x.Guid == wishlistVM.Guid && x.IsWishlist == true
@@ -332,7 +340,7 @@ namespace B2CPortal.Services
                     ||
                     (x.IsWishlist == false
                     && x.IsActive == true
-                    && x.FK_Customer == wishlistVM.FK_Customer && x.FK_ProductMaster == wishlistVM.FK_ProductMaster)).FirstOrDefaultAsync();
+                    && x.FK_Customer == wishlistVM.FK_Customer && wishlistVM.FK_Customer != null && x.FK_ProductMaster == wishlistVM.FK_ProductMaster)).FirstOrDefaultAsync();
                 }
                 if (Current != null)
                 {
@@ -358,7 +366,7 @@ namespace B2CPortal.Services
         {
             try
             {
-                Current = await _dxcontext.Carts.Where(x => x.Id == cartId && x.IsActive == true).FirstOrDefaultAsync();
+                Current = await _dxcontext.Carts.Where(x => x.Id == cartId && x.IsActive == true && x.IsWishlist == true).FirstOrDefaultAsync();
                 if (Current != null)
                 {
                     PrimaryKeyValue = Current.Id;

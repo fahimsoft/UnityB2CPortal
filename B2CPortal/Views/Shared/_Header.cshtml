@@ -1,108 +1,180 @@
 ﻿
-    <header class="header-one">
-        <div class="container-fluid text-center">
-            <div class="row">
-                <div class="col-sm-2">
-                    <div class="logo">
-                        <a href="/Home/Index"><img src="~/Content/Asset/img/unity-logo.gif" alt="Sellshop" style="max-height:149px;" /></a>
-                    </div>
+<header class="header-one">
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="logo">
+                    <a href="/Home/Index"><img src="~/Content/Asset/img/unity-logo.gif" alt="Sellshop" style="max-height:149px;" /></a>
                 </div>
-                <div class="col-sm-8">
-                    <div class="header-middel">
-                        <div style="width:105%" class="middel-top clearfix">
-                            <div class="left floatleft">
-                                <p>
-                                    <i class="mdi mdi-clock"></i> @DateTime.Now.ToString("dd-MMM-yyyy hh:mm")
-                                </p>
-                            </div>
-                            <div style="width:50%" class="center floatleft">
-                                <form action="#" method="get">
-                                    <button type="submit"><i class="mdi mdi-magnify"></i></button>
-                                    <div class="autocomplete">
-                                        @*<input id="myInput" type="text" name="myCountry" placeholder="Country">*@
-                                    <input type="text" class="removespecialchar" autocomplete="off" id="handlesearch" placeholder="Search within these results..." />
-                                    </div>
-                                </form>
-                            </div>
-                            <div style="width:30%" class="right floatleft">
-                                <ul style="width:100%" class="clearfix">
-                                    @{
-                                        if (Session["UserId"] != null)
-                                        {
-                                            <li id="logedin">
-                                                <i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
-                                                <b style="font-size:12px">Hi, @(Session["UserName"]?.ToString())</b>
-                                                <ul>
-                                                    <li><a href="/Account/MyAccount">My Account</a></li>
-                                                    <li><a href="/Account/LogOut">Logout</a></li>
-
-                                                </ul>
-
-
-
-
-                                            </li>
-                                        }
-                                        else
-                                        {
-                                            <li id="register">
-                                                <a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
-
-
-
-                                                <ul class="log">
-                                                    <li><a href="/Account/Login">Login</a></li>
-                                                    <li><a href="/Account/Login">Register</a></li>
-                                                    @*<li><a href="/Account/Login">My account</a></li>*@
-                                                </ul>
-                                            </li>
-
-
-
-                                        }
-                                    }
-
-
-
-
-
-
-                                    @*<li>
-                        <a href="#"><i class="mdi mdi-account"></i></a>
-                        <ul>
-                        <li><a href="/Account/Login">Login</a></li>
-                        <li><a href="/Account/Login">Registar</a></li>
-                        <li><a href="my-account.html">My account</a></li>
-                        </ul>
-                        </li>*@
-                                    <li>
-                                        <a href="#"><i class="mdi mdi-settings"></i></a>
-                                        <ul>
-                                            @*<li><a href="my-account.html">My account</a></li>*@
-                                            <li><a href="@Url.Action("AddToCart", "Product")">My cart</a></li>
-                                            <li><a href="@Url.Action("Wishlist", "Product")">My wishlist</a></li>
-                                            <li><a href="@Url.Action("Checkout", "Orders")">Check out</a></li>
-                                            <li><a href="@Url.Action("Index", "Orders")">My Orders</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="header-middel">
+                    <div style="width:105%" class="middel-top clearfix">
+                        <div class="left floatleft">
+                            <p>
+                                <i class="mdi mdi-clock"></i> @DateTime.Now.ToString("dd-MMM-yyyy hh:mm")
+                            </p>
                         </div>
-                        <div class="mainmenu">
-                            <nav>
+                        <div style="width:50%" class="center floatleft">
+                            <form action="#" method="get">
+                                <button type="submit"><i class="mdi mdi-magnify"></i></button>
+                                <div class="autocomplete">
+                                    @*<input id="myInput" type="text" name="myCountry" placeholder="Country">*@
+                                    <input type="text" class="removespecialchar" autocomplete="off" id="handlesearch" placeholder="Search within these results..." />
+                                </div>
+                            </form>
+                        </div>
+                        <div style="width:30%" class="right floatleft">
+                            <ul style="width:100%" class="clearfix">
+                                @{
+                                    if (Session["UserId"] != null)
+                                    {
+                                        <li id="logedin">
+                                            <i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
+                                            <b style="font-size:12px">Hi, @(Session["UserName"]?.ToString())</b>
+                                            <ul>
+                                                <li><a href="/Account/MyAccount">My Account</a></li>
+                                                <li><a href="/Account/LogOut">Logout</a></li>
+
+                                            </ul>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li id="register">
+                                            <a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
+
+                                            <ul class="log">
+                                                <li><a href="/Account/Login">Login</a></li>
+                                                <li><a href="/Account/Login">Register</a></li>
+                                                @*<li><a href="/Account/Login">My account</a></li>*@
+                                            </ul>
+                                        </li>
+                                    }
+                                }
+
+
+
+
+
+
+                                @*<li>
+                                    <a href="#"><i class="mdi mdi-account"></i></a>
+                                    <ul>
+                                    <li><a href="/Account/Login">Login</a></li>
+                                    <li><a href="/Account/Login">Registar</a></li>
+                                    <li><a href="my-account.html">My account</a></li>
+                                    </ul>
+                                    </li>*@
+                                <li>
+                                    <a href="#"><i class="mdi mdi-settings"></i></a>
+                                    <ul>
+                                        @*<li><a href="my-account.html">My account</a></li>*@
+                                        <li><a href="@Url.Action("AddToCart", "Product")">My cart</a></li>
+                                        <li><a href="@Url.Action("Wishlist", "Product")">My wishlist</a></li>
+                                        <li><a href="@Url.Action("Checkout", "Orders")">Check out</a></li>
+                                        <li><a href="@Url.Action("Index", "Orders")">My Orders</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mainmenu">
+                        <nav>
+                            <ul>
+                                <li>
+                                    <a href="/Home/Index">Home</a>
+                                    @*<ul class="dropdown">
+                                        <li><a href="index.html">Home version one</a></li>
+                                        <li><a href="index-2.html">Home version two</a></li>
+                                        </ul>*@
+                                </li>
+                                <li>
+                                    @*<a href="shop.html">Shop</a>*@
+                                    @Html.ActionLink("Shop", "PorductList", "Product")
+                                    <ul class="magamenu">
+                                        <li class="banner"><a href="javascript:void(0)"><img src="~/Content/Asset/img/u1.png" alt="" /></a></li>
+                                        <li>
+                                            <h5>Unity Foods</h5>
+                                            <ul>
+                                                <li><a href="#">DASTAK</a></li>
+                                                <li><a href="#">EHTIMAM</a></li>
+                                                <li><a href="#">LAGAN</a></li>
+                                                <li><a href="#">ZAUQEEN</a></li>
+                                                <li><a href="#">UNITY OIL </a></li>
+                                                <li><a href="#">PURE</a></li>
+                                                <li><a href="#">SPECIALTY FATS</a></li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <h5>Sunridge Foods</h5>
+                                            <ul>
+                                                <li><a href="#">Sunridge Fortified</a></li>
+                                                <li><a href="#">Sunridge Wheat Chakki</a></li>
+                                                <li><a href="#">Sunridge High Fiber </a></li>
+                                                <li><a href="#">Sunridge White Chakki </a></li>
+                                                <li><a href="#">Sunridge Super Fine </a></li>
+                                                <li><a href="#">Sunridge Premium Maida</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="banner"><a href="javascript:void(0)"><img src="~/content/asset/img/u2.jpg" alt="" /></a></li>
+                                    </ul>
+                                </li>
+                                <li style="display:none">
+                                    <a href="#">Pages</a>
+                                    <ul class="dropdown">
+                                        <li><a href="wishlist.html">Wishlist</a></li>
+                                        <li><a href="checkout.html">Checkout</a></li>
+                                        <li><a href="cart.html">Cart</a></li>
+                                        <li><a href="product-grid.html">Product Grid View</a></li>
+                                        <li><a href="product-list.html">Product List View</a></li>
+                                        <li><a href="single-product.html">Single Product</a></li>
+                                        @*<li><a href="error-404.html">404 page</a></li>*@
+                                    </ul>
+                                </li>
+                                @*<li>
+                                    <a href="blog.html">Blog</a>
+                                    <ul class="dropdown">
+                                    <li><a href="blog-style-1.html">Blog Style One</a></li>
+                                    <li><a href="blog-style-2.html">Blog Style Two</a></li>
+                                    <li><a href="single-blog.html">Single Blog</a></li>
+                                    </ul>
+                                    </li>*@
+                                <li><a href="@Url.Action("About","Contact")">About</a></li>
+                                <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
+                                <li>
+                                    <a href="javascrip:void(0)">
+                                        Conversion Rate
+                                        @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString(); }
+                                        <b> : @rate</b>
+
+                                    </a>
+                                </li>
+                                <li>
+                                    <select class="form-control" id="handlecity">
+                                        <option value="0">Reload</option>
+                                    </select>
+
+                                </li>
+
+                            </ul>
+                        </nav>
+                    </div>
+                    <!-- mobile menu start -->
+                    <div class="mobile-menu-area">
+                        <div class="mobile-menu">
+                            <nav id="dropdown">
                                 <ul>
                                     <li>
                                         <a href="/Home/Index">Home</a>
                                         @*<ul class="dropdown">
-                            <li><a href="index.html">Home version one</a></li>
-                            <li><a href="index-2.html">Home version two</a></li>
-                            </ul>*@
+                                            <li><a href="index.html">Home version one</a></li>
+                                            <li><a href="index-2.html">Home version two</a></li>
+                                            </ul>*@
                                     </li>
                                     <li>
-                                        @*<a href="shop.html">Shop</a>*@
-                                        @Html.ActionLink("Shop", "PorductList", "Product")
-                                        <ul class="magamenu">
-                                            <li class="banner"><a href="javascript:void(0)"><img src="~/Content/Asset/img/u1.png" alt="" /></a></li>
+                                        <a href="shop.html">Shop</a>
+                                        <ul>
                                             <li>
                                                 <h5>Unity Foods</h5>
                                                 <ul>
@@ -126,153 +198,76 @@
                                                     <li><a href="#">Sunridge Premium Maida</a></li>
                                                 </ul>
                                             </li>
-                                            <li class="banner"><a href="javascript:void(0)"><img src="~/content/asset/img/u2.jpg" alt="" /></a></li>
                                         </ul>
                                     </li>
                                     <li style="display:none">
                                         <a href="#">Pages</a>
-                                        <ul class="dropdown">
+                                        <ul>
                                             <li><a href="wishlist.html">Wishlist</a></li>
                                             <li><a href="checkout.html">Checkout</a></li>
                                             <li><a href="cart.html">Cart</a></li>
                                             <li><a href="product-grid.html">Product Grid View</a></li>
                                             <li><a href="product-list.html">Product List View</a></li>
                                             <li><a href="single-product.html">Single Product</a></li>
-                                            @*<li><a href="error-404.html">404 page</a></li>*@
+                                            <li><a href="error-404.html">404 page</a></li>
                                         </ul>
                                     </li>
-                                    @*<li>
-                        <a href="blog.html">Blog</a>
-                        <ul class="dropdown">
-                        <li><a href="blog-style-1.html">Blog Style One</a></li>
-                        <li><a href="blog-style-2.html">Blog Style Two</a></li>
-                        <li><a href="single-blog.html">Single Blog</a></li>
-                        </ul>
-                        </li>*@
-                                    <li><a href="@Url.Action("About","Contact")">About</a></li>
-                                    <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
-                                    <li>
-                                        <a href="javascrip:void(0)">
-                                            Conversion Rate
-                                            @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString(); }
-                                            <b> : @rate</b>
-                                            
-                                        </a>
+                                    <li style="display:none">
+                                        <a href="blog.html">Blog</a>
+                                        <ul>
+                                            <li><a href="blog-style-1.html">Blog Style One</a></li>
+                                            <li><a href="blog-style-2.html">Blog Style Two</a></li>
+                                            <li><a href="single-blog.html">Single Blog</a></li>
+                                        </ul>
                                     </li>
-
-
-
+                                    <li><a href="about.html">About</a></li>
+                                    <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
-                        <!-- mobile menu start -->
-                        <div class="mobile-menu-area">
-                            <div class="mobile-menu">
-                                <nav id="dropdown">
-                                    <ul>
-                                        <li>
-                                            <a href="/Home/Index">Home</a>
-                                            @*<ul class="dropdown">
-                                <li><a href="index.html">Home version one</a></li>
-                                <li><a href="index-2.html">Home version two</a></li>
-                                </ul>*@
-                                        </li>
-                                        <li>
-                                            <a href="shop.html">Shop</a>
-                                            <ul>
-                                                <li>
-                                                    <h5>Unity Foods</h5>
-                                                    <ul>
-                                                        <li><a href="#">DASTAK</a></li>
-                                                        <li><a href="#">EHTIMAM</a></li>
-                                                        <li><a href="#">LAGAN</a></li>
-                                                        <li><a href="#">ZAUQEEN</a></li>
-                                                        <li><a href="#">UNITY OIL </a></li>
-                                                        <li><a href="#">PURE</a></li>
-                                                        <li><a href="#">SPECIALTY FATS</a></li>
-                                                    </ul>
-                                                </li>
-                                                <li>
-                                                    <h5>Sunridge Foods</h5>
-                                                    <ul>
-                                                        <li><a href="#">Sunridge Fortified</a></li>
-                                                        <li><a href="#">Sunridge Wheat Chakki</a></li>
-                                                        <li><a href="#">Sunridge High Fiber </a></li>
-                                                        <li><a href="#">Sunridge White Chakki </a></li>
-                                                        <li><a href="#">Sunridge Super Fine </a></li>
-                                                        <li><a href="#">Sunridge Premium Maida</a></li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li style="display:none">
-                                            <a href="#">Pages</a>
-                                            <ul>
-                                                <li><a href="wishlist.html">Wishlist</a></li>
-                                                <li><a href="checkout.html">Checkout</a></li>
-                                                <li><a href="cart.html">Cart</a></li>
-                                                <li><a href="product-grid.html">Product Grid View</a></li>
-                                                <li><a href="product-list.html">Product List View</a></li>
-                                                <li><a href="single-product.html">Single Product</a></li>
-                                                <li><a href="error-404.html">404 page</a></li>
-                                            </ul>
-                                        </li>
-                                        <li style="display:none">
-                                            <a href="blog.html">Blog</a>
-                                            <ul>
-                                                <li><a href="blog-style-1.html">Blog Style One</a></li>
-                                                <li><a href="blog-style-2.html">Blog Style Two</a></li>
-                                                <li><a href="single-blog.html">Single Blog</a></li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="about.html">About</a></li>
-                                        <li><a href="contact.html">Contact</a></li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-sm-2" id="hovercartlist">
-                    <div class="cart-itmes">
-                        <a class="cart-itme-a" href="@Url.Action("AddToCart","Product")">
-                            <i class="mdi mdi-cart"></i>
-                            <b id="productaddtocart"> </b> Items : <small style="text-transform: capitalize;"><strong class="pricesymbol"> </strong> </small>  <strong id="totalprice"></strong>
-                        </a>
-                        <div class="cartdrop" id="cartdrop">
-
-                            @*<div class="sin-itme clearfix">
-                <i class="mdi mdi-close"></i>
-                <a class="cart-img" href="cart.html"><img src="~/Content/Asset/img/cart/2.png" alt="" /></a>
-                <div class="menu-cart-text">
-                    <a href="#"><h5>men’s black t-shirt</h5></a>
-                    <span>Color :  Black</span>
-                    <span>Size :     SL</span>
-                    <strong>$132.00</strong>
-                </div>
-            </div>*@
-                            <div class="total">
-                                <span>total <strong>= $306.00</strong></span>
-                            </div>
-                            <a class="goto" href="cart.html">go to cart</a>
-                            <a class="out-menu" href="checkout.html">Check out</a>
-                        </div>
-
-
-
                     </div>
                 </div>
             </div>
+
+            <div class="col-sm-2" id="hovercartlist">
+                <div class="cart-itmes">
+                    <a class="cart-itme-a" href="@Url.Action("AddToCart","Product")">
+                        <i class="mdi mdi-cart"></i>
+                        <b id="productaddtocart"> </b> Items : <small style="text-transform: capitalize;"><strong class="pricesymbol"> </strong> </small>  <strong id="totalprice"></strong>
+                    </a>
+                    <div class="cartdrop" id="cartdrop">
+
+                        @*<div class="sin-itme clearfix">
+                                <i class="mdi mdi-close"></i>
+                                <a class="cart-img" href="cart.html"><img src="~/Content/Asset/img/cart/2.png" alt="" /></a>
+                                <div class="menu-cart-text">
+                                    <a href="#"><h5>men’s black t-shirt</h5></a>
+                                    <span>Color :  Black</span>
+                                    <span>Size :     SL</span>
+                                    <strong>$132.00</strong>
+                                </div>
+                            </div>*@
+                        <div class="total">
+                            <span>total <strong>= $306.00</strong></span>
+                        </div>
+                        <a class="goto" href="cart.html">go to cart</a>
+                        <a class="out-menu" href="checkout.html">Check out</a>
+                    </div>
+
+
+
+                </div>
+            </div>
         </div>
-    </header>
+    </div>
+</header>
 
 
 <script>
     //try {
     //    localStorage.setItem('name', 'Hello World!');
     //} catch (e) {
-    //    
+    //
     //    if (e.include("")) {
     //        alert('Quota exceeded!');
     //    }

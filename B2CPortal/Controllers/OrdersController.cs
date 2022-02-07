@@ -26,8 +26,13 @@ namespace B2CPortal.Controllers
         private readonly IShippingDetails _IShippingDetails = null;
         private readonly ICart _cart = null;
         private readonly PaymentMethodFacade _paymentMethodFacade = null;
+        private readonly ICity _ICity = null;
 
-        public OrdersController(IShippingDetails shippingDetails ,PaymentMethodFacade paymentMethodFacade, IOrders orders, IProductMaster productMaster, ICart cart, IOrderDetail orderDetail)
+        public OrdersController(IShippingDetails shippingDetails ,
+
+            PaymentMethodFacade paymentMethodFacade, 
+            IOrders orders, IProductMaster productMaster, 
+            ICart cart, IOrderDetail orderDetail, ICity city)
         {
             _IShippingDetails = shippingDetails;
             _IProductMaster = productMaster;
@@ -35,6 +40,8 @@ namespace B2CPortal.Controllers
             _cart = cart;
             _orders = orders;
             _ordersDetail = orderDetail;
+            _ICity = city;
+
         }
         public ActionResult Index()
         {
@@ -48,29 +55,38 @@ namespace B2CPortal.Controllers
         }
         public async Task<JsonResult> GetOrderDetailsById(int id)
         {
+            //get location from cookie
+            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            if (string.IsNullOrEmpty(cookiecity))
+            {
+                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+            }
+            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
             List<OrderVM> orderdetailslist = new List<OrderVM>();
             decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             var detailslist = await _ordersDetail.GetOrderDetailsById(id);
             foreach (var item in detailslist)
             {
-                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
                 string name = productmasetr.Name;
                 string MasterImageUrl = productmasetr.MasterImageUrl;
-                var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
-                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                //var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+               // var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+               // var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
+                //var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+               // var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                 var detailsobj = new OrderVM
                 {
                     Name = name,
-                    Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                    Price = item.Price,
                     Discount = item.Discount,
-                    SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
-                    DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
+                    SubTotalPrice = item.Price * item.Quantity,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
+                    DiscountAmount = item.DiscountedPrice,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
                     Quantity = item.Quantity,
-                    TotalPrice = discountedprice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
+                    TotalPrice = item.TotalPrice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
                     MasterImageUrl = MasterImageUrl,
                     Date = item.CreatedOn.ToString(),
                     FK_ProductMaster = item.FK_ProductMaster
@@ -126,6 +142,7 @@ namespace B2CPortal.Controllers
         {
             try
             {
+
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
@@ -138,6 +155,14 @@ namespace B2CPortal.Controllers
                 if (Session["UserId"] != null)
                 {
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    //get location from cookie
+                    string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    if (string.IsNullOrEmpty(cookiecity))
+                    {
+                        HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                    }
+                    cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
                     if (customerId > 0)
                     {
                         // customer data for billing and shipment
@@ -152,12 +177,12 @@ namespace B2CPortal.Controllers
                         orderVM.Address = customer.Address;
 
                         var cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                        var cartlist = await _cart.GetCartProducts(cartguid, customerId);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId,citymodel);
                         if (cartlist != null)
                         {
                             foreach (var item in cartlist)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
@@ -236,6 +261,15 @@ namespace B2CPortal.Controllers
                    || Billing.paymenttype == PaymentType.Paypal)
                     )
                 {
+                    //get location from cookie
+                    string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    if (string.IsNullOrEmpty(cookiecity))
+                    {
+                        HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                    }
+                    cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                     customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     //------------existing order remove (manage)-----------------
                     OrderMaster Omaster = await _orders.ExestingOrder(customerId);
@@ -249,7 +283,7 @@ namespace B2CPortal.Controllers
                         // Billing Details Add
                         Billing.FK_Customer = customerId;
                         string cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                        var cartlist = await _cart.GetCartProducts(cartguid, customerId);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId,citymodel);
                         if (cartlist != null && cartlist.Count() > 0)
                         {
                             //for shipping address table..
@@ -269,7 +303,7 @@ namespace B2CPortal.Controllers
 
                             foreach (var item in cartlist)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
@@ -308,6 +342,7 @@ namespace B2CPortal.Controllers
                             Billing.BillingAddress = Billing.BillingAddress;
                             Billing.FK_ShippingDetails = shippingmodel.Id;
                             Billing.IsShipping = Billing.shippingdetails == null ? false : true;
+                            Billing.FK_CityId = citymodel.Id; 
                             Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
                             var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
                             // Insert order Master
@@ -321,7 +356,7 @@ namespace B2CPortal.Controllers
                                 {
                                     foreach (var item in cartlist)
                                     {
-                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                         var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
@@ -584,6 +619,15 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate)); OrderVM orderVM = new OrderVM();
                 List<OrderDetailsViewModel> orderDetailsVM = new List<OrderDetailsViewModel>();
@@ -613,7 +657,7 @@ namespace B2CPortal.Controllers
                             orderVM = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, orderVM);
                             foreach (var item in ordermodel.OrderDetails)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
@@ -641,6 +685,7 @@ namespace B2CPortal.Controllers
                             orderVM.Currency = currency;
                             orderVM.ConversionRate = conversionvalue;
                             orderVM.Id = id;
+                            orderVM.FK_CityId = citymodel.Id;
                             var orderresult = await _orders.UpdateOrderMAster(orderVM);
                             HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, orderVM.TotalPrice.ToString(), true);
                             orderVM.OrderDetailsViewModels = orderDetailsVM;

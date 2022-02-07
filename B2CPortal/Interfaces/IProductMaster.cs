@@ -17,15 +17,16 @@ namespace B2CPortal.Interfaces
         Task<IEnumerable<ProductMaster>> GetProduct();
 
         Task<IEnumerable<ProductMaster>> GetFeaturedProduct();
+        Task<IEnumerable<ProductMaster>> GetNewArrivalProducts();
 
-        Task<ProductMaster> GetProductById(long Id);
+        Task<ProductMaster> GetProductById(long Id, int id);
         Task<IEnumerable<ProductMaster>> GetProductByName(string name);
 
-        Task<ProductMaster> GetDataForWishList(int id);
+        Task<ProductMaster> GetDataForWishList(int id, int cityid);
         Task<BrandCategoryVM> GetSidebar();
 
 
-        Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage); //int[] filterList
+        Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage, int cityid); //int[] filterList
 
 
         Task<IEnumerable<ProductsVM>> GetProductByIdWithRating(long Id);

@@ -39,13 +39,15 @@
         <AssociationConnector Association="B2CModel.FK_AuditOrderDetail_OrderMaster" />
         <AssociationConnector Association="B2CModel.FK_AuditOrderDetail_ProductMaster" />
         <AssociationConnector Association="B2CModel.FK_Customer" />
-        <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="0.75" PointY="0.75" />
         <EntityTypeShape EntityType="B2CModel.OrderTransection" Width="1.5" PointX="10.5" PointY="0.75" />
         <EntityTypeShape EntityType="B2CModel.ShippingDetail" Width="1.5" PointX="6" PointY="26.625" />
         <AssociationConnector Association="B2CModel.FK_OrderTransection_Customer" />
         <AssociationConnector Association="B2CModel.FK_OrderMaster_ShippingDetails" />
         <AssociationConnector Association="B2CModel.FK_OrderTransection_OrderMAster" />
         <EntityTypeShape EntityType="B2CModel.AdminUser" Width="1.5" PointX="13.375" PointY="0.75" />
+        <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="0.75" PointY="0.75" />
+        <AssociationConnector Association="B2CModel.FK_Cart_City" />
+        <AssociationConnector Association="B2CModel.FK_OrderMaster_City" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

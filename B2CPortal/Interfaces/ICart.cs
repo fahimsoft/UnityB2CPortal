@@ -10,7 +10,7 @@ namespace B2CPortal.Interfaces
 {
     public interface ICart
     {
-        Task<IEnumerable<Cart>> GetCartProducts(string guid , int customerid);
+        Task<IEnumerable<Cart>> GetCartProducts(string guid , int customerid, City city);
         Task<Cart> CreateCart(Cart cart);
 
         Task<Cart> UpdateCartFromWishList(Cart cart);

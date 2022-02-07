@@ -24,7 +24,10 @@ namespace API_Base.Common
         public static string ConversionRate = "ConversionRate";
         public static string ordermasterId = "ordermasterId";
         public static string OrderTotalAmount = "OrderTotalAmount";
+        public static string LocationCity = "LocationCity";
+        public static string CityList = "CityList";
         //---------------readonly data-----------
+        public static string DefaultCity = "Karachi";
         public static string from = "USD";
         public static string to = "PKR";
         
@@ -36,9 +39,9 @@ namespace API_Base.Common
             string datavalue = string.Empty;
             if (isset == true)
             {
-                if (key == pricesymbol)
+                if (key == pricesymbol || key == LocationCity)
                 {
-                    SetCookie(key, value, 1);
+                    SetCookie(key, value, 360);
                 }
                 HttpContext.Current.Session.Add(key,value);
             }

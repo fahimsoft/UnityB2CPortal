@@ -14,6 +14,20 @@ window.onload = function () {
         //$('body').addClass('body-pading-right');
         //$('.quick-view .modal-dialog .modal-content').find('.row').remove();
     };
+    $.ajax({
+        type: "GET",
+        url: "/Home/GetCityList",
+        data: {
+        },
+        success: function (data) {
+            debugger
+            var html = '';
+            data.data.map(function (item, index) {
+                    html += `<option ${item.Selected == true ? "Selected": ""} value="${item.Id}">${item.Name}</option>`;
+            });
+            $('#handlecity').html(html);
+        }
+    });
 };
 $(document).ready(function () {
     ShowCartProducts();
@@ -22,7 +36,7 @@ $(document).ready(function () {
             var num = $(this).text();
             var symbolvalue = GetCookieByName(pricesymbol);
             if (symbolvalue.toLowerCase() == "pkr") {
-               var amountnumber =  parseFloat(num).toFixed(2);
+                var amountnumber = parseFloat(num).toFixed(2);
                 $(this).text(amountnumber.replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
             } else {
                 //$(this).text($(this).text().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$,"));
@@ -77,7 +91,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.qtybuttonquickview', function () {
-        
+
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
@@ -140,6 +154,24 @@ $(document).ready(function () {
     $('.nav-view').on('click', '.my-list-grid-btn', function () {
         localStorage.removeItem('my-list-grid-btn');
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
+    });
+    //----------------------on change city --------------------
+    $(document).on('change', '#handlecity', function () {
+        var id = $("#handlecity").val();
+        if (id == 0) {
+            window.location.reload();
+        }
+        $.ajax({
+            type: "POST",
+            url: "/Home/ChangeCity",
+            data: {
+                id: id
+            },
+            success: function (data) {
+                toastr.success(data.msg);
+                window.location.reload();
+            }
+        });
     });
 });
 ///========================search with autocomplete========================================
@@ -458,7 +490,7 @@ function HandleAddtoWishList(id) {
     //  var guid = document.cookie.split('=')[1];
     $.ajax({
         type: "POST",
-        url: "/Product/GetDataForWishList",
+        url: "/Product/AddWishlistProduct",
         data: {
             id: proid,
             quentity: quentity,
@@ -894,7 +926,10 @@ ${GetProductRating(item.AvgRating)}
 <div class="ratting">
 ${GetProductRating(item.AvgRating)}
 </div>
-<span><del style='color:silver'><strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span></del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+<span>
+<del style='color:silver'>
+<strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
+</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 </div>
 </div>
 </div>`;
@@ -1078,7 +1113,11 @@ function loadFeatureProduct() {
 </div>
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
- <del> <strong class="pricesymbol"></strong>  ${item.Price}  </del>&nbsp <strong class="pricesymbol"> </strong> ${item.DiscountedAmount} 
+ <del>
+
+<strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
+</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+
 </div>
 </div>
 </div>
@@ -1086,8 +1125,64 @@ function loadFeatureProduct() {
 </li>`;
 
             });
+//<strong class="pricesymbol"></strong>  ${item.Price}
+//</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
 
             $('#ulLoadFeatureProduct').html(html);
+            $("span .numbers").digits();
+            var symbolvalue = GetCookieByName(pricesymbol);
+            $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
+        },
+        error: function (errorMessage) {
+            alert(errorMessage.responseText);
+        }
+    });
+
+}
+function loadnewarrivalproducts() {
+    $.ajax({
+        url: "/Product/LoadNewArrivalProducts",
+        type: "GET",
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        success: function (result) {
+            var html = '';
+            var data = JSON.parse(result.data);
+
+            $.each(data, function (key, item) {
+                html += `<li>
+<div class="text-center">
+<div class="col-xs-12 col-sm-6 col-md-3">
+<div class="single-product">
+<div class="product-img">
+<div class="pro-type">
+<span>${item.Discount}%</span>
+</div>
+<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<div class="actions-btn">
+<a onclick="HandleAddtocart(this)" productIdList=${item.Id} ><i class="mdi mdi-cart"></i></a>
+<a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
+<a onclick="HandleAddtoWishList(this)" productIdList=${item.Id}><i class="mdi mdi-heart"></i></a>
+</div>
+</div>
+<div class="product-dsc">
+<p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
+ <del>
+
+<strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
+</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+
+</div>
+</div>
+</div>
+</div></div>
+</li>`;
+
+            });
+//<strong class="pricesymbol"></strong>  ${item.Price}
+//</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
+
+            $('#ulLoadNewArrivalProducts').html(html);
             $("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;

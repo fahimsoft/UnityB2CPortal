@@ -40,6 +40,7 @@ namespace B2C_Models.Models
         public Nullable<bool> IsActive { get; set; }
         public string MasterImageUrl { get; set; }
         public bool IsFeatured { get; set; }
+        public Nullable<bool> IsNewArrival { get; set; }
     
         public virtual ProductBrand ProductBrand { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

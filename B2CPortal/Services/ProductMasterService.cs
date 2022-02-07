@@ -34,7 +34,6 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
         public async Task<IEnumerable<ProductMaster>> GetFeaturedProduct()
         {
             try
@@ -56,11 +55,30 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-
-        public async Task<ProductMaster> GetProductById(long Id)
+        public async Task<IEnumerable<ProductMaster>> GetNewArrivalProducts()
         {
             try
             {
+                _dxcontext.Configuration.LazyLoadingEnabled = false;
+                var obj = await _dxcontext.ProductMasters.Where(x=> x.IsActive == true && x.IsNewArrival == true)
+                    .Include(x => x.ProductPrices)
+                    .AsNoTracking()
+                    .OrderByDescending(a => a.Id)
+                    .ToListAsync();
+
+                return obj;
+            }
+            catch (Exception Ex)
+            {
+
+                throw Ex;
+            }
+        }
+        public async Task<ProductMaster> GetProductById(long Id, int cityid)
+        {
+            try
+            {
+
                 var obj = await _dxcontext.ProductMasters
                     .Include(x => x.ProductPrices)
                     .Include(x => x.ProductDetails)
@@ -69,6 +87,7 @@ namespace B2CPortal.Services
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == Id);
                     //.OrderByDescending(a=>a.Id);//  GetAll();
+                    obj.ProductPrices =  obj.ProductPrices.Where(y => y.FK_City == cityid).ToList();
                 return obj;
 
 
@@ -117,7 +136,7 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-        public async Task<ProductMaster> GetDataForWishList(int id)
+        public async Task<ProductMaster> GetDataForWishList(int id, int cityid)
         {
             try
             {
@@ -127,6 +146,7 @@ namespace B2CPortal.Services
                     .Include(x => x.ProductPackSize)
                     .AsNoTracking()
                     .Where(x => x.Id == id).FirstOrDefaultAsync();
+                obj.ProductPrices = obj.ProductPrices.Where(x => x.FK_City == cityid).ToList();
                 return obj;
 
             }
@@ -258,7 +278,7 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
-        public async Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage) //int[] filterList
+        public async Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage, int cityid) //int[] filterList
         {
             try
             {
@@ -471,8 +491,8 @@ namespace B2CPortal.Services
                 }).AsNoTracking().ToList();
                 foreach (var item in obj)
                 {
-                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discount = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
                     var discountedprice = Math.Round(Convert.ToDecimal((price *  (1 - (discount / 100))) / conversionvalue), 2);
                     //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 

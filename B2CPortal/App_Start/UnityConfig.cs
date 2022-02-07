@@ -17,6 +17,7 @@ namespace B2CPortal
             
             // e.g. container.RegisterType<ITestService, TestService>();
 
+            container.RegisterType<ICity, CityService>();
             container.RegisterType<ITest, TestService>();
             container.RegisterType<IUser, UserService>();
             container.RegisterType<IProductMaster, ProductMasterService>();

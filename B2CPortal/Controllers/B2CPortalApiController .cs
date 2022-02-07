@@ -23,7 +23,14 @@ namespace B2CPortal.Controllers
         private readonly IOrderDetail _ordersDetail = null;
         private readonly IAccount _account = null;
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
-        public B2CPortalApiController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection, IOrderDetail orderDetail, IAccount account)
+        private readonly ICity _ICity = null;
+
+        public B2CPortalApiController(IOrders order, 
+            IProductMaster productMaster, 
+            ICart cart, 
+            IOrderTransection orderTransection, 
+            IOrderDetail orderDetail, 
+            IAccount account, ICity city)
         {
             _orders = order;
             _IProductMaster = productMaster;
@@ -32,6 +39,7 @@ namespace B2CPortal.Controllers
             _PaymentMethodFacade = new PaymentMethodFacade();
             _ordersDetail = orderDetail;
             _account = account;
+            _ICity = city;
 
 
         }
@@ -208,12 +216,21 @@ namespace B2CPortal.Controllers
         {
             if (!string.IsNullOrEmpty(orderid))
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                 List<OrderVM> orderdetailslist = new List<OrderVM>();
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 var detailslist = await _ordersDetail.GetOrderDetailsById(Convert.ToInt32(orderid));
                 foreach (var item in detailslist)
                 {
-                    var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                    var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
                     string name = productmasetr.Name;
                     string MasterImageUrl = productmasetr.MasterImageUrl;
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
@@ -271,8 +288,17 @@ namespace B2CPortal.Controllers
                         };
                         if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                         {
+                            //get location from cookie
+                            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                            if (string.IsNullOrEmpty(cookiecity))
+                            {
+                                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                            }
+                            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                             cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                            List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id) as List<Cart>;
+                            List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id,citymodel) as List<Cart>;
                             List<Cart> wishlist = await _cart.GetWishListProducts(cookie, res.Id) as List<Cart>;
                             cartlsit.ForEach(x =>
                             {
@@ -289,6 +315,7 @@ namespace B2CPortal.Controllers
                                 {
                                     x.FK_Customer = res.Id;
                                     x.Guid = cookie;
+                                    x.FK_CityId = citymodel.Id;
                                     _cart.UpdateToCart(x);
                                 }
                             });

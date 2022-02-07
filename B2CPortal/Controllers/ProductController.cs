@@ -16,10 +16,12 @@ namespace B2CPortal.Controllers
     {
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
-        public ProductController(IProductMaster productMaster, ICart cart)
+        private readonly ICity _ICity = null;
+        public ProductController(IProductMaster productMaster, ICart cart, ICity city)
         {
             _IProductMaster = productMaster;
             _cart = cart;
+            _ICity = city;
         }
         public ActionResult Index()
         {
@@ -83,7 +85,17 @@ namespace B2CPortal.Controllers
         #region cart handling
         public async Task<JsonResult> GetCartCount()
         {
-            decimal  conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+            //get default city for price calculation
+            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            if (string.IsNullOrEmpty(cookiecity))
+            {
+                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+            }
+            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
+
+            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
             string cartguid = string.Empty;
@@ -94,10 +106,13 @@ namespace B2CPortal.Controllers
                 cartguid = Guid.NewGuid().ToString();
                 HelperFunctions.SetCookie(HelperFunctions.cartguid, cartguid, 1);
             }
-            var cartproducts = await _cart.GetCartProducts(cartguid, userid);
+            var cartproducts = await _cart.GetCartProducts(cartguid, userid, citymodel);
             foreach (var item in cartproducts)
             {
-                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+
+                //productmasetr.ProductPrices.Where(x=> x.FK_City)
+
                 string name = productmasetr.Name;
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -133,6 +148,14 @@ namespace B2CPortal.Controllers
         }
         public async Task<ActionResult> GetCartList()
         {
+            //get default city for price calculation
+            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            if (string.IsNullOrEmpty(cookiecity))
+            {
+                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+            }
+            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
             string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
             decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
@@ -142,10 +165,10 @@ namespace B2CPortal.Controllers
             {
                 cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
             }
-            var cartproducts = await _cart.GetCartProducts(cookie, userid);
+            var cartproducts = await _cart.GetCartProducts(cookie, userid, citymodel);
             foreach (var item in cartproducts)
             {
-                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                 string name = productmasetr.Name;
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
@@ -234,6 +257,15 @@ namespace B2CPortal.Controllers
             {
                 if (quentity > 0)
                 {
+                    //get location from cookie
+                    string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    if (string.IsNullOrEmpty(cookiecity))
+                    {
+                        HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                    }
+                    cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                     string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                     decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                     int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
@@ -245,7 +277,7 @@ namespace B2CPortal.Controllers
                         cookieid = Guid.NewGuid().ToString();
                         HelperFunctions.SetCookie(HelperFunctions.cartguid, cookieid, 1);
                     }
-                    var productobj = await _IProductMaster.GetProductById(proid);
+                    var productobj = await _IProductMaster.GetProductById(proid,citymodel.Id);
                     var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
                     var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
@@ -259,14 +291,20 @@ namespace B2CPortal.Controllers
                     cart.FK_ProductMaster = proid;
                     cart.Currency = currency;// Session["currency"].ToString().ToLower();
                     cart.ConversionRate = conversionvalue;
+                    cart.FK_CityId= citymodel.Id;
+
 
                     if (userid > 0)
                     {
                         cart.FK_Customer = userid;
                     }
                     var obj = await _cart.CreateCart(cart); 
-
-                    var cartproducts = await _cart.GetCartProducts(cookieid, userid);
+                     var cartproducts = await _cart.GetCartProducts(cookieid, userid, citymodel);
+                    cartproducts.ToList().ForEach(x =>
+                    {
+                        x.FK_CityId = citymodel.Id;
+                        _cart.UpdateCart(x);
+                    });
                     var totalquentity = cartproducts.Sum(x => x.Quantity);
                     msg = obj == null ? "You Can't Add to Cart more then 10 times" : "Add to Cart Successfully !";
                     return Json(new { data = obj, msg = msg, cartproductscount = totalquentity, success = obj == null ? false : true }, JsonRequestBehavior.AllowGet);
@@ -295,6 +333,15 @@ namespace B2CPortal.Controllers
         [HttpPost]
         public async Task<JsonResult> UpdateCartList(List<int> cartquentites, List<int> cartids)
         {
+            //get location from cookie
+            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            if (string.IsNullOrEmpty(cookiecity))
+            {
+                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+            }
+            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
             string msg = string.Empty;
             bool updateresult = false;
             string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
@@ -305,7 +352,7 @@ namespace B2CPortal.Controllers
                 if (cartproducts != null)
                 {
                     cartproducts.Quantity = cartquentites[i];
-                    var productmasetr = await _IProductMaster.GetProductById(cartproducts.FK_ProductMaster);
+                    var productmasetr = await _IProductMaster.GetProductById(cartproducts.FK_ProductMaster,citymodel.Id);
                     var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                     cartproducts.TotalPrice = Math.Round(Convert.ToDecimal((price * cartproducts.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
@@ -342,7 +389,15 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage);
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+                var filter = await _IProductMaster.GetProductListbySidebar(filterList, search, nextPage, prevPage,citymodel.Id);
                 return SuccessResponse(filter);
             }
             catch (Exception Ex)
@@ -357,6 +412,15 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                 var obj = await _IProductMaster.GetFeaturedProduct();
@@ -364,8 +428,59 @@ namespace B2CPortal.Controllers
                 foreach (var item in obj)
                 {
                     string MasterImageUrl = item.MasterImageUrl;
-                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discount = item.ProductPrices.Where(x=> x.FK_City == citymodel.Id).Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Where(x => x.FK_City == citymodel.Id).Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
+
+                    var producVMList = new ProductsVM
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                        DiscountedAmount = discountedprice,
+                        Discount = discount,
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = MasterImageUrl,
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+
+                    };
+                    productsVM.Add(producVMList);
+                }
+
+                return SuccessResponse(productsVM);
+            }
+            catch (Exception Ex)
+            {
+
+                return BadResponse(Ex);
+            }
+        }
+        [HttpGet]
+        [ActionName("LoadNewArrivalProducts")]
+       // [OutputCache(CacheProfile = "SetCache")]
+        public async Task<JsonResult> LoadNewArrivalProducts()
+        {
+            try
+            {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                var obj = await _IProductMaster.GetNewArrivalProducts();
+                List<ProductsVM> productsVM = new List<ProductsVM>();
+                foreach (var item in obj)
+                {
+                    string MasterImageUrl = item.MasterImageUrl;
+                    var discount = item.ProductPrices.Where(x=> x.FK_City == citymodel.Id).Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Where(x => x.FK_City == citymodel.Id).Select(x => x.Price).FirstOrDefault();
                     var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
 
                     var producVMList = new ProductsVM
@@ -404,7 +519,16 @@ namespace B2CPortal.Controllers
         {
             try
             {
-                var obj = await _IProductMaster.GetProductById(Id);
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
+                var obj = await _IProductMaster.GetProductById(Id,citymodel.Id);
                 //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 //decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
 
@@ -502,6 +626,15 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                 string msg = string.Empty;
                 bool updateresult = false;
                 for (int i = 0; i < wishlistids.Count(); i++)
@@ -510,7 +643,7 @@ namespace B2CPortal.Controllers
                     if (wishlistProducts != null)
                     {
                         wishlistProducts.Quantity = wishlistquentites[i];
-                        wishlistProducts.TotalQuantity = wishlistquentites[i]; var productmasetr = await _IProductMaster.GetProductById(wishlistProducts.FK_ProductMaster);
+                        wishlistProducts.TotalQuantity = wishlistquentites[i]; var productmasetr = await _IProductMaster.GetProductById(wishlistProducts.FK_ProductMaster,citymodel.Id);
                         var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                         var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault(); wishlistProducts.Currency = string.IsNullOrEmpty(Session["currency"]?.ToString()) ? "PKR" : Session["currency"]?.ToString();
                        // var usdRate = HelperFunctions.GetConvertedCurrencyAmount(HelperFunctions.from, HelperFunctions.to);
@@ -537,10 +670,18 @@ namespace B2CPortal.Controllers
             }
         }
         [HttpPost]
-        public async Task<JsonResult> GetDataForWishList(int id, int quentity = 1)
+        public async Task<JsonResult> AddWishlistProduct(int id, int quentity = 1)
         {
             try
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
                 string msg = string.Empty;
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
@@ -554,7 +695,7 @@ namespace B2CPortal.Controllers
                     cookie = Guid.NewGuid().ToString();
                     HelperFunctions.SetCookie(HelperFunctions.cartguid, cookie, 1);
                 }
-                Cart cart = new Cart(); var res = await _IProductMaster.GetDataForWishList(id);
+                Cart cart = new Cart(); var res = await _IProductMaster.GetDataForWishList(id,citymodel.Id);
                 var Price = res.ProductPrices.Select(x => x.Price).FirstOrDefault();
                 var Discount = res.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var DiscountedPrice = Price * (1 - (Discount / 100));
@@ -575,6 +716,8 @@ namespace B2CPortal.Controllers
                 cart.TotalQuantity = quentity;
                 cart.Currency = currency;
                 cart.ConversionRate = conversionvalue;
+                cart.FK_CityId= citymodel.Id;
+
                 if (cart.Currency == "PKR")
                 {
                     cart.TotalPrice = DiscountedPrice;
@@ -601,6 +744,15 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                //get location from cookie
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
                 var customerId = 0;
                 if (Session["UserId"] != null)
                 {
@@ -617,12 +769,12 @@ namespace B2CPortal.Controllers
                     var ProductIds = await _cart.GetWishListProducts(cookie.Value, customerId);
                     foreach (var item in ProductIds)
                     {
-                        var productmaster = await _IProductMaster.GetProductById(item.FK_ProductMaster);
+                        var productmaster = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                         var Name = productmaster.Name;
                         var mainImg = productmaster.MasterImageUrl;
                         //var priceobj = productmaster.ProductPrices.Select(x => x.)
-                        var price = productmaster.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                        var discount = productmaster.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                        var price = productmaster.ProductPrices.Where(x => x.FK_City == citymodel.Id).Select(x => x.Price).FirstOrDefault();
+                        var discount = productmaster.ProductPrices.Where(x => x.FK_City == citymodel.Id).Select(x => x.Discount).FirstOrDefault();
                         var DiscountedPrice = price * (1 - (discount / 100));
                         var Total = item.TotalPrice;
                         var Quantity = item.TotalQuantity;
@@ -727,7 +879,16 @@ namespace B2CPortal.Controllers
                             if (customerId > 0)
                                 cartData.FK_Customer = customerId;
                             cartData.Guid = cookie.Value;
-                            var productData = await _IProductMaster.GetProductById(productId); if (cartData.Currency == "PKR")
+                            //get location from cookie
+                            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                            if (string.IsNullOrEmpty(cookiecity))
+                            {
+                                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                            }
+                            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
+                            var productData = await _IProductMaster.GetProductById(productId,citymodel.Id); if (cartData.Currency == "PKR")
                             {
                                 if (productData != null)
                                 {

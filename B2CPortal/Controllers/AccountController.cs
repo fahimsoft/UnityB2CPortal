@@ -19,11 +19,14 @@ namespace B2CPortal.Controllers
         private readonly IAccount _account = null;
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
-        public AccountController(IAccount account, IProductMaster productMaster, ICart cart)
+        private readonly ICity _ICity = null;
+
+        public AccountController(IAccount account, IProductMaster productMaster, ICart cart, ICity city)
         {
             _account = account;
             _IProductMaster = productMaster;
             _cart = cart;
+            _ICity = city;
         }
         #endregion
         [HttpGet]
@@ -57,20 +60,25 @@ namespace B2CPortal.Controllers
                 var res = await _account.SelectByIdPassword(customer);
                 if (res != null)
                 {
-                    var genral = new GenralClass();
+                    //get location from cookie
+                    string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    if (string.IsNullOrEmpty(cookiecity))
+                    {
+                        HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                    }
+                    cookiecity =  string.IsNullOrEmpty(cookiecity)? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                    City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
 
+                    var genral = new GenralClass();
                     string cookie = string.Empty;
-                    
                     Session["UserAccount"] = res;
                     Session["UserId"] = res.Id;
                     Session["UserName"] = res.FirstName;
                     Session["email"] = res.EmailId;
-
-
                     if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                     {
                         cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                        List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id) as List<Cart>;
+                        List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id, citymodel) as List<Cart>;
                         List<Cart> wishlist = await _cart.GetWishListProducts(cookie, res.Id) as List<Cart>;
                         cartlsit.ForEach(x =>
                         {
@@ -78,6 +86,7 @@ namespace B2CPortal.Controllers
                             {
                                 x.FK_Customer = res.Id;
                                 x.Guid = cookie;
+                                x.FK_CityId = citymodel.Id;
                                 _cart.UpdateCart(x);
                             }
                         });
@@ -87,6 +96,7 @@ namespace B2CPortal.Controllers
                             {
                                 x.FK_Customer = res.Id;
                                 x.Guid = cookie;
+                                x.FK_CityId = citymodel.Id;
                                 _cart.UpdateToCart(x);
                             }
                         });

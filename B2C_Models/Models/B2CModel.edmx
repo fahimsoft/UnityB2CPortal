@@ -42,6 +42,7 @@ warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary k
           <Property Name="IsActive" Type="bit" />
           <Property Name="Currency" Type="varchar" MaxLength="50" />
           <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="FK_CityId" Type="int" />
         </EntityType>
         <EntityType Name="City">
           <Key>
@@ -179,6 +180,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderDetailLogs' does not have a pri
           <Property Name="IsPriceChanged" Type="bit" Nullable="false" />
           <Property Name="IsShipping" Type="bit" Nullable="false" />
           <Property Name="FK_ShippingDetails" Type="int" />
+          <Property Name="FK_CityId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -292,6 +294,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="IsActive" Type="bit" />
           <Property Name="IsFeatured" Type="bit" Nullable="false" />
+          <Property Name="IsNewArrival" Type="bit" />
         </EntityType>
         <EntityType Name="ProductPackSize">
           <Key>
@@ -409,6 +412,18 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_Cart_City">
+          <End Role="City" Type="Self.City" Multiplicity="0..1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="FK_CityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Cart_Customer">
           <End Role="customer" Type="Self.customer" Multiplicity="0..1" />
           <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
@@ -466,6 +481,18 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Principal>
             <Dependent Role="OrderDetail">
               <PropertyRef Name="FK_ProductMaster" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderMaster_City">
+          <End Role="City" Type="Self.City" Multiplicity="0..1" />
+          <End Role="OrderMaster" Type="Self.OrderMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderMaster">
+              <PropertyRef Name="FK_CityId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -730,6 +757,10 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="ProductMaster" EntitySet="ProductMaster" />
             <End Role="OrderDetailLogs" EntitySet="OrderDetailLogs" />
           </AssociationSet>
+          <AssociationSet Name="FK_Cart_City" Association="Self.FK_Cart_City">
+            <End Role="City" EntitySet="City" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
           <AssociationSet Name="FK_Cart_Customer" Association="Self.FK_Cart_Customer">
             <End Role="customer" EntitySet="customer" />
             <End Role="Cart" EntitySet="Cart" />
@@ -749,6 +780,10 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <AssociationSet Name="FK_OrderDetail_ProductMaster" Association="Self.FK_OrderDetail_ProductMaster">
             <End Role="ProductMaster" EntitySet="ProductMaster" />
             <End Role="OrderDetail" EntitySet="OrderDetail" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderMaster_City" Association="Self.FK_OrderMaster_City">
+            <End Role="City" EntitySet="City" />
+            <End Role="OrderMaster" EntitySet="OrderMaster" />
           </AssociationSet>
           <AssociationSet Name="FK_OrderMaster_Customer" Association="Self.FK_OrderMaster_Customer">
             <End Role="customer" EntitySet="customer" />
@@ -911,7 +946,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <Parameter Name="new_diagramname" Mode="In" Type="String" />
           </FunctionImport>
           <FunctionImport Name="sp_upgraddiagrams" />
-          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
           <EntitySet Name="OrderTransections" EntityType="B2CModel.OrderTransection" />
           <EntitySet Name="ShippingDetails" EntityType="B2CModel.ShippingDetail" />
           <AssociationSet Name="FK_OrderTransection_Customer" Association="B2CModel.FK_OrderTransection_Customer">
@@ -927,6 +961,15 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="OrderTransection" EntitySet="OrderTransections" />
           </AssociationSet>
           <EntitySet Name="AdminUsers" EntityType="B2CModel.AdminUser" />
+          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
+          <AssociationSet Name="FK_Cart_City" Association="B2CModel.FK_Cart_City">
+            <End Role="City" EntitySet="Cities" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OrderMaster_City" Association="B2CModel.FK_OrderMaster_City">
+            <End Role="City" EntitySet="Cities" />
+            <End Role="OrderMaster" EntitySet="OrderMasters" />
+          </AssociationSet>
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -946,6 +989,8 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedOn" Type="DateTime" Precision="0" />
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
+          <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_City" FromRole="City" ToRole="Cart" />
+          <NavigationProperty Name="OrderMasters" Relationship="B2CModel.FK_OrderMaster_City" FromRole="City" ToRole="OrderMaster" />
         </EntityType>
         <EntityType Name="ProductBrand">
           <Key>
@@ -1004,6 +1049,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <NavigationProperty Name="Carts" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="ProductMaster" ToRole="Cart" />
           <NavigationProperty Name="OrderDetails" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="ProductMaster" ToRole="OrderDetail" />
           <NavigationProperty Name="OrderDetailLogs" Relationship="B2CModel.FK_AuditOrderDetail_ProductMaster" FromRole="ProductMaster" ToRole="OrderDetailLog" />
+          <Property Name="IsNewArrival" Type="Boolean" />
         </EntityType>
         <EntityType Name="ProductPackSize">
           <Key>
@@ -1233,6 +1279,8 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="customer" Relationship="B2CModel.FK_Cart_Customer" FromRole="Cart" ToRole="customer" />
           <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_Cart_ProductMaster" FromRole="Cart" ToRole="ProductMaster" />
+          <Property Name="FK_CityId" Type="Int32" />
+          <NavigationProperty Name="City" Relationship="B2CModel.FK_Cart_City" FromRole="Cart" ToRole="City" />
         </EntityType>
         <Association Name="FK_Cart_Customer">
           <End Type="B2CModel.customer" Role="customer" Multiplicity="0..1" />
@@ -1318,6 +1366,8 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="FK_ShippingDetails" Type="Int32" />
           <NavigationProperty Name="ShippingDetail" Relationship="B2CModel.FK_OrderMaster_ShippingDetails" FromRole="OrderMaster" ToRole="ShippingDetail" />
           <NavigationProperty Name="OrderTransections" Relationship="B2CModel.FK_OrderTransection_OrderMAster" FromRole="OrderMaster" ToRole="OrderTransection" />
+          <Property Name="FK_CityId" Type="Int32" />
+          <NavigationProperty Name="City1" Relationship="B2CModel.FK_OrderMaster_City" FromRole="OrderMaster" ToRole="City" />
         </EntityType>
         <Association Name="FK_OrderMaster_Customer">
           <End Type="B2CModel.customer" Role="customer" Multiplicity="1" />
@@ -1467,16 +1517,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Type="String" Name="Owner" Nullable="true" MaxLength="128" />
           <Property Type="Int32" Name="OwnerID" Nullable="false" />
         </ComplexType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityType Name="OrderTransection">
           <Key>
             <PropertyRef Name="ID" />
@@ -1569,6 +1609,40 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
         </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_Cart_City">
+          <End Type="B2CModel.City" Role="City" Multiplicity="0..1" />
+          <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="FK_CityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OrderMaster_City">
+          <End Type="B2CModel.City" Role="City" Multiplicity="0..1" />
+          <End Type="B2CModel.OrderMaster" Role="OrderMaster" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="City">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OrderMaster">
+              <PropertyRef Name="FK_CityId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1627,6 +1701,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="ProductMasters">
             <EntityTypeMapping TypeName="B2CModel.ProductMaster">
               <MappingFragment StoreEntitySet="ProductMaster">
+                <ScalarProperty Name="IsNewArrival" ColumnName="IsNewArrival" />
                 <ScalarProperty Name="IsFeatured" ColumnName="IsFeatured" />
                 <ScalarProperty Name="MasterImageUrl" ColumnName="MasterImageUrl" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -1770,6 +1845,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="Carts">
             <EntityTypeMapping TypeName="B2CModel.Cart">
               <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="FK_CityId" ColumnName="FK_CityId" />
                 <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
                 <ScalarProperty Name="Currency" ColumnName="Currency" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -1813,6 +1889,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="OrderMasters">
             <EntityTypeMapping TypeName="B2CModel.OrderMaster">
               <MappingFragment StoreEntitySet="OrderMaster">
+                <ScalarProperty Name="FK_CityId" ColumnName="FK_CityId" />
                 <ScalarProperty Name="FK_ShippingDetails" ColumnName="FK_ShippingDetails" />
                 <ScalarProperty Name="IsShipping" ColumnName="IsShipping" />
                 <ScalarProperty Name="IsPriceChanged" ColumnName="IsPriceChanged" />
@@ -1932,17 +2009,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           </FunctionImportMapping>
           <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="B2CModel.Store.sp_renamediagram" />
           <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="B2CModel.Store.sp_upgraddiagrams" />
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="B2CModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="OrderTransections">
             <EntityTypeMapping TypeName="B2CModel.OrderTransection">
               <MappingFragment StoreEntitySet="OrderTransection">
@@ -1996,6 +2062,17 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
                 <ScalarProperty Name="PhoneNo" ColumnName="PhoneNo" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="B2CModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

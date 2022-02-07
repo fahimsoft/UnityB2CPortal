@@ -50,6 +50,7 @@ namespace B2C_Models.Models
         public bool IsPriceChanged { get; set; }
         public bool IsShipping { get; set; }
         public Nullable<int> FK_ShippingDetails { get; set; }
+        public Nullable<int> FK_CityId { get; set; }
     
         public virtual customer customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -59,5 +60,6 @@ namespace B2C_Models.Models
         public virtual ShippingDetail ShippingDetail { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderTransection> OrderTransections { get; set; }
+        public virtual City City1 { get; set; }
     }
 }

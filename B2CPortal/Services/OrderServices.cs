@@ -63,6 +63,8 @@ namespace B2CPortal.Services
                     Current.ShippingAddress = Billing.ShippingAddress;
                     Current.PaymentStatus = Billing.PaymentStatus;
                     Current.OrderDescription= Billing.OrderDescription;
+                    Current.FK_CityId = Billing.FK_CityId;
+
 
                 }
                 else
@@ -106,6 +108,7 @@ namespace B2CPortal.Services
                     Current.Status= string.IsNullOrEmpty(ordervm.Status) ? Current.Status: ordervm.Status; 
                     Current.TotalPrice = (int) ordervm.TotalPrice;
                     Current.PaymentStatus = ordervm.PaymentStatus;
+                    Current.FK_CityId = ordervm.FK_CityId;
                 }
                 Save();
                 return Current;
