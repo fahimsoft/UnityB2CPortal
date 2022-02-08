@@ -1,7 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "GetPorductList";
-}   
+}
 <!-- pages-title-start -->
 <div class="pages-title section-padding">
     <div class="container">
@@ -192,7 +192,7 @@
 
 
         if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
-            
+
             // if (typeof (filterList)=='string')
             var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
 
@@ -205,10 +205,13 @@
         }
 
 
+        var retVal = LoadSidebar();
 
 
         $('#textProductName').val(filterSearchByName);
-        loadProductListById(filterCategoryAndBrandarray, filterSearchByName, filterNextPage, filterPrevpage);
+        //if ($('#textProductName').val()?.trim().length > 0)
+        if (retVal)
+            loadProductListById(filterCategoryAndBrandarray, filterSearchByName, filterNextPage, filterPrevpage);
 
 
 
@@ -241,7 +244,7 @@
         // Prev and Next Button
         $('#htmlProdListPaggination').on('click', '.btn-Prod-PrevAndNext', function () {
 
-            
+
             let searchProduct = $('#textProductName').val();
             let value = $(this).attr('value');
 
@@ -290,5 +293,58 @@
         loadProductListById(filterCategoryAndBrand, filterSearchByName, filterNextPage, filterPrevpage);
 
     }
+    //Load Sidebar List
+    function LoadSidebar() {
+        var html = '', htmlPBrand = '', htmlPCategory = '', pVariant = '';
+        var count = 0;
+        var categCount = 1;
+        var brandCount = 20;
 
+        var retRes = false;
+
+        //$('#categorySidebarId').html('');
+        $.ajax({
+            url: "/Product/GetSidebar",
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (result) {
+
+                var data = JSON.parse(result.data);
+                //console.log(data);
+                //
+                $.each(data.Category, function (key, item) {
+
+                    htmlPCategory += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" categoryId="${item.Id}" myfilter="Category" categoryName="${item.Name}"  id="${item.Name}">
+                          &nbsp;&nbsp;<label for="${item.Name}">&nbsp;${item.Name}</label></a><br>`;
+
+                });
+
+                $.each(data.Brand, function (key, item) {
+
+                    htmlPBrand += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" categoryId="${item.Id}" myfilter="Brand" categoryName="${item.Name}"  id="${item.Name}">
+                          &nbsp;&nbsp;<label for="${item.Name}">&nbsp;${item.Name}</label></a><br>`;
+
+                    //htmlPBrand += `<a href="javascript:void(0)"> <input type="checkbox" class="filter" brandId="${item.Id}" myfilter="Brand" brandName="${item.Name}" value="Dastak" id="${item.Id}">
+                    //      &nbsp;&nbsp;<label for="${item.Id}">&nbsp;${item.Name}</label></a><br>`;
+
+                });
+
+                $('#category-checkboxes').html('<div class="normal-a">' + htmlPCategory + '</div>');
+                $('#brand-checkboxes').html('<div class="normal-a">' + htmlPBrand + '</div>');
+
+                /*$('#categorySidebarId').html(html);*/
+
+                retRes = true;
+            },
+            error: function (errorMessage) {
+                alert(errorMessage.responseText);
+                retRes = false;
+            }
+        });
+
+        return retRes;
+    }
 </script>
+
