@@ -55,6 +55,7 @@
                                         <th> Payment Mode</th>
                                         <th> Status</th>
                                         <th> Payment </th>
+                                        <th> City</th>
                                         <th> Action</th>
                                     </tr>
                                 </thead>
@@ -117,7 +118,7 @@
                                                         }
                                                     }
                                                 </td>
-
+                                                <td>@item.CityName</td>
                                                 <td>
                                                     <a href="#" data-toggle="modal" id="19" data-target="#quick-view" onclick="Handleorderdetail(@item.Id)"> <i class="mdi mdi-account-card-details" title="Order Detail"></i> </a>
                                                     @if (item.PaymentMode.ToLower() != "cod" && item.Status.ToLower() == "inprocess" && item.PaymentStatus == false)

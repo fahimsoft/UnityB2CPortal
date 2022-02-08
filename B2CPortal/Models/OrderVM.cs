@@ -66,6 +66,7 @@ namespace B2CPortal.Models
         public bool IsShipping { get; internal set; }
         public int FK_ShippingDetails { get; internal set; }
         public int FK_CityId { get; internal set; }
+        public string CityName { get; internal set; }
     }
     public class OrderDetailsViewModel
     {

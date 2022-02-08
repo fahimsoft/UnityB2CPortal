@@ -114,6 +114,7 @@ namespace B2CPortal.Controllers
                         OrderVM dd = (OrderVM)HelperFunctions.CopyPropertiesTo(item, new OrderVM());
                         var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
                         dd.OrderNo = result;
+                        dd.CityName = item?.City1?.Name;
                         //dd.Price = dd.Price;
                         //dd.SubTotalPrice = dd.SubTotalPrice;
                         //dd.DiscountAmount = dd.DiscountAmount;

@@ -399,10 +399,14 @@ function Handleorderdetail(id) {
             $(data).each(function (index, item) {
                 htmlProductPriceDetail += ` <tr data-id="58">
                                         <td class="td-img text-left">
-                                            <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><img src="${item.MasterImageUrl}" alt="Add Product"></a>
+                                            <a href="/ProductDetails?productId=${item.FK_ProductMaster}">
+<img src="${item.MasterImageUrl}" alt="Add Product"/>
+</a>
                                             <div class="items-dsc">
-                                                <h5><a href="/ProductDetails?productId=${item.FK_ProductMaster}"> ${item.Name}
-                                                 </a></h5>
+                                                <h5>
+                                                         ${item.Name}
+                                                
+                                                </h5>
 
                                             </div>
                                         </td>
