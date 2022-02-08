@@ -1,13 +1,31 @@
 ﻿
 <style>
-    .locationcityicon {
+
+    .divCity {
+        margin-top:5px;
+    }
+
+    .divCity > * {
+        float:left;
+    }
+
+    .divCity i {
+        width: 20%;
+        font-size:2.5em;
+    }
+    .divCity select {
+        width: 80%;
+
+    }
+
+    /*.locationcityicon {
         font-size: 3em
     }
-    #handlecity {
-        float: right;
-        margin: auto;
+    #handlecity {*/
+        /*float: right;*/
+        /*margin: auto;
         width: auto;
-    }
+    }*/
 </style>
 <header class="header-one">
     <div class="container-fluid text-center">
@@ -161,11 +179,12 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <i  class="mdi mdi-google-maps locationcityicon"></i>
-                                    <select class="form-control" id="handlecity">
-                                        <option value="0">Reload</option>
-                                    </select>
-
+                                    <div class="divCity">
+                                        <i class="mdi mdi-google-maps locationcityicon"></i>
+                                        <select class="form-control" id="handlecity">
+                                            <option value="0">Reload</option>
+                                        </select>
+                                    </div>
                                 </li>
 
                             </ul>
