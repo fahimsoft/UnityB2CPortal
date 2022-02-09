@@ -36,6 +36,16 @@ namespace API_Base.Common
 
         public static string SetGetSessionData(string key , string value ="", bool isset = false)
         {
+            if (key == ConversionRate)
+            {//disable conversion rate
+                return "1";
+            }
+            if (key == pricesymbol)
+            {// disable currency
+                return "pkr";
+            }
+
+
             string datavalue = string.Empty;
             if (isset == true)
             {

@@ -12,16 +12,18 @@ namespace API_Base.Base
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             GetCountryByIP(Request);
-            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
-            if (currency.ToLower() == "pkr")
-            {
-                HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, "1", true);
-            }
-            else
-            {
-                var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
-                conversionrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, conversionrate, true);
-            }
+
+            //==============disable currency conversion rate and price symbol=============
+            //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+            //if (currency.ToLower() == "pkr")
+            //{
+            //    HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, "1", true);
+            //}
+            //else
+            //{
+            //    var conversionrate = HelperFunctions.GetConvertedCurrencyAmount("USD", "PKR");
+            //    conversionrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate, conversionrate, true);
+            //}
 
             //------------------url for common js----------------------
             base.OnActionExecuting(filterContext);
