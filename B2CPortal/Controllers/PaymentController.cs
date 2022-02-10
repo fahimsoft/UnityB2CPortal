@@ -146,7 +146,7 @@ namespace B2CPortal.Controllers
                 string conrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
                 if (!string.IsNullOrEmpty(conrate))
                 {
-                    decimal conversionvalue = Convert.ToDecimal(conrate);
+                   /// decimal conversionvalue = Convert.ToDecimal(conrate);
 
                     if (model == null || model.TotalPrice == null)
                     {
@@ -177,10 +177,10 @@ namespace B2CPortal.Controllers
                     return RedirectToAction("Checkout", "Orders");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                throw ex;
+                //return RedirectToAction("Index", "Home");
             }
         }
         [HttpGet]
