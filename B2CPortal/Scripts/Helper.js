@@ -11,7 +11,7 @@ function FormDataToObject(formArray) {
 //get cookie by name 
 function GetCookieByName(name) {
     var sym = unescape((document.cookie.match(name + '=([^;].+?)(;|$)') || [])[1] || '');
-    sym = sym == "PKR" ? "PKR" : "$";
+    sym = sym == "PKR" ? "PKR" : "PKR";
     return sym;
 }
 //validate previous date.................

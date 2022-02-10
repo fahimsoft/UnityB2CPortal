@@ -32,7 +32,7 @@
         <div class="row">
             <div class="col-sm-2">
                 <div class="logo">
-                    <a href="/Home/Index"><img src="~/Content/Asset/img/unity-logo.gif" alt="Sellshop" style="max-height:149px;" /></a>
+                    <a href="/Home/Index"><img src="~/Content/Asset/img/unityxpress_logo.png" alt="Sellshop" style="max-height:149px;" /></a>
                 </div>
             </div>
             <div class="col-sm-8">
@@ -59,7 +59,10 @@
                                     {
                                         <li id="logedin">
                                             <i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
+                                           @if (!string.IsNullOrEmpty(Session["UserName"].ToString()))
+                                           {
                                             <b style="font-size:12px">Hi, @(Session["UserName"]?.ToString())</b>
+                                           }
                                             <ul>
                                                 <li><a href="/Account/MyAccount">My Account</a></li>
                                                 <li><a href="/Account/LogOut">Logout</a></li>
@@ -172,9 +175,12 @@
                                 <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
                                 <li>
                                     <a href="javascrip:void(0)">
-                                         RATE
-                                        @{string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString(); }
-                                        <b> : @rate</b>
+                                        RATE
+                                        @if (!string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()))
+                                        {
+                                            string rate = string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()) ? "1" : Session["ConversionRate"]?.ToString();
+                                            <b> : @rate</b>
+                                        }
 
                                     </a>
                                 </li>

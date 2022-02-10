@@ -350,6 +350,7 @@
     <Content Include="Content\Asset\img\u2.jpg" />
     <Content Include="Content\Asset\img\Unity-Logo.gif" />
     <Content Include="Content\Asset\img\unity.png" />
+    <Content Include="Content\Asset\img\unityxpress_logo.png" />
     <Content Include="Content\Asset\js\bootstrap-min.js" />
     <Content Include="Content\Asset\js\bootstrap.min.js" />
     <Content Include="Content\Asset\js\countdown.js" />

@@ -11,8 +11,7 @@ namespace API_Base.Base
     {
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            GetCountryByIP(Request);
-
+            //GetCountryByIP(Request);
             //==============disable currency conversion rate and price symbol=============
             //string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
             //if (currency.ToLower() == "pkr")

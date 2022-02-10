@@ -202,7 +202,7 @@ namespace API_Base.Common
                 string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
                 string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
                 string Password = ConfigurationManager.AppSettings["Password"].ToString();
-                string Port = ConfigurationManager.AppSettings["Port"].ToString();
+                int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
 
                 MailMessage mailMessage = new MailMessage();
 
@@ -213,10 +213,10 @@ namespace API_Base.Common
                 mailMessage.To.Add(new MailAddress(SenderEmail));
 
 
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                using (SmtpClient smtp = new SmtpClient(HostAddress, Port))
                 {
                     smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new NetworkCredential("muahsan1289@gmail.com", "Password1289.");
+                    smtp.Credentials = new NetworkCredential(FormEmailId, Password);
                     smtp.EnableSsl = true;
                     smtp.Timeout = 20000;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;

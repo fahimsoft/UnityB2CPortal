@@ -1201,7 +1201,7 @@ function loadRecentViewProduct() {
     if (localStorage.length > 0) {
         var html = '';
         //var index = 0;
-        var id = JSON.parse(localStorage.Id);
+        var id = JSON.parse(localStorage?.Id);
         var name = JSON.parse(localStorage.Name);
         var img = JSON.parse(localStorage.Img);
 

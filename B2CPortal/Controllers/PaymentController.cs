@@ -134,39 +134,47 @@ namespace B2CPortal.Controllers
       [HttpGet]
         public async Task<ActionResult> PaymentStatus(OrderVM model =  null)
         {
-            string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
-                string conrate =  HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
-            if (!string.IsNullOrEmpty(conrate))
+            try
             {
-                decimal conversionvalue = Convert.ToDecimal(conrate);
-
-                if (model == null || model.TotalPrice == null)
+                string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
+                string conrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
+                if (!string.IsNullOrEmpty(conrate))
                 {
-                    string orderid = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
-                    OrderMaster ordermodel = await _orders.GetOrderMasterById(Convert.ToInt32(orderid));
+                    decimal conversionvalue = Convert.ToDecimal(conrate);
 
-                    model = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, model);
-                    model.DiscountAmount =  model.OrderDetails.Sum(x => x.DiscountedPrice);
-                    model.SubTotalPrice =  model.OrderDetails.Sum(x => x.Price);
+                    if (model == null || model.TotalPrice == null)
+                    {
+                        string orderid = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+                        OrderMaster ordermodel = await _orders.GetOrderMasterById(Convert.ToInt32(orderid));
 
-                    model.Id = ordermodel.Id;
-                    model.Status = OrderStatus.Confirmed.ToString();
-                    model.TotalPrice = model.TotalPrice;
-                    model.PaymentStatus = true;
+                        model = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, model);
+                        model.DiscountAmount = model.OrderDetails.Sum(x => x.DiscountedPrice);
+                        model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price);
 
-                    var ordermodelresponse = await _orders.UpdateOrderMAster(model);
-                    // orderVM =  (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
-                    // ------------Remove from cart------------
-                    var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
-                    var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                    var removeCart = await _cart.DisableCart(customerId, cookie);
+                        model.Id = ordermodel.Id;
+                        model.Status = OrderStatus.Confirmed.ToString();
+                        model.TotalPrice = model.TotalPrice;
+                        model.PaymentStatus = true;
+
+                        var ordermodelresponse = await _orders.UpdateOrderMAster(model);
+                        // orderVM =  (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
+                        // ------------Remove from cart------------
+                        var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                        var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                        var removeCart = await _cart.DisableCart(customerId, cookie);
+                    }
+                    model.OrderNo = HelperFunctions.GenrateOrderNumber(model.Id.ToString());
+                    return View(model);
                 }
-                model.OrderNo = HelperFunctions.GenrateOrderNumber(model.Id.ToString());
-                return View(model);
+                else
+                {
+                    return RedirectToAction("Checkout", "Orders");
+                }
             }
-            else
+            catch (Exception)
             {
-                return RedirectToAction("Checkout","Orders");
+
+                return RedirectToAction("Index", "Home");
             }
         }
         [HttpGet]
