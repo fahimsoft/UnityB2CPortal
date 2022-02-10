@@ -33,38 +33,38 @@ namespace B2CPortal
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             };
         }
-        protected void Application_Error(object sender, EventArgs e)
-        {
-            Exception exception = Server.GetLastError();
-            Response.Clear();
+        //protected void Application_Error(object sender, EventArgs e)
+        //{
+        //    Exception exception = Server.GetLastError();
+        //    Response.Clear();
 
-            HttpException httpException = exception as HttpException;
+        //    HttpException httpException = exception as HttpException;
 
-            if (httpException != null)
-            {
-                string action;
+        //    if (httpException != null)
+        //    {
+        //        string action;
 
-                switch (httpException.GetHttpCode())
-                {
-                    case 404:
-                        // page not found
-                        action = "HttpError404";
-                        break;
-                    case 500:
-                        // server error
-                        action = "HttpError500";
-                        break;
-                    default:
-                        action = "General";
-                        break;
-                }
+        //        switch (httpException.GetHttpCode())
+        //        {
+        //            case 404:
+        //                // page not found
+        //                action = "HttpError404";
+        //                break;
+        //            case 500:
+        //                // server error
+        //                action = "HttpError500";
+        //                break;
+        //            default:
+        //                action = "General";
+        //                break;
+        //        }
 
-                // clear error on server
-                Server.ClearError();
+        //        // clear error on server
+        //        Server.ClearError();
 
-                Response.Redirect(String.Format("~/ErrorHandler/{0}/?message={1}", action, exception.Message));
-            }
-        }
+        //        Response.Redirect(String.Format("~/ErrorHandler/{0}/?message={1}", action, exception.Message));
+        //    }
+        //}
     }
 }
 
