@@ -122,7 +122,7 @@
                                 </li>
                                 <li>
                                     @*<a href="shop.html">Shop</a>*@
-                                    @Html.ActionLink("Shop", "PorductList", "Product")
+                                    @Html.ActionLink("Shop", "ProductList", "Product")
                                     @*<ul class="magamenu">
                                         <li class="banner"><a href="javascript:void(0)"><img src="~/Content/Asset/img/u1.png" alt="" /></a></li>
                                         <li>
@@ -172,8 +172,8 @@
                                     </ul>
                                     </li>*@
                                 <li><a href="@Url.Action("About","Contact")">About</a></li>
-                                <li><a href="@Url.Action("ContactUs", "Contact")">Contact</a></li>
-                                <li>
+                                <li><a href="@Url.Action("ContactUs", "Contact")">Contact Us</a></li>
+                                <li style="display:none;">
                                     <a href="javascrip:void(0)">
                                         RATE
                                         @if (!string.IsNullOrEmpty(Session["ConversionRate"]?.ToString()))
@@ -204,37 +204,37 @@
                                     <li>
                                         <a href="/Home/Index">Home</a>
                                         @*<ul class="dropdown">
-                                            <li><a href="index.html">Home version one</a></li>
-                                            <li><a href="index-2.html">Home version two</a></li>
-                                            </ul>*@
+            <li><a href="index.html">Home version one</a></li>
+            <li><a href="index-2.html">Home version two</a></li>
+            </ul>*@
                                     </li>
                                     <li>
-                                        <a href="shop.html">Shop</a>
-                                        <ul>
-                                            <li>
-                                                <h5>Unity Foods</h5>
-                                                <ul>
-                                                    <li><a href="#">DASTAK</a></li>
-                                                    <li><a href="#">EHTIMAM</a></li>
-                                                    <li><a href="#">LAGAN</a></li>
-                                                    <li><a href="#">ZAUQEEN</a></li>
-                                                    <li><a href="#">UNITY OIL </a></li>
-                                                    <li><a href="#">PURE</a></li>
-                                                    <li><a href="#">SPECIALTY FATS</a></li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <h5>Sunridge Foods</h5>
-                                                <ul>
-                                                    <li><a href="#">Sunridge Fortified</a></li>
-                                                    <li><a href="#">Sunridge Wheat Chakki</a></li>
-                                                    <li><a href="#">Sunridge High Fiber </a></li>
-                                                    <li><a href="#">Sunridge White Chakki </a></li>
-                                                    <li><a href="#">Sunridge Super Fine </a></li>
-                                                    <li><a href="#">Sunridge Premium Maida</a></li>
-                                                </ul>
-                                            </li>
-                                        </ul>
+                                        @Html.ActionLink("Shop", "ProductList", "Product")
+                                        @*<ul>
+                <li>
+                    <h5>Unity Foods</h5>
+                    <ul>
+                        <li><a href="#">DASTAK</a></li>
+                        <li><a href="#">EHTIMAM</a></li>
+                        <li><a href="#">LAGAN</a></li>
+                        <li><a href="#">ZAUQEEN</a></li>
+                        <li><a href="#">UNITY OIL </a></li>
+                        <li><a href="#">PURE</a></li>
+                        <li><a href="#">SPECIALTY FATS</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <h5>Sunridge Foods</h5>
+                    <ul>
+                        <li><a href="#">Sunridge Fortified</a></li>
+                        <li><a href="#">Sunridge Wheat Chakki</a></li>
+                        <li><a href="#">Sunridge High Fiber </a></li>
+                        <li><a href="#">Sunridge White Chakki </a></li>
+                        <li><a href="#">Sunridge Super Fine </a></li>
+                        <li><a href="#">Sunridge Premium Maida</a></li>
+                    </ul>
+                </li>
+            </ul>*@
                                     </li>
                                     <li style="display:none">
                                         <a href="#">Pages</a>
@@ -256,8 +256,12 @@
                                             <li><a href="single-blog.html">Single Blog</a></li>
                                         </ul>
                                     </li>
-                                    <li><a href="about.html">About</a></li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="@Url.Action("AddToCart", "Product")">My cart</a></li>
+                                    <li><a href="@Url.Action("Wishlist", "Product")">My wishlist</a></li>
+                                    <li><a href="@Url.Action("Checkout", "Orders")">Check out</a></li>
+                                    <li><a href="@Url.Action("Index", "Orders")">My Orders</a></li>
+                                    <li><a href="@Url.Action("About","Contact")">About</a></li>
+                                    <li><a href="@Url.Action("ContactUs", "Contact")">Contact Us</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -326,7 +330,7 @@
     }
     //window.localStorage;
     function SetLocalStorage(elem) {
-        debugger
+        
         if (localStorage.Id != undefined)
             var id = JSON.parse(localStorage.Id);
 

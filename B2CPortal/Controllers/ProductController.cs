@@ -515,7 +515,7 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
-        public ActionResult PorductList()
+        public ActionResult ProductList()
         {
             string CurrentURL = Request.Url.AbsoluteUri;
             TempData["returnurl"] = CurrentURL;

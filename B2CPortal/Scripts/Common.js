@@ -20,7 +20,7 @@ window.onload = function () {
         data: {
         },
         success: function (data) {
-            debugger
+            
             var html = '';
             data.data.map(function (item, index) {
                     html += `<option ${item.Selected == true ? "Selected": ""} value="${item.Id}">${item.Name}</option>`;
@@ -156,6 +156,7 @@ $(document).ready(function () {
         localStorage.setItem("my-list-grid-btn", $(this).attr("mylistgridbtn"));
     });
     //----------------------on change city --------------------
+
     $(document).on('change', '#handlecity', function () {
         var id = $("#handlecity").val();
         if (id == 0) {
@@ -172,6 +173,31 @@ $(document).ready(function () {
                 window.location.reload();
             }
         });
+    });
+
+    //========================emil subscription========================
+    $(document).on('click', '#handlingsubscribe', function () {
+        var emailid = $("#subemail").val();
+        debugger
+        if (emailid) {
+            $.ajax({
+                type: "POST",
+                url: "/Account/EmailSubscription",
+                data: {
+                    emailid: emailid
+                },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.msg);
+                       $("#subemail").val("");
+
+                    } else {
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        }
+
     });
 });
 ///========================search with autocomplete========================================
@@ -340,7 +366,7 @@ function RemoveCartProduct(id) {
                 if (tb.find("tr").length == 1) {
                     $('#cartmanagebtn').replaceWith(`
                     <div class="text-right">
-                            <a class="btn btn-primary" href="/Product/PorductList">Shop Now</a>
+                            <a class="btn btn-primary" href="/Product/ProductList">Shop Now</a>
                     </div>
                 `);
                 }
@@ -632,8 +658,8 @@ function loadProductList() {
                     gl2 = "active";
                     break;
                 default:
-                    gl1 = "active";
-                    gl2 = "";
+                    gl1 = "";
+                    gl2 = "active";
                     break;
             }
 
@@ -990,8 +1016,8 @@ ${GetProductRating(item.AvgRating)}
                     gl2 = "active";
                     break;
                 default:
-                    gl1 = "active";
-                    gl2 = "";
+                    gl1 = "";
+                    gl2 = "active";
                     break;
             }
 
@@ -1538,7 +1564,7 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
 
 // Set Local Storage (Array) Generalize Fn
 function SetLocalStorageInArray(key, value) {
-    debugger
+    
     alert();
     var keyValue = JSON.parse(localStorage.getItem(key)) || [];
     var ParamValue = JSON.parse(localStorage.getItem(value)) || [];

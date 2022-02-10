@@ -235,7 +235,7 @@
 
         // Registeration Submit Button
         $("#btnAddSale").click(function (e) {
-            debugger
+            e.preventDefault();
             var userinput = $('.email').val();
             var pattern = /^\b[A-Z0-9._%-]+@@[A-Z0-9.-]+\.[A-Z]{2,4}\b$/i;
             if (!pattern.test(userinput)) {
@@ -253,7 +253,7 @@
                     success: function (data) {
                         if (data.success == true) {
                             toastr.success(data.msg);
-                            $('#btnAddSale').attr('disabled', false);
+                            //$('#btnAddSale').attr('disabled', false);
                             //-----------------------for sign up------------------------
                             var form = $("#register");
                             var datatosend = {
@@ -280,7 +280,7 @@
                                     success: function (data) {
                                         if (data.success == true) {
                                             toastr.success("Registered successfully.");
-                                            window.location.href = '/Account/ThankYou';
+                                            window.location.href = '/Account/Login';
 
                                         }
                                         else if (data.success == false || data.isSuccessful == false) {
@@ -304,7 +304,7 @@
                         }
                         else if (data.success == false) {
                             toastr.error(data.msg);
-                            $('#btnAddSale').attr('disabled', true);
+                            //$('#btnAddSale').attr('disabled', false);
                         }
                     },
                     async: false

@@ -82,6 +82,9 @@
     <Compile Include="Models\customer.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\EmailSubscription.cs">
+      <DependentUpon>B2CModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ExceptionHandling.cs">
       <DependentUpon>B2CModel.tt</DependentUpon>
     </Compile>

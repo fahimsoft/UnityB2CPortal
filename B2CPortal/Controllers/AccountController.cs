@@ -20,13 +20,15 @@ namespace B2CPortal.Controllers
         private readonly IProductMaster _IProductMaster = null;
         private readonly ICart _cart = null;
         private readonly ICity _ICity = null;
+        private readonly IEmailSubscription _emailSubscription= null;
 
-        public AccountController(IAccount account, IProductMaster productMaster, ICart cart, ICity city)
+        public AccountController(IAccount account, IProductMaster productMaster, ICart cart, ICity city,IEmailSubscription emailSubscription)
         {
             _account = account;
             _IProductMaster = productMaster;
             _cart = cart;
             _ICity = city;
+            _emailSubscription = emailSubscription;
         }
         #endregion
         [HttpGet]
@@ -228,20 +230,9 @@ namespace B2CPortal.Controllers
                         var resultToken = new string(
                         Enumerable.Repeat(allChar, 8)
                         .Select(token => token[random.Next(token.Length)]).ToArray());
-
-
-
-
-
                         string authToken = resultToken.ToString();
-
-
-
                         //Create URL with above token
                         var lnkHref = " <a href='" + Url.Action("Login", "Account", new { email = To, code = authToken }, "http") + "'>Account Verification</a>";
-
-
-
                         //HTML Template for Send email
                         string subject = "Account Verification";
                         string body = "<b>Please find the Account Verification Link. </b><br/>" + lnkHref;
@@ -510,7 +501,37 @@ namespace B2CPortal.Controllers
             }
 
         }
+       [HttpPost]
+        public async Task<ActionResult> EmailSubscription(string emailid)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(emailid))
+                {
+                    var model = new EmailSubscription
+                    {
+                        IsActive = true,
+                        SubEmail = emailid,
+                        CreatedOn = DateTime.Now
+
+                    };
+                   var dd =  await _emailSubscription.CreateEmailSubscription(model);
+                    return Json(new { success = true, msg = "Thanks for Subscription !" });
+                }
+                else
+                {
+                    return Json(new { success = false, msg = "Please Try Again." });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+        }
         [HttpGet]
+
         public ActionResult ThankYou()
         {
             try

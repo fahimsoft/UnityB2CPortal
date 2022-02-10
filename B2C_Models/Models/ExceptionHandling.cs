@@ -19,5 +19,6 @@ namespace B2C_Models.Models
         public string ErrorMessage { get; set; }
         public string ErrorURL { get; set; }
         public Nullable<int> FK_userid { get; set; }
+        public System.DateTime CreatedOn { get; set; }
     }
 }

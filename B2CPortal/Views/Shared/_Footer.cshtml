@@ -4,12 +4,12 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12">
-                    <div class="barnd-bg">
+                    <div class="barnd-bg" align="center">
                         <a href="#"><img src="~/Content/Asset/img/brand/d.png" alt="Brand Logo" /></a>
-                        <a href="#"><img src="~/Content/Asset/img/brand/z.png" alt="Brand Logo" /></a>
+                        @*  <a href="#"><img src="~/Content/Asset/img/brand/z.png" alt="Brand Logo" /></a>*@
                         <a href="#"><img src="~/Content/Asset/img/brand/s.png" alt="Brand Logo" /></a>
-                        <a href="#"><img src="~/Content/Asset/img/brand/l.png" alt="Brand Logo" /></a>
-                        <a href="#"><img src="~/Content/Asset/img/brand/e.png" alt="Brand Logo" /></a>
+                        <a href="#"><img src="~/Content/Asset/img/logo-print-screen.PNG" alt="Brand Logo" /></a>
+                        @*<a href="#"><img src="~/Content/Asset/img/brand/e.png" alt="Brand Logo" /></a>*@
                     </div>
                 </div>
             </div>
@@ -25,22 +25,19 @@
                 <div class="col-sm-6">
                     <div class="social-icons">
                         <a href="https://web.facebook.com/Unity-Foods-Limited"><i class="mdi mdi-facebook"></i></a>
-                        <a href="https://www.linkedin.com/company/unity-foods-limted/"><i class="mdi mdi-linkedin"></i></a>
+                       @* <a href="https://www.linkedin.com/company/unity-foods-limted/"><i class="mdi mdi-linkedin"></i></a>*@
 
                         <a href="https://twitter.com/sunridgefoods"><i class="mdi mdi-twitter"></i></a>
                         <a href="https://www.instagram.com/sunridgefoods/"><i class="mdi mdi-instagram"></i></a>
                         <a href="https://www.youtube.com/channel/UCMsFV9GrJgQYfmUiLqyhaaA"><i class="mdi mdi-youtube-play"></i></a>
-
                     </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="newsletter">
-                        <form action="#" method="post">
-                            <input type="text" name="email" placeholder="Enter your email..." />
-                            <input disabled type="submit" value="subscribe" />
-                        </form>
+                        <div class="newsletter">
+                                <input type="text" id="subemail" name="email" placeholder="Enter your email..." />
+                                <input type="submit" id="handlingsubscribe" value="subscribe" />
+                        </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>
@@ -50,7 +47,7 @@
         <div class="footer-dsc">
             <div class="container">
                 <div class="row">
-                    <div class="col-xs-12 col-sm-6 col-md-3">
+                    <div class="col-md-3 wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
                                 <h4>Contact us</h4>
@@ -66,17 +63,18 @@
                                         <i class="mdi mdi-phone"></i>
                                         <p>+92-21-34373605-7</p>
                                         <p>+92-21-34373608</p>
+                                        <p>03000-DASTAK(327825)</p>
                                     </li>
                                     <li>
                                         <i class="mdi mdi-email"></i>
-                                        <p>info@unityfoods.pk</p>
+                                        <p>info@unityxpress.pk</p>
                                         @*<p>username@email.com</p>*@
                                     </li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-3 col-md-2 wide-mobile">
+                    <div class="col-md-3  wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
                                 <h4>my account</h4>
@@ -84,78 +82,81 @@
                             <div class="footer-menu">
                                 <ul>
                                     <li><a href="/Account/Login"><i class="mdi mdi-menu-right"></i>My Account</a></li>
-                                    <li><a href="~/Product/WishList"><i class="mdi mdi-menu-right"></i>My Wishlist</a></li>
-                                    <li><a href="/Product/AddToCart"><i class="mdi mdi-menu-right"></i>My Cart</a></li>
                                     <li><a href="/Account/Login"><i class="mdi mdi-menu-right"></i>Sign In</a></li>
-                                    <li><a href="/Orders/Checkout"><i class="mdi mdi-menu-right"></i>Check out</a></li>
-                                    <li><a href="/Orders/GetOrderList"><i class="mdi mdi-menu-right"></i>Track My Order</a></li>
+                                    <li><a href="/Account/Login"><i class="mdi mdi-menu-right"></i>Register</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-3 col-md-2 wide-mobile">
-                        <div class="single-text">
-                            <div class="footer-title">
-                                <h4>Products</h4>
-                            </div>
-                            <div class="footer-menu">
-                                <ul>
-                                    <li><a href="/Product/PorductList"><i class="mdi mdi-menu-right"></i>New Products</a></li>
-                                    <li><a href="#"><i class="mdi mdi-menu-right"></i>Top Sellers</a></li>
-                                    @*<li><a href="#"><i class="mdi mdi-menu-right"></i>Manufactirers</a></li>
-                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Suppliers</a></li>
-                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Specials</a></li>
-                                        <li><a href="#"><i class="mdi mdi-menu-right"></i>Availability</a></li>*@
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-2 r-margin-top wide-mobile">
+                    <div class="col-md-3  wide-mobile">
                         <div class="single-text">
                             <div class="footer-title">
                                 <h4>Information</h4>
                             </div>
                             <div class="footer-menu">
                                 <ul>
-                                    <li><a href="@Url.Action("ContactUs","Contact")"><i class="mdi mdi-menu-right"></i>Return Exchange</a></li>
-                                    <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Fast Delivery</a></li>
-                                    <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Online Shopping</a></li>
-                                    <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Shipping Guide</a></li>
-                                    <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Terms Of Use</a></li>
-                                    <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Home Delivery</a></li>
+                                    <li><a href="~/Product/WishList"><i class="mdi mdi-menu-right"></i>My Wishlist</a></li>
+                                    <li><a href="/Product/AddToCart"><i class="mdi mdi-menu-right"></i>My Cart</a></li>
+                                    <li><a href="/Orders/Checkout"><i class="mdi mdi-menu-right"></i>Check out</a></li>
+                                    <li><a href="/Orders/Index"><i class="mdi mdi-menu-right"></i>Order History</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
-                    <div class="col-xs-12 col-sm-6 col-md-3 r-margin-top wide-mobile">
+                    <div class="col-md-3 wide-mobile" >
                         <div class="single-text">
                             <div class="footer-title">
-                                <h4>Best Products </h4>
+                                <h4>QUICK LINKS</h4>
                             </div>
-                            <div class="clearfix instagram">
+                            <div class="footer-menu">
                                 <ul>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/1.png" alt="Instagram" /></a></li>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/10.png" alt="Instagram" /></a></li>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/2.png" alt="Instagram" /></a></li>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/6.png" alt="Instagram" /></a></li>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/3.png" alt="Instagram" /></a></li>
-                                    <li><a href="javascript:void(0)"><img src="~/ProductImg/4.png" alt="Instagram" /></a></li>
-
-                                    @*@Url.Action("PorductList", "Product")
-                                    @Url.Action("PorductList", "Product")
-                                    @Url.Action("PorductList", "Product")
-                                    @Url.Action("PorductList", "Product")
-                                    @Url.Action("PorductList", "Product")
-                                    @Url.Action("PorductList", "Product")*@
-                                    @*<li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
-        <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
-        <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>
-        <li><a href="#"><img src="~/Content/Asset/img/footer/in1.png" alt="Instagram" /></a></li>*@
+                                    <li><a href="~/Contact/About"><i class="mdi mdi-menu-right"></i>About </a></li>
+                                    <li><a href="~/Contact/ContactUs"><i class="mdi mdi-menu-right"></i>Contact Us</a></li>
+                                    <li><a href="~/Product/ProductList"><i class="mdi mdi-menu-right"></i>Products</a></li>
                                 </ul>
-
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4 wide-mobile" style="display:none;">
+                        <div class="single-text">
+                            <div class="footer-title">
+                                <h4>Brands</h4>
+                            </div>
+                            <div class="footer-menu">
+                                <img src="~/Content/Asset/img/brand/s.png" alt="Instagram" />
+                            </div>
+                            @*<div class="footer-menu">
+            <ul>
+                <li><a href="@Url.Action("ContactUs","Contact")"><i class="mdi mdi-menu-right"></i>Return Exchange</a></li>
+                <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Fast Delivery</a></li>
+                <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Online Shopping</a></li>
+                <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Shipping Guide</a></li>
+                <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Terms Of Use</a></li>
+                <li><a href="javascript:void(0)"><i class="mdi mdi-menu-right"></i>Home Delivery</a></li>
+            </ul>
+        </div>*@
+                        </div>
+                    </div>
+                    @*<div class="col-xs-12 col-sm-6 col-md-3 r-margin-top wide-mobile"  style="display:none">
+                            <div class="single-text">
+                                <div class="footer-title">
+                                    <h4>Best Products </h4>
+                                </div>
+                                <div class="clearfix instagram">
+                                    <ul>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/1.png" alt="Instagram" /></a></li>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/10.png" alt="Instagram" /></a></li>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/2.png" alt="Instagram" /></a></li>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/6.png" alt="Instagram" /></a></li>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/3.png" alt="Instagram" /></a></li>
+                                        <li><a href="javascript:void(0)"><img src="~/ProductImg/4.png" alt="Instagram" /></a></li>
+
+
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>*@
                 </div>
             </div>
         </div>
@@ -166,18 +167,18 @@
         <div class="container">
             <div class="row">
                 <div class="col-xs-12 col-sm-6">
-                    <p>&copy; Copyright 2021 Unity Foods.</p>
+                    <p>&copy; Copyright @DateTime.Now.Year Unity Foods.</p>
                 </div>
-                <div class="col-xs-12 col-sm-6 text-right">
-                    <a href="javascript:void(0)">
-                        <img src="~/Content/logos/ccc.png" alt="COD" />
-                        <img src="~/Content/logos/stripe.png" alt="Stripe" />
-                        <img src="~/Content/logos/hbl.png" alt="HBL" />
-                        <img src="~/Content/logos/ey.png" alt="Easypaisa" />
-                        <img src="~/Content/logos/j.png" alt="Jazz Cash" />
+                @*<div class="col-xs-12 col-sm-6 text-right">
+                        <a href="javascript:void(0)">
+                            <img src="~/Content/logos/ccc.png" alt="COD" />
+                            <img src="~/Content/logos/stripe.png" alt="Stripe" />
+                            <img src="~/Content/logos/hbl.png" alt="HBL" />
+                            <img src="~/Content/logos/ey.png" alt="Easypaisa" />
+                            <img src="~/Content/logos/j.png" alt="Jazz Cash" />
 
-                    </a>
-                </div>
+                        </a>
+                    </div>*@
             </div>
         </div>
     </div>

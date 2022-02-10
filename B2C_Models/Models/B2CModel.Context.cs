@@ -48,8 +48,9 @@ namespace B2C_Models.Models
         public virtual DbSet<OrderTransection> OrderTransections { get; set; }
         public virtual DbSet<ShippingDetail> ShippingDetails { get; set; }
         public virtual DbSet<AdminUser> AdminUsers { get; set; }
-        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
         public virtual DbSet<ExceptionHandling> ExceptionHandlings { get; set; }
+        public virtual DbSet<EmailSubscription> EmailSubscriptions { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     
         public virtual ObjectResult<GetProductRating_Result> GetProductRating(Nullable<decimal> productId)
         {

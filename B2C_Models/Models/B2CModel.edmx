@@ -101,6 +101,15 @@ warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary k
           <Property Name="RegisteredFrom" Type="varchar" MaxLength="50" />
           <Property Name="IsVerified" Type="bit" />
         </EntityType>
+        <EntityType Name="EmailSubscription">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="SubEmail" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedOn" Type="smalldatetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="ExceptionHandling">
           <Key>
             <PropertyRef Name="Id" />
@@ -110,6 +119,7 @@ warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary k
           <Property Name="ErrorMessage" Type="nvarchar" MaxLength="50" />
           <Property Name="ErrorURL" Type="nvarchar" MaxLength="50" />
           <Property Name="FK_userid" Type="int" />
+          <Property Name="CreatedOn" Type="smalldatetime" Nullable="false" />
         </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
@@ -638,45 +648,15 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="fn_diagramobjects" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" ReturnType="int" />
         <Function Name="GetProductRating" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProductId" Type="decimal" Mode="In" />
         </Function>
-        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="version" Type="int" Mode="In" />
-          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
-        </Function>
-        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-        </Function>
-        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
-          <Parameter Name="owner_id" Type="int" Mode="In" />
-          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
-        </Function>
-        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="B2CModelStoreContainer">
           <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CommentAndRating" EntityType="Self.CommentAndRating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="customer" EntityType="Self.customer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EmailSubscription" EntityType="Self.EmailSubscription" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ExceptionHandling" EntityType="Self.ExceptionHandling" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetail" EntityType="Self.OrderDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderMaster" EntityType="Self.OrderMaster" Schema="dbo" store:Type="Tables" />
@@ -980,8 +960,9 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="City" EntitySet="Cities" />
             <End Role="OrderMaster" EntitySet="OrderMasters" />
           </AssociationSet>
-          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
           <EntitySet Name="ExceptionHandlings" EntityType="B2CModel.ExceptionHandling" />
+          <EntitySet Name="EmailSubscriptions" EntityType="B2CModel.EmailSubscription" />
+          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -1645,16 +1626,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <EntityType Name="ExceptionHandling">
           <Key>
             <PropertyRef Name="Id" />
@@ -1664,6 +1635,26 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ErrorMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="ErrorURL" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="FK_userid" Type="Int32" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="0" />
+        </EntityType>
+        <EntityType Name="EmailSubscription">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SubEmail" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="0" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
         </EntityType>
         </Schema>
     </edmx:ConceptualModels>
@@ -2007,30 +1998,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
               </ComplexTypeMapping>
             </ResultMapping>
           </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_alterdiagram" FunctionName="B2CModel.Store.sp_alterdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_creatediagram" FunctionName="B2CModel.Store.sp_creatediagram" />
-          <FunctionImportMapping FunctionImportName="sp_dropdiagram" FunctionName="B2CModel.Store.sp_dropdiagram" />
-          <FunctionImportMapping FunctionImportName="sp_helpdiagramdefinition" FunctionName="B2CModel.Store.sp_helpdiagramdefinition">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="B2CModel.sp_helpdiagramdefinition_Result">
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="definition" ColumnName="definition" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_helpdiagrams" FunctionName="B2CModel.Store.sp_helpdiagrams">
-            <ResultMapping>
-              <ComplexTypeMapping TypeName="B2CModel.sp_helpdiagrams_Result">
-                <ScalarProperty Name="Database" ColumnName="Database" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ID" ColumnName="ID" />
-                <ScalarProperty Name="Owner" ColumnName="Owner" />
-                <ScalarProperty Name="OwnerID" ColumnName="OwnerID" />
-              </ComplexTypeMapping>
-            </ResultMapping>
-          </FunctionImportMapping>
-          <FunctionImportMapping FunctionImportName="sp_renamediagram" FunctionName="B2CModel.Store.sp_renamediagram" />
-          <FunctionImportMapping FunctionImportName="sp_upgraddiagrams" FunctionName="B2CModel.Store.sp_upgraddiagrams" />
           <EntitySetMapping Name="OrderTransections">
             <EntityTypeMapping TypeName="B2CModel.OrderTransection">
               <MappingFragment StoreEntitySet="OrderTransection">
@@ -2087,6 +2054,28 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ExceptionHandlings">
+            <EntityTypeMapping TypeName="B2CModel.ExceptionHandling">
+              <MappingFragment StoreEntitySet="ExceptionHandling">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="FK_userid" ColumnName="FK_userid" />
+                <ScalarProperty Name="ErrorURL" ColumnName="ErrorURL" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EmailSubscriptions">
+            <EntityTypeMapping TypeName="B2CModel.EmailSubscription">
+              <MappingFragment StoreEntitySet="EmailSubscription">
+                <ScalarProperty Name="CreatedOn" ColumnName="CreatedOn" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SubEmail" ColumnName="SubEmail" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="sysdiagrams">
             <EntityTypeMapping TypeName="B2CModel.sysdiagram">
               <MappingFragment StoreEntitySet="sysdiagrams">
@@ -2095,17 +2084,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
                 <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="ExceptionHandlings">
-            <EntityTypeMapping TypeName="B2CModel.ExceptionHandling">
-              <MappingFragment StoreEntitySet="ExceptionHandling">
-                <ScalarProperty Name="FK_userid" ColumnName="FK_userid" />
-                <ScalarProperty Name="ErrorURL" ColumnName="ErrorURL" />
-                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
-                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

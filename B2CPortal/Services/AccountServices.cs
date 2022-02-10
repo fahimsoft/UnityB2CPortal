@@ -37,7 +37,7 @@ namespace B2CPortal.Services
                 Current.Password = customer.Password;
                 Current.Gender = customer.Gender;
                 Current.DateOfBirth = customer.DateOfBirth;
-                //Current.Country = customer.Country;
+                Current.IsVerified = true;
                 //Current.City = customer.City;
                 //Current.Address = customer.Address;
                 Save();
