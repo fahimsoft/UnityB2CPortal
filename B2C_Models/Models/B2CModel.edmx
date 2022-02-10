@@ -101,6 +101,16 @@ warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary k
           <Property Name="RegisteredFrom" Type="varchar" MaxLength="50" />
           <Property Name="IsVerified" Type="bit" />
         </EntityType>
+        <EntityType Name="ExceptionHandling">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StatusCode" Type="nvarchar" MaxLength="50" />
+          <Property Name="ErrorMessage" Type="nvarchar" MaxLength="50" />
+          <Property Name="ErrorURL" Type="nvarchar" MaxLength="50" />
+          <Property Name="FK_userid" Type="int" />
+        </EntityType>
         <EntityType Name="OrderDetail">
           <Key>
             <PropertyRef Name="Id" />
@@ -667,6 +677,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySet Name="City" EntityType="Self.City" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CommentAndRating" EntityType="Self.CommentAndRating" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="customer" EntityType="Self.customer" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ExceptionHandling" EntityType="Self.ExceptionHandling" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderDetail" EntityType="Self.OrderDetail" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderMaster" EntityType="Self.OrderMaster" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="OrderTransection" EntityType="Self.OrderTransection" Schema="dbo" store:Type="Tables" />
@@ -961,7 +972,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="OrderTransection" EntitySet="OrderTransections" />
           </AssociationSet>
           <EntitySet Name="AdminUsers" EntityType="B2CModel.AdminUser" />
-          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
           <AssociationSet Name="FK_Cart_City" Association="B2CModel.FK_Cart_City">
             <End Role="City" EntitySet="Cities" />
             <End Role="Cart" EntitySet="Carts" />
@@ -970,6 +980,8 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             <End Role="City" EntitySet="Cities" />
             <End Role="OrderMaster" EntitySet="OrderMasters" />
           </AssociationSet>
+          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
+          <EntitySet Name="ExceptionHandlings" EntityType="B2CModel.ExceptionHandling" />
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -1609,16 +1621,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
         </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         <Association Name="FK_Cart_City">
           <End Type="B2CModel.City" Role="City" Multiplicity="0..1" />
           <End Type="B2CModel.Cart" Role="Cart" Multiplicity="*" />
@@ -1643,6 +1645,26 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="ExceptionHandling">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StatusCode" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorURL" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="FK_userid" Type="Int32" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2073,6 +2095,17 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
                 <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
                 <ScalarProperty Name="principal_id" ColumnName="principal_id" />
                 <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExceptionHandlings">
+            <EntityTypeMapping TypeName="B2CModel.ExceptionHandling">
+              <MappingFragment StoreEntitySet="ExceptionHandling">
+                <ScalarProperty Name="FK_userid" ColumnName="FK_userid" />
+                <ScalarProperty Name="ErrorURL" ColumnName="ErrorURL" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="StatusCode" ColumnName="StatusCode" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

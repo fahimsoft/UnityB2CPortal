@@ -160,6 +160,7 @@
     <Compile Include="Common\General.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ContactController.cs" />
+    <Compile Include="Controllers\ErrorHandlerController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
     <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Controllers\PaypalPaymentMethodController.cs" />
@@ -351,6 +352,7 @@
     <Content Include="Content\Asset\img\Unity-Logo.gif" />
     <Content Include="Content\Asset\img\unity.png" />
     <Content Include="Content\Asset\img\unityxpress_logo.png" />
+    <Content Include="Content\Asset\unityxpress_logo.png" />
     <Content Include="Content\Asset\js\bootstrap-min.js" />
     <Content Include="Content\Asset\js\bootstrap.min.js" />
     <Content Include="Content\Asset\js\countdown.js" />
@@ -524,6 +526,8 @@
     <Content Include="Views\Payment\Paypal.cshtml" />
     <Content Include="Views\PaypalPaymentMethod\Paypal.cshtml" />
     <Content Include="Views\Account\ThankYou.cshtml" />
+    <Content Include="Views\ErrorHandler\HttpError404.cshtml" />
+    <Content Include="Views\ErrorHandler\HttpError500.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

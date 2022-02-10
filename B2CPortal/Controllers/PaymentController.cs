@@ -31,14 +31,20 @@ namespace B2CPortal.Controllers
         }
         public ActionResult Stripe()
         {
-            ViewBag.Amount =  HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
-            if (string.IsNullOrEmpty(ViewBag.Amount))
+            try
             {
-                return RedirectToAction("Checkout", "Orders");
+                ViewBag.Amount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+                if (string.IsNullOrEmpty(ViewBag.Amount))
+                {
+                    return RedirectToAction("Checkout", "Orders");
+                }
+                return View();
             }
-            return View();
+            catch (Exception)
+            {
 
-
+                throw;
+            }
         }
         [HttpPost]
         public async Task<ActionResult> StripeAsync(string stripeToken, Payment payment)
@@ -174,18 +180,26 @@ namespace B2CPortal.Controllers
             catch (Exception)
             {
 
-                return RedirectToAction("Index", "Home");
+                throw;
             }
         }
         [HttpGet]
         public ActionResult PaymentStatusCOD(OrderVM orderVM)
         {
-            orderVM = (OrderVM)Session["orderdata"];
-            if (orderVM ==  null)
+            try
             {
-                return RedirectToAction("Index","Orders");
+                orderVM = (OrderVM)Session["orderdata"];
+                if (orderVM == null)
+                {
+                    return RedirectToAction("Index", "Orders");
+                }
+                return View(orderVM);
             }
-            return View(orderVM);
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
         [HttpGet]
         public ActionResult DownloadPDFOrder()

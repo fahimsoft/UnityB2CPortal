@@ -85,66 +85,74 @@ namespace B2CPortal.Controllers
         #region cart handling
         public async Task<JsonResult> GetCartCount()
         {
-            //get default city for price calculation
-            string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
-            if (string.IsNullOrEmpty(cookiecity))
+            try
             {
-                HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
-            }
-            cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
-            City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
-
-
-            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-            List<CartViewModel> cartViewModels = new List<CartViewModel>();
-            int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
-            string cartguid = string.Empty;
-            decimal totalprice = 0;
-            cartguid =   HelperFunctions.GetCookie(HelperFunctions.cartguid);
-            if (string.IsNullOrEmpty(cartguid) || cartguid == "undefined")
-            {
-                cartguid = Guid.NewGuid().ToString();
-                HelperFunctions.SetCookie(HelperFunctions.cartguid, cartguid, 1);
-            }
-            var cartproducts = await _cart.GetCartProducts(cartguid, userid, citymodel);
-            foreach (var item in cartproducts)
-            {
-                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
-
-                //productmasetr.ProductPrices.Where(x=> x.FK_City)
-
-                string name = productmasetr.Name;
-                string MasterImageUrl = productmasetr.MasterImageUrl;
-                var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                var cartobj = new CartViewModel
+                //get default city for price calculation
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
                 {
-                    Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
-                    Id = item.Id,
-                    Packsize = packsize,
-                    Quantity = (int)item.Quantity,
-                    Name = name,
-                    MasterImageUrl = MasterImageUrl,
-                    Discount = discount,
-                    TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
-                    FK_ProductMaster = item.FK_ProductMaster,
-                };
-                cartViewModels.Add(cartobj);
-                totalprice += discountedprice;
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+
+
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                List<CartViewModel> cartViewModels = new List<CartViewModel>();
+                int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
+                string cartguid = string.Empty;
+                decimal totalprice = 0;
+                cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                if (string.IsNullOrEmpty(cartguid) || cartguid == "undefined")
+                {
+                    cartguid = Guid.NewGuid().ToString();
+                    HelperFunctions.SetCookie(HelperFunctions.cartguid, cartguid, 1);
+                }
+                var cartproducts = await _cart.GetCartProducts(cartguid, userid, citymodel);
+                foreach (var item in cartproducts)
+                {
+                    var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+
+                    //productmasetr.ProductPrices.Where(x=> x.FK_City)
+
+                    string name = productmasetr.Name;
+                    string MasterImageUrl = productmasetr.MasterImageUrl;
+                    var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                    var cartobj = new CartViewModel
+                    {
+                        Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                        Id = item.Id,
+                        Packsize = packsize,
+                        Quantity = (int)item.Quantity,
+                        Name = name,
+                        MasterImageUrl = MasterImageUrl,
+                        Discount = discount,
+                        TotalPrice = discountedprice,//item.TotalPrice == null ? 0 : Math.Round(Convert.ToDecimal(item.TotalPrice / conversionvalue), 2),
+                        FK_ProductMaster = item.FK_ProductMaster,
+                    };
+                    cartViewModels.Add(cartobj);
+                    totalprice += discountedprice;
+                }
+                var totalquentity = cartproducts.Sum(x => x.Quantity);
+                //var totalprice = cartproducts.Sum(x => x.TotalPrice);
+
+                return SuccessResponse(new
+                {
+                    cartproducts = cartViewModels,
+                    cartproductscount = totalquentity,
+                    totalprice = totalprice
+                });
+
             }
-            var totalquentity = cartproducts.Sum(x => x.Quantity);
-            //var totalprice = cartproducts.Sum(x => x.TotalPrice);
-
-            return SuccessResponse(new
+            catch (Exception)
             {
-                cartproducts = cartViewModels,
-                cartproductscount = totalquentity,
-                totalprice = totalprice
-            });
 
+                throw;
+            }
         }
         public async Task<ActionResult> GetCartList()
         {
