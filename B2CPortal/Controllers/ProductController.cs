@@ -181,6 +181,7 @@ namespace B2CPortal.Controllers
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                var packsize = productmasetr.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
                 var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
                 var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
@@ -188,7 +189,8 @@ namespace B2CPortal.Controllers
                 {
                     ActualPrice = actualprice,//Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2),
                     Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
-                    Id = item.Id,
+                    Id = productmasetr.Id,
+                    Packsize = packsize,
                     Quantity = (int)item.Quantity,
                     Name = name,
                     MasterImageUrl = MasterImageUrl,

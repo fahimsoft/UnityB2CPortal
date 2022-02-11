@@ -44,8 +44,6 @@ namespace API_Base.Common
             {// disable currency
                 return "pkr";
             }
-
-
             string datavalue = string.Empty;
             if (isset == true)
             {

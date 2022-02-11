@@ -28,7 +28,7 @@
                                         <td class="td-img text-left">
                                             <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>
                                             <div class="items-dsc">
-                                                <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name </a></h5>
+                                                <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name (@item.Packsize)</a></h5>
                                                 @*<p class="itemcolor">Color : <span>Blue</span></p>*@
                                                 @*<p class="itemcolor">Size   : <span>SL</span></p>*@
                                             </div>

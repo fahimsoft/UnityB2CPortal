@@ -20,10 +20,11 @@ window.onload = function () {
         data: {
         },
         success: function (data) {
-            
             var html = '';
             data.data.map(function (item, index) {
+                if (item.Name == "Karachi") {
                     html += `<option ${item.Selected == true ? "Selected": ""} value="${item.Id}">${item.Name}</option>`;
+                }
             });
             $('#handlecity').html(html);
         }

@@ -179,8 +179,8 @@ namespace B2CPortal.Controllers
             }
             catch (Exception ex)
             {
-                throw ex;
-                //return RedirectToAction("Index", "Home");
+                //throw ex;
+                return RedirectToAction("Index", "Home");
             }
         }
         [HttpGet]
