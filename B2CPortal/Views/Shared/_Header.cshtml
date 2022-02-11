@@ -31,7 +31,7 @@
     <div class="container-fluid text-center">
         <div class="row">
             <div class="col-sm-2">
-                <div class="logo">
+                <div class="logo logo-class-for-mobile">
                     <a href="/Home/Index"><img width="220" src="~/Content/Asset/img/unityxpress_logo.png" alt="Sellshop" style="max-height:149px;" /></a>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                                 <i class="mdi mdi-clock"></i> @DateTime.Now.ToString("dd-MMM-yyyy hh:mm")
                             </p>
                         </div>
-                        <div style="width:50%" class="center floatleft">
+                        <div style="width:50%" class="center floatleft hide-auto-complete">
                             <form action="#" method="get">
                                 <button type="submit"><i class="mdi mdi-magnify"></i></button>
                                 <div class="autocomplete">
@@ -54,38 +54,39 @@
                         </div>
                         <div style="width:30%" class="right floatleft">
                             <ul style="width:100%" class="clearfix">
-                                @{
-                                    if (Session["UserId"] != null)
-                                    {
+                                
+@*//if (Session["UserId"] != null)
+//{*@
                                         <li id="logedin">
-                                            <i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
-                                           @if (!string.IsNullOrEmpty(Session["UserName"].ToString()))
-                                           {
-                                            <b style="font-size:12px">Hi, @(Session["UserName"]?.ToString())</b>
-                                           }
+                                            @*<i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
+                                            @if (!string.IsNullOrEmpty(Session["UserName"].ToString()))
+                                            {
+                                                <b style="font-size:12px">Hi, @(Session["UserName"]?.ToString())</b>
+                                            }
                                             <ul>
                                                 <li><a href="/Account/MyAccount">My Account</a></li>
                                                 <li><a href="/Account/LogOut">Logout</a></li>
 
-                                            </ul>
+
+
+                                            </ul>*@
                                         </li>
-                                    }
+                                    @*}
                                     else
-                                    {
+                                    {*@
                                         <li id="register">
-                                            <a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
+                                            <!--<a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
+
+
 
                                             <ul class="log">
                                                 <li><a href="/Account/Login">Login</a></li>
-                                                <li><a href="/Account/Login">Register</a></li>
+                                                <li><a href="/Account/Login">Register</a></li>-->
                                                 @*<li><a href="/Account/Login">My account</a></li>*@
-                                            </ul>
+                                            <!--</ul>-->
                                         </li>
-                                    }
-                                }
-
-
-
+                                    @*  *@
+                                
 
 
 
@@ -97,7 +98,7 @@
                                     <li><a href="my-account.html">My account</a></li>
                                     </ul>
                                     </li>*@
-                                <li>
+                                <li id="mdi-settings">
                                     <a href="#"><i class="mdi mdi-settings"></i></a>
                                     <ul>
                                         @*<li><a href="my-account.html">My account</a></li>*@
@@ -126,30 +127,30 @@
                                     @*<ul class="magamenu">
                                         <li class="banner"><a href="javascript:void(0)"><img src="~/Content/Asset/img/u1.png" alt="" /></a></li>
                                         <li>
-                                            <h5>Unity Foods</h5>
-                                            <ul>
-                                                <li><a href="#">DASTAK</a></li>
-                                                <li><a href="#">EHTIMAM</a></li>
-                                                <li><a href="#">LAGAN</a></li>
-                                                <li><a href="#">ZAUQEEN</a></li>
-                                                <li><a href="#">UNITY OIL </a></li>
-                                                <li><a href="#">PURE</a></li>
-                                                <li><a href="#">SPECIALTY FATS</a></li>
-                                            </ul>
+                                        <h5>Unity Foods</h5>
+                                        <ul>
+                                        <li><a href="#">DASTAK</a></li>
+                                        <li><a href="#">EHTIMAM</a></li>
+                                        <li><a href="#">LAGAN</a></li>
+                                        <li><a href="#">ZAUQEEN</a></li>
+                                        <li><a href="#">UNITY OIL </a></li>
+                                        <li><a href="#">PURE</a></li>
+                                        <li><a href="#">SPECIALTY FATS</a></li>
+                                        </ul>
                                         </li>
                                         <li>
-                                            <h5>Sunridge Foods</h5>
-                                            <ul>
-                                                <li><a href="#">Sunridge Fortified</a></li>
-                                                <li><a href="#">Sunridge Wheat Chakki</a></li>
-                                                <li><a href="#">Sunridge High Fiber </a></li>
-                                                <li><a href="#">Sunridge White Chakki </a></li>
-                                                <li><a href="#">Sunridge Super Fine </a></li>
-                                                <li><a href="#">Sunridge Premium Maida</a></li>
-                                            </ul>
+                                        <h5>Sunridge Foods</h5>
+                                        <ul>
+                                        <li><a href="#">Sunridge Fortified</a></li>
+                                        <li><a href="#">Sunridge Wheat Chakki</a></li>
+                                        <li><a href="#">Sunridge High Fiber </a></li>
+                                        <li><a href="#">Sunridge White Chakki </a></li>
+                                        <li><a href="#">Sunridge Super Fine </a></li>
+                                        <li><a href="#">Sunridge Premium Maida</a></li>
+                                        </ul>
                                         </li>
                                         <li class="banner"><a href="javascript:void(0)"><img src="~/content/asset/img/u2.jpg" alt="" /></a></li>
-                                    </ul>*@
+                                        </ul>*@
                                 </li>
                                 <li style="display:none">
                                     <a href="#">Pages</a>
@@ -182,6 +183,8 @@
                                             <b> : @rate</b>
                                         }
 
+
+
                                     </a>
                                 </li>
                                 <li>
@@ -192,6 +195,8 @@
                                         </select>
                                     </div>
                                 </li>
+
+
 
                             </ul>
                         </nav>
@@ -204,37 +209,37 @@
                                     <li>
                                         <a href="/Home/Index">Home</a>
                                         @*<ul class="dropdown">
-            <li><a href="index.html">Home version one</a></li>
-            <li><a href="index-2.html">Home version two</a></li>
-            </ul>*@
+                                            <li><a href="index.html">Home version one</a></li>
+                                            <li><a href="index-2.html">Home version two</a></li>
+                                            </ul>*@
                                     </li>
                                     <li>
                                         @Html.ActionLink("Shop", "ProductList", "Product")
                                         @*<ul>
-                <li>
-                    <h5>Unity Foods</h5>
-                    <ul>
-                        <li><a href="#">DASTAK</a></li>
-                        <li><a href="#">EHTIMAM</a></li>
-                        <li><a href="#">LAGAN</a></li>
-                        <li><a href="#">ZAUQEEN</a></li>
-                        <li><a href="#">UNITY OIL </a></li>
-                        <li><a href="#">PURE</a></li>
-                        <li><a href="#">SPECIALTY FATS</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <h5>Sunridge Foods</h5>
-                    <ul>
-                        <li><a href="#">Sunridge Fortified</a></li>
-                        <li><a href="#">Sunridge Wheat Chakki</a></li>
-                        <li><a href="#">Sunridge High Fiber </a></li>
-                        <li><a href="#">Sunridge White Chakki </a></li>
-                        <li><a href="#">Sunridge Super Fine </a></li>
-                        <li><a href="#">Sunridge Premium Maida</a></li>
-                    </ul>
-                </li>
-            </ul>*@
+                                            <li>
+                                            <h5>Unity Foods</h5>
+                                            <ul>
+                                            <li><a href="#">DASTAK</a></li>
+                                            <li><a href="#">EHTIMAM</a></li>
+                                            <li><a href="#">LAGAN</a></li>
+                                            <li><a href="#">ZAUQEEN</a></li>
+                                            <li><a href="#">UNITY OIL </a></li>
+                                            <li><a href="#">PURE</a></li>
+                                            <li><a href="#">SPECIALTY FATS</a></li>
+                                            </ul>
+                                            </li>
+                                            <li>
+                                            <h5>Sunridge Foods</h5>
+                                            <ul>
+                                            <li><a href="#">Sunridge Fortified</a></li>
+                                            <li><a href="#">Sunridge Wheat Chakki</a></li>
+                                            <li><a href="#">Sunridge High Fiber </a></li>
+                                            <li><a href="#">Sunridge White Chakki </a></li>
+                                            <li><a href="#">Sunridge Super Fine </a></li>
+                                            <li><a href="#">Sunridge Premium Maida</a></li>
+                                            </ul>
+                                            </li>
+                                            </ul>*@
                                     </li>
                                     <li style="display:none">
                                         <a href="#">Pages</a>
@@ -269,23 +274,27 @@
                 </div>
             </div>
 
+
+
             <div class="col-sm-2" id="hovercartlist">
                 <div class="cart-itmes">
                     <a class="cart-itme-a" href="@Url.Action("AddToCart","Product")">
                         <i class="mdi mdi-cart"></i>
-                        <b id="productaddtocart"> </b> Items : <small style="text-transform: capitalize;"><strong class="pricesymbol"> </strong> </small>  <strong id="totalprice"></strong>
+                        <b id="productaddtocart"> </b> Items : <small style="text-transform: capitalize;"><strong class="pricesymbol"> </strong> </small> <strong id="totalprice"></strong>
                     </a>
                     <div class="cartdrop" id="cartdrop">
 
+
+
                         @*<div class="sin-itme clearfix">
-                                <i class="mdi mdi-close"></i>
-                                <a class="cart-img" href="cart.html"><img src="~/Content/Asset/img/cart/2.png" alt="" /></a>
-                                <div class="menu-cart-text">
-                                    <a href="#"><h5>men’s black t-shirt</h5></a>
-                                    <span>Color :  Black</span>
-                                    <span>Size :     SL</span>
-                                    <strong>$132.00</strong>
-                                </div>
+                            <i class="mdi mdi-close"></i>
+                            <a class="cart-img" href="cart.html"><img src="~/Content/Asset/img/cart/2.png" alt="" /></a>
+                            <div class="menu-cart-text">
+                            <a href="#"><h5>men’s black t-shirt</h5></a>
+                            <span>Color : Black</span>
+                            <span>Size : SL</span>
+                            <strong>$132.00</strong>
+                            </div>
                             </div>*@
                         <div class="total">
                             <span>total <strong>= $306.00</strong></span>
@@ -293,6 +302,8 @@
                         <a class="goto" href="cart.html">go to cart</a>
                         <a class="out-menu" href="checkout.html">Check out</a>
                     </div>
+
+
 
 
 

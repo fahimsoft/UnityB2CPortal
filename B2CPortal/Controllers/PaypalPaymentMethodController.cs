@@ -153,6 +153,7 @@ namespace B2CPortal.Controllers
                     //3. Call PayPal to capture an order
                     var response = await PayPalClient.Client().Execute(request);
                     //4. Save the capture ID to your database. Implement logic to save capture to your database for future reference.
+                    string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                     var result = response.Result<Order>();
                     Console.WriteLine("Status: {0}", result.Status);
@@ -177,6 +178,7 @@ namespace B2CPortal.Controllers
                     // var ordermodel = await GetOrder(result.Id);
                     if (result.Status.ToLower() == PaypalOrderStatus.COMPLETED.ToString().ToLower())
                     {
+
                         OrderTransection mod3el = new OrderTransection();
                         mod3el.EmailId = result.Payer.Email;
                         mod3el.FullName = result.Payer.Name.GivenName;
@@ -184,7 +186,7 @@ namespace B2CPortal.Controllers
                         mod3el.PaypalPaymentID = result.Id;
                         mod3el.IsActive= true;
                         mod3el.Status= result.Status.ToLower();
-                        mod3el.FK_Customer = Convert.ToInt32(Session["UserId"]);
+                        mod3el.FK_Customer = Convert.ToInt32(userid);
                         mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
 
                         var dd =  await _orderTransection.CreateOrderTransection(mod3el);

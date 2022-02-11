@@ -21,12 +21,12 @@ namespace B2CPortal.Services
             {
 
                 string checkGuid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                string userId = Convert.ToString(System.Web.HttpContext.Current.Session["UserId"]);
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
 
                 int? uId = null;
-                if (!string.IsNullOrEmpty(userId))
-                    uId = Convert.ToInt32(userId);
+                if (!string.IsNullOrEmpty(userid))
+                    uId = Convert.ToInt32(userid);
 
 
                 if (!string.IsNullOrEmpty(checkGuid))
@@ -53,7 +53,7 @@ namespace B2CPortal.Services
                     Current.Comment = commentAndRating.Comment;
                     Current.Rate = commentAndRating.Rate;
 
-                    if (String.IsNullOrEmpty(userId) && String.IsNullOrEmpty(checkGuid))
+                    if (String.IsNullOrEmpty(userid) && String.IsNullOrEmpty(checkGuid))
                     {
                         Current.IsAnonymousUser = true;
                         HelperFunctions.SetCookie(HelperFunctions.cartguid, Guid.NewGuid().ToString(), 365);

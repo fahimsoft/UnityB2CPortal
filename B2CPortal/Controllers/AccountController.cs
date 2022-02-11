@@ -36,11 +36,13 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
                 if (CODE != null && email != null)
                 {
                     var obj = await _account.verification(email);
                 }
-                if (Session["UserId"] != null)
+                if (!string.IsNullOrEmpty(userid))
                 {
                     return RedirectToAction("Index", "Home");
                 }
@@ -73,10 +75,14 @@ namespace B2CPortal.Controllers
 
                     var genral = new GenralClass();
                     string cookie = string.Empty;
-                    Session["UserAccount"] = res;
-                    Session["UserId"] = res.Id;
-                    Session["UserName"] = res.FirstName;
-                    Session["email"] = res.EmailId;
+                   // Session["UserAccount"] = res;
+                    //Session["UserName"] = res.FirstName;
+                    //Session["email"] = res.EmailId;
+                    //Session["UserId"] = res.Id;
+                    HelperFunctions.SetGetSessionData(HelperFunctions.UserId, res.Id.ToString(), true);
+                    HelperFunctions.SetGetSessionData(HelperFunctions.UserEmail, res.EmailId.ToString(), true);
+                    HelperFunctions.SetGetSessionData(HelperFunctions.UserName, res.FirstName.ToString(), true);
+
                     if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
                     {
                         cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
@@ -131,10 +137,11 @@ namespace B2CPortal.Controllers
             try
             {
                 customer customer = new customer();
+              string userid =   HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
                 var obj = 0;
-                if (Session["UserId"] != null)
+                if (!string.IsNullOrEmpty(userid))
                 {
-                    obj = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    obj = Convert.ToInt32(userid);
                 }
                 if (obj > 0)
                 {
@@ -166,10 +173,11 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
                 var obj = 0;
-                if (Session["UserId"] != null)
+                if (!string.IsNullOrEmpty(userid))
                 {
-                    obj = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    obj = Convert.ToInt32(userid);
                 }
                 if (obj > 0)
                 {
@@ -317,8 +325,22 @@ namespace B2CPortal.Controllers
 
         public ActionResult LogOut()
         {
-            FormsAuthentication.SignOut();
-            Session.Abandon(); // it will clear the session at the end of request
+            try
+            {
+                foreach (string key in Request.Cookies.AllKeys)
+                {
+                    HttpCookie c = Request.Cookies[key];
+                    c.Expires = DateTime.Now.AddMonths(-1);
+                    Response.AppendCookie(c);
+                }
+                FormsAuthentication.SignOut();
+                Session.Abandon(); // it will clear the session at the end of request
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             return RedirectToAction("index", "Home");
         }
         [HttpGet]

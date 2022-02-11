@@ -6,6 +6,9 @@ var NextClickValue = 10;
 var PrevProdClickValue = 0;
 var NextProdClickValue = 10;
 var pricesymbol = "pricesymbol";
+var userid = "userid";
+var UserName = "username";
+var UserEmail = "useremail";
 
 window.onload = function () {
  /*   var divToHide = document.getElementById('quick-view');*/
@@ -32,6 +35,38 @@ window.onload = function () {
 };
 $(document).ready(function () {
     ShowCartProducts();
+    let customerid = getCookie(userid);
+    var accounthtml = '';
+    if (parseInt(customerid) > 0) {
+        var username = getCookie(UserName);
+        $('#logedin').html();
+        accounthtml += `     
+                    <i style="font-size: 1.73em; " class="mdi mdi-account"></i> <br>
+                    <b style="font-size:12px">Hi, ${username}</b>
+                    <ul>
+                        <li><a href="/Account/MyAccount">My Account</a></li>
+                        <li><a href="/Account/LogOut">Logout</a></li>
+
+                        </ul>
+                    `;
+        $('#logedin').html(accounthtml);
+    } else {
+        $('#register').html();
+
+        accounthtml += `    
+                                            <a href="#"><i style="font-size: 1.73em;" class="mdi mdi-account"></i></a>
+
+                                            <ul class="log">
+                                                <li><a href="/Account/Login">Login</a></li>
+                                                <li><a href="/Account/Login">Register</a></li>
+                                            </ul>
+                                       `;
+        $('#register').html(accounthtml);
+
+    }
+
+    var username = getCookie(UserName);
+
     $.fn.digits = function () {
         return this.each(function () {
             var num = $(this).text();
@@ -328,7 +363,7 @@ function ShowCartProducts() {
 <div class="menu-cart-text">
 <a href="/ProductDetails?productId=${item.FK_ProductMaster}"><h5>${item.Name} ${item.Packsize}</h5></a>
 <span>Quantity: ${item.Quantity}</span>
-<strong> <strong class="pricesymbol"> </strong> <span class="numbers"> ${item.TotalPrice} </span></strong>
+<strong class="pricesymbol_numbers"> <strong class="pricesymbol"> </strong> <span class="numbers"> ${item.TotalPrice} </span></strong>
 </div>
 </div> `;
             });
@@ -1951,4 +1986,15 @@ $(document).ready(function () {
         }
     })
 });
+
+function getCookie(cName) {
+    const name = cName + "=";
+    const cDecoded = decodeURIComponent(document.cookie); //to be careful
+    const cArr = cDecoded.split('; ');
+    let res;
+    cArr.forEach(val => {
+        if (val.indexOf(name) === 0) res = val.substring(name.length);
+    })
+    return res
+}
 

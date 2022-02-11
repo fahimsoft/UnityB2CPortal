@@ -54,8 +54,9 @@ namespace B2CPortal.Controllers
                 ViewBag.error = "";
                string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
                string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
-                if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || HttpContext.Session["UserId"] == null)
+                if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || string.IsNullOrEmpty(userid))
                 {
                     return RedirectToAction("Checkout", "Orders");
                 }
@@ -95,7 +96,7 @@ namespace B2CPortal.Controllers
                     ordervm.DiscountAmount = ordervm.OrderDetails.Sum(x => x.DiscountedPrice);
                     ordervm.SubTotalPrice = ordervm.OrderDetails.Sum(x => x.Price);
                     // ------------Remove from cart------------
-                    var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    var customerId = Convert.ToInt32(userid);
                     var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                     var removeCart = await _cart.DisableCart(customerId, cookie);
                     //-------------------add order transection record--------------
@@ -106,7 +107,7 @@ namespace B2CPortal.Controllers
                     mod3el.StripePaymentID = chargeobj.Id;
                     mod3el.IsActive = true;
                     mod3el.Status = chargeobj.Status.ToLower();
-                    mod3el.FK_Customer = Convert.ToInt32(Session["UserId"]);
+                    mod3el.FK_Customer = customerId;
                     mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
                     var dd = await _orderTransection.CreateOrderTransection(mod3el);
                     //---------------order email------------------
@@ -144,6 +145,8 @@ namespace B2CPortal.Controllers
             {
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 string conrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
                 if (!string.IsNullOrEmpty(conrate))
                 {
                    /// decimal conversionvalue = Convert.ToDecimal(conrate);
@@ -165,7 +168,7 @@ namespace B2CPortal.Controllers
                         var ordermodelresponse = await _orders.UpdateOrderMAster(model);
                         // orderVM =  (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);
                         // ------------Remove from cart------------
-                        var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                        var customerId = Convert.ToInt32(userid);
                         var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                         var removeCart = await _cart.DisableCart(customerId, cookie);
                     }
@@ -223,10 +226,11 @@ namespace B2CPortal.Controllers
 
             string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
             string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+            string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
 
             ViewBag.error = "";
-            if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || HttpContext.Session["UserId"] == null)
+            if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || string.IsNullOrEmpty(userid))
             {
                 return RedirectToAction("Checkout", "Orders");
             }

@@ -151,6 +151,8 @@ namespace B2CPortal.Controllers
                     ordervm.OrderNo = HelperFunctions.GenrateOrderNumber(ordervm.Id.ToString());
                     ordervm.DiscountAmount = ordervm.OrderDetails.Sum(x => x.DiscountedPrice);
                     ordervm.SubTotalPrice = ordervm.OrderDetails.Sum(x => x.Price);
+                    string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
                     // ------------Remove from cart------------
                     //var customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
                     //var cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
@@ -163,7 +165,7 @@ namespace B2CPortal.Controllers
                     mod3el.StripePaymentID = chargeobj.Id;
                     mod3el.IsActive = true;
                     mod3el.Status = chargeobj.Status.ToLower();
-                    mod3el.FK_Customer = Convert.ToInt32(Session["UserId"]);
+                    mod3el.FK_Customer = Convert.ToInt32(userid);
                     mod3el.FK_OrderMAster = Convert.ToInt32(HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId));
                     var dd = await _orderTransection.CreateOrderTransection(mod3el);
                     return Json(new { success = true, data = payment, msg = "" }, JsonRequestBehavior.AllowGet);

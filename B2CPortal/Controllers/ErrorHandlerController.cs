@@ -24,9 +24,11 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
                 var model = new ExceptionHandling
                 {
-                    FK_userid = Session["UserId"] == null ? 0 : Convert.ToInt32(Session["UserId"]),
+                    FK_userid = string.IsNullOrEmpty(userid) == null ? 0 : Convert.ToInt32(userid),
                     ErrorMessage = message,
                     StatusCode = "404",
                     ErrorURL = ""
@@ -46,9 +48,11 @@ namespace B2CPortal.Controllers
         {
             try
             {
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
                 var model = new ExceptionHandling
                 {
-                    FK_userid = Session["UserId"] == null ? 0 : Convert.ToInt32(Session["UserId"]),
+                    FK_userid = string.IsNullOrEmpty(userid) == null ? 0 : Convert.ToInt32(userid),
                     ErrorMessage = message,
                     StatusCode = "500",
                     ErrorURL = ""

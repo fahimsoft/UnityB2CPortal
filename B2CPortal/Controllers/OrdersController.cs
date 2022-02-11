@@ -45,7 +45,9 @@ namespace B2CPortal.Controllers
         }
         public ActionResult Index()
         {
-            if (Convert.ToInt32(HttpContext.Session["UserId"]) <= 0)
+            string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
+            if (string.IsNullOrEmpty(userid) || Convert.ToInt32(userid) <= 0)
             {
                 string CurrentURL = Request.Url.AbsoluteUri;
                 TempData["returnurl"] = CurrentURL;
@@ -102,12 +104,12 @@ namespace B2CPortal.Controllers
             {
 
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-                List<OrderVM> list = new List<OrderVM>();
-                if (Convert.ToInt32(HttpContext.Session["UserId"]) > 0)
-                {
-                    int userid = Convert.ToInt32(HttpContext.Session["UserId"]);
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
-                    var orderlist = await _orders.GetOrderList(userid);
+                List<OrderVM> list = new List<OrderVM>();
+                if (!string.IsNullOrEmpty(userid) &&  Convert.ToInt32(userid) > 0)
+                {
+                    var orderlist = await _orders.GetOrderList(Convert.ToInt32(userid));
 
                     foreach (var item in orderlist)
                     {
@@ -153,9 +155,11 @@ namespace B2CPortal.Controllers
                 var totalDiscount = 0;
                 var customerId = 0;
                 var subTotal = 0;
-                if (Session["UserId"] != null)
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
+                if (!string.IsNullOrEmpty(userid))
                 {
-                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    customerId = Convert.ToInt32(userid);
                     //get location from cookie
                     string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
                     if (string.IsNullOrEmpty(cookiecity))
@@ -249,14 +253,15 @@ namespace B2CPortal.Controllers
                 var tQuantity = 0;
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
-                if (Session["UserId"] != null  && currency.ToLower() == "pkr" &&
+                if (!string.IsNullOrEmpty(userid) && currency.ToLower() == "pkr" &&
                    ( Billing.paymenttype == PaymentType.Stripe ||
                     Billing.paymenttype == PaymentType.Paypal))
                 {
                     return Json(new { data = "", msg = $"You can not pay with {Billing.paymenttype}", success = false }, JsonRequestBehavior.AllowGet);
                 }
-                if (Session["UserId"] != null &&  
+                if (!string.IsNullOrEmpty(userid) &&  
                     (Billing.paymenttype == PaymentType.Stripe
                     || Billing.paymenttype == PaymentType.COD
                    || Billing.paymenttype == PaymentType.Paypal)
@@ -271,7 +276,7 @@ namespace B2CPortal.Controllers
                     cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
                     City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
 
-                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    customerId = Convert.ToInt32(userid);
                     //------------existing order remove (manage)-----------------
                     OrderMaster Omaster = await _orders.ExestingOrder(customerId);
                     if (Omaster != null)
@@ -390,10 +395,13 @@ namespace B2CPortal.Controllers
                                 {
                                     //if (Billing.paymenttype != PaymentType.Stripe)
                                     //{
+                                    string username = HelperFunctions.SetGetSessionData(HelperFunctions.UserName);
+                                    
+                                    string useremail = HelperFunctions.SetGetSessionData(HelperFunctions.UserName);
 
-                                        string recepit = string.Empty;
-                                        var name = Session["UserName"].ToString();
-                                        var email = Session["email"].ToString();
+                                    string recepit = string.Empty;
+                                    var name = username;
+                                        var email = useremail;
                                         string htmlString = @"<html>
                            <body>
                            <img src=" + "~/Content/Asset/img/img.PNG" + @">
@@ -489,7 +497,7 @@ namespace B2CPortal.Controllers
                 }
                 else
                 {
-                   string msg =  Session["UserId"] != null ? string.Format("Sorry ! Currently {0} Not Supported", Billing.paymenttype.ToString()) : "Something bad happened";
+                   string msg =  !string.IsNullOrEmpty(userid) ? string.Format("Sorry ! Currently {0} Not Supported", Billing.paymenttype.ToString()) : "Something bad happened";
                     return Json(new { data = "", msg = msg, success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -634,9 +642,12 @@ namespace B2CPortal.Controllers
                 List<OrderDetailsViewModel> orderDetailsVM = new List<OrderDetailsViewModel>();
                 var customerId = 0;
                 decimal ordertoal = 0;
-                if (Session["UserId"] != null)
+                string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
+
+
+                if (!string.IsNullOrEmpty(userid))
                 {
-                    customerId = Convert.ToInt32(HttpContext.Session["UserId"]);
+                    customerId = Convert.ToInt32(userid);
                     if (customerId > 0)
                     {
                         // customer data for billing and shipment
