@@ -663,7 +663,13 @@ function loadProductList() {
 <i class="mdi mdi-star-half"></i>
 <i class="mdi mdi-star-outline"></i>
 </div>
-<span><del style='color:silver'><span class="numbers">${productPricesValue.Price}</span> <strong class="pricesymbol"> </strong></del>&nbsp<span class="numbers">${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))}</span> <strong class="pricesymbol"> </strong></span>
+<span>
+${item.Discount > 0 ?
+                        `<del style='color:silver'>
+                        <span class="numbers">${productPricesValue.Price}</span> <strong class="pricesymbol"> </strong>
+                        </del>`: ""}
+
+&nbsp<span class="numbers">${productPricesValue.Price * (1 - (productPricesValue.Discount / 100))}</span> <strong class="pricesymbol"> </strong></span>
 </div>
 </div>
 </div>`;
@@ -852,7 +858,14 @@ ${htmlProductPriceDetail}
 <div class="list-text">
 ${htmlProductSize}
 </div>
-<h5> <del> <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}  </del><labal style="color:gray"> ${Discount == undefined ? 0 : Discount}% </labal> <strong class="pricesymbol"> </strong> <b id="discoountedprice"> ${productDiscount} </b>  </h5>
+<h5>
+${Discount > 0 ?
+                `<del>
+<strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}
+</del>`: ""}
+
+
+<labal style="color:gray"> ${Discount == undefined ? 0 : Discount}% </labal> <strong class="pricesymbol"> </strong> <b id="discoountedprice"> ${productDiscount} </b>  </h5>
 <p>${item[0].LongDescription}</p>
 <div class="plus-minus">
 <a class="dec qtybuttonquickview qtybutton">-</a>
@@ -960,7 +973,13 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 <p>( ${item.TotalRating} Rating )</p>
 ${GetProductRating(item.AvgRating)}
 </div>
-<h5><del> <strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span></del>&nbsp <strong class="pricesymbol"></strong> <span class="numbers"> ${item.DiscountedAmount}</span> </h5>
+<h5>
+${item.Discount > 0 ?
+                    `<del>
+<strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span>
+</del>`: ""}
+
+&nbsp <strong class="pricesymbol"></strong> <span class="numbers"> ${item.DiscountedAmount}</span> </h5>
 <p></p>
 <div class="list-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id} >add to cart</a>
@@ -993,9 +1012,11 @@ ${GetProductRating(item.AvgRating)}
 ${GetProductRating(item.AvgRating)}
 </div>
 <span>
-<del style='color:silver'>
-<strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
-</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+${item.Discount > 0?
+                    `<del style='color:silver'>
+                        <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
+                    </del>`:""}
+ &nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 </div>
 </div>
 </div>`;
@@ -1179,10 +1200,13 @@ function loadFeatureProduct() {
 </div>
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
- <del>
-
+${item.Discount > 0 ?
+                    `<del>
 <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
-</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+</del>`: ""}
+
+
+&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 
 </div>
 </div>
@@ -1233,10 +1257,13 @@ function loadnewarrivalproducts() {
 </div>
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
- <del>
-
+${item.Discount > 0 ?
+                    ` <del>
 <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
-</del>&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
+</del>`: ""}
+
+
+&nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 
 </div>
 </div>
@@ -1762,7 +1789,13 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
 
                         ${htlmRating}
                        </div>
-                       <h5><del><strong class="pricesymbol"></strong> ${productPrice}</del> <labal style="color:#999"> ${Discount}% </labal> <strong class="pricesymbol"></strong> <b id="discoountedprice">${productDiscount} </h5>
+                       <h5>
+${Discount > 0 ?
+                    `<del>
+<strong class="pricesymbol"></strong> ${productPrice}
+</del>`: ""}
+
+<labal style="color:#999"> ${Discount}% </labal> <strong class="pricesymbol"></strong> <b id="discoountedprice">${productDiscount} </h5>
                        <div class="all-choose">
                        </div>
                                    <div class="plus-minus">
@@ -1986,7 +2019,7 @@ $(document).ready(function () {
         }
     })
 });
-
+//------------------get user cookie data ---------------------
 function getCookie(cName) {
     const name = cName + "=";
     const cDecoded = decodeURIComponent(document.cookie); //to be careful
