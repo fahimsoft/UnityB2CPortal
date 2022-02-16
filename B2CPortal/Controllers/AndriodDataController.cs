@@ -65,7 +65,7 @@ namespace B2CPortal.Controllers
             }
         }
 
-        public ActionResult NewGuid()
+        public ActionResult AndroidNewGuid()
         {
             return Json(new { guid = Guid.NewGuid().ToString() }, JsonRequestBehavior.AllowGet);
         }
