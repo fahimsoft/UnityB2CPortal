@@ -8,12 +8,13 @@ namespace B2CPortal.Services.EmailTemplates
 {
     public static class Templates
     {
-        public static string OrderEmail(string name, string OrderDescription, string PhoneNo, string EmailId,
+        public static string OrderEmail(string filePath, string name, string OrderDescription, string PhoneNo, string EmailId,
             string CreatedOn, string ShippingAddress, string BillingAddress, string PaymentMode,
             string Status, string TotalQuantity, string currency, string TotalPrice, string ordermasterId,
             string CartSubTotalDiscount, string SubTotalPrice, string recepiturl)
         {
-            string FilePath = "D:\\B2C\\B2CPortal\\B2CPortal\\B2CPortal\\Services\\EmailTemplates\\OrderEmail.html";
+            string FilePath = filePath;
+            //string FilePath = "D:\\B2C\\B2CPortal\\B2CPortal\\B2CPortal\\Services\\EmailTemplates\\OrderEmail.html";
             StreamReader str = new StreamReader(FilePath);
             string MailText = str.ReadToEnd();
             str.Close();

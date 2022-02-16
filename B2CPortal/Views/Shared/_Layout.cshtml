@@ -780,15 +780,31 @@
         }
     </style>
 
+    <style>
+        div#my-inner-grid {
+            display: flex;
+            flex-flow: row wrap;
+        }
+
+            div#my-inner-grid > div {
+                display: flex;
+            }
+                div#my-inner-grid > div > div {
+                    width: 100%;
+                    padding-left: 5px;
+                    padding-right: 5px;
+                }
+    </style>
+
     @Html.Partial("_Header")
 </head>
 <body>
-    @*<div class="loader-container">
+    <div class="loader-container">
         <div class="loader">
             <div class="loading">
             </div>
         </div>
-    </div>*@
+    </div>
     @*<input type="hidden" name="name" value="@ViewBag.URL.Authority" id="myurl" />*@
     @RenderBody()
     @Html.Partial("_Footer")
@@ -848,7 +864,7 @@
     @*meanmenu js*@
     <script src="@Url.Content("~/Content/Asset/js/jquery.meanmenu.js")"></script>
     @*countdown JS*@
-    <script src="@Url.Content("~/Content/Asset/js/countdown.js")"></script>
+    @*<script src="@Url.Content("~/Content/Asset/js/countdown.js")"></script>*@
     @*nivo.slider JS*@
     <script src="@Url.Content("~/Content/Asset/js/jquery.nivo.slider.pack.js")"></script>
     @*simpleLens JS*@

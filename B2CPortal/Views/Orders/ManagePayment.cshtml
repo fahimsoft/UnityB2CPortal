@@ -386,7 +386,7 @@
                     }
                 }
 
-                //document.getElementsByClassName("loader-container")[0].style.display = "block";
+                document.getElementsByClassName("loader-container")[0].style.display = "block";
 
                 $.ajax({
                     type: "POST",
@@ -402,7 +402,7 @@
                         else if (data.success == false) {
                             toastr.error("Failed.");
                         }
-                        //document.getElementsByClassName("loader-container")[0].style.display = "none";
+                        document.getElementsByClassName("loader-container")[0].style.display = "none";
                     },
                     failure: function (data) {
                         console.log(data);

@@ -45,10 +45,13 @@ namespace B2CPortal.Controllers
                 BrandCategoryVM model = await _IProductMaster.AndroidBrandCatagory();
                 return Json(new { status = 200,
                     sucess = 1, 
-                    message = ResultStatus .Success.ToString(),
-                    ProductList = filter,
-                    Brand = model.Brand,
-                    Catagory = model.Category
+                    message = ResultStatus.Success.ToString(),
+                    data = new
+                    {
+                        Brand = model.Brand,
+                        Catagory = model.Category,
+                        ProductList = filter
+                    }
                 }); 
             }
             catch (Exception Ex)
@@ -58,9 +61,13 @@ namespace B2CPortal.Controllers
                     status = 500,
                     sucess = 0,
                     message = Ex.Message,
-                    ProductList = new object(),
-                    Brand = new object(),
-                    Catagory = new object()
+                    data = new
+                    {
+                        Brand = new List<BrandCategoryVM>(),
+                        Catagory = new List<BrandCategoryVM>(),
+                        ProductList = new List<AndroidViewModel>()
+                    }
+             
                 });
             }
         }

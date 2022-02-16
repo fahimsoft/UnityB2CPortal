@@ -122,13 +122,6 @@ namespace B2CPortal.Models
         public ICollection<OrderDetail> OrderDetails { get; set; }
 
     }
-    public enum ResultStatus
-    {
-        Success= 1,
-        Failed = 2,
-        Bloked = 3,
-        Exception = 4,
-    }
     public enum PaymentType
     {
         Stripe = 1,

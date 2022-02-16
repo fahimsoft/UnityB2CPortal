@@ -397,7 +397,7 @@ namespace B2CPortal.Controllers
                                     //{
                                     string username = HelperFunctions.SetGetSessionData(HelperFunctions.UserName);
                                     
-                                    string useremail = HelperFunctions.SetGetSessionData(HelperFunctions.UserName);
+                                    string useremail = HelperFunctions.SetGetSessionData(HelperFunctions.UserEmail);
 
                                     string recepit = string.Empty;
                                     var name = username;
@@ -414,8 +414,11 @@ namespace B2CPortal.Controllers
                             <p>Unity Foods LTD!</p>
                             </body>
                             </html>";
-                                        //Fetching Email Body Text from EmailTemplate File.  
-                                        string MailText = Templates.OrderEmail(name, orderresult.OrderDescription, orderresult.PhoneNo, orderresult.EmailId,
+
+                                    string pth = Server.MapPath("~/Services/EmailTemplates/OrderEmail.html");
+
+                                    //Fetching Email Body Text from EmailTemplate File.  
+                                    string MailText = Templates.OrderEmail(pth, name, orderresult.OrderDescription, orderresult.PhoneNo, orderresult.EmailId,
                                            orderresult.CreatedOn.ToString(), orderresult.ShippingAddress, orderresult.BillingAddress, orderresult.PaymentMode,
                                            orderresult.Status, orderresult.TotalQuantity.ToString(), currency,
                                           orderresult.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
@@ -445,10 +448,9 @@ namespace B2CPortal.Controllers
 
 
                                 }
-                                catch
+                                catch(Exception ex)
                                 {
-
-
+                                    //throw;
                                 }
 
                                 HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId, ordermasterId.ToString(), true);

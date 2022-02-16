@@ -42,6 +42,7 @@ namespace B2C_Models.Models
         public bool IsFeatured { get; set; }
         public Nullable<bool> IsNewArrival { get; set; }
     
+        public virtual ProductBrand ProductBrand { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductDetail> ProductDetails { get; set; }
         public virtual ProductPackSize ProductPackSize { get; set; }
@@ -50,13 +51,12 @@ namespace B2C_Models.Models
         public virtual ICollection<ProductPrice> ProductPrices { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<CommentAndRating> CommentAndRatings { get; set; }
+        public virtual ProductCategory ProductCategory { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<OrderDetailLog> OrderDetailLogs { get; set; }
-        public virtual ProductBrand ProductBrand { get; set; }
-        public virtual ProductCategory ProductCategory { get; set; }
     }
 }

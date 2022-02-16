@@ -7,12 +7,14 @@
       <Diagram DiagramId="ea4ea4c11d0443178d992015f083dbae" Name="Diagram1" ZoomLevel="93">
         <EntityTypeShape EntityType="B2CModel.Test" Width="1.5" PointX="3.375" PointY="0.75" />
         <EntityTypeShape EntityType="B2CModel.City" Width="1.5" PointX="5.25" PointY="6.875" />
+        <EntityTypeShape EntityType="B2CModel.ProductBrand" Width="1.5" PointX="3" PointY="11.75" />
         <EntityTypeShape EntityType="B2CModel.ProductDetail" Width="1.5" PointX="7.5" PointY="22.125" />
         <EntityTypeShape EntityType="B2CModel.ProductMaster" Width="1.5" PointX="5.25" PointY="10.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="B2CModel.ProductPackSize" Width="2.25" PointX="3" PointY="15.5" />
+        <EntityTypeShape EntityType="B2CModel.ProductPackSize" Width="1.5" PointX="3" PointY="15.5" />
         <EntityTypeShape EntityType="B2CModel.ProductVariant" Width="1.5" PointX="3" PointY="8.25" />
         <EntityTypeShape EntityType="B2CModel.User" Width="1.5" PointX="0.75" PointY="4.875" />
         <EntityTypeShape EntityType="B2CModel.Userinfo" Width="1.5" PointX="7.75" PointY="6.875" />
+        <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductBrand" />
         <AssociationConnector Association="B2CModel.FK_ProductDetail_ProductMaster" />
         <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductPackSize" />
         <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductVariant" />
@@ -21,6 +23,8 @@
         <EntityTypeShape EntityType="B2CModel.customer" Width="1.5" PointX="6" PointY="1" />
         <EntityTypeShape EntityType="B2CModel.CommentAndRating" Width="1.5" PointX="7.5" PointY="14.5" />
         <AssociationConnector Association="B2CModel.FK_CommentAndRating_ProductMaster" />
+        <EntityTypeShape EntityType="B2CModel.ProductCategory" Width="1.5" PointX="3" PointY="4.25" />
+        <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductCategory" />
         <EntityTypeShape EntityType="B2CModel.Cart" Width="1.5" PointX="11.25" PointY="5.5" />
         <AssociationConnector Association="B2CModel.FK_Cart_Customer" />
         <AssociationConnector Association="B2CModel.FK_Cart_ProductMaster" />
@@ -46,10 +50,6 @@
         <EntityTypeShape EntityType="B2CModel.ExceptionHandling" Width="1.5" PointX="13.375" PointY="4.75" />
         <EntityTypeShape EntityType="B2CModel.EmailSubscription" Width="1.5" PointX="13.375" PointY="12.75" />
         <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="0.75" PointY="0.75" />
-        <EntityTypeShape EntityType="B2CModel.ProductBrand" Width="1.5" PointX="3.375" PointY="19.25" />
-        <EntityTypeShape EntityType="B2CModel.ProductCategory" Width="1.5" PointX="0.75" PointY="12" />
-        <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductBrand" />
-        <AssociationConnector Association="B2CModel.FK_ProductMaster_ProductCategory" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

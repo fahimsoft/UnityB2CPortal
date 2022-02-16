@@ -13,7 +13,7 @@ var UserEmail = "useremail";
 window.onload = function () {
  /*   var divToHide = document.getElementById('quick-view');*/
     document.onclick = function (e) {
-       // $(e.target).find('.modal-content').remove();
+        $(e.target).find('.modal-content').remove();
         //$('body').addClass('body-pading-right');
         //$('.quick-view .modal-dialog .modal-content').find('.row').remove();
     };
@@ -37,6 +37,7 @@ $(document).ready(function () {
     ShowCartProducts();
     let customerid = getCookie(userid);
     var accounthtml = '';
+    debugger
     if (parseInt(customerid) > 0) {
         var username = getCookie(UserName);
         $('#logedin').html();
@@ -345,23 +346,10 @@ autocomplete(document.getElementById("handlesearch"), "");
 function removequickviewvalues(id) {
     $('body').addClass('body-pading-right');
     $('.quick-view .modal-dialog .modal-content').find('.row').remove();
-    //reload product lsit
-    var filterCategoryAndBrand = [];
-    GetfilterListDummy();
-    var filterSearchByName = localStorage.getItem("filterSearchByName") == undefined ? "" : localStorage.getItem("filterSearchByName");
-    filterCategoryAndBrand = localStorage.getItem("categoryAndBrand");
-    //Merge to . 4-Dec-2021
-    var filterCategoryAndBrandarray;
-    if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
-        var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
-        filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
-    }
-
-    loadProductListById(filterCategoryAndBrandarray, filterSearchByName, 10, 0);
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
-    //document.getElementsByClassName("loader-container")[0].style.display = "block";
+    document.getElementsByClassName("loader-container")[0].style.display = "block";
     $.ajax({
         type: "POST",
         url: "/Product/GetCartCount",
@@ -395,7 +383,7 @@ function ShowCartProducts() {
             $('#totalprice').html(dataobj.totalprice.toLocaleString("en-US"));
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
-            //document.getElementsByClassName("loader-container")[0].style.display = "none";
+            document.getElementsByClassName("loader-container")[0].style.display = "none";
             
         }
     });
@@ -761,7 +749,7 @@ function LoadQuickViewWithRating(elem) {
             var htmlProductDetail = '';
             var htmlProductPriceDetail = '';
             var htmlProductSize = '';
-
+            debugger;
             var item = JSON.parse(result.data);
 
             $(item).each(function (i, v) {
@@ -1094,7 +1082,7 @@ ${item.Discount > 0?
 
 
             htmldata = `<div class="tab-pane fade in text-center ${gl2}" id="grid">
-${htmlProductGrid}
+<div id="my-inner-grid">${htmlProductGrid}</div>
 </div>
 <div class="tab-pane fade in ${gl1}" id="list">
 ${htmlProductList}
@@ -1997,6 +1985,8 @@ function GetfilterListDummy() {
     return filterList_Dummy;
 }
 function SetLocalStorageForFilter(FilterCateAndBrand, filterSearchByName, filterNextPage, filterPrevpage) {
+
+
 
     localStorage.setItem("filterSearchByName", filterSearchByName);
     localStorage.setItem("filterPrevpage", filterPrevpage);

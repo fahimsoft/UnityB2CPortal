@@ -454,7 +454,7 @@
                                 }
                             }
 
-                           // //document.getElementsByClassName("loader-container")[0].style.display = "block";
+                            document.getElementsByClassName("loader-container")[0].style.display = "block";
                             $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
                             $.validator.unobtrusive.parse($(this));//add the form validation
                             $.validator.unobtrusive.parse(form);
@@ -473,7 +473,7 @@
                                         else if (data.success == false) {
                                             toastr.error(data.msg);
                                         }
-                                       // //document.getElementsByClassName("loader-container")[0].style.display = "none";
+                                        document.getElementsByClassName("loader-container")[0].style.display = "none";
                                     },
                                     failure: function (data) {
                                         console.log(data);
@@ -538,7 +538,7 @@
         //            }
         //        }
 
-        //        //document.getElementsByClassName("loader-container")[0].style.display = "block";
+        //        document.getElementsByClassName("loader-container")[0].style.display = "block";
         //        $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
         //        $.validator.unobtrusive.parse($(this));//add the form validation
         //        $.validator.unobtrusive.parse(form);
@@ -557,7 +557,7 @@
         //                    else if (data.success == false) {
         //                        toastr.error(data.msg);
         //                    }
-        //                    //document.getElementsByClassName("loader-container")[0].style.display = "none";
+        //                    document.getElementsByClassName("loader-container")[0].style.display = "none";
         //                },
         //                failure: function (data) {
         //                    console.log(data);
