@@ -29,7 +29,6 @@ namespace B2C_Models.Models
     
         public virtual DbSet<Test> Tests { get; set; }
         public virtual DbSet<City> Cities { get; set; }
-        public virtual DbSet<ProductBrand> ProductBrands { get; set; }
         public virtual DbSet<ProductDetail> ProductDetails { get; set; }
         public virtual DbSet<ProductMaster> ProductMasters { get; set; }
         public virtual DbSet<ProductPackSize> ProductPackSizes { get; set; }
@@ -39,7 +38,6 @@ namespace B2C_Models.Models
         public virtual DbSet<ProductPrice> ProductPrices { get; set; }
         public virtual DbSet<customer> customers { get; set; }
         public virtual DbSet<CommentAndRating> CommentAndRatings { get; set; }
-        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
         public virtual DbSet<Cart> Carts { get; set; }
         public virtual DbSet<OrderDetail> OrderDetails { get; set; }
         public virtual DbSet<OrderMaster> OrderMasters { get; set; }
@@ -51,6 +49,8 @@ namespace B2C_Models.Models
         public virtual DbSet<ExceptionHandling> ExceptionHandlings { get; set; }
         public virtual DbSet<EmailSubscription> EmailSubscriptions { get; set; }
         public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
+        public virtual DbSet<ProductBrand> ProductBrands { get; set; }
+        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
     
         public virtual ObjectResult<GetProductRating_Result> GetProductRating(Nullable<decimal> productId)
         {

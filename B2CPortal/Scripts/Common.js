@@ -13,7 +13,7 @@ var UserEmail = "useremail";
 window.onload = function () {
  /*   var divToHide = document.getElementById('quick-view');*/
     document.onclick = function (e) {
-        $(e.target).find('.modal-content').remove();
+       // $(e.target).find('.modal-content').remove();
         //$('body').addClass('body-pading-right');
         //$('.quick-view .modal-dialog .modal-content').find('.row').remove();
     };
@@ -345,10 +345,23 @@ autocomplete(document.getElementById("handlesearch"), "");
 function removequickviewvalues(id) {
     $('body').addClass('body-pading-right');
     $('.quick-view .modal-dialog .modal-content').find('.row').remove();
+    //reload product lsit
+    var filterCategoryAndBrand = [];
+    GetfilterListDummy();
+    var filterSearchByName = localStorage.getItem("filterSearchByName") == undefined ? "" : localStorage.getItem("filterSearchByName");
+    filterCategoryAndBrand = localStorage.getItem("categoryAndBrand");
+    //Merge to . 4-Dec-2021
+    var filterCategoryAndBrandarray;
+    if (filterCategoryAndBrand != '[[]]' && filterCategoryAndBrand.length > 0) {
+        var filterCategoryAndBrandList = filterCategoryAndBrand.substring(1, filterCategoryAndBrand.length - 1);
+        filterCategoryAndBrandarray = JSON.parse(filterCategoryAndBrandList);
+    }
+
+    loadProductListById(filterCategoryAndBrandarray, filterSearchByName, 10, 0);
 }
 //=====================On hover cart list========================
 function ShowCartProducts() {
-    document.getElementsByClassName("loader-container")[0].style.display = "block";
+    //document.getElementsByClassName("loader-container")[0].style.display = "block";
     $.ajax({
         type: "POST",
         url: "/Product/GetCartCount",
@@ -377,12 +390,12 @@ function ShowCartProducts() {
 </div>
 `;
             $('#cartdrop').html(html);
-            $(".numbers").digits();
+            //$(".numbers").digits();
             $('#productaddtocart').html(dataobj.cartproductscount);
             $('#totalprice').html(dataobj.totalprice.toLocaleString("en-US"));
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
-            document.getElementsByClassName("loader-container")[0].style.display = "none";
+            //document.getElementsByClassName("loader-container")[0].style.display = "none";
             
         }
     });
@@ -721,7 +734,7 @@ ${htmlProductList}
 
 
             $('#htmlListAndGrid').html(htmldata);
-            $(".numbers").digits();
+            //$(".numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             //document.getElementsByClassName("pricesymbol").innerHTML = pricesymbol.symbol;
@@ -904,7 +917,7 @@ ${Discount > 0 ?
 </div>
 </div>`;
             $('#quick-view').html(html);
-            $(".numbers").digits();
+            //$(".numbers").digits();
 
 
 
@@ -1219,7 +1232,7 @@ ${item.Discount > 0 ?
 //</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
 
             $('#ulLoadFeatureProduct').html(html);
-            $("span .numbers").digits();
+            //$("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
         },
@@ -1276,7 +1289,7 @@ ${item.Discount > 0 ?
 //</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
 
             $('#ulLoadNewArrivalProducts').html(html);
-            $("span .numbers").digits();
+            //$("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
         },
@@ -1984,8 +1997,6 @@ function GetfilterListDummy() {
     return filterList_Dummy;
 }
 function SetLocalStorageForFilter(FilterCateAndBrand, filterSearchByName, filterNextPage, filterPrevpage) {
-
-
 
     localStorage.setItem("filterSearchByName", filterSearchByName);
     localStorage.setItem("filterPrevpage", filterPrevpage);

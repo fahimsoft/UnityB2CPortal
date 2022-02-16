@@ -330,7 +330,7 @@
 
             $.validator.unobtrusive.parse(form);
             if ($(form).valid()) {
-            document.getElementsByClassName("loader-container")[0].style.display = "block";
+            //document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $.ajax({
                     type: "POST",
                     url: "/Account/Login",
@@ -338,7 +338,7 @@
                     //cache : false,
                     //processData: false,
                     success: function (data) {
-                        document.getElementsByClassName("loader-container")[0].style.display = "none";
+                        //document.getElementsByClassName("loader-container")[0].style.display = "none";
                         if (data.success == true /*&& res.count > 0*/) {
                             toastr.success("Login successfully.");
                             window.location = data.data;

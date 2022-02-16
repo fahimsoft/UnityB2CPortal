@@ -159,6 +159,7 @@
     <Compile Include="App_Start\UnityConfig.cs" />
     <Compile Include="Common\General.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AndriodDataController.cs" />
     <Compile Include="Controllers\ContactController.cs" />
     <Compile Include="Controllers\ErrorHandlerController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
@@ -538,6 +539,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\AndriodData\" />
     <Folder Include="Views\Test\" />
   </ItemGroup>
   <ItemGroup>

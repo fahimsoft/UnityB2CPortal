@@ -90,14 +90,14 @@
         event.preventDefault();
         $('#btnAddSale').attr('disabled', 'disabled');
         stripe.createToken(card).then(function (result) {
-            document.getElementsByClassName("loader-container")[0].style.display = "block";
+            //document.getElementsByClassName("loader-container")[0].style.display = "block";
 
             if (result.error) {
                 $('#btnAddSale').removeAttr('disabled');
 
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;
-                document.getElementsByClassName("loader-container")[0].style.display = "none";
+                //document.getElementsByClassName("loader-container")[0].style.display = "none";
 
             } else {
                 toastr.info("Please Wait !");

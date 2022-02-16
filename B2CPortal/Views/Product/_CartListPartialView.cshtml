@@ -185,7 +185,7 @@
         //return false;
     });
     $("#updatecart").click(function () {
-        document.getElementsByClassName("loader-container")[0].style.display = "block";
+        //document.getElementsByClassName("loader-container")[0].style.display = "block";
         var cartids = [];
         var cartquentites = [];
         var array = $.makeArray($('tbody tr[id]').map(function () {
@@ -215,7 +215,7 @@
                     ShowCartProducts();
                     $("#CartTable").load('@Url.Action("GetCartList", "Product")');
                     toastr.success(data.msg);
-                    document.getElementsByClassName("loader-container")[0].style.display = "none";
+                    //document.getElementsByClassName("loader-container")[0].style.display = "none";
                 } else {
                     toastr.error(data.msg);
                 }

@@ -177,7 +177,7 @@
                 var obj = {
                     res: res
                 }
-                document.getElementsByClassName("loader-container")[0].style.display = "block";
+               // //document.getElementsByClassName("loader-container")[0].style.display = "block";
                 $.ajax({
                     type: "POST",
                     data: obj,
@@ -203,7 +203,7 @@
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 success: function (data) {
-                                    document.getElementsByClassName("loader-container")[0].style.display = "none";
+                                   // //document.getElementsByClassName("loader-container")[0].style.display = "none";
                                     if (data.success == true) {
                                         toastr.success("Email sent successfully.");
                                         window.location.reload();
@@ -226,7 +226,7 @@
                         else if (data.success == false) {
                             toastr.error(data.msg);
                             $('#capturemessage').html('Please Fill the Capture ').css('color', 'red');
-                            document.getElementsByClassName("loader-container")[0].style.display = "none";
+                            //document.getElementsByClassName("loader-container")[0].style.display = "none";
 
                         }
                     },

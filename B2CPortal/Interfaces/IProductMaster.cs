@@ -24,9 +24,11 @@ namespace B2CPortal.Interfaces
 
         Task<ProductMaster> GetDataForWishList(int id, int cityid);
         Task<BrandCategoryVM> GetSidebar();
+        Task<BrandCategoryVM> AndroidBrandCatagory();
 
 
         Task<IEnumerable<ProductsVM>> GetProductListbySidebar(SideBarVM[] filterList, string search, int nextPage, int prevPage, int cityid); //int[] filterList
+        Task<IEnumerable<AndroidViewModel>> AndriodProductList(SideBarVM[] filterList, string search, int nextPage, int prevPage, int cityid); //int[] filterList
 
 
         Task<IEnumerable<ProductsVM>> GetProductByIdWithRating(long Id);
