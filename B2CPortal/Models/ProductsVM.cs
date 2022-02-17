@@ -50,32 +50,5 @@ public int? UnitInNumeric { get; set; }
     public string LongDescription { get; set; }
 }
 
-    public class AndroidViewModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public decimal? Price { get; set; }
-        public decimal? Discount { get; set; }
-        public string ImageUrl { get; set; }
-        public string MasterImageUrl { get; set; }
-        public string ShortDescription { get; set; }
-        public string LongDescription { get; set; }
 
-
-
-        public string UOM { get; set; }
-        public decimal? TotalRating { get; set; }
-        public decimal? AvgRating { get; set; }
-        public int? UnitInNumeric { get; set; }
-        public bool IsFeatured { get; internal set; }
-        public bool? IsNewArrival { get; internal set; }
-    }
-
-    public enum ResultStatus
-    {
-        Success = 1,
-        Failed = 2,
-        Bloked = 3,
-        Exception = 4,
-    }
 }

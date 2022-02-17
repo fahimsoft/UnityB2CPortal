@@ -16,7 +16,8 @@ namespace B2CPortal.Services
         {
             try
             {
-                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id); if (Current == null)
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId); 
+                if (Current == null)
                 {
                     New();
                     Current.CreatedOn = DateTime.Now;
@@ -38,8 +39,8 @@ namespace B2CPortal.Services
                 Current.Gender = customer.Gender;
                 Current.DateOfBirth = customer.DateOfBirth;
                 Current.IsVerified = true;
-                //Current.City = customer.City;
-                //Current.Address = customer.Address;
+                Current.City = customer.City;
+                Current.Address = customer.Address;
                 Save();
                 return Current;
             }
@@ -154,5 +155,92 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
+        //=======================android===============
+        public async Task<customer> AndroidLoginWithEmailPassword(string email, string Password)
+        {
+            try
+            {
+                var obj = await _dxcontext.customers.Where(x => x.EmailId == email && x.Password == Password && x.IsVerified == true).FirstOrDefaultAsync();
+                return obj;
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<customer> AndroidCreateCustomer(customer customer)
+        {
+            try
+            {
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId);
+                if (Current == null)
+                {
+                    New();
+                    Current.CreatedOn = DateTime.Now;
+                    Current.IsWebUser = customer.IsWebUser;
+                    Current.IsAppUser = customer.IsAppUser;
+                    Current.Guid = customer.Guid;
+                    Current.RegisteredFrom = customer.RegisteredFrom;
+                    Current.FirstName = customer.FirstName;
+                    Current.LastName = customer.LastName;
+                    Current.PhoneNo = customer.PhoneNo;
+                    Current.EmailId = customer.EmailId;
+                    Current.Password = customer.Password;
+                    Current.Gender = customer.Gender;
+                    Current.DateOfBirth = customer.DateOfBirth;
+                    Current.IsVerified = true;
+                    Current.City = customer.City;
+                    Current.Address = customer.Address;
+                    Save();
+                    return Current;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task<customer> AndroidUpdateCustomer(customer customer)
+        {
+            try
+            {
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId);
+                if (Current != null)
+                {
+                    //New();
+                    PrimaryKeyValue = Current.Id;
+                    //Current.Guid = customer.Guid;
+                    //Current.RegisteredFrom = customer.RegisteredFrom;
+                    Current.FirstName = customer.FirstName;
+                    Current.LastName = customer.LastName;
+                    Current.PhoneNo = customer.PhoneNo;
+                    //Current.EmailId = customer.EmailId;
+                    //Current.Password = customer.Password;
+                    Current.Gender = customer.Gender;
+                    Current.DateOfBirth = customer.DateOfBirth;
+                    //Current.IsVerified = true;
+                    Current.City = customer.City;
+                    Current.Address = customer.Address;
+
+                    Save();
+                    return Current;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
     }
 }

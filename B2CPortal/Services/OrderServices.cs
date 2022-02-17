@@ -64,6 +64,7 @@ namespace B2CPortal.Services
                     Current.PaymentStatus = Billing.PaymentStatus;
                     Current.OrderDescription= Billing.OrderDescription;
                     Current.FK_CityId = Billing.FK_CityId;
+                    Current.FK_ShippingDetails = Billing.FK_ShippingDetails;
 
 
                 }
@@ -160,6 +161,53 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
+
+        //=================android==============================
+        public async Task<OrderMaster> AndroidCreateOrder(OrderMaster Billing)
+        {
+            try
+            {
+                Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
+                if (Current == null)
+                {
+                    New();
+                    Current.CreatedOn = DateTime.Now;
+                    Current.FK_Customer = Billing.FK_Customer;
+                    Current.PhoneNo = Billing.PhoneNo;
+                    Current.EmailId = Billing.EmailId;
+                    Current.BillingAddress = Billing.BillingAddress;
+                    Current.IsActive = true;
+                    Current.TotalPrice = Billing.TotalPrice;
+                    Current.TotalQuantity = Billing.TotalQuantity;
+                    Current.OrderNo = Billing.OrderNo;
+                    Current.Currency = Billing.Currency;
+                    Current.ConversionRate = Billing.ConversionRate;
+                    Current.PaymentMode = Billing.PaymentMode;
+                    Current.Status = Billing.Status;
+                    Current.Country = Billing.Country;
+                    Current.City = Billing.City;
+                    Current.ShippingAddress = Billing.ShippingAddress;
+                    Current.PaymentStatus = Billing.PaymentStatus;
+                    Current.OrderDescription = Billing.OrderDescription;
+                    Current.FK_CityId = Billing.FK_CityId;
+                    Current.FK_ShippingDetails = Billing.FK_ShippingDetails;
+                }
+                else
+                {
+                    PrimaryKeyValue = Current.Id;
+                    Current.ModifiedOn = DateTime.Now;
+                }
+
+                Save();
+                return Current;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
     }
  
 }

@@ -88,14 +88,14 @@ namespace B2CPortal.Controllers
                         cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
                         List<Cart> cartlsit = await _cart.GetCartProducts(cookie, res.Id, citymodel) as List<Cart>;
                         List<Cart> wishlist = await _cart.GetWishListProducts(cookie, res.Id) as List<Cart>;
-                        cartlsit.ForEach(x =>
+                        cartlsit.ForEach(async x =>
                         {
                             if (x.FK_Customer == null || string.IsNullOrEmpty(x.Guid))
                             {
                                 x.FK_Customer = res.Id;
                                 x.Guid = cookie;
                                 x.FK_CityId = citymodel.Id;
-                                _cart.UpdateCart(x);
+                                _ = await _cart.UpdateCart(x);
                             }
                         });
                         wishlist.ForEach(x =>

@@ -186,6 +186,7 @@
     <Compile Include="Interfaces\ITest.cs" />
     <Compile Include="Interfaces\IProductDetail.cs" />
     <Compile Include="Interfaces\IUser.cs" />
+    <Compile Include="Models\AndroidViewModel.cs" />
     <Compile Include="Models\ContactUsVM.cs" />
     <Compile Include="Models\BrandCategoryVM.cs" />
     <Compile Include="Models\CartViewModel.cs" />
