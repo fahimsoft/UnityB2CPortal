@@ -208,6 +208,12 @@ namespace B2CPortal.Services
 
         }
 
+        public async Task<IEnumerable<OrderMaster>> AndroidGetOrderList(int userid)
+        {
+            return await _dxcontext.OrderMasters.Where(x => x.IsActive == true &&
+            x.FK_Customer == userid
+            ).OrderByDescending(x => x.Status.ToLower() == "inprocess").OrderByDescending(x => x.CreatedOn).Include(x => x.City1).ToListAsync();
+        }
     }
  
 }

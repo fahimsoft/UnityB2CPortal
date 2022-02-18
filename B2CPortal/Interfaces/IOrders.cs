@@ -18,6 +18,8 @@ namespace B2CPortal.Interfaces
         Task<OrderMaster> UpdateOrderMAster(OrderVM Billing);
         Task<OrderMaster> ExestingOrder(int customerId);
         Task<bool> DeleteOrderMAster(int id);
+        //==================androoid==============
         Task<OrderMaster> AndroidCreateOrder(OrderMaster Billing);
+        Task<IEnumerable<OrderMaster>> AndroidGetOrderList(int userid);
     }
 }

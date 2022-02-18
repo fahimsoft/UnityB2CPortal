@@ -86,5 +86,10 @@ namespace B2CPortal.Services
                 throw;
             }
         }
+        //==================android==============
+        public async Task<IEnumerable<OrderDetail>> AndroidGetOrderDetailsById(int id)
+        {
+            return await _dxcontext.OrderDetails.Where(x => x.FK_OrderMaster == id && x.IsActive == true).ToListAsync();
+        }
     }
 }

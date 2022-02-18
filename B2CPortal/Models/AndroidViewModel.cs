@@ -23,7 +23,6 @@ namespace B2CPortal.Models
         public bool IsFeatured { get; internal set; }
         public bool? IsNewArrival { get; internal set; }
     }
-
     public class AndroidAuthenticationVM
     {
         public int Id { get; set; }
@@ -71,6 +70,19 @@ namespace B2CPortal.Models
         public Nullable<int> FK_ShippingDetails { get; set; }
         public Nullable<int> FK_CityId { get; set; }
 
+    }
+    public class AndroidOrderDetailsVM
+    {
+        public string Name { get; internal set; }
+        public decimal? Price { get; internal set; }
+        public decimal? Discount { get; internal set; }
+        public decimal? SubTotalPrice { get; internal set; }
+        public int? Quantity { get; internal set; }
+        public decimal? DiscountedPrice { get; internal set; }
+        public decimal? TotalPrice { get; internal set; }
+        public string MasterImageUrl { get; internal set; }
+        public string Date { get; internal set; }
+        public int FK_ProductMaster { get; internal set; }
     }
     public static class ResultStatus
     {

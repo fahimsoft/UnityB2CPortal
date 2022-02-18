@@ -28,7 +28,7 @@ namespace B2CPortal.Controllers
             ICart cart,
             ICity city,
             IAccount account,
-            IEmailSubscription emailSubscription, 
+            IEmailSubscription emailSubscription,
             IShippingDetails shippingDetails,
              IOrders orders,
               IOrderDetail orderDetail
@@ -197,7 +197,7 @@ namespace B2CPortal.Controllers
                             status = 200,
                             sucess = 1,
                             message = ResultStatus.RegisterSuccess,
-                            data =  new { model },
+                            data = new { model },
                         }, JsonRequestBehavior.AllowGet);
                     }
                     else
@@ -332,17 +332,17 @@ namespace B2CPortal.Controllers
                     data = new { ex.Message }
                 }, JsonRequestBehavior.AllowGet);
             }
-        } 
+        }
         #endregion
-        #region Checkout Management
+        #region Orders & Checkout Management
         [HttpPost]
         public async Task<ActionResult> AndroidCheckout(
             AndroidCheckoutVM model)
-            //string city, 
-            //string userid, 
-            //string guid,
-            //string username,
-            //string useremail)
+        //string city, 
+        //string userid, 
+        //string guid,
+        //string username,
+        //string useremail)
         {
 
             //insert cart data
@@ -425,8 +425,8 @@ namespace B2CPortal.Controllers
                             model.Status = OrderStatus.InProcess.ToString();
                             model.Country = model.Country;
                             model.City = model.City;
-                            model.PhoneNo= model.PhoneNo;
-                            model.EmailId= model.EmailId;
+                            model.PhoneNo = model.PhoneNo;
+                            model.EmailId = model.EmailId;
                             model.ShippingAddress = model.ShippingAddress;
                             model.BillingAddress = model.BillingAddress;
                             model.FK_ShippingDetails = shippingmodel.Id;
@@ -592,6 +592,124 @@ namespace B2CPortal.Controllers
 
         }
 
+        [HttpGet]
+        public async Task<ActionResult> AndroidGetOrdersList(string userid, string guid = "")
+        {
+
+            try
+            {
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                List<AndroidCheckoutVM> list = new List<AndroidCheckoutVM>();
+                if (!string.IsNullOrEmpty(userid) && Convert.ToInt32(userid) > 0)
+                {
+                    var orderlist = await _orders.AndroidGetOrderList(Convert.ToInt32(userid));
+
+                    foreach (var item in orderlist)
+                    {
+                        AndroidCheckoutVM dd = (AndroidCheckoutVM)HelperFunctions.CopyPropertiesTo(item, new AndroidCheckoutVM());
+                        var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
+                        dd.OrderNo = result;
+                        dd.city = item?.City1?.Name;
+                        list.Add((AndroidCheckoutVM)dd);
+                    }
+                    return Json(new
+                    {
+                        status = 200,
+                        sucess = 1,
+                        message = ResultStatus.success,
+                        data = new { list }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        status = 404,
+                        sucess = 0,
+                        message = ResultStatus.unauthorized,
+                        data = new { list }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = 500,
+                    sucess = 0,
+                    message = ResultStatus.Error,
+                    data = new { ex.Message }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public async Task<JsonResult> AndroidGetOrderDetailsById(string orderid, string userid, string city, string guid = "")
+        {
+            ////get location from cookie
+            //string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            //if (string.IsNullOrEmpty(cookiecity))
+            //{
+            //    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+            //}
+            //cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+            try
+            {
+                List<AndroidOrderDetailsVM> orderdetailslist = new List<AndroidOrderDetailsVM>();
+                if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(orderid))
+                {
+                    City citymodel = await _ICity.GetCityByIdOrName(0, city);
+                    decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+                    var detailslist = await _ordersDetail.AndroidGetOrderDetailsById(Convert.ToInt32(orderid));
+                    foreach (var item in detailslist)
+                    {
+                        var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                        string name = productmasetr.Name;
+                        string MasterImageUrl = productmasetr.MasterImageUrl;
+                        var detailsobj = new AndroidOrderDetailsVM
+                        {
+                            Name = name,
+                            Price = item.Price,
+                            Discount = item.Discount,
+                            SubTotalPrice = item.Price * item.Quantity,
+                            DiscountedPrice = item.DiscountedPrice,
+                            Quantity = item.Quantity,
+                            TotalPrice = item.TotalPrice,
+                            MasterImageUrl = MasterImageUrl,
+                            Date = item.CreatedOn.ToString(),
+                            FK_ProductMaster = item.FK_ProductMaster
+                        };
+                        orderdetailslist.Add(detailsobj);
+                    }
+                    return Json(new
+                    {
+                        status = 200,
+                        sucess = 1,
+                        message = ResultStatus.success,
+                        data = new { orderdetailslist }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        status = 404,
+                        sucess = 0,
+                        message = ResultStatus.unauthorized,
+                        data = new { orderdetailslist }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    status = 404,
+                    sucess = 0,
+                    message = ResultStatus.Error,
+                    data = new { ex.Message }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
         #endregion
 
     }
