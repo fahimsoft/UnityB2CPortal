@@ -41,6 +41,8 @@ namespace B2CPortal.Services
                 Current.IsVerified = true;
                 Current.City = customer.City;
                 Current.Address = customer.Address;
+                Current.IsActive = true;
+
                 Save();
                 return Current;
             }
@@ -192,6 +194,7 @@ namespace B2CPortal.Services
                     Current.IsVerified = true;
                     Current.City = customer.City;
                     Current.Address = customer.Address;
+                    Current.IsActive = true;
                     Save();
                     return Current;
                 }

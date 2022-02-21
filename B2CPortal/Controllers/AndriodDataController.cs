@@ -106,10 +106,11 @@ namespace B2CPortal.Controllers
             {
                 if (!string.IsNullOrEmpty(email) && !string.IsNullOrEmpty(password))
                 {
+                    AndroidAuthenticationVM model = new AndroidAuthenticationVM();
                     var resultmodel = await _account.AndroidLoginWithEmailPassword(email, password);
-                    AndroidAuthenticationVM model = (AndroidAuthenticationVM)HelperFunctions.CopyPropertiesTo(resultmodel, new AndroidAuthenticationVM());
                     if (resultmodel != null && resultmodel.Id > 0)
                     {
+                        model = (AndroidAuthenticationVM)HelperFunctions.CopyPropertiesTo(resultmodel, new AndroidAuthenticationVM());
                         City citymodel = await _ICity.GetCityByIdOrName(0, city);
                         string cookie = string.Empty;
                         if (!string.IsNullOrEmpty(guid) && guid != "undefined")
@@ -142,8 +143,8 @@ namespace B2CPortal.Controllers
                         {
                             status = 200,
                             sucess = 1,
-                            message = ResultStatus.RegisterSuccess,
-                            data = new { model },
+                            message = ResultStatus.success,
+                            data = model,
                         }, JsonRequestBehavior.AllowGet);
                     }
                     else
@@ -175,7 +176,7 @@ namespace B2CPortal.Controllers
                     status = 404,
                     sucess = 0,
                     message = ResultStatus.Error.ToString(),
-                    data = new { ex.Message }
+                    data = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
 
@@ -188,16 +189,16 @@ namespace B2CPortal.Controllers
                 if (model != null && !string.IsNullOrEmpty(model.EmailId) && !string.IsNullOrEmpty(model.Password))
                 {
                     customer customermodel = (customer)HelperFunctions.CopyPropertiesTo(model, new customer());
-                    model.Id = customermodel.Id;
                     var resultmodel = await _account.AndroidCreateCustomer(customermodel);
                     if (resultmodel != null)
                     {
+                        model.Id = resultmodel.Id;
                         return Json(new
                         {
                             status = 200,
                             sucess = 1,
                             message = ResultStatus.RegisterSuccess,
-                            data = new { model },
+                            data = model,
                         }, JsonRequestBehavior.AllowGet);
                     }
                     else
@@ -336,20 +337,15 @@ namespace B2CPortal.Controllers
         #endregion
         #region Orders & Checkout Management
         [HttpPost]
-        public async Task<ActionResult> AndroidCheckout(
-            AndroidCheckoutVM model)
-        //string city, 
-        //string userid, 
-        //string guid,
-        //string username,
-        //string useremail)
+        public async Task<ActionResult> AndroidCheckout(AndroidCheckoutVM model)
         {
 
             //insert cart data
             try
             {
-                City citymodel = await _ICity.GetCityByIdOrName(0, model.city);
-                if (model.cartidlist.Count() > 0 && !string.IsNullOrEmpty(model.userid) && !string.IsNullOrEmpty(model.guid))
+                List<CartDataResponseList> reslist = new List<CartDataResponseList>();
+                City citymodel = await _ICity.GetCityByIdOrName(0, model.Usercity);
+                if (model.cartData.Count() > 0 && !string.IsNullOrEmpty(model.userid) && !string.IsNullOrEmpty(model.guid))
                 {
                     int custoemrid = string.IsNullOrEmpty(model.userid) ? 0 : Convert.ToInt32(model.userid);
                     string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
@@ -361,166 +357,220 @@ namespace B2CPortal.Controllers
                     decimal RemainingDiscountPrice = 0;
                     var customerId = 0;
                     var tQuantity = 0;
-                    for (int i = 0; i < model.cartidlist.Count(); i++)
+
+                    foreach (var item in model.cartData)
                     {
-                        var productobj = await _IProductMaster.GetProductById(model.cartidlist[i], citymodel.Id);
+                        var productobj = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                         var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                         var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                        var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
-                        var cart = new Cart();
-                        cart.Quantity = model.cartquentitelist[i];
-                        cart.Guid = cookieid;
-                        cart.IsWishlist = false;
-                        cart.IsActive = false;
-                        cart.TotalPrice = discountedprice;
-                        cart.TotalQuantity = model.cartquentitelist[i]; ;
-                        cart.FK_ProductMaster = model.cartidlist[i]; ;
-                        cart.Currency = currency;
-                        cart.ConversionRate = conversionvalue;
-                        cart.FK_CityId = citymodel.Id;
-                        cart.FK_Customer = custoemrid;
-                        var obj = await _cart.CreateCart(cart);
-                    }
-
-                    if (custoemrid > 0)
-                    {
-                        var shippingmodel = new ShippingDetail();
-                        // model Details Add
-                        model.FK_Customer = custoemrid;
-                        var cartlist = await _cart.GetCartProducts(model.guid, custoemrid, citymodel);
-                        if (cartlist != null && cartlist.Count() > 0)
+                        if (item.ProductPrice != price || item.ProductDiscount != discount)
                         {
-                            //for shipping address table..
-                            if (model.shippingdetails != null)
+                            reslist.Add(new CartDataResponseList
                             {
-                                shippingmodel.FirstName = model.shippingdetails.FirstName;
-                                shippingmodel.LastName = model.shippingdetails.LastName;
-                                shippingmodel.City = model.shippingdetails.City;
-                                shippingmodel.Country = model.shippingdetails.Country;
-                                shippingmodel.EmailId = model.shippingdetails.EmailId;
-                                shippingmodel.PhoneNo = model.shippingdetails.PhoneNo;
-                                shippingmodel.Address = model.shippingdetails.Address;
-                                shippingmodel.IsActive = true;
-                                shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
+                                ProductId = item.ProductId,
+                                ProductPrice = (decimal)price,
+                                ProductDiscount = (decimal)discount,
+                                Name = productobj.Name
+                            });
+                        }
+                    }
+                    if (reslist.Count() > 0)
+                    {
+                        return Json(new
+                        {
+                            status = 300,
+                            sucess = 0,
+                            message = ResultStatus.PriceChanged,
+                            data = reslist
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        if (reslist.Count() < 0)
+                        {
+                            foreach (var item in model.cartData)
+                            {
+                                var productobj = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
+                                var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                                var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
+                                var cart = new Cart();
+                                cart.Quantity = item.ProductQuantity;
+                                cart.Guid = cookieid;
+                                cart.IsWishlist = false;
+                                cart.IsActive = false;
+                                cart.TotalPrice = discountedprice;
+                                cart.TotalQuantity = item.ProductQuantity;
+                                cart.FK_ProductMaster = item.ProductId;
+                                cart.Currency = currency;
+                                cart.ConversionRate = conversionvalue;
+                                cart.FK_CityId = citymodel.Id;
+                                cart.FK_Customer = custoemrid;
+                                var obj = await _cart.CreateCart(cart);
                             }
 
-                            foreach (var item in cartlist)
+                            if (custoemrid > 0)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
-                                var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                                var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                RemainingDiscountPrice += Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                ActualPrice += ((decimal)(price * item.Quantity) / conversionvalue);
-                                TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
-                                subTotal = (subTotal + ActualPrice);
-                                tQuantity = (int)(tQuantity + item.Quantity);
-                            }
-                            model.PaymentStatus = false;
-                            model.TotalPrice = Math.Round(TotalPrice, 2);
-                            model.TotalQuantity = tQuantity;
-                            model.Currency = currency;
-                            model.ConversionRate = conversionvalue;
-                            model.PaymentMode = model.PaymentMode;
-                            model.Status = OrderStatus.InProcess.ToString();
-                            model.Country = model.Country;
-                            model.City = model.City;
-                            model.PhoneNo = model.PhoneNo;
-                            model.EmailId = model.EmailId;
-                            model.ShippingAddress = model.ShippingAddress;
-                            model.BillingAddress = model.BillingAddress;
-                            model.FK_ShippingDetails = shippingmodel.Id;
-                            model.IsShipping = model.shippingdetails != null;
-                            model.FK_CityId = citymodel.Id;
-                            model.OrderDescription = string.IsNullOrEmpty(model.OrderDescription) ? "order has been genrated successfully" : model.OrderDescription;
-                            OrderMaster orderresult = null;// model.TotalQuantity <= 0 ? null : await _orders.AndroidCreateOrder(model);
-                                                           // Insert order Master
-                            if (model.TotalQuantity > 0)
-                            {
-                                var reqordermodel = (OrderMaster)HelperFunctions.CopyPropertiesTo(model, new OrderMaster());
-                                orderresult = await _orders.AndroidCreateOrder(reqordermodel);
-                            }
-                            if (orderresult != null)
-                            {
-                                // Insert order Detail
-                                var ordermasterId = orderresult.Id;
-                                var orderNo = orderresult.OrderNo;
-                                if (cartlist != null)
+                                var shippingmodel = new ShippingDetail();
+                                // model Details Add
+                                model.FK_Customer = custoemrid;
+                                var cartlist = await _cart.GetCartProducts(model.guid, custoemrid, citymodel);
+                                if (cartlist != null && cartlist.Count() > 0)
                                 {
+                                    //for shipping address table..
+                                    if (model.shippingdetails != null)
+                                    {
+                                        shippingmodel.FirstName = model.shippingdetails.FirstName;
+                                        shippingmodel.LastName = model.shippingdetails.LastName;
+                                        shippingmodel.City = model.shippingdetails.City;
+                                        shippingmodel.Country = model.shippingdetails.Country;
+                                        shippingmodel.EmailId = model.shippingdetails.EmailId;
+                                        shippingmodel.PhoneNo = model.shippingdetails.PhoneNo;
+                                        shippingmodel.Address = model.shippingdetails.Address;
+                                        shippingmodel.IsActive = true;
+                                        shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
+                                    }
+
                                     foreach (var item in cartlist)
                                     {
                                         var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                         var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                        var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                        var ActualPricedetails = (decimal)(price * item.Quantity);
-                                        subTotal = (int)(subTotal + ActualPricedetails);
+                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                                        ActualPrice += ((decimal)(price * item.Quantity) / conversionvalue);
+                                        TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
+                                        subTotal = (subTotal + ActualPrice);
                                         tQuantity = (int)(tQuantity + item.Quantity);
-                                        var Order = new OrderVM
-                                        {
-                                            FK_OrderMaster = ordermasterId,
-                                            FK_ProductMaster = item.FK_ProductMaster,
-                                            SubTotalPrice = discountedprice,
-                                            DiscountAmount = totalDiscountAmount,
-                                            Price = price,
-                                            Discount = discount,
-                                            Quantity = item.Quantity,
-                                            FK_Customer = customerId,
-                                            ConversionRate = conversionvalue,
-                                            Currency = currency,
-
-                                        };
-                                        var response = await _ordersDetail.CreateOrderDetail(Order);
                                     }
-                                }
-                                // Sending Mail
-                                try
-                                {
-                                    string recepit = string.Empty;
-                                    string pth = Server.MapPath("~/Services/EmailTemplates/OrderEmail.html");
-                                    string MailText = Templates.OrderEmail(pth, model.username, orderresult.OrderDescription, orderresult.PhoneNo, orderresult.EmailId,
-                                           orderresult.CreatedOn.ToString(), orderresult.ShippingAddress, "", orderresult.PaymentMode,
-                                           orderresult.Status, orderresult.TotalQuantity.ToString(), currency,
-                                          orderresult.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
-                                          RemainingDiscountPrice.ToString(), ActualPrice.ToString(),
-                                         recepit);
-                                    bool IsSendEmail = HelperFunctions.EmailSend(model.useremail, "Thanks for Your Order!", MailText, true);
-                                }
-                                catch (Exception ex)
-                                {
-                                    //throw;
-                                }
+                                    model.PaymentStatus = false;
+                                    model.TotalPrice = Math.Round(TotalPrice, 2);
+                                    model.TotalQuantity = tQuantity;
+                                    model.Currency = currency;
+                                    model.ConversionRate = conversionvalue;
+                                    model.PaymentMode = model.PaymentMode;
+                                    model.Status = OrderStatus.InProcess.ToString();
+                                    model.Country = model.Country;
+                                    model.CityName = model.CityName;
+                                    model.PhoneNo = model.PhoneNo;
+                                    model.EmailId = model.EmailId;
+                                    model.ShippingAddress = model.ShippingAddress;
+                                    model.BillingAddress = model.BillingAddress;
+                                    model.FK_ShippingDetails = shippingmodel.Id;
+                                    model.IsShipping = model.shippingdetails != null;
+                                    model.FK_CityId = citymodel.Id;
+                                    model.OrderDescription = string.IsNullOrEmpty(model.OrderDescription) ? "order has been genrated successfully" : model.OrderDescription;
+                                    OrderMaster orderresult = null;// model.TotalQuantity <= 0 ? null : await _orders.AndroidCreateOrder(model);
+                                                                   // Insert order Master
+                                    if (model.TotalQuantity > 0)
+                                    {
+                                        var reqordermodel = (OrderMaster)HelperFunctions.CopyPropertiesTo(model, new OrderMaster());
+                                        orderresult = await _orders.AndroidCreateOrder(reqordermodel);
+                                    }
+                                    if (orderresult != null)
+                                    {
+                                        // Insert order Detail
+                                        var ordermasterId = orderresult.Id;
+                                        var orderNo = orderresult.OrderNo;
+                                        if (cartlist != null)
+                                        {
+                                            foreach (var item in cartlist)
+                                            {
+                                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                                var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                                                var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                                                var ActualPricedetails = (decimal)(price * item.Quantity);
+                                                subTotal = (int)(subTotal + ActualPricedetails);
+                                                tQuantity = (int)(tQuantity + item.Quantity);
+                                                var Order = new OrderVM
+                                                {
+                                                    FK_OrderMaster = ordermasterId,
+                                                    FK_ProductMaster = item.FK_ProductMaster,
+                                                    SubTotalPrice = discountedprice,
+                                                    DiscountAmount = totalDiscountAmount,
+                                                    Price = price,
+                                                    Discount = discount,
+                                                    Quantity = item.Quantity,
+                                                    FK_Customer = customerId,
+                                                    ConversionRate = conversionvalue,
+                                                    Currency = currency,
 
-                                if (model.PaymentMode == PaymentType.Stripe.ToString())
-                                {
-                                    return Json(new
+                                                };
+                                                var response = await _ordersDetail.CreateOrderDetail(Order);
+                                            }
+                                        }
+                                        // Sending Mail
+                                        try
+                                        {
+                                            string recepit = string.Empty;
+                                            string pth = Server.MapPath("~/Services/EmailTemplates/OrderEmail.html");
+                                            string MailText = Templates.OrderEmail(pth, model.username, orderresult.OrderDescription, orderresult.PhoneNo, orderresult.EmailId,
+                                                   orderresult.CreatedOn.ToString(), orderresult.ShippingAddress, "", orderresult.PaymentMode,
+                                                   orderresult.Status, orderresult.TotalQuantity.ToString(), currency,
+                                                  orderresult.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
+                                                  RemainingDiscountPrice.ToString(), ActualPrice.ToString(),
+                                                 recepit);
+                                            bool IsSendEmail = HelperFunctions.EmailSend(model.useremail, "Thanks for Your Order!", MailText, true);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            //throw;
+                                        }
+
+                                        if (model.PaymentMode == PaymentType.Stripe.ToString())
+                                        {
+                                            return Json(new
+                                            {
+                                                status = 200,
+                                                sucess = 1,
+                                                message = ResultStatus.Insert,
+                                                data = model
+                                            }, JsonRequestBehavior.AllowGet);
+                                        }
+                                        else if (model.PaymentMode == PaymentType.Paypal.ToString())
+                                        {
+                                            return Json(new
+                                            {
+                                                status = 200,
+                                                sucess = 1,
+                                                message = ResultStatus.Insert,
+                                                data = model
+                                            }, JsonRequestBehavior.AllowGet);
+                                        }
+                                        else if (model.PaymentMode == PaymentType.COD.ToString())
+                                        {
+                                            return Json(new
+                                            {
+                                                status = 200,
+                                                sucess = 1,
+                                                message = ResultStatus.Insert,
+                                                data = model
+                                            }, JsonRequestBehavior.AllowGet);
+                                        }
+                                        else
+                                        {
+                                            return Json(new
+                                            {
+                                                status = 400,
+                                                sucess = 0,
+                                                message = ResultStatus.failed,
+                                                data = model
+                                            }, JsonRequestBehavior.AllowGet);
+                                        }
+                                    }
+                                    else
                                     {
-                                        status = 200,
-                                        sucess = 1,
-                                        message = ResultStatus.Insert,
-                                        data = new { model }
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else if (model.PaymentMode == PaymentType.Paypal.ToString())
-                                {
-                                    return Json(new
-                                    {
-                                        status = 200,
-                                        sucess = 1,
-                                        message = ResultStatus.Insert,
-                                        data = new { model }
-                                    }, JsonRequestBehavior.AllowGet);
-                                }
-                                else if (model.PaymentMode == PaymentType.COD.ToString())
-                                {
-                                    return Json(new
-                                    {
-                                        status = 200,
-                                        sucess = 1,
-                                        message = ResultStatus.Insert,
-                                        data = new { model }
-                                    }, JsonRequestBehavior.AllowGet);
+                                        return Json(new
+                                        {
+                                            status = 400,
+                                            sucess = 0,
+                                            message = ResultStatus.failed,
+                                            data = model
+                                        }, JsonRequestBehavior.AllowGet);
+                                        // return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
+                                    }
                                 }
                                 else
                                 {
@@ -528,8 +578,8 @@ namespace B2CPortal.Controllers
                                     {
                                         status = 400,
                                         sucess = 0,
-                                        message = ResultStatus.failed,
-                                        data = new { model }
+                                        message = ResultStatus.EmptyFillData,
+                                        data = model
                                     }, JsonRequestBehavior.AllowGet);
                                 }
                             }
@@ -539,10 +589,9 @@ namespace B2CPortal.Controllers
                                 {
                                     status = 400,
                                     sucess = 0,
-                                    message = ResultStatus.failed,
-                                    data = new { model }
+                                    message = ResultStatus.unauthorized,
+                                    data = model
                                 }, JsonRequestBehavior.AllowGet);
-                                // return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
                             }
                         }
                         else
@@ -552,19 +601,10 @@ namespace B2CPortal.Controllers
                                 status = 400,
                                 sucess = 0,
                                 message = ResultStatus.EmptyFillData,
-                                data = new { model }
+                                data = model
                             }, JsonRequestBehavior.AllowGet);
                         }
-                    }
-                    else
-                    {
-                        return Json(new
-                        {
-                            status = 400,
-                            sucess = 0,
-                            message = ResultStatus.unauthorized,
-                            data = new { model }
-                        }, JsonRequestBehavior.AllowGet);
+
                     }
                 }
                 else
@@ -574,10 +614,11 @@ namespace B2CPortal.Controllers
                         status = 400,
                         sucess = 0,
                         message = ResultStatus.EmptyFillData,
-                        data = new { model }
+                        data = model
                     }, JsonRequestBehavior.AllowGet);
-                    //return Json(new { data = "", msg = "Not Insert 0 Quentity in Cart", success = false }, JsonRequestBehavior.AllowGet);
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -586,13 +627,13 @@ namespace B2CPortal.Controllers
                     status = 400,
                     sucess = 0,
                     message = ResultStatus.Error,
-                    data = new { ex.Message }
+                    data = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
 
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult> AndroidGetOrdersList(string userid, string guid = "")
         {
 
@@ -609,7 +650,7 @@ namespace B2CPortal.Controllers
                         AndroidCheckoutVM dd = (AndroidCheckoutVM)HelperFunctions.CopyPropertiesTo(item, new AndroidCheckoutVM());
                         var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
                         dd.OrderNo = result;
-                        dd.city = item?.City1?.Name;
+                        dd.CityName = item?.City1?.Name;
                         list.Add((AndroidCheckoutVM)dd);
                     }
                     return Json(new
@@ -617,7 +658,7 @@ namespace B2CPortal.Controllers
                         status = 200,
                         sucess = 1,
                         message = ResultStatus.success,
-                        data = new { list }
+                        data = list
                     }, JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -626,8 +667,8 @@ namespace B2CPortal.Controllers
                     {
                         status = 404,
                         sucess = 0,
-                        message = ResultStatus.unauthorized,
-                        data = new { list }
+                        message = ResultStatus.UserNotExist,
+                        data = list
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -637,27 +678,20 @@ namespace B2CPortal.Controllers
                 {
                     status = 500,
                     sucess = 0,
-                    message = ResultStatus.Error,
-                    data = new { ex.Message }
-                }, JsonRequestBehavior.AllowGet);
+                    message = ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet); ;
             }
         }
-        [HttpGet]
-        public async Task<JsonResult> AndroidGetOrderDetailsById(string orderid, string userid, string city, string guid = "")
+        [HttpPost]
+        public async Task<JsonResult> AndroidGetOrderDetailsById(string orderid, string userid, string usercity, string guid = "")
         {
-            ////get location from cookie
-            //string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
-            //if (string.IsNullOrEmpty(cookiecity))
-            //{
-            //    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
-            //}
-            //cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
             try
             {
                 List<AndroidOrderDetailsVM> orderdetailslist = new List<AndroidOrderDetailsVM>();
                 if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(orderid))
                 {
-                    City citymodel = await _ICity.GetCityByIdOrName(0, city);
+                    City citymodel = await _ICity.GetCityByIdOrName(0, usercity);
                     decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
                     var detailslist = await _ordersDetail.AndroidGetOrderDetailsById(Convert.ToInt32(orderid));
                     foreach (var item in detailslist)
@@ -685,7 +719,7 @@ namespace B2CPortal.Controllers
                         status = 200,
                         sucess = 1,
                         message = ResultStatus.success,
-                        data = new { orderdetailslist }
+                        data = orderdetailslist
                     }, JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -695,7 +729,7 @@ namespace B2CPortal.Controllers
                         status = 404,
                         sucess = 0,
                         message = ResultStatus.unauthorized,
-                        data = new { orderdetailslist }
+                        data = orderdetailslist
                     }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -706,11 +740,10 @@ namespace B2CPortal.Controllers
                     status = 404,
                     sucess = 0,
                     message = ResultStatus.Error,
-                    data = new { ex.Message }
+                    data = ex.Message
                 }, JsonRequestBehavior.AllowGet);
             }
         }
         #endregion
-
     }
 }

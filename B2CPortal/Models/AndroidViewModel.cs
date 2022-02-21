@@ -38,17 +38,31 @@ namespace B2CPortal.Models
         public string Address { get; set; }
         public string Guid { get; set; }
     }
+    public class CartDataList
+    {
+        public int ProductId { get; set; }
+        public decimal ProductPrice { get; set; }
+        public int ProductQuantity { get; set; }
+        public decimal? ProductDiscount { get; internal set; }
+    }
+    public class CartDataResponseList
+    {
+        public int ProductId { get; set; }
+        public decimal ProductPrice { get; set; }
+        public string Name { get; set; }
+        public decimal ProductDiscount { get; internal set; }
+    }
+    
     public class AndroidCheckoutVM
     {
-        public List<int> cartquentitelist { get; set; }
-        public List<int> cartidlist { get; set; }
+        public List<CartDataList> cartData { get; set; }
         public ShippingDetail shippingdetails { get; set; }
-        public string city { get; set; }
+        public string Usercity { get; set; }
         public string userid { get; set; }
         public string guid { get; set; }
+        //-----for prevent extra call db----------
         public string username { get; set; }
         public string useremail { get; set; }
-
         public int Id { get; set; }
         public string OrderDescription { get; set; }
         public Nullable<int> TotalQuantity { get; set; }
@@ -59,7 +73,6 @@ namespace B2CPortal.Models
         public string BillingAddress { get; set; }
         public string PhoneNo { get; set; }
         public string EmailId { get; set; }
-        public string City { get; set; }
         public string Country { get; set; }
         public string Status { get; set; }
         public string Currency { get; set; }
@@ -69,7 +82,7 @@ namespace B2CPortal.Models
         public bool IsShipping { get; set; }
         public Nullable<int> FK_ShippingDetails { get; set; }
         public Nullable<int> FK_CityId { get; set; }
-
+        public string CityName { get; internal set; }
     }
     public class AndroidOrderDetailsVM
     {
@@ -88,6 +101,7 @@ namespace B2CPortal.Models
     {
         public static string Error = "something went wrong";
         public static string failed = "something went wrong.Please try again";
+        public static string UserNotExist = "User Not Exist. Please try again.";
         public static string unauthorized = "Incorrect Email or password. Please try again.";
         public static string notfound = "Page Not Found";
         public static string Loginsuccess = "You are successfully logged in";
@@ -99,6 +113,7 @@ namespace B2CPortal.Models
         public static string Update = "ecord Updated Successfully";
         public static string Delete = "ecord Deleted Successfully";
         public static string EmptyFillData = "Please Fill All Fields Correctly. Please try again.";
+        public static string PriceChanged = "Price has been chaenged";
 
 
     }
