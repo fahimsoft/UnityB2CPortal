@@ -153,7 +153,7 @@ namespace B2CPortal.Controllers
                         {
                             status = 404,
                             sucess = 0,
-                            message = ResultStatus.notfound.ToString(),
+                            message = ResultStatus.unauthorized.ToString(),
                             data = model
                         }, JsonRequestBehavior.AllowGet);
                     }
@@ -636,22 +636,28 @@ namespace B2CPortal.Controllers
         [HttpPost]
         public async Task<ActionResult> AndroidGetOrdersList(string userid, string guid = "")
         {
-
             try
             {
                 decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-                List<AndroidCheckoutVM> list = new List<AndroidCheckoutVM>();
+                List<AndroidOrderListVM> list = new List<AndroidOrderListVM>();
                 if (!string.IsNullOrEmpty(userid) && Convert.ToInt32(userid) > 0)
                 {
                     var orderlist = await _orders.AndroidGetOrderList(Convert.ToInt32(userid));
-
                     foreach (var item in orderlist)
                     {
-                        AndroidCheckoutVM dd = (AndroidCheckoutVM)HelperFunctions.CopyPropertiesTo(item, new AndroidCheckoutVM());
-                        var result = HelperFunctions.GenrateOrderNumber(dd.Id.ToString());
-                        dd.OrderNo = result;
-                        dd.CityName = item?.City1?.Name;
-                        list.Add((AndroidCheckoutVM)dd);
+                        List<AndroidOrderDetailsListVM> odlist = new List<AndroidOrderDetailsListVM>();
+                        AndroidOrderListVM omodel = (AndroidOrderListVM)HelperFunctions.CopyPropertiesTo(item, new AndroidOrderListVM());
+                        var result = HelperFunctions.GenrateOrderNumber(omodel.Id.ToString());
+                        omodel.OrderNo = result;
+                        omodel.City = item?.City1?.Name;
+                        var orderdetailslist =  await _ordersDetail.GetOrderDetailsById(item.Id);
+                        orderdetailslist.ToList().ForEach(x =>
+                        {
+                            AndroidOrderDetailsListVM odmodel = (AndroidOrderDetailsListVM)HelperFunctions.CopyPropertiesTo(x, new AndroidOrderDetailsListVM());
+                            odlist.Add(odmodel);
+                        });
+                        omodel.AndroidOrderDetailsListVMs = odlist;
+                        list.Add((AndroidOrderListVM)omodel);
                     }
                     return Json(new
                     {

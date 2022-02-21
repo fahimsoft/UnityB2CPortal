@@ -52,7 +52,38 @@ namespace B2CPortal.Models
         public string Name { get; set; }
         public decimal ProductDiscount { get; internal set; }
     }
-    
+
+    public class AndroidOrderListVM
+    {
+        //public ShippingDetail shippingdetails { get; set; }
+        public List<AndroidOrderDetailsListVM> AndroidOrderDetailsListVMs { get; set; }
+        //public string Usercity { get; set; }
+        //public string userid { get; set; }
+        //public string guid { get; set; }
+        //-----for prevent extra call db----------
+        //public string username { get; set; }
+        //public string useremail { get; set; }
+        public int Id { get; set; }
+        public string OrderDescription { get; set; }
+        public Nullable<int> TotalQuantity { get; set; }
+        public Nullable<decimal> TotalPrice { get; set; }
+        //public int FK_Customer { get; set; }
+        public string OrderNo { get; set; }
+        public string ShippingAddress { get; set; }
+        public string BillingAddress { get; set; }
+        public string PhoneNo { get; set; }
+        public string EmailId { get; set; }
+        public string Country { get; set; }
+        public string Status { get; set; }
+        public string Currency { get; set; }
+        public Nullable<decimal> ConversionRate { get; set; }
+        public string PaymentMode { get; set; }
+        public Nullable<bool> PaymentStatus { get; set; }
+        //public bool IsShipping { get; set; }
+        //public Nullable<int> FK_ShippingDetails { get; set; }
+        //public Nullable<int> FK_CityId { get; set; }
+        public string City { get; internal set; }
+    }
     public class AndroidCheckoutVM
     {
         public List<CartDataList> cartData { get; set; }
@@ -116,5 +147,24 @@ namespace B2CPortal.Models
         public static string PriceChanged = "Price has been chaenged";
 
 
+    }
+    public class AndroidOrderDetailsListVM
+    {
+        public int Id { get; set; }
+        public Nullable<int> Quantity { get; set; }
+        public Nullable<decimal> Price { get; set; }
+        //public int FK_OrderMaster { get; set; }
+        //public int FK_ProductMaster { get; set; }
+        public Nullable<decimal> Discount { get; set; }
+        public Nullable<System.DateTime> CreatedOn { get; set; }
+        //public Nullable<int> CreatedBy { get; set; }
+        //public Nullable<System.DateTime> ModifiedOn { get; set; }
+        //public Nullable<int> ModifiedBy { get; set; }
+        //public Nullable<bool> IsActive { get; set; }
+        //public Nullable<int> FK_Customer { get; set; }
+        public Nullable<decimal> DiscountedPrice { get; set; }
+        public Nullable<decimal> TotalPrice { get; set; }
+        public string Currency { get; set; }
+        public Nullable<decimal> ConversionRate { get; set; }
     }
 }
