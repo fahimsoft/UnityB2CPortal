@@ -46,6 +46,31 @@ namespace B2CPortal.Controllers
         }
         // GET: AndriodData
         [HttpPost]
+        public async Task<ActionResult> AndroidProductDataById(string productid , string userid , string guid = "")
+        {
+            if (!string.IsNullOrEmpty(productid))
+            {
+            var productdetails =  await  _IProductMaster.AndroidGetProductByIdWithRating(Convert.ToInt32(productid));
+                return Json(new
+                {
+                    status = 200,
+                    sucess = 1,
+                    message = ResultStatus.success,
+                    data = productdetails
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = 400,
+                    sucess = 0,
+                    message = ResultStatus.failed,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
         public async Task<ActionResult> AndroidHomePageData(string guid = "", string userid = "")
         {
             try
@@ -94,6 +119,7 @@ namespace B2CPortal.Controllers
                 });
             }
         }
+      
         #region Account management
         public ActionResult AndroidNewGuid()
         {
@@ -111,6 +137,10 @@ namespace B2CPortal.Controllers
                     if (resultmodel != null && resultmodel.Id > 0)
                     {
                         model = (AndroidAuthenticationVM)HelperFunctions.CopyPropertiesTo(resultmodel, new AndroidAuthenticationVM());
+                        if (string.IsNullOrEmpty(model.Guid))
+                        {
+                            model.Guid = guid;
+                        }
                         City citymodel = await _ICity.GetCityByIdOrName(0, city);
                         string cookie = string.Empty;
                         if (!string.IsNullOrEmpty(guid) && guid != "undefined")
@@ -339,7 +369,6 @@ namespace B2CPortal.Controllers
         [HttpPost]
         public async Task<ActionResult> AndroidCheckout(AndroidCheckoutVM model)
         {
-
             //insert cart data
             try
             {
@@ -632,7 +661,6 @@ namespace B2CPortal.Controllers
             }
 
         }
-
         [HttpPost]
         public async Task<ActionResult> AndroidGetOrdersList(string userid, string guid = "")
         {
@@ -651,11 +679,15 @@ namespace B2CPortal.Controllers
                         omodel.OrderNo = result;
                         omodel.City = item?.City1?.Name;
                         var orderdetailslist =  await _ordersDetail.GetOrderDetailsById(item.Id);
-                        orderdetailslist.ToList().ForEach(x =>
+                        foreach (var oditem in orderdetailslist)
                         {
-                            AndroidOrderDetailsListVM odmodel = (AndroidOrderDetailsListVM)HelperFunctions.CopyPropertiesTo(x, new AndroidOrderDetailsListVM());
+                            AndroidOrderDetailsListVM odmodel = (AndroidOrderDetailsListVM)HelperFunctions.CopyPropertiesTo(oditem, new AndroidOrderDetailsListVM());
+                            var pmodel = await _IProductMaster.AndroidGetProductById(oditem.FK_ProductMaster);
+                            odmodel.ImageURL = pmodel.MasterImageUrl;
+                            odmodel.Name = pmodel.Name;
+                            odmodel.CreatedOnDate = oditem.CreatedOn.ToString();
                             odlist.Add(odmodel);
-                        });
+                        }
                         omodel.AndroidOrderDetailsListVMs = odlist;
                         list.Add((AndroidOrderListVM)omodel);
                     }
@@ -689,67 +721,67 @@ namespace B2CPortal.Controllers
                 }, JsonRequestBehavior.AllowGet); ;
             }
         }
-        [HttpPost]
-        public async Task<JsonResult> AndroidGetOrderDetailsById(string orderid, string userid, string usercity, string guid = "")
-        {
-            try
-            {
-                List<AndroidOrderDetailsVM> orderdetailslist = new List<AndroidOrderDetailsVM>();
-                if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(orderid))
-                {
-                    City citymodel = await _ICity.GetCityByIdOrName(0, usercity);
-                    decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-                    var detailslist = await _ordersDetail.AndroidGetOrderDetailsById(Convert.ToInt32(orderid));
-                    foreach (var item in detailslist)
-                    {
-                        var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
-                        string name = productmasetr.Name;
-                        string MasterImageUrl = productmasetr.MasterImageUrl;
-                        var detailsobj = new AndroidOrderDetailsVM
-                        {
-                            Name = name,
-                            Price = item.Price,
-                            Discount = item.Discount,
-                            SubTotalPrice = item.Price * item.Quantity,
-                            DiscountedPrice = item.DiscountedPrice,
-                            Quantity = item.Quantity,
-                            TotalPrice = item.TotalPrice,
-                            MasterImageUrl = MasterImageUrl,
-                            Date = item.CreatedOn.ToString(),
-                            FK_ProductMaster = item.FK_ProductMaster
-                        };
-                        orderdetailslist.Add(detailsobj);
-                    }
-                    return Json(new
-                    {
-                        status = 200,
-                        sucess = 1,
-                        message = ResultStatus.success,
-                        data = orderdetailslist
-                    }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new
-                    {
-                        status = 404,
-                        sucess = 0,
-                        message = ResultStatus.unauthorized,
-                        data = orderdetailslist
-                    }, JsonRequestBehavior.AllowGet);
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new
-                {
-                    status = 404,
-                    sucess = 0,
-                    message = ResultStatus.Error,
-                    data = ex.Message
-                }, JsonRequestBehavior.AllowGet);
-            }
-        }
+        //[HttpPost]
+        //public async Task<JsonResult> AndroidGetOrderDetailsById(string orderid, string userid, string usercity, string guid = "")
+        //{
+        //    try
+        //    {
+        //        List<AndroidOrderDetailsVM> orderdetailslist = new List<AndroidOrderDetailsVM>();
+        //        if (!string.IsNullOrEmpty(userid) && !string.IsNullOrEmpty(orderid))
+        //        {
+        //            City citymodel = await _ICity.GetCityByIdOrName(0, usercity);
+        //            decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+        //            var detailslist = await _ordersDetail.AndroidGetOrderDetailsById(Convert.ToInt32(orderid));
+        //            foreach (var item in detailslist)
+        //            {
+        //                var productmasetr = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+        //                string name = productmasetr.Name;
+        //                string MasterImageUrl = productmasetr.MasterImageUrl;
+        //                var detailsobj = new AndroidOrderDetailsVM
+        //                {
+        //                    Name = name,
+        //                    Price = item.Price,
+        //                    Discount = item.Discount,
+        //                    SubTotalPrice = item.Price * item.Quantity,
+        //                    DiscountedPrice = item.DiscountedPrice,
+        //                    Quantity = item.Quantity,
+        //                    TotalPrice = item.TotalPrice,
+        //                    MasterImageUrl = MasterImageUrl,
+        //                    Date = item.CreatedOn.ToString(),
+        //                    FK_ProductMaster = item.FK_ProductMaster
+        //                };
+        //                orderdetailslist.Add(detailsobj);
+        //            }
+        //            return Json(new
+        //            {
+        //                status = 200,
+        //                sucess = 1,
+        //                message = ResultStatus.success,
+        //                data = orderdetailslist
+        //            }, JsonRequestBehavior.AllowGet);
+        //        }
+        //        else
+        //        {
+        //            return Json(new
+        //            {
+        //                status = 404,
+        //                sucess = 0,
+        //                message = ResultStatus.unauthorized,
+        //                data = orderdetailslist
+        //            }, JsonRequestBehavior.AllowGet);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new
+        //        {
+        //            status = 404,
+        //            sucess = 0,
+        //            message = ResultStatus.Error,
+        //            data = ex.Message
+        //        }, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
         #endregion
     }
 }

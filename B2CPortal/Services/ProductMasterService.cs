@@ -859,5 +859,77 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+        public async Task<ProductMaster> AndroidGetProductById(int Id)
+        {
+            try
+            {
+                var obj = await _dxcontext.ProductMasters
+                    .Include(x => x.ProductPrices)
+                    .Include(x => x.ProductPackSize)
+                    .FirstOrDefaultAsync(x => x.Id == Id);
+                return obj;
+            }
+            catch (Exception Ex)
+            {
+
+                throw Ex;
+            }
+        }
+        public async Task<AndroidProductDetails> AndroidGetProductByIdWithRating(int pid)
+        {
+            try
+            {
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
+
+                var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + pid + "").ToList<ProductsVM>();
+
+                var obj = await _dxcontext.ProductMasters
+                .Include(x => x.ProductPrices)
+                .Include(x => x.ProductDetails)
+                .Include(x => x.ProductPackSize)
+                .AsNoTracking().Where(x => x.Id == pid).ToListAsync();
+
+                AndroidProductDetails producVMList = null;
+                foreach (var item in obj)
+                {
+                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    producVMList = new AndroidProductDetails
+                    {
+                        Id = item.Id,
+                        Name = item.Name,
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        DiscountedAmount = discountedprice,
+                        Discount = discount,
+                        MasterImageUrl = item.MasterImageUrl,
+                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                        ShortDescription = item.ShortDescription,
+                        LongDescription = item.LongDescription,
+                        UOM = item.ProductPackSize.UOM,
+                        TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
+                        AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
+                        SlideerImages = item.ProductDetails.Select(x => x.ImageUrl).ToList(),
+                        Comments = _dxcontext.CommentAndRatings.Where(y => y.FK_ProductMaster == item.Id).Select(z => z.Comment).ToList()
+
+                    };
+                }
+
+
+
+                return producVMList;
+
+
+
+
+            }
+            catch (Exception Ex)
+            {
+
+
+
+                throw Ex;
+            }
+        }
     }
 }

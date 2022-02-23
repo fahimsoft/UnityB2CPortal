@@ -152,6 +152,8 @@ namespace B2CPortal.Models
     {
         public int Id { get; set; }
         public Nullable<int> Quantity { get; set; }
+        public string Name { get; set; }
+        public string ImageURL { get; set; }
         public Nullable<decimal> Price { get; set; }
         //public int FK_OrderMaster { get; set; }
         //public int FK_ProductMaster { get; set; }
@@ -166,5 +168,6 @@ namespace B2CPortal.Models
         public Nullable<decimal> TotalPrice { get; set; }
         public string Currency { get; set; }
         public Nullable<decimal> ConversionRate { get; set; }
+        public string CreatedOnDate { get; internal set; }
     }
 }
