@@ -206,6 +206,7 @@ namespace API_Base.Common
                 string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
                 string Password = ConfigurationManager.AppSettings["Password"].ToString();
                 int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
+                bool IsSSL =  Convert.ToBoolean(ConfigurationManager.AppSettings["IsSSL"]);
 
                 MailMessage mailMessage = new MailMessage();
 
@@ -220,7 +221,7 @@ namespace API_Base.Common
                 {
                     smtp.UseDefaultCredentials = false;
                     smtp.Credentials = new NetworkCredential(FormEmailId, Password);
-                    smtp.EnableSsl = true;
+                    smtp.EnableSsl = IsSSL;
                     smtp.Timeout = 20000;
                     smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                     smtp.Send(mailMessage);

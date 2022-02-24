@@ -27,9 +27,9 @@
                     <div class="custom-input">
                         <form id="billing">
                             @Html.HiddenFor(m => m.FK_Customer)
-                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar", id= "FirstName" } })
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar", id = "FirstName" } })
                             @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control removespecialchar", id = "LastName" } })
-                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control removespecialchar",id= "EmailId" } })
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control removespecialchar", id = "EmailId" } })
                             @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control removespecialchar", id = "PhoneNo" } })
 
                             @if (Model.FK_Customer > 0)
@@ -64,7 +64,7 @@
 
                             <div class="custom-select">
                                 <label>Order Description</label>
-                                <textarea  id="OrderDescription" name="OrderDescription" class="form-control" placeholder="Order Description"></textarea>
+                                <textarea id="OrderDescription" name="OrderDescription" class="form-control" placeholder="Order Description"></textarea>
                             </div>
                             <div class="row">
                                 <label class="switch">
@@ -200,41 +200,6 @@
                     <div class="log-title">
                         <h3><strong>Payment method's</strong></h3>
                     </div>
-                    @*<div class="form-check">
-            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "checked") class="form-check-input" value="Stripe" type="radio" name="paymode">
-            <label class="form-check-label">
-                Stripe Payment
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/paypal.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "") class="form-check-input" value="Paypal" type="radio" name="paymode">
-            <label class="form-check-label">
-                Paypal Payment
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="HBL" type="radio" name="paymode">
-            <label class="form-check-label">
-                HBL (Habib Bank Limited)
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="JazzCash" type="radio" name="paymode">
-            <label class="form-check-label">
-                Jazz Cash (Mobilink)
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="EasyPaisa" type="radio" name="paymode">
-            <label class="form-check-label">
-                Easypaisa (Telenor)
-            </label>
-        </div>*@
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
@@ -259,84 +224,9 @@
                         </div>
                     }
                 </div>
-                    </div>
-
+            </div>
 
         </div>
-        <!-- Modal starts -->
-
-        <!--<div class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">Confirm Order</h3>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body cartdrop-sin-container">
-
-                        <div class="cart-form-text pay-details table-responsive">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <td>Total</td>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    @if (Model.orderVMs != null)
-                                    {
-                                        foreach (var item in Model.orderVMs)
-                                        {
-                                            <tr>
-                                                <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
-                                                <td> <strong class="pricesymbol"> </strong> @item.SubTotalPrice </td>
-                                            </tr>
-                                        }
-                                    }
-
-                                    <tr>
-                                        <th>Cart Subtotal</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.CartSubTotal</td>
-
-                                    </tr>
-                                    <tr>
-                                        <th>Total Discount</th>
-                                        <td> <strong class="pricesymbol"> </strong> @Model.CartSubTotalDiscount </td>
-                                    </tr>
-
-                                    <tr>
-                                        <th>Shipping and Handing</th>
-                                        <td><strong class="pricesymbol"> </strong>  00.00</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Vat</th>
-                                        <td> <strong class="pricesymbol"> </strong>  00.00</td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>Order total</th>
-                                        <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" id="confirmBtn" class="btn btn-primary">Confirm</button>
-                        <button type="button" class="cancelBtn btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>-->
-        <!-- Modal Ends -->
-
-
     </div>
 
 </section>
@@ -423,7 +313,7 @@
                 }
                 var form = $("#billing");
                 $.validator.unobtrusive.parse(form);
-                        //==============================confirm order===============================
+                //==============================confirm order===============================
                 if ($(form).valid()) {
                     if (confirm("Are You Sure To Confirm Order !")) {
                         $(this).attr('disabled', 'disabled');
@@ -438,7 +328,7 @@
                                 var shippingdata = $("#shipping").serializeArray();
                                 shippingdetails = FormDataToObject(shippingdata);
                             }
-                            
+
                             var datatosend = {
                                 Billing: {
                                     /*Id: $('#Id').val(),*/
@@ -514,7 +404,7 @@
         //    if (paymenttype == undefined || paymenttype == "") {
         //        toastr.error("Please Select Payment Type.");
         //    } else {
-                
+
         //        var form = $("#billing");
         //        //work for shipping detils.
         //        var shippingdetails = {};
