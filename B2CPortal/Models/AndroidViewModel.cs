@@ -51,6 +51,8 @@ namespace B2CPortal.Models
         public decimal ProductPrice { get; set; }
         public string Name { get; set; }
         public decimal ProductDiscount { get; internal set; }
+        public string MasterImageUrl { get; internal set; }
+        public int ProductQuantity { get; internal set; }
     }
 
     public class AndroidOrderListVM
@@ -140,7 +142,8 @@ namespace B2CPortal.Models
         public static string AlreadyExist = "You are Already Registered.";
         public static string success = "Success";
 
-        public static string Insert = "ecord Inserted Successfully";
+        public static string Insertorder = "Order placed successfully ";
+        public static string Insert = "Record Inserted Successfully";
         public static string Update = "ecord Updated Successfully";
         public static string Delete = "ecord Deleted Successfully";
         public static string EmptyFillData = "Please Fill All Fields Correctly. Please try again.";

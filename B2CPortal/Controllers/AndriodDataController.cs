@@ -357,10 +357,10 @@ namespace B2CPortal.Controllers
             {
                 return Json(new
                 {
-                    status = 200,
-                    sucess = 1,
-                    message = ResultStatus.Error,
-                    data = new { ex.Message }
+                    status = 500,
+                    sucess = 0,
+                    message = ex.Message,
+                    data =  new {}
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -397,9 +397,11 @@ namespace B2CPortal.Controllers
                             reslist.Add(new CartDataResponseList
                             {
                                 ProductId = item.ProductId,
+                                ProductQuantity = item.ProductQuantity,
                                 ProductPrice = (decimal)price,
                                 ProductDiscount = (decimal)discount,
-                                Name = productobj.Name
+                                Name = productobj.Name,
+                                MasterImageUrl = productobj.MasterImageUrl
                             });
                         }
                     }
@@ -415,7 +417,7 @@ namespace B2CPortal.Controllers
                     }
                     else
                     {
-                        if (reslist.Count() < 0)
+                        if (reslist.Count() <= 0)
                         {
                             foreach (var item in model.cartData)
                             {
@@ -443,8 +445,8 @@ namespace B2CPortal.Controllers
                                 var shippingmodel = new ShippingDetail();
                                 // model Details Add
                                 model.FK_Customer = custoemrid;
-                                var cartlist = await _cart.GetCartProducts(model.guid, custoemrid, citymodel);
-                                if (cartlist != null && cartlist.Count() > 0)
+                                //var cartlist = await _cart.GetCartProducts(model.guid, custoemrid, citymodel);
+                                if (model.cartData != null && model.cartData.Count() > 0)
                                 {
                                     //for shipping address table..
                                     if (model.shippingdetails != null)
@@ -460,17 +462,17 @@ namespace B2CPortal.Controllers
                                         shippingmodel = await _IShippingDetails.CreateShippingDetail(shippingmodel);
                                     }
 
-                                    foreach (var item in cartlist)
+                                    foreach (var item in model.cartData)
                                     {
-                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                        var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                        ActualPrice += ((decimal)(price * item.Quantity) / conversionvalue);
+                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice), 2);
+                                        ActualPrice += ((decimal)(price * item.ProductQuantity) / conversionvalue);
                                         TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
                                         subTotal = (subTotal + ActualPrice);
-                                        tQuantity = (int)(tQuantity + item.Quantity);
+                                        tQuantity = (int)(tQuantity + item.ProductQuantity);
                                     }
                                     model.PaymentStatus = false;
                                     model.TotalPrice = Math.Round(TotalPrice, 2);
@@ -501,27 +503,27 @@ namespace B2CPortal.Controllers
                                         // Insert order Detail
                                         var ordermasterId = orderresult.Id;
                                         var orderNo = orderresult.OrderNo;
-                                        if (cartlist != null)
+                                        if (model.cartData != null)
                                         {
-                                            foreach (var item in cartlist)
+                                            foreach (var item in model.cartData)
                                             {
-                                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                                var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
-                                                var ActualPricedetails = (decimal)(price * item.Quantity);
+                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice), 2);
+                                                var ActualPricedetails = (decimal)(price * item.ProductQuantity);
                                                 subTotal = (int)(subTotal + ActualPricedetails);
-                                                tQuantity = (int)(tQuantity + item.Quantity);
+                                                tQuantity = (int)(tQuantity + item.ProductQuantity);
                                                 var Order = new OrderVM
                                                 {
                                                     FK_OrderMaster = ordermasterId,
-                                                    FK_ProductMaster = item.FK_ProductMaster,
+                                                    FK_ProductMaster = item.ProductId,
                                                     SubTotalPrice = discountedprice,
                                                     DiscountAmount = totalDiscountAmount,
                                                     Price = price,
                                                     Discount = discount,
-                                                    Quantity = item.Quantity,
+                                                    Quantity = item.ProductQuantity,
                                                     FK_Customer = customerId,
                                                     ConversionRate = conversionvalue,
                                                     Currency = currency,
@@ -554,8 +556,8 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insert,
-                                                data = model
+                                                message = ResultStatus.Insertorder,
+                                                data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
                                         else if (model.PaymentMode == PaymentType.Paypal.ToString())
@@ -564,8 +566,8 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insert,
-                                                data = model
+                                                message = ResultStatus.Insertorder,
+                                                data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
                                         else if (model.PaymentMode == PaymentType.COD.ToString())
@@ -574,8 +576,8 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insert,
-                                                data = model
+                                                message = ResultStatus.Insertorder,
+                                                data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
                                         else
@@ -585,7 +587,7 @@ namespace B2CPortal.Controllers
                                                 status = 400,
                                                 sucess = 0,
                                                 message = ResultStatus.failed,
-                                                data = model
+                                                data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
                                     }
@@ -596,7 +598,7 @@ namespace B2CPortal.Controllers
                                             status = 400,
                                             sucess = 0,
                                             message = ResultStatus.failed,
-                                            data = model
+                                            data = new List<object>()
                                         }, JsonRequestBehavior.AllowGet);
                                         // return Json(new { data = "", msg = "Please Re-Genrate Your Order.", success = false }, JsonRequestBehavior.AllowGet);
                                     }
@@ -608,7 +610,7 @@ namespace B2CPortal.Controllers
                                         status = 400,
                                         sucess = 0,
                                         message = ResultStatus.EmptyFillData,
-                                        data = model
+                                        data = new List<object>()
                                     }, JsonRequestBehavior.AllowGet);
                                 }
                             }
@@ -619,7 +621,7 @@ namespace B2CPortal.Controllers
                                     status = 400,
                                     sucess = 0,
                                     message = ResultStatus.unauthorized,
-                                    data = model
+                                    data = new List<object>()
                                 }, JsonRequestBehavior.AllowGet);
                             }
                         }
@@ -630,7 +632,7 @@ namespace B2CPortal.Controllers
                                 status = 400,
                                 sucess = 0,
                                 message = ResultStatus.EmptyFillData,
-                                data = model
+                                data = new List<object>()
                             }, JsonRequestBehavior.AllowGet);
                         }
 
@@ -643,7 +645,7 @@ namespace B2CPortal.Controllers
                         status = 400,
                         sucess = 0,
                         message = ResultStatus.EmptyFillData,
-                        data = model
+                        data = new List<object>()
                     }, JsonRequestBehavior.AllowGet);
                 }
 
@@ -655,8 +657,8 @@ namespace B2CPortal.Controllers
                 {
                     status = 400,
                     sucess = 0,
-                    message = ResultStatus.Error,
-                    data = ex.Message
+                    message = ex.Message,
+                    data = new List<object>()
                 }, JsonRequestBehavior.AllowGet);
             }
 

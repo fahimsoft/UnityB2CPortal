@@ -167,7 +167,7 @@ namespace B2CPortal.Services
         {
             try
             {
-                Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
+               // Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
                 if (Current == null)
                 {
                     New();
@@ -190,7 +190,7 @@ namespace B2CPortal.Services
                     Current.PaymentStatus = Billing.PaymentStatus;
                     Current.OrderDescription = Billing.OrderDescription;
                     Current.FK_CityId = Billing.FK_CityId;
-                    Current.FK_ShippingDetails = Billing.FK_ShippingDetails;
+                    Current.FK_ShippingDetails = Billing.FK_ShippingDetails <= 0 ? null : Billing.FK_ShippingDetails;
                 }
                 else
                 {
