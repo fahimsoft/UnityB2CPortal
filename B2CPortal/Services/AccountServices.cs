@@ -16,7 +16,7 @@ namespace B2CPortal.Services
         {
             try
             {
-                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId); 
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId);
                 if (Current == null)
                 {
                     New();
@@ -212,23 +212,25 @@ namespace B2CPortal.Services
         {
             try
             {
-                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id || x.EmailId == customer.EmailId);
+                Current = await _dxcontext.customers.FirstOrDefaultAsync(x => x.Id == customer.Id && x.IsActive == true);
                 if (Current != null)
                 {
                     //New();
                     PrimaryKeyValue = Current.Id;
                     //Current.Guid = customer.Guid;
                     //Current.RegisteredFrom = customer.RegisteredFrom;
-                    Current.FirstName = customer.FirstName;
-                    Current.LastName = customer.LastName;
+                    Current.FirstName = customer?.FirstName;
+                    Current.LastName = customer?.LastName;
                     Current.PhoneNo = customer.PhoneNo;
                     //Current.EmailId = customer.EmailId;
                     //Current.Password = customer.Password;
-                    Current.Gender = customer.Gender;
-                    Current.DateOfBirth = customer.DateOfBirth;
+                    Current.Gender = customer?.Gender;
+                    Current.DateOfBirth = customer?.DateOfBirth;
                     //Current.IsVerified = true;
-                    Current.City = customer.City;
-                    Current.Address = customer.Address;
+                    Current.City = customer?.City;
+                    Current.Address = customer?.Address;
+                    Current.Country = customer?.Country;
+                    Current.IsAppUser = true;
 
                     Save();
                     return Current;
@@ -243,7 +245,27 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-
-
+        public async Task<customer> AndroidChangePassword(customer customer)
+        {
+            try
+            {
+                Current = await _dxcontext.customers.Where(x => x.EmailId == customer.EmailId && x.Id == customer.Id && x.IsActive == true).FirstOrDefaultAsync();
+                if (Current != null)
+                {
+                    PrimaryKeyValue = Current.Id;
+                    Current.Password = customer.Password;
+                    Save();
+                    return Current;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

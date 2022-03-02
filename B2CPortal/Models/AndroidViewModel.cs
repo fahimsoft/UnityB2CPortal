@@ -144,8 +144,8 @@ namespace B2CPortal.Models
 
         public static string Insertorder = "Order placed successfully ";
         public static string Insert = "Record Inserted Successfully";
-        public static string Update = "ecord Updated Successfully";
-        public static string Delete = "ecord Deleted Successfully";
+        public static string Update = "Record Updated Successfully";
+        public static string Delete = "Record Deleted Successfully";
         public static string EmptyFillData = "Please Fill All Fields Correctly. Please try again.";
         public static string PriceChanged = "Price has been chaenged";
 

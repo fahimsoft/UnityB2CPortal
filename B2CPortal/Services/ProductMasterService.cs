@@ -39,7 +39,7 @@ namespace B2CPortal.Services
             try
             {
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
-                var obj = await _dxcontext.ProductMasters.Where(x=>x.IsFeatured && x.IsActive == true)
+                var obj = await _dxcontext.ProductMasters.Where(x => x.IsFeatured && x.IsActive == true)
                     .Include(x => x.ProductPrices)
                     //.Include(x => x.ProductDetails)
                     .AsNoTracking()
@@ -60,7 +60,7 @@ namespace B2CPortal.Services
             try
             {
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
-                var obj = await _dxcontext.ProductMasters.Where(x=> x.IsActive == true && x.IsNewArrival == true)
+                var obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true && x.IsNewArrival == true)
                     .Include(x => x.ProductPrices)
                     .AsNoTracking()
                     .OrderByDescending(a => a.Id)
@@ -86,8 +86,8 @@ namespace B2CPortal.Services
                     //.Where(x=>x.Id==Id)
                     .AsNoTracking()
                     .FirstOrDefaultAsync(x => x.Id == Id);
-                    //.OrderByDescending(a=>a.Id);//  GetAll();
-                    obj.ProductPrices =  obj.ProductPrices.Where(y => y.FK_City == cityid).ToList();
+                //.OrderByDescending(a=>a.Id);//  GetAll();
+                obj.ProductPrices = obj.ProductPrices.Where(y => y.FK_City == cityid).ToList();
                 return obj;
 
 
@@ -102,10 +102,10 @@ namespace B2CPortal.Services
         {
             try
             {
-                    
+
                 var obj = await _dxcontext.ProductMasters
-                    .Where(x=>x.IsActive == true)
-                    .Include(x => x.ProductPrices.Where(i=>i.IsActive == true))
+                    .Where(x => x.IsActive == true)
+                    .Include(x => x.ProductPrices.Where(i => i.IsActive == true))
                     .AsNoTracking().Where(x => x.Id == Id)
                     .FirstOrDefaultAsync();
                 //obj.ProductPrices.FirstOrDefault(x => x.IsActive == true);
@@ -127,7 +127,7 @@ namespace B2CPortal.Services
                     .Include(x => x.ProductPrices)
                     .Include(x => x.ProductDetails)
                     .Include(x => x.ProductPackSize)
-                    .Where(x=>x.Name.Contains(name)).OrderByDescending(a => a.Id).AsNoTracking().ToListAsync();//  GetAll();
+                    .Where(x => x.Name.Contains(name)).OrderByDescending(a => a.Id).AsNoTracking().ToListAsync();//  GetAll();
                 return obj;
             }
             catch (Exception Ex)
@@ -193,7 +193,7 @@ namespace B2CPortal.Services
                           join PD in _dxcontext.ProductDetails on PM.Id equals PD.FK_ProductMaster
                           where PM.Name.Contains(name)
                           select new { PM.Id, PM.Name, PM.ShortDescription, PM.LongDescription, PM.MasterImageUrl, PP.Price, PD.ImageUrl };
-                var obj2 = await obj. ToListAsync().ConfigureAwait(false);
+                var obj2 = await obj.ToListAsync().ConfigureAwait(false);
                 var dd = await obj.Select(x => new ProductsVM()
 
                 {
@@ -354,10 +354,10 @@ namespace B2CPortal.Services
                         .Skip(prevPage).Take(nextPage)
                         .ToListAsync();
 
-                          totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
-                        && (cat.Contains(x.FK_ProductCategory)
-                        && brand.Contains(x.FK_ProductBrand))
-                        );
+                        totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true
+                      && (cat.Contains(x.FK_ProductCategory)
+                      && brand.Contains(x.FK_ProductBrand))
+                      );
                     }
                 }
                 else if (cat.Length > 0)
@@ -493,7 +493,7 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price *  (1 - (discount / 100))) / conversionvalue), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
                     //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
 
@@ -883,53 +883,51 @@ namespace B2CPortal.Services
 
                 var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + pid + "").ToList<ProductsVM>();
 
-                var obj = await _dxcontext.ProductMasters
+                var pdetails = await _dxcontext.ProductMasters
                 .Include(x => x.ProductPrices)
                 .Include(x => x.ProductDetails)
                 .Include(x => x.ProductPackSize)
-                .AsNoTracking().Where(x => x.Id == pid).ToListAsync();
-
+                .AsNoTracking().Where(x => x.Id == pid).FirstOrDefaultAsync();
                 AndroidProductDetails producVMList = null;
-                foreach (var item in obj)
+                List<AndroidCommentAndRating> commentlist = new List<AndroidCommentAndRating>();
+                var Commentandratingslist = _dxcontext.CommentAndRatings.Where(y => y.FK_ProductMaster == pdetails.Id).ToList();
+                foreach (var item in Commentandratingslist)
                 {
-                    var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                    var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
-                    producVMList = new AndroidProductDetails
-                    {
-                        Id = item.Id,
-                        Name = item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
-                        DiscountedAmount = discountedprice,
-                        Discount = discount,
-                        MasterImageUrl = item.MasterImageUrl,
-                        ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
-                        ShortDescription = item.ShortDescription,
-                        LongDescription = item.LongDescription,
-                        UOM = item.ProductPackSize.UOM,
-                        TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
-                        AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
-                        SlideerImages = item.ProductDetails.Select(x => x.ImageUrl).ToList(),
-                        Comments = _dxcontext.CommentAndRatings.Where(y => y.FK_ProductMaster == item.Id).Select(z => z.Comment).ToList()
-
-                    };
+                       var model = (AndroidCommentAndRating) HelperFunctions.CopyPropertiesTo(item, new AndroidCommentAndRating());
+                    model.CreatedOnDate = item.CreatedOn.ToString();
+                    commentlist.Add(model);
                 }
 
+                var discount = pdetails.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                var price = pdetails.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                producVMList = new AndroidProductDetails
+                {
+                    Id = pdetails.Id,
+                    Name = pdetails.Name,
+                    Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                    DiscountedAmount = discountedprice,
+                    Discount = discount,
+                    MasterImageUrl = pdetails.MasterImageUrl,
+                    ImageUrl = pdetails.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
+                    ShortDescription = pdetails.ShortDescription,
+                    LongDescription = pdetails.LongDescription,
+                    UOM = pdetails.ProductPackSize.UOM,
+                    TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
+                    AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
+                    SlideerImages = pdetails.ProductDetails.Select(x => x.ImageUrl).ToList(),
+                    TotalRatingCount = Commentandratingslist.Count(),
+                    Comments = commentlist
 
+                };
 
                 return producVMList;
-
-
-
-
             }
             catch (Exception Ex)
             {
-
-
-
                 throw Ex;
             }
-        }
+        } 
+       
     }
 }

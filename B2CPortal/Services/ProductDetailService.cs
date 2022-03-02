@@ -171,41 +171,81 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+        //======================android======================
+        public async Task<CommentAndRating> AndroidProductCommentAndRating(AndroidRequestCommentAndRating model)
+        {
+            try
+            {
+
+                string checkGuid = model.guid;
+                string userid = model.userid;
 
 
-
-        //public async Task<IEnumerable<ProductDetail>> GetProduct()
-        //{
-        //    try
-        //    {
-        //          var obj = await _dxcontext.ProductDetails.OrderByDescending(a => a.Id).ToListAsync();//  GetAll();
+                int? uId = null;
+                if (!string.IsNullOrEmpty(userid))
+                    uId = Convert.ToInt32(userid);
 
 
+                if (!string.IsNullOrEmpty(checkGuid))
+                {
+                    Current = await _dxcontext.CommentAndRatings.FirstOrDefaultAsync(o =>
+                    o.FK_ProductMaster == model.productid &&
+                   !string.IsNullOrEmpty(o.Guid) && o.Guid == checkGuid);
+                }
+                else
+                {
+                    Current = await _dxcontext.CommentAndRatings.FirstOrDefaultAsync(o =>
+                    o.FK_ProductMaster == model.productid &&
+                    o.CustomerId != null && o.CustomerId == Convert.ToInt32(model.userid));
+                }
 
+                if (Current == null)
+                {
+                    New();
 
-        //        return obj;
-        //    }
-        //    catch (Exception Ex)
-        //    {
+                    Current.CreatedOn = DateTime.Now;
+                    Current.AnonymousName = model.AnonymousName;
+                    Current.FK_ProductMaster = model.productid;
+                    Current.EmailId = model.EmailId;
+                    Current.Comment = model.Comment;
+                    Current.Rate = model.Rate;
 
-        //        throw Ex;
-        //    }
-        //}
+                    if (String.IsNullOrEmpty(userid) && String.IsNullOrEmpty(checkGuid))
+                    {
+                        Current.IsAnonymousUser = true;
+                        HelperFunctions.SetCookie(HelperFunctions.cartguid, Guid.NewGuid().ToString(), 365);
+                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
 
-        //public async Task<ProductDetail> GetProductDetailById(long Id)
-        //{
-        //    try
-        //    {
-        //        var obj = await GetSingleByField(a => a.Id == Id);
+                    }
+                    else
+                    {
+                        Current.CustomerId = uId;
+                        Current.Guid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+                    }
+                }
+                else
+                {
+                    //update herer
 
-        //        return obj;
-        //    }
-        //    catch (Exception Ex)
-        //    {
+                    PrimaryKeyValue = Current.Id;
+                    Current.ModifiedOn = DateTime.Now;
+                    Current.AnonymousName = Current.AnonymousName;
+                    Current.CustomerId = uId;
+                    Current.FK_ProductMaster = model.productid;
+                    Current.EmailId = model.EmailId;
+                    Current.Comment = model.Comment;
+                    Current.Rate = model.Rate;
+                }
 
-        //        throw Ex;
-        //    }
-        //}
+                Save();
 
+                return Current;
+            }
+            catch (Exception Ex)
+            {
+                return null;
+                throw Ex;
+            }
+        }
     }
 }

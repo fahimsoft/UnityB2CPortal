@@ -35,6 +35,7 @@ namespace B2CPortal.Interfaces
         //=============android===============
         Task<ProductMaster> AndroidGetProductById(int id);
         Task<AndroidProductDetails> AndroidGetProductByIdWithRating(int Id);
+       // Task<AndroidProductDetails> AndroidProductCommentAndRating(AndroidRequestCommentAndRating model);
 
 
     }

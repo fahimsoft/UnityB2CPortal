@@ -58,14 +58,33 @@ public int? UnitInNumeric { get; set; }
         public string ShortDescription { get; set; }
         public string LongDescription { get; set; }
         public decimal? DiscountedAmount { get; set; }
-
         public string UOM { get; set; }
-        public SingleProduct product { get; set; }
         public decimal? TotalRating { get; set; }
         public decimal? AvgRating { get; set; }
         public int TotalRatingCount { get; set; }
-        public int? UnitInNumeric { get; set; }
-        public List<string> Comments { get; internal set; }
+       // public int? UnitInNumeric { get; set; }
+        public List<AndroidCommentAndRating> Comments { get; internal set; }
+    }
+    public class AndroidCommentAndRating
+    {
+        public int Id { get; set; }
+        public string Comment { get; set; }
+        public Nullable<int> Rate { get; set; }
+        public string CreatedOnDate { get; set; }
+        public string AnonymousName { get; set; }
+        public string EmailId { get; set; }
+    }
+    public class AndroidRequestCommentAndRating
+    {
+        public string Comment { get; set; }
+        public Nullable<int> Rate { get; set; }
+        //public string CreatedOn { get; set; }
+        public string AnonymousName { get; set; }
+        public string EmailId { get; set; }
+        //----------for authroze-----------------
+        public int productid { get; set; }
+        public string userid { get; set; }
+        public string guid { get; set; }
     }
 
 }

@@ -15,6 +15,6 @@ namespace B2CPortal.Interfaces
         Task<bool> DeleteComment(long Id);
         //Task<IEnumerable<CommentAndRating>> GetProductCommentWithPaggination(long Id);
         Task<IEnumerable<CommentAndRatingVM>> GetProductCommentWithPaggination(long Id, int nextPage = 10, int prevPage = 0);
-
+        Task<CommentAndRating> AndroidProductCommentAndRating(AndroidRequestCommentAndRating commentAndRating);
     }
 }

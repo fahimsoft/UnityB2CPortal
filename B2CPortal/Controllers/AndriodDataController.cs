@@ -16,6 +16,7 @@ namespace B2CPortal.Controllers
     public class AndriodDataController : Controller
     {
         private readonly IProductMaster _IProductMaster = null;
+        private readonly IProductDetail _IProductDetail = null;
         private readonly ICart _cart = null;
         private readonly ICity _ICity = null;
         private readonly IAccount _account = null;
@@ -31,7 +32,8 @@ namespace B2CPortal.Controllers
             IEmailSubscription emailSubscription,
             IShippingDetails shippingDetails,
              IOrders orders,
-              IOrderDetail orderDetail
+              IOrderDetail orderDetail,
+              IProductDetail productDetail
             )
         {
             _IProductMaster = productMaster;
@@ -42,34 +44,10 @@ namespace B2CPortal.Controllers
             _IShippingDetails = shippingDetails;
             _orders = orders;
             _ordersDetail = orderDetail;
+            _IProductDetail = productDetail;
 
         }
         // GET: AndriodData
-        [HttpPost]
-        public async Task<ActionResult> AndroidProductDataById(string productid , string userid , string guid = "")
-        {
-            if (!string.IsNullOrEmpty(productid))
-            {
-            var productdetails =  await  _IProductMaster.AndroidGetProductByIdWithRating(Convert.ToInt32(productid));
-                return Json(new
-                {
-                    status = 200,
-                    sucess = 1,
-                    message = ResultStatus.success,
-                    data = productdetails
-                }, JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                return Json(new
-                {
-                    status = 400,
-                    sucess = 0,
-                    message = ResultStatus.failed,
-                    data = new { }
-                }, JsonRequestBehavior.AllowGet);
-            }
-        }
         [HttpPost]
         public async Task<ActionResult> AndroidHomePageData(string guid = "", string userid = "")
         {
@@ -119,7 +97,72 @@ namespace B2CPortal.Controllers
                 });
             }
         }
-      
+        [HttpPost]
+        public async Task<ActionResult> AndroidProductDataById(string productid, string userid, string guid = "")
+        {
+            if (!string.IsNullOrEmpty(productid))
+            {
+                var productdetails = await _IProductMaster.AndroidGetProductByIdWithRating(Convert.ToInt32(productid));
+                return Json(new
+                {
+                    status = 200,
+                    sucess = 1,
+                    message = ResultStatus.success,
+                    data = productdetails
+                }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = 400,
+                    sucess = 0,
+                    message = ResultStatus.failed,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpPost]
+        public async Task<ActionResult> AndroidProductCommnetAndRating(AndroidRequestCommentAndRating model)
+        {
+            if (!string.IsNullOrEmpty(model.Comment) && !string.IsNullOrEmpty(model.AnonymousName)
+                && !string.IsNullOrEmpty(model.EmailId) && (!string.IsNullOrEmpty(model.guid) || !string.IsNullOrEmpty(model.userid)))
+            {
+                var res = await _IProductDetail.AndroidProductCommentAndRating(model);
+                if (res != null)
+                {
+                    return Json(new
+                    {
+                        status = 200,
+                        sucess = 1,
+                        message = ResultStatus.success,
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        status = 500,
+                        sucess = 0,
+                        message = ResultStatus.failed,
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+
+                }
+            }
+            else
+            {
+                return Json(new
+                {
+                    status = 500,
+                    sucess = 0,
+                    message = ResultStatus.EmptyFillData,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+
+            }
+        }
         #region Account management
         public ActionResult AndroidNewGuid()
         {
@@ -249,7 +292,7 @@ namespace B2CPortal.Controllers
                         status = 500,
                         sucess = 0,
                         message = ResultStatus.EmptyFillData,
-                        data = model
+                        data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
 
@@ -258,10 +301,10 @@ namespace B2CPortal.Controllers
             {
                 return Json(new
                 {
-                    status = 404,
+                    status = 500,
                     sucess = 0,
-                    message = ResultStatus.Error.ToString(),
-                    data = new { ex.Message }
+                    message = ex.Message,
+                    data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -288,10 +331,10 @@ namespace B2CPortal.Controllers
                     {
                         return Json(new
                         {
-                            status = 500,
+                            status = 404,
                             sucess = 0,
                             message = ResultStatus.unauthorized,
-                            data = model
+                            data = new { }
                         }, JsonRequestBehavior.AllowGet);
                     }
                 }
@@ -299,10 +342,10 @@ namespace B2CPortal.Controllers
                 {
                     return Json(new
                     {
-                        status = 500,
+                        status = 404,
                         sucess = 0,
                         message = ResultStatus.EmptyFillData,
-                        data = model
+                        data = new { }
                     }, JsonRequestBehavior.AllowGet);
                 }
 
@@ -311,13 +354,66 @@ namespace B2CPortal.Controllers
             {
                 return Json(new
                 {
-                    status = 404,
+                    status = 500,
                     sucess = 0,
                     message = ResultStatus.Error.ToString(),
                     data = new { ex.Message }
                 }, JsonRequestBehavior.AllowGet);
             }
 
+        }
+        [HttpPost]
+        public async Task<ActionResult> AndroidChangePassword(AndroidAuthenticationVM model)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(model.EmailId) && !string.IsNullOrEmpty(model.Password) && model.Id > 0)
+                {
+                    customer customermodel = (customer)HelperFunctions.CopyPropertiesTo(model, new customer());
+                    var resultmodel = await _account.AndroidChangePassword(customermodel);
+                    if (resultmodel != null)
+                    {
+                        return Json(new
+                        {
+                            status = 200,
+                            sucess = 1,
+                            message = ResultStatus.Update,
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                    else
+                    {
+                        return Json(new
+                        {
+                            status = 404,
+                            sucess = 0,
+                            message = ResultStatus.unauthorized,
+                            data = new { }
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        status = 404,
+                        sucess = 0,
+                        message = ResultStatus.EmptyFillData,
+                        data = new { }
+                    }, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            catch (global::System.Exception ex)
+            {
+                return Json(new
+                {
+                    status = 500,
+                    sucess = 0,
+                    message = ex.Message,
+                    data = new { }
+                }, JsonRequestBehavior.AllowGet);
+            }
         }
         [HttpPost]
         public async Task<ActionResult> AndroidEmailSubscription(string emailid)
@@ -360,7 +456,7 @@ namespace B2CPortal.Controllers
                     status = 500,
                     sucess = 0,
                     message = ex.Message,
-                    data =  new {}
+                    data = new { }
                 }, JsonRequestBehavior.AllowGet);
             }
         }
@@ -680,7 +776,7 @@ namespace B2CPortal.Controllers
                         var result = HelperFunctions.GenrateOrderNumber(omodel.Id.ToString());
                         omodel.OrderNo = result;
                         omodel.City = item?.City1?.Name;
-                        var orderdetailslist =  await _ordersDetail.GetOrderDetailsById(item.Id);
+                        var orderdetailslist = await _ordersDetail.GetOrderDetailsById(item.Id);
                         foreach (var oditem in orderdetailslist)
                         {
                             AndroidOrderDetailsListVM odmodel = (AndroidOrderDetailsListVM)HelperFunctions.CopyPropertiesTo(oditem, new AndroidOrderDetailsListVM());

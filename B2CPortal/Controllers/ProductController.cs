@@ -171,7 +171,7 @@ namespace B2CPortal.Controllers
             string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
             decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
-            int customerid = Convert.ToInt32(userid);
+            int customerid = string.IsNullOrEmpty(userid) ? 0 :  Convert.ToInt32(userid);
             string cookie = string.Empty;
             if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
             {

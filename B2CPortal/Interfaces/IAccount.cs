@@ -20,5 +20,6 @@ namespace B2CPortal.Interfaces
         Task<customer> AndroidLoginWithEmailPassword(string email, string password);
         Task<customer> AndroidCreateCustomer(customer customer);
         Task<customer> AndroidUpdateCustomer(customer customer);
+        Task<customer> AndroidChangePassword(customer customer);
     }
 }
