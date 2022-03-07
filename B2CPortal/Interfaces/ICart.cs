@@ -29,6 +29,8 @@ namespace B2CPortal.Interfaces
         Task<Cart> UpdateWishList(int cartId);
         Task<bool> DeleteFromCart(int Id);
         Task<bool> DisableCart(int customerId, string guid);
+        //=======================android====================
+        Task<IEnumerable<Cart>> AndroidGetCartProducts(string guid , int customerid, City city);
 
     }
 }

@@ -42,8 +42,8 @@ namespace B2CPortal.Models
     {
         public int ProductId { get; set; }
         public decimal ProductPrice { get; set; }
+        public decimal ProductDiscount { get; set; }
         public int ProductQuantity { get; set; }
-        public decimal? ProductDiscount { get; internal set; }
     }
     public class CartDataResponseList
     {
@@ -55,37 +55,6 @@ namespace B2CPortal.Models
         public int ProductQuantity { get; internal set; }
     }
 
-    public class AndroidOrderListVM
-    {
-        //public ShippingDetail shippingdetails { get; set; }
-        public List<AndroidOrderDetailsListVM> AndroidOrderDetailsListVMs { get; set; }
-        //public string Usercity { get; set; }
-        //public string userid { get; set; }
-        //public string guid { get; set; }
-        //-----for prevent extra call db----------
-        //public string username { get; set; }
-        //public string useremail { get; set; }
-        public int Id { get; set; }
-        public string OrderDescription { get; set; }
-        public Nullable<int> TotalQuantity { get; set; }
-        public Nullable<decimal> TotalPrice { get; set; }
-        //public int FK_Customer { get; set; }
-        public string OrderNo { get; set; }
-        public string ShippingAddress { get; set; }
-        public string BillingAddress { get; set; }
-        public string PhoneNo { get; set; }
-        public string EmailId { get; set; }
-        public string Country { get; set; }
-        public string Status { get; set; }
-        public string Currency { get; set; }
-        public Nullable<decimal> ConversionRate { get; set; }
-        public string PaymentMode { get; set; }
-        public Nullable<bool> PaymentStatus { get; set; }
-        //public bool IsShipping { get; set; }
-        //public Nullable<int> FK_ShippingDetails { get; set; }
-        //public Nullable<int> FK_CityId { get; set; }
-        public string City { get; internal set; }
-    }
     public class AndroidCheckoutVM
     {
         public List<CartDataList> cartData { get; set; }
@@ -134,7 +103,6 @@ namespace B2CPortal.Models
     {
         public static string Error = "something went wrong";
         public static string failed = "something went wrong.Please try again";
-        public static string UserNotExist = "User Not Exist. Please try again.";
         public static string unauthorized = "Incorrect Email or password. Please try again.";
         public static string notfound = "Page Not Found";
         public static string Loginsuccess = "You are successfully logged in";
@@ -142,21 +110,53 @@ namespace B2CPortal.Models
         public static string AlreadyExist = "You are Already Registered.";
         public static string success = "Success";
 
-        public static string Insertorder = "Order placed successfully ";
-        public static string Insert = "Record Inserted Successfully";
+        public static string InsertOrder = "Order placed successfully";
+        public static string Insert = "Successfully Added";
         public static string Update = "Record Updated Successfully";
         public static string Delete = "Record Deleted Successfully";
         public static string EmptyFillData = "Please Fill All Fields Correctly. Please try again.";
-        public static string PriceChanged = "Price has been chaenged";
 
+        public static string UserNotExist = "User Not Exist. Please try again.";
+        public static string PriceChanged = "Price has been changed.";
 
     }
+public class AndroidOrderListVM
+    {
+        //public ShippingDetail shippingdetails { get; set; }
+        public List<AndroidOrderDetailsListVM> AndroidOrderDetailsListVMs { get; set; }
+        //public string Usercity { get; set; }
+        //public string userid { get; set; }
+        //public string guid { get; set; }
+        //-----for prevent extra call db----------
+        //public string username { get; set; }
+        //public string useremail { get; set; }
+        public int Id { get; set; }
+        public string OrderDescription { get; set; }
+        public Nullable<int> TotalQuantity { get; set; }
+        public Nullable<decimal> TotalPrice { get; set; }
+        //public int FK_Customer { get; set; }
+        public string OrderNo { get; set; }
+        public string ShippingAddress { get; set; }
+        public string BillingAddress { get; set; }
+        public string PhoneNo { get; set; }
+        public string EmailId { get; set; }
+        public string Country { get; set; }
+        public string Status { get; set; }
+        public string Currency { get; set; }
+        public Nullable<decimal> ConversionRate { get; set; }
+        public string PaymentMode { get; set; }
+        public Nullable<bool> PaymentStatus { get; set; }
+        //public bool IsShipping { get; set; }
+        //public Nullable<int> FK_ShippingDetails { get; set; }
+        //public Nullable<int> FK_CityId { get; set; }
+        public string City { get; internal set; }
+        public string CreatedOnDate { get; internal set; }
+    }
+
     public class AndroidOrderDetailsListVM
     {
         public int Id { get; set; }
         public Nullable<int> Quantity { get; set; }
-        public string Name { get; set; }
-        public string ImageURL { get; set; }
         public Nullable<decimal> Price { get; set; }
         //public int FK_OrderMaster { get; set; }
         //public int FK_ProductMaster { get; set; }
@@ -171,6 +171,11 @@ namespace B2CPortal.Models
         public Nullable<decimal> TotalPrice { get; set; }
         public string Currency { get; set; }
         public Nullable<decimal> ConversionRate { get; set; }
+        public string ImageURL { get; internal set; }
+        public string Name { get; internal set; }
+        public string PackSize { get; internal set; }
         public string CreatedOnDate { get; internal set; }
     }
+
+
 }

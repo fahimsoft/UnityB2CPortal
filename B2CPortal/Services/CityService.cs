@@ -58,6 +58,7 @@ namespace B2CPortal.Services
         {
             var  model = await _dxcontext.Cities.Where(x => (x.IsActive == true && x.Name.ToLower() == name.ToLower())
            || (x.IsActive == true && x.Id ==  Id) ).FirstOrDefaultAsync();
+
             return model;
         }
     }

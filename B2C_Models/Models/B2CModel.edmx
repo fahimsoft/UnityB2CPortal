@@ -6,7 +6,7 @@
     <edmx:StorageModels>
     <Schema Namespace="B2CModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <!--Errors Found During Generation:
-warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.AdminUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="AdminUser">
           <Key>
             <PropertyRef Name="Id" />
@@ -143,7 +143,7 @@ warning 6002: The table/view 'B2CPortal.dbo.AdminUser' does not have a primary k
           <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'B2CPortal.dbo.OrderDetailLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.OrderDetailLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="OrderDetailLogs">
           <Key>
             <PropertyRef Name="Id" />
@@ -203,7 +203,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderDetailLogs' does not have a pri
           <Property Name="FK_CityId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.OrderMasterLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="OrderMasterLogs">
           <Key>
             <PropertyRef Name="Id" />
@@ -269,6 +269,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="BrandImage" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="ProductCategory">
           <Key>
@@ -281,6 +282,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="int" />
           <Property Name="IsActive" Type="bit" />
+          <Property Name="CatagoryImage" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="ProductDetail">
           <Key>
@@ -336,6 +338,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           </Key>
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Tax" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Discount" Type="decimal" Precision="18" Scale="2" />
           <Property Name="CreatedOn" Type="smalldatetime" />
           <Property Name="CreatedBy" Type="int" />
@@ -374,16 +377,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedOn" Type="smalldatetime" />
           <Property Name="ModifiedBy" Type="varchar" MaxLength="50" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
-        </EntityType>
-        <EntityType Name="sysdiagrams">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
-          <Property Name="principal_id" Type="int" Nullable="false" />
-          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="version" Type="int" />
-          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="Test">
           <Key>
@@ -669,7 +662,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySet Name="ProductPrice" EntityType="Self.ProductPrice" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ProductVariant" EntityType="Self.ProductVariant" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ShippingDetails" EntityType="Self.ShippingDetails" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Test" EntityType="Self.Test" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Userinfo" EntityType="Self.Userinfo" Schema="dbo" store:Type="Tables" />
@@ -962,7 +954,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           </AssociationSet>
           <EntitySet Name="ExceptionHandlings" EntityType="B2CModel.ExceptionHandling" />
           <EntitySet Name="EmailSubscriptions" EntityType="B2CModel.EmailSubscription" />
-          <EntitySet Name="sysdiagrams" EntityType="B2CModel.sysdiagram" />
           </EntityContainer>
         <EntityType Name="Test">
           <Key>
@@ -998,6 +989,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
           <NavigationProperty Name="ProductMasters" Relationship="B2CModel.FK_ProductMaster_ProductBrand" FromRole="ProductBrand" ToRole="ProductMaster" />
+          <Property Name="BrandImage" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ProductDetail">
           <Key>
@@ -1151,6 +1143,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="FK_City" Type="Int32" Nullable="false" />
           <Property Name="FK_ProductMaster" Type="Int32" Nullable="false" />
           <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_ProductPrice_ProductMaster" FromRole="ProductPrice" ToRole="ProductMaster" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <Association Name="FK_ProductPrice_ProductMaster">
           <End Type="B2CModel.ProductMaster" Role="ProductMaster" Multiplicity="1" />
@@ -1238,6 +1231,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="ModifiedBy" Type="Int32" />
           <Property Name="IsActive" Type="Boolean" />
           <NavigationProperty Name="ProductMasters" Relationship="B2CModel.FK_ProductMaster_ProductCategory" FromRole="ProductCategory" ToRole="ProductMaster" />
+          <Property Name="CatagoryImage" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
         </EntityType>
         <Association Name="FK_ProductMaster_ProductCategory">
           <End Type="B2CModel.ProductCategory" Role="ProductCategory" Multiplicity="1" />
@@ -1646,16 +1640,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="CreatedOn" Type="DateTime" Nullable="false" Precision="0" />
         </EntityType>
-        <EntityType Name="sysdiagram">
-          <Key>
-            <PropertyRef Name="diagram_id" />
-          </Key>
-          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
-          <Property Name="principal_id" Type="Int32" Nullable="false" />
-          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="version" Type="Int32" />
-          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
-        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1686,6 +1670,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="ProductBrands">
             <EntityTypeMapping TypeName="B2CModel.ProductBrand">
               <MappingFragment StoreEntitySet="ProductBrand">
+                <ScalarProperty Name="BrandImage" ColumnName="BrandImage" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
@@ -1782,6 +1767,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="ProductPrices">
             <EntityTypeMapping TypeName="B2CModel.ProductPrice">
               <MappingFragment StoreEntitySet="ProductPrice">
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
                 <ScalarProperty Name="FK_ProductMaster" ColumnName="FK_ProductMaster" />
                 <ScalarProperty Name="FK_City" ColumnName="FK_City" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
@@ -1845,6 +1831,7 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
           <EntitySetMapping Name="ProductCategories">
             <EntityTypeMapping TypeName="B2CModel.ProductCategory">
               <MappingFragment StoreEntitySet="ProductCategory">
+                <ScalarProperty Name="CatagoryImage" ColumnName="CatagoryImage" />
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
                 <ScalarProperty Name="ModifiedOn" ColumnName="ModifiedOn" />
@@ -2073,17 +2060,6 @@ warning 6002: The table/view 'B2CPortal.dbo.OrderMasterLogs' does not have a pri
                 <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="SubEmail" ColumnName="SubEmail" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="sysdiagrams">
-            <EntityTypeMapping TypeName="B2CModel.sysdiagram">
-              <MappingFragment StoreEntitySet="sysdiagrams">
-                <ScalarProperty Name="definition" ColumnName="definition" />
-                <ScalarProperty Name="version" ColumnName="version" />
-                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
-                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
-                <ScalarProperty Name="name" ColumnName="name" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

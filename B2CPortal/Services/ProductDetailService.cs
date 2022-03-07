@@ -171,14 +171,19 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+
         //======================android======================
         public async Task<CommentAndRating> AndroidProductCommentAndRating(AndroidRequestCommentAndRating model)
         {
             try
             {
 
+
+
                 string checkGuid = model.guid;
                 string userid = model.userid;
+
+
 
 
                 int? uId = null;
@@ -186,11 +191,13 @@ namespace B2CPortal.Services
                     uId = Convert.ToInt32(userid);
 
 
+
+
                 if (!string.IsNullOrEmpty(checkGuid))
                 {
                     Current = await _dxcontext.CommentAndRatings.FirstOrDefaultAsync(o =>
                     o.FK_ProductMaster == model.productid &&
-                   !string.IsNullOrEmpty(o.Guid) && o.Guid == checkGuid);
+                    !string.IsNullOrEmpty(o.Guid) && o.Guid == checkGuid);
                 }
                 else
                 {
@@ -199,9 +206,13 @@ namespace B2CPortal.Services
                     o.CustomerId != null && o.CustomerId == Convert.ToInt32(model.userid));
                 }
 
+
+
                 if (Current == null)
                 {
                     New();
+
+
 
                     Current.CreatedOn = DateTime.Now;
                     Current.AnonymousName = model.AnonymousName;
@@ -210,11 +221,15 @@ namespace B2CPortal.Services
                     Current.Comment = model.Comment;
                     Current.Rate = model.Rate;
 
+
+
                     if (String.IsNullOrEmpty(userid) && String.IsNullOrEmpty(checkGuid))
                     {
                         Current.IsAnonymousUser = true;
                         HelperFunctions.SetCookie(HelperFunctions.cartguid, Guid.NewGuid().ToString(), 365);
                         Current.Guid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
+
+
 
                     }
                     else
@@ -227,6 +242,8 @@ namespace B2CPortal.Services
                 {
                     //update herer
 
+
+
                     PrimaryKeyValue = Current.Id;
                     Current.ModifiedOn = DateTime.Now;
                     Current.AnonymousName = Current.AnonymousName;
@@ -237,7 +254,11 @@ namespace B2CPortal.Services
                     Current.Rate = model.Rate;
                 }
 
+
+
                 Save();
+
+
 
                 return Current;
             }
@@ -247,5 +268,39 @@ namespace B2CPortal.Services
                 throw Ex;
             }
         }
+
+        //public async Task<IEnumerable<ProductDetail>> GetProduct()
+        //{
+        //    try
+        //    {
+        //          var obj = await _dxcontext.ProductDetails.OrderByDescending(a => a.Id).ToListAsync();//  GetAll();
+
+
+
+
+        //        return obj;
+        //    }
+        //    catch (Exception Ex)
+        //    {
+
+        //        throw Ex;
+        //    }
+        //}
+
+        //public async Task<ProductDetail> GetProductDetailById(long Id)
+        //{
+        //    try
+        //    {
+        //        var obj = await GetSingleByField(a => a.Id == Id);
+
+        //        return obj;
+        //    }
+        //    catch (Exception Ex)
+        //    {
+
+        //        throw Ex;
+        //    }
+        //}
+
     }
 }

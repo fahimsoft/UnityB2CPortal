@@ -37,7 +37,7 @@ $(document).ready(function () {
     ShowCartProducts();
     let customerid = getCookie(userid);
     var accounthtml = '';
-    debugger
+    //debugger
     if (parseInt(customerid) > 0) {
         var username = getCookie(UserName);
         $('#logedin').html();
@@ -111,9 +111,12 @@ $(document).ready(function () {
         if (!isNaN(Discount)) {
 
             var price = parseFloat($(row).find('td')[2].textContent);
+            var tax = parseFloat($(row).find('td')[7].textContent);
             let actualTotal = (price * newVal);
 
-            price = price * (1 - (Discount / 100));
+             price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
+
+            //price = price * (1 - (Discount / 100));
             let totalvalue = (price * newVal);
 
             DiscountAmount = actualTotal - totalvalue;
@@ -173,7 +176,12 @@ $(document).ready(function () {
             var price = parseFloat($(row).find('td')[2].textContent);
             let actualTotal = (price * newVal);
 
-            price = price * (1 - (Discount / 100));
+            var tax = parseFloat($(row).find('td')[7].textContent);
+
+            price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
+
+
+           // price = price * (1 - (Discount / 100));
             let totalvalue = (price * newVal);
 
             DiscountAmount = actualTotal - totalvalue;
@@ -587,7 +595,7 @@ function loadProductList() {
         dataType: "json",
         success: function (result) {
             var data = JSON.parse(result.data);
-            $('#lblTotalCount').text('Total Records: ' + data.length);
+            $('#lblTotalCount').text('Total Items: ' + data.length);
             $.each(data, function (key, item) {
 
 
@@ -950,7 +958,7 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
             else
                 totalProductList = data[0].totalProduct;
 
-            $('#lblTotalCount').text('Total Records: ' + totalProductList);
+            $('#lblTotalCount').text('Total Items: ' + totalProductList);
             $.each(data, function (key, item) {
 
                 htmlProductList += `<div class="col - xs - 12">
@@ -960,9 +968,9 @@ function loadProductListById(filterList, search, nextPage = 10, prevPage = 0) {
 <div class="listinge list-img">
 <div class="product-img">
 <div class="pro-type sell">
-<span>${item.Discount}%</span>
+<span style="${item.Discount > 0 ? "" : "display:none;"}">${item.Discount}%</span>
 </div>
-<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<a class="lazy_img" href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img  rel="${item.MasterImageUrl}" alt="Product Title" /></a>
 </div>
 </div>
 </div>
@@ -998,9 +1006,9 @@ ${item.Discount > 0 ?
 <div class="single-product">
 <div class="product-img">
 <div class="pro-type">
-<span>${item.Discount}%</span>
+<span style="${item.Discount > 0 ? "" : "display:none;"}">${item.Discount}%</span>
 </div>
-<a href="/ProductDetails/Index?productId=${item.Id}" productName="${item.Name}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<a class="lazy_img" href="/ProductDetails/Index?productId=${item.Id}" productName="${item.Name}" onClick="SetLocalStorage(this)" productId="${item.Id}" productImg="${item.MasterImageUrl}"><img rel="${item.MasterImageUrl}" alt="Product Title" /></a>
 <div class="actions-btn">
 <a onclick="HandleAddtocart(this)" href="javascript:void(0)" productIdList=${item.Id}><i class="mdi mdi-cart"></i></a>
 <a href="javascript:void(0)" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
@@ -1134,6 +1142,19 @@ ${htmlProductList}
 
                 });
             }
+
+            setTimeout(function () {
+                //alert($('#htmlListAndGrid').find('img').html());
+                $('#htmlListAndGrid').find('.lazy_img').each(function () {
+
+                    var limg = $(this).find('img');
+                    limg.attr('src', limg.attr('rel'));
+                    });
+
+                
+
+            }, 100);
+
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -1192,7 +1213,7 @@ function loadFeatureProduct() {
 <div class="pro-type">
 <span>${item.Discount}%</span>
 </div>
-<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<a class="lazy_img" href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img rel="${item.MasterImageUrl}" alt="Product Title" /></a>
 <div class="actions-btn">
 <a onclick="HandleAddtocart(this)" productIdList=${item.Id} ><i class="mdi mdi-cart"></i></a>
 <a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
@@ -1223,6 +1244,18 @@ ${item.Discount > 0 ?
             //$("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
+
+            setTimeout(function () {
+                //alert($('#htmlListAndGrid').find('img').html());
+                $('#ulLoadFeatureProduct').find('.lazy_img').each(function () {
+
+                    var limg = $(this).find('img');
+                    limg.attr('src', limg.attr('rel'));
+                });
+
+
+
+            }, 100);
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);
@@ -1249,7 +1282,7 @@ function loadnewarrivalproducts() {
 <div class="pro-type">
 <span>${item.Discount}%</span>
 </div>
-<a href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img src="${item.MasterImageUrl}" alt="Product Title" /></a>
+<a class="lazy_img" href="/ProductDetails/Index?productId=${item.Id}" onClick="SetLocalStorage(this)" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}"><img rel="${item.MasterImageUrl}" alt="Product Title" /></a>
 <div class="actions-btn">
 <a onclick="HandleAddtocart(this)" productIdList=${item.Id} ><i class="mdi mdi-cart"></i></a>
 <a href="#" data-toggle="modal" onClick="LoadQuickViewWithRating(this)" id="${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}" data-target="#quick-view"><i class="mdi mdi-eye"></i></a>
@@ -1280,6 +1313,18 @@ ${item.Discount > 0 ?
             //$("span .numbers").digits();
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);// document.getElementsByClassName("pricesymbol").innerHTML = dd;
+
+            setTimeout(function () {
+                //alert($('#htmlListAndGrid').find('img').html());
+                $('#ulLoadNewArrivalProducts').find('.lazy_img').each(function () {
+
+                    var limg = $(this).find('img');
+                    limg.attr('src', limg.attr('rel'));
+                });
+
+
+
+            }, 100);
         },
         error: function (errorMessage) {
             alert(errorMessage.responseText);

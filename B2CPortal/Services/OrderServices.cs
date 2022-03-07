@@ -167,7 +167,7 @@ namespace B2CPortal.Services
         {
             try
             {
-               // Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
+                // Current = await _dxcontext.OrderMasters.Where(x => x.Id == Billing.Id).FirstOrDefaultAsync();
                 if (Current == null)
                 {
                     New();
@@ -198,6 +198,8 @@ namespace B2CPortal.Services
                     Current.ModifiedOn = DateTime.Now;
                 }
 
+
+
                 Save();
                 return Current;
             }
@@ -206,8 +208,9 @@ namespace B2CPortal.Services
                 throw ex;
             }
 
-        }
 
+
+        }
         public async Task<IEnumerable<OrderMaster>> AndroidGetOrderList(int userid)
         {
             return await _dxcontext.OrderMasters.Where(x => x.IsActive == true &&

@@ -364,7 +364,11 @@ namespace B2CPortal.Controllers
                     var resultToken = new string(
                     Enumerable.Repeat(allChar, 8)
                     .Select(token => token[random.Next(token.Length)]).ToArray());
+
+
+
                     string authToken = resultToken.ToString();
+
                     //Create URL with above token
                     var lnkHref = " <a href='" + Url.Action("ResetPassword", "Account", new { email = EmailId, code = authToken }, "http") + "'>Reset Password</a>";
                     //var lnkHref = "<a href='"+='" + EmailId + @"'&code='" + authToken + @" >Reset Password </a>";
@@ -395,7 +399,13 @@ namespace B2CPortal.Controllers
             else
             {
                 return Json(new { data = "", msg = "You are Not Registered!", success = false, statuscode = 400 }, JsonRequestBehavior.AllowGet);
+
+
+
             }
+
+
+
         }
         public ActionResult ResetPassword(string code, string email)
         {
@@ -513,7 +523,7 @@ namespace B2CPortal.Controllers
             }
 
         }
-       [HttpPost]
+        [HttpPost]
         public async Task<ActionResult> EmailSubscription(string emailid)
         {
             try

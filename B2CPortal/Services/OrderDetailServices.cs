@@ -54,10 +54,6 @@ namespace B2CPortal.Services
         {
            return await _dxcontext.OrderDetails.Where(x => x.FK_OrderMaster == id && x.IsActive == true).ToListAsync();
         }
-        public async Task<IEnumerable<OrderDetail>> GetOrderDetailsList()
-        {
-           return await _dxcontext.OrderDetails.Where(x => x.IsActive == true).ToListAsync();
-        }
         public async Task<OrderDetail> UpdateOrderDetails(OrderDetailsViewModel ordervm)
         {
             try

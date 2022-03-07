@@ -241,7 +241,12 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+
+                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
+
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
@@ -493,7 +498,14 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    var tax = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Tax).FirstOrDefault();
+
+                    // Last Work
+                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
+                    //,((P.Price / 1.17) - ((P.Price / 1.17) * 0.10) + ((P.Price / 1.17) * 0.17))
+
                     //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
 
@@ -780,11 +792,13 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
-                    //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+
+                    var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
 
 
-
+                   // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                   
 
                     var producVMList = new AndroidViewModel
                     {
@@ -864,13 +878,15 @@ namespace B2CPortal.Services
             try
             {
                 var obj = await _dxcontext.ProductMasters
-                    .Include(x => x.ProductPrices)
-                    .Include(x => x.ProductPackSize)
-                    .FirstOrDefaultAsync(x => x.Id == Id);
+                .Include(x => x.ProductPrices)
+                .Include(x => x.ProductPackSize)
+                .FirstOrDefaultAsync(x => x.Id == Id);
                 return obj;
             }
             catch (Exception Ex)
             {
+
+
 
                 throw Ex;
             }
@@ -879,11 +895,7 @@ namespace B2CPortal.Services
         {
             try
             {
-                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate));
-
-                var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + pid + "").ToList<ProductsVM>();
-
-                var pdetails = await _dxcontext.ProductMasters
+                decimal conversionvalue = Convert.ToDecimal(HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate)); var productRating = _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + pid + "").ToList<ProductsVM>(); var pdetails = await _dxcontext.ProductMasters
                 .Include(x => x.ProductPrices)
                 .Include(x => x.ProductDetails)
                 .Include(x => x.ProductPackSize)
@@ -893,14 +905,17 @@ namespace B2CPortal.Services
                 var Commentandratingslist = _dxcontext.CommentAndRatings.Where(y => y.FK_ProductMaster == pdetails.Id).ToList();
                 foreach (var item in Commentandratingslist)
                 {
-                       var model = (AndroidCommentAndRating) HelperFunctions.CopyPropertiesTo(item, new AndroidCommentAndRating());
+                    var model = (AndroidCommentAndRating)HelperFunctions.CopyPropertiesTo(item, new AndroidCommentAndRating());
                     model.CreatedOnDate = item.CreatedOn.ToString();
                     commentlist.Add(model);
                 }
-
                 var discount = pdetails.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = pdetails.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+
+                var tax = pdetails.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
                 producVMList = new AndroidProductDetails
                 {
                     Id = pdetails.Id,
@@ -918,16 +933,12 @@ namespace B2CPortal.Services
                     SlideerImages = pdetails.ProductDetails.Select(x => x.ImageUrl).ToList(),
                     TotalRatingCount = Commentandratingslist.Count(),
                     Comments = commentlist
-
-                };
-
-                return producVMList;
+                }; return producVMList;
             }
             catch (Exception Ex)
             {
                 throw Ex;
             }
-        } 
-       
+        }
     }
 }

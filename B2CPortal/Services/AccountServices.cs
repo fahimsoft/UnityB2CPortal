@@ -42,7 +42,6 @@ namespace B2CPortal.Services
                 Current.City = customer.City;
                 Current.Address = customer.Address;
                 Current.IsActive = true;
-
                 Save();
                 return Current;
             }
@@ -192,9 +191,9 @@ namespace B2CPortal.Services
                     Current.Gender = customer.Gender;
                     Current.DateOfBirth = customer.DateOfBirth;
                     Current.IsVerified = true;
+                    Current.IsActive = true;
                     Current.City = customer.City;
                     Current.Address = customer.Address;
-                    Current.IsActive = true;
                     Save();
                     return Current;
                 }
@@ -231,6 +230,8 @@ namespace B2CPortal.Services
                     Current.Address = customer?.Address;
                     Current.Country = customer?.Country;
                     Current.IsAppUser = true;
+
+
 
                     Save();
                     return Current;

@@ -7,6 +7,7 @@ namespace B2CPortal.Models
 {
     public class CartViewModel
     {
+
         public int Id { get; set; }
         public int FK_ProductMaster { get; set; }
         public int FK_Customer { get; set; }
@@ -36,7 +37,8 @@ namespace B2CPortal.Models
 
         public decimal ShipingAndHostring { get; internal set; }
         public decimal OrderTotal { get; internal set; }
-        public int VatTax { get; internal set; }
+        public decimal VatTax { get; internal set; }
+        public decimal tax { get; internal set; }
     }
    
 }

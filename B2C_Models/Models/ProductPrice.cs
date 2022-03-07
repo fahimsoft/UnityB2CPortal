@@ -24,6 +24,7 @@ namespace B2C_Models.Models
         public Nullable<bool> IsActive { get; set; }
         public int FK_City { get; set; }
         public int FK_ProductMaster { get; set; }
+        public Nullable<decimal> Tax { get; set; }
     
         public virtual ProductMaster ProductMaster { get; set; }
     }

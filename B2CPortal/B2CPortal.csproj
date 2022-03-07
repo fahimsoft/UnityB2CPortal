@@ -421,7 +421,6 @@
     <Content Include="ProductImg\DC3.png" />
     <Content Include="ProductImg\DCO1.png" />
     <Content Include="ProductImg\DCO2.png" />
-    <Content Include="ProductImg\dm34.png" />
     <Content Include="ProductImg\DR1.png" />
     <Content Include="ProductImg\EB1.png" />
     <Content Include="ProductImg\EB2.png" />
@@ -434,7 +433,6 @@
     <Content Include="ProductImg\LB1.png" />
     <Content Include="ProductImg\LB2.png" />
     <Content Include="ProductImg\LB3.png" />
-    <Content Include="ProductImg\ma1.png" />
     <Content Include="ProductImg\SB1.png" />
     <Content Include="ProductImg\SB16.png" />
     <Content Include="ProductImg\SB5.png" />

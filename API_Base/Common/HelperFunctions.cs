@@ -202,30 +202,34 @@ namespace API_Base.Common
             bool status = false;
             try
             {
-                string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
-                string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
-                string Password = ConfigurationManager.AppSettings["Password"].ToString();
-                int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
-                bool IsSSL =  Convert.ToBoolean(ConfigurationManager.AppSettings["IsSSL"]);
-
-                MailMessage mailMessage = new MailMessage();
-
-                mailMessage.From = new MailAddress(FormEmailId);
-                mailMessage.Subject = Subject;
-                mailMessage.Body = Message;
-                mailMessage.IsBodyHtml = IsBodyHtml;
-                mailMessage.To.Add(new MailAddress(SenderEmail));
-
-
-                using (SmtpClient smtp = new SmtpClient(HostAddress, Port))
+                bool IsEmailEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["IsEmailEnabled"]);
+                if (IsEmailEnabled)
                 {
-                    smtp.UseDefaultCredentials = false;
-                    smtp.Credentials = new NetworkCredential(FormEmailId, Password);
-                    smtp.EnableSsl = IsSSL;
-                    smtp.Timeout = 20000;
-                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                    smtp.Send(mailMessage);
-                    status = true;
+                    string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
+                    string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
+                    string Password = ConfigurationManager.AppSettings["Password"].ToString();
+                    int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
+                    bool IsSSL = Convert.ToBoolean(ConfigurationManager.AppSettings["IsSSL"]);
+
+                    MailMessage mailMessage = new MailMessage();
+
+                    mailMessage.From = new MailAddress(FormEmailId);
+                    mailMessage.Subject = Subject;
+                    mailMessage.Body = Message;
+                    mailMessage.IsBodyHtml = IsBodyHtml;
+                    mailMessage.To.Add(new MailAddress(SenderEmail));
+
+
+                    using (SmtpClient smtp = new SmtpClient(HostAddress, Port))
+                    {
+                        smtp.UseDefaultCredentials = false;
+                        smtp.Credentials = new NetworkCredential(FormEmailId, Password);
+                        smtp.EnableSsl = IsSSL;
+                        smtp.Timeout = 20000;
+                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                        smtp.Send(mailMessage);
+                        status = true;
+                    }
                 }
                 return status;
             }

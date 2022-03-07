@@ -45,8 +45,8 @@ namespace B2CPortal.Services
                 Current.TotalQuantity = Current.Quantity;
                 Current.IsActive = cart.IsActive;
                 Current.IsWishlist = false;
-                Current.Currency= cart.Currency;
-                Current.ConversionRate= cart.ConversionRate;
+                Current.Currency = cart.Currency;
+                Current.ConversionRate = cart.ConversionRate;
                 Current.FK_CityId = cart.FK_CityId;
 
                 Save();
@@ -137,7 +137,7 @@ namespace B2CPortal.Services
                 throw ex;
             }
         }
-        public async Task<IEnumerable<Cart>> GetCartProducts(string guid, int customerid,City city)
+        public async Task<IEnumerable<Cart>> GetCartProducts(string guid, int customerid, City city)
         {
             List<Cart> cartlist = new List<Cart>();
             _dxcontext.Configuration.LazyLoadingEnabled = false;
@@ -159,8 +159,12 @@ namespace B2CPortal.Services
                 {
                     PrimaryKeyValue = Current.Id;
                     Current.IsActive = false;
-                }
                 Save();
+                }
+                else
+                {
+                    return false;
+                }
 
                 return true;
             }
@@ -264,12 +268,12 @@ namespace B2CPortal.Services
             {
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
                 Current = await _dxcontext.Carts.FirstOrDefaultAsync(x => x.Guid == cart.Guid && x.IsWishlist == true && x.IsActive == true && x.FK_ProductMaster == cart.FK_ProductMaster || x.IsWishlist == true && x.FK_ProductMaster == cart.FK_ProductMaster && x.IsActive == true && x.FK_Customer == cart.FK_Customer);
-                
+
                 if (Current == null)
                 {
                     New();
                     Current.CreatedOn = DateTime.Now;
-                  
+
                 }
                 else
                 {
@@ -294,7 +298,7 @@ namespace B2CPortal.Services
                 Current.IsActive = cart.IsActive;
                 Current.FK_ProductMaster = cart.FK_ProductMaster;
                 Current.FK_CityId = cart.FK_CityId;
-              
+
                 Save();
                 return Current;
 
@@ -405,7 +409,7 @@ namespace B2CPortal.Services
                 ||
                 (x.Guid == guid && x.IsWishlist == false && x.IsActive == true))
                 .ToListAsync();
-                if (db != null && db.Count > 0)  
+                if (db != null && db.Count > 0)
                 {
                     foreach (var item in db)
                     {
@@ -425,6 +429,20 @@ namespace B2CPortal.Services
             {
                 throw ex;
             }
+        }
+
+        //=========================android=================================
+        public async Task<IEnumerable<Cart>> AndroidGetCartProducts(string guid, int customerid, City city)
+        {
+            List<Cart> cartlist = new List<Cart>();
+            _dxcontext.Configuration.LazyLoadingEnabled = false;
+            cartlist = await _dxcontext.Carts.Where
+                (x => (x.Guid == guid && x.IsWishlist == false && x.IsActive == false)
+            ||
+            (x.FK_Customer == customerid && x.IsWishlist == false && x.IsActive == false)).ToListAsync();
+
+
+            return cartlist;
         }
     }
 }

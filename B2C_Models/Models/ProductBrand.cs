@@ -28,6 +28,7 @@ namespace B2C_Models.Models
         public Nullable<System.DateTime> ModifiedOn { get; set; }
         public Nullable<int> ModifiedBy { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public string BrandImage { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProductMaster> ProductMasters { get; set; }

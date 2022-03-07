@@ -56,6 +56,9 @@
                                         <td class="totalpricecol">
                                             <b style="font-weight:bolder;">@item.TotalPrice</b>
                                         </td>
+                                        <td style="display:none">
+                                            <b>@item.tax</b>
+                                        </td>
                                         <td><i class="mdi mdi-close removecartbtn" title="Remove this product"></i></td>
                                     </tr>
                                 }
@@ -125,7 +128,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> ( @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() )</td>
+                                    <td> @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>

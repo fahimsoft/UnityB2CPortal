@@ -652,7 +652,7 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insertorder,
+                                                message = ResultStatus.InsertOrder,
                                                 data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
@@ -662,7 +662,7 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insertorder,
+                                                message = ResultStatus.InsertOrder,
                                                 data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }
@@ -672,7 +672,7 @@ namespace B2CPortal.Controllers
                                             {
                                                 status = 200,
                                                 sucess = 1,
-                                                message = ResultStatus.Insertorder,
+                                                message = ResultStatus.InsertOrder,
                                                 data = new List<object>()
                                             }, JsonRequestBehavior.AllowGet);
                                         }

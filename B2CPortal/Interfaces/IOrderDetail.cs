@@ -15,7 +15,6 @@ namespace B2CPortal.Interfaces
         Task<OrderDetail> UpdateOrderDetails(OrderDetailsViewModel ordervm);
         //=============android===============
         Task<IEnumerable<OrderDetail>> AndroidGetOrderDetailsById(int id);
-        Task<IEnumerable<OrderDetail>> GetOrderDetailsList();
 
     }
 }

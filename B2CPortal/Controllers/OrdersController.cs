@@ -28,10 +28,10 @@ namespace B2CPortal.Controllers
         private readonly PaymentMethodFacade _paymentMethodFacade = null;
         private readonly ICity _ICity = null;
 
-        public OrdersController(IShippingDetails shippingDetails,
+        public OrdersController(IShippingDetails shippingDetails ,
 
-            PaymentMethodFacade paymentMethodFacade,
-            IOrders orders, IProductMaster productMaster,
+            PaymentMethodFacade paymentMethodFacade, 
+            IOrders orders, IProductMaster productMaster, 
             ICart cart, IOrderDetail orderDetail, ICity city)
         {
             _IShippingDetails = shippingDetails;
@@ -75,10 +75,10 @@ namespace B2CPortal.Controllers
                 string name = productmasetr.Name;
                 string MasterImageUrl = productmasetr.MasterImageUrl;
                 //var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                // var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                // var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
+               // var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+               // var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
                 //var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                // var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+               // var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                 var detailsobj = new OrderVM
                 {
@@ -107,7 +107,7 @@ namespace B2CPortal.Controllers
                 string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                 List<OrderVM> list = new List<OrderVM>();
-                if (!string.IsNullOrEmpty(userid) && Convert.ToInt32(userid) > 0)
+                if (!string.IsNullOrEmpty(userid) &&  Convert.ToInt32(userid) > 0)
                 {
                     var orderlist = await _orders.GetOrderList(Convert.ToInt32(userid));
 
@@ -155,6 +155,7 @@ namespace B2CPortal.Controllers
                 var totalDiscount = 0;
                 var customerId = 0;
                 var subTotal = 0;
+                decimal VatTax = 0;
                 string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                 if (!string.IsNullOrEmpty(userid))
@@ -182,39 +183,46 @@ namespace B2CPortal.Controllers
                         orderVM.Address = customer.Address;
 
                         var cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                        var cartlist = await _cart.GetCartProducts(cartguid, customerId, citymodel);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId,citymodel);
                         if (cartlist != null)
                         {
                             foreach (var item in cartlist)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+
+                                var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
+                                // var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
 
                                 //var DiscountedPrice = price * (1 - (discount / 100));
-                                var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue);
+                                var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue) ;
                                 subTotal = (int)(subTotal + ActualPrice);
                                 totalDiscount = (int)(totalDiscount + discount);
                                 var Order = new OrderVM
                                 {
                                     Name = productData.Name,
-                                    Price = Math.Round((decimal)(price / conversionvalue), 2),
+                                    Price = Math.Round((decimal)(price /conversionvalue),2),
                                     Quantity = item.Quantity,
                                     Discount = discount,
-                                    SubTotalPrice = Math.Round(ActualPrice, 2),
+                                    SubTotalPrice = Math.Round(ActualPrice,2),
                                 };
                                 orderVMs.Add(Order);
 
                                 orderVM.CartSubTotalDiscount += totalDiscountAmount;//((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
                                 OrderTotal += discountedprice;//Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
+                                VatTax =(decimal) ((tax - 1) * 100);
                             }
                             orderVM.orderVMs = orderVMs;
                             orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue, 2);
                             orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
                             orderVM.OrderTotal = OrderTotal;
                             orderVM.Currency = currency;
+                            orderVM.Currency = currency;
+                            orderVM.VatTax = VatTax;
 
                             HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount, OrderTotal.ToString(), true);
 
@@ -256,12 +264,12 @@ namespace B2CPortal.Controllers
                 string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                 if (!string.IsNullOrEmpty(userid) && currency.ToLower() == "pkr" &&
-                   (Billing.paymenttype == PaymentType.Stripe ||
+                   ( Billing.paymenttype == PaymentType.Stripe ||
                     Billing.paymenttype == PaymentType.Paypal))
                 {
                     return Json(new { data = "", msg = $"You can not pay with {Billing.paymenttype}", success = false }, JsonRequestBehavior.AllowGet);
                 }
-                if (!string.IsNullOrEmpty(userid) &&
+                if (!string.IsNullOrEmpty(userid) &&  
                     (Billing.paymenttype == PaymentType.Stripe
                     || Billing.paymenttype == PaymentType.COD
                    || Billing.paymenttype == PaymentType.Paypal)
@@ -285,11 +293,11 @@ namespace B2CPortal.Controllers
                     }
                     if (customerId > 0)
                     {
-                        var shippingmodel = new ShippingDetail();
+                       var shippingmodel = new ShippingDetail();
                         // Billing Details Add
                         Billing.FK_Customer = customerId;
                         string cartguid = HelperFunctions.GetCookie(HelperFunctions.cartguid);
-                        var cartlist = await _cart.GetCartProducts(cartguid, customerId, citymodel);
+                        var cartlist = await _cart.GetCartProducts(cartguid, customerId,citymodel);
                         if (cartlist != null && cartlist.Count() > 0)
                         {
                             //for shipping address table..
@@ -309,10 +317,14 @@ namespace B2CPortal.Controllers
 
                             foreach (var item in cartlist)
                             {
-                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                //var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+
+                                var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                                 var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue);
                                 OrderTotal = (OrderTotal + Convert.ToDecimal(discountedprice));
@@ -348,7 +360,7 @@ namespace B2CPortal.Controllers
                             Billing.BillingAddress = Billing.BillingAddress;
                             Billing.FK_ShippingDetails = shippingmodel.Id;
                             Billing.IsShipping = Billing.shippingdetails == null ? false : true;
-                            Billing.FK_CityId = citymodel.Id;
+                            Billing.FK_CityId = citymodel.Id; 
                             Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
                             var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
                             // Insert order Master
@@ -362,10 +374,15 @@ namespace B2CPortal.Controllers
                                 {
                                     foreach (var item in cartlist)
                                     {
-                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
+                                        var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                        // var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+
+                                        var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                        var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
+
                                         var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                                         var ActualPrice = (decimal)(price * item.Quantity);
 
@@ -396,24 +413,12 @@ namespace B2CPortal.Controllers
                                     //if (Billing.paymenttype != PaymentType.Stripe)
                                     //{
                                     string username = HelperFunctions.SetGetSessionData(HelperFunctions.UserName);
-
+                                    
                                     string useremail = HelperFunctions.SetGetSessionData(HelperFunctions.UserEmail);
 
                                     string recepit = string.Empty;
                                     var name = username;
-                                    var email = useremail;
-                                    string htmlString = @"<html>
-                           <body>
-                           <img src=" + "~/Content/Asset/img/img.PNG" + @">
-                           <h1 style=" + "text-align:center;" + @">Thanks for Your Order!</h1>
-                            <p>Dear " + name + @",</p>
-                            <p>Hello, " + name + @"! Thanks for Your Order!</p>
-                            <p>Order No: " + ordermasterId + @"</p>
-                            <p>Total Amount: " + orderresult.TotalPrice + @"</p>
-                            <p>Thanks,</p>
-                            <p>Unity Foods LTD!</p>
-                            </body>
-                            </html>";
+                                        var email = useremail;
 
                                     string pth = Server.MapPath("~/Services/EmailTemplates/OrderEmail.html");
 
@@ -424,10 +429,11 @@ namespace B2CPortal.Controllers
                                           orderresult.TotalPrice.ToString(), HelperFunctions.GenrateOrderNumber(ordermasterId.ToString()),
                                           Billing.orderVMs.Sum(x => x.CartSubTotalDiscount).ToString(), Billing.orderVMs.Sum(x => x.SubTotalPrice).ToString(),
                                          recepit);
-                                    bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
+                                        bool IsSendEmail = HelperFunctions.EmailSend(email, "Thanks for Your Order!", MailText, true);
+
 
                                 }
-                                catch (Exception ex)
+                                catch(Exception ex)
                                 {
                                     //throw;
                                 }
@@ -478,7 +484,7 @@ namespace B2CPortal.Controllers
                 }
                 else
                 {
-                    string msg = !string.IsNullOrEmpty(userid) ? string.Format("Sorry ! Currently {0} Not Supported", Billing.paymenttype.ToString()) : "Something bad happened";
+                   string msg =  !string.IsNullOrEmpty(userid) ? string.Format("Sorry ! Currently {0} Not Supported", Billing.paymenttype.ToString()) : "Something bad happened";
                     return Json(new { data = "", msg = msg, success = false }, JsonRequestBehavior.AllowGet);
                 }
             }
@@ -653,7 +659,11 @@ namespace B2CPortal.Controllers
                                 var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster, citymodel.Id);
                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+                                //  var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
+
+                                var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
                                 var Orderdetails = new OrderDetailsViewModel
                                 {
