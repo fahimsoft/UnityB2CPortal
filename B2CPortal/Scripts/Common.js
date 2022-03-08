@@ -51,7 +51,8 @@ $(document).ready(function () {
                         </ul>
                     `;
         $('#logedin').html(accounthtml);
-    } else {
+    }
+    else {
         $('#register').html();
 
         accounthtml += `    
@@ -105,13 +106,13 @@ $(document).ready(function () {
     $(document).on('change', 'input[name=qtybutton]', function () {
         var $button = $(this);
         var oldValue = $(this).val();
-        newVal = oldValue == "0" || parseFloat(oldValue) <= 0 || oldValue == "" ? 1 : $button.parent().find("input").val();
+        newVal = oldValue == "0" || parseInt(oldValue) <= 0 || oldValue == "" ? 1 : $button.parent().find("input").val();
         var row = $(this).closest("tr");
-        var Discount = parseFloat($(row).find('td')[1]?.textContent);
+        var Discount = parseInt($(row).find('td')[2]?.textContent);
         if (!isNaN(Discount)) {
 
-            var price = parseFloat($(row).find('td')[2].textContent);
-            var tax = parseFloat($(row).find('td')[7].textContent);
+            var price = parseInt($(row).find('td')[3].textContent);
+            var tax = parseFloat($(row).find('td')[8].textContent);
             let actualTotal = (price * newVal);
 
              price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
@@ -121,9 +122,13 @@ $(document).ready(function () {
 
             DiscountAmount = actualTotal - totalvalue;
 
-            $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent = DiscountAmount.toLocaleString();
-            $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+            //$(row).find('td')[5].textContent = actualTotal.toLocaleString();
+            //$(row).find('td')[6].textContent = DiscountAmount.toLocaleString();
+            //$(row).find('td')[7].textContent = totalvalue.toLocaleString();
+
+            $(row).find('td')[5].textContent = Math.round(actualTotal);
+            $(row).find('td')[6].textContent = Math.round(DiscountAmount);
+            $(row).find('td')[7].textContent = Math.round(totalvalue);
             $button.parent().find("input").val(newVal);
         } else {
             $button.parent().find("input").val(newVal);
@@ -156,39 +161,39 @@ $(document).ready(function () {
         }
     });
     $(document).on('click', '.qtybutton', function () {
+        debugger
         var $button = $(this);
         var oldValue = $button.parent().find("input").val();
         oldValue = oldValue == "NaN" || oldValue == "" ? 0 : $button.parent().find("input").val();
         if ($button.text() == "+") {
-            var newVal = parseFloat(oldValue) + 1;
+            var newVal = parseInt(oldValue) + 1;
         } else {
             // Don't allow decrementing below zero
             if (oldValue > 0) {
-                var newVal = parseFloat(oldValue) - 1;
+                var newVal = parseInt(oldValue) - 1;
                 newVal = newVal == 0 ? 1 : newVal;
             } else {
                 newVal = 1;
             }
         }
         var row = $(this).closest("tr");
-        var Discount = parseFloat($(row).find('td')[1]?.textContent);
-        if (parseFloat(newVal) <= 10 && !isNaN(Discount)) {
-            var price = parseFloat($(row).find('td')[2].textContent);
+        var Discount = parseInt($(row).find('td')[2]?.textContent);
+        if (parseInt(newVal) <= 10 && !isNaN(Discount)) {
+            var price = parseInt($(row).find('td')[3].textContent);
             let actualTotal = (price * newVal);
 
-            var tax = parseFloat($(row).find('td')[7].textContent);
+            var tax = parseFloat($(row).find('td')[8].textContent);
 
             price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
-
 
            // price = price * (1 - (Discount / 100));
             let totalvalue = (price * newVal);
 
             DiscountAmount = actualTotal - totalvalue;
 
-            $(row).find('td')[4].textContent = actualTotal.toLocaleString();
-            $(row).find('td')[5].textContent = DiscountAmount.toLocaleString();
-            $(row).find('td')[6].textContent = totalvalue.toLocaleString();
+            $(row).find('td')[5].textContent = Math.round(actualTotal);
+            $(row).find('td')[6].textContent = Math.round(DiscountAmount);
+            $(row).find('td')[7].textContent = Math.round(totalvalue);
 
             $button.parent().find("input").val(newVal);
         } else {

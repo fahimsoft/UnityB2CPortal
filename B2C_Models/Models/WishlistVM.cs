@@ -8,6 +8,7 @@ namespace B2C_Models.Models
 {
     public class WishlistVM
     {
+
         public int Id { get; set; }
         public int FK_ProductMaster { get; set; }
         public Nullable<int> FK_Customer { get; set; }
@@ -39,7 +40,7 @@ public decimal DiscountAmount { get; set; }
         public decimal ShipingAndHostring { get;  set; }
         public decimal OrderTotal { get;  set; }
         public decimal VatTax { get;  set; }
-        public decimal tax { get;  set; }
+        public decimal Tax { get;  set; }
         public decimal ActualPrice { get; set; }
         public virtual customer customer { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }

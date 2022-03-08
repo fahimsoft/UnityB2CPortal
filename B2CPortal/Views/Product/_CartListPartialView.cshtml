@@ -10,6 +10,7 @@
                         <thead>
                             <tr>
                                 <th>Product</th>
+                                <th>Tax %</th>
                                 <th>Discount %</th>
                                 <th>Price</th>
                                 <th>quantity</th>
@@ -24,43 +25,47 @@
                             {
                                 foreach (var item in Model)
                                 {
-                                    <tr data-id="@item.Id">
-                                        <td class="td-img text-left">
-                                            <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>
-                                            <div class="items-dsc">
-                                                <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name (@item.Packsize)</a></h5>
-                                                @*<p class="itemcolor">Color : <span>Blue</span></p>*@
-                                                @*<p class="itemcolor">Size   : <span>SL</span></p>*@
-                                            </div>
-                                        </td>
-                                        <td class="pricecol">
-                                            @item.Discount
-                                        </td>
-                                        <td class="pricecol">
-                                            @item.Price
-                                        </td>
-                                        <td>
-                                            <div class="plus-minus">
-                                                <a class="dec qtybutton">-</a>
-                                                <input type="text" value="@item.Quantity" name="qtybutton" class="plus-minus-box">
-                                                <a class="inc qtybutton">+</a>
-                                            </div>
-                                        </td>
-                                        <td class="totalpricecol" style="text-decoration:line-through;">
-                                            @item.ActualPrice
-                                        </td>
-                                        <td class="totalpricecol">
-                                             @item.DiscountAmount
+                            <tr data-id="@item.Id">
+                                <td class="td-img text-left">
+                                    <a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"><img src="@item.MasterImageUrl" alt="Add Product" /></a>
+                                    <div class="items-dsc">
+                                        <h5><a href="@Url.Action("Index", "ProductDetails", new { productId = item.Id})"> @item.Name (@item.Packsize)</a></h5>
+                                        @*<p class="itemcolor">Color : <span>Blue</span></p>*@
+                                        @*<p class="itemcolor">Size   : <span>SL</span></p>*@
+                                    </div>
+                                </td>
+                                <td>
+                                    <b>@item.Tax</b>
+                                </td>
+                                <td class="pricecol">
+                                    @item.Discount
+                                </td>
+                                <td class="pricecol">
+                                    @item.Price
+                                </td>
+                                <td>
+                                    <div class="plus-minus">
+                                        <a class="dec qtybutton">-</a>
+                                        <input type="text" value="@item.Quantity" name="qtybutton" class="plus-minus-box">
+                                        <a class="inc qtybutton">+</a>
+                                    </div>
+                                </td>
+                                <td class="totalpricecol" style="text-decoration:line-through;">
+                                    @item.ActualPrice
+                                </td>
+                                <td class="totalpricecol">
+                                    @item.DiscountAmount
 
-                                        </td>
-                                        <td class="totalpricecol">
-                                            <b style="font-weight:bolder;">@item.TotalPrice</b>
-                                        </td>
-                                        <td style="display:none">
-                                            <b>@item.tax</b>
-                                        </td>
-                                        <td><i class="mdi mdi-close removecartbtn" title="Remove this product"></i></td>
-                                    </tr>
+                                </td>
+                                <td class="totalpricecol">
+                                    <b style="font-weight:bolder;">@item.TotalPrice</b>
+                                </td>
+                                <td style="display:none">
+                                    <b>@item.VatTax</b>
+                                </td>
+
+                                <td><i class="mdi mdi-close removecartbtn" title="Remove this product"></i></td>
+                            </tr>
                                 }
 
 
@@ -86,8 +91,6 @@
                         else
                         {
                     <div id="cartmanagebtn">
-                        
-                       
                         <button type="button" id="updatecart" class="btn btn-primary">Update Cart <i class="mdi mdi-cart-plus"></i></button>
                         <a class="btn btn-primary" href="/Orders/Checkout">Check out<i class="mdi mdi-credit-card-multiple"></i> </a>
                     </div>

@@ -12,6 +12,7 @@
                         <thead>
                             <tr>
                                 <th>Product</th>
+                                <th>Tax %</th>
                                 <th>Discount %</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
@@ -36,6 +37,7 @@
                                                 <h5><a href="#">@item.Name</a></h5>
                                             </div>
                                         </td>
+                                        <td>@item.Tax</td>
                                         <td id="DiscountedPrice" data-price=@item.Discount>@item.Discount</td>
                                         <td>@item.Price</td>
 
@@ -59,7 +61,7 @@
 
                                         <td><strong> @item.TotalPrice </strong></td>
 
-                                        <td style="display:none">@item.tax</td>
+                                        <td style="display:none">@item.VatTax</td>
                                         <td style="display:none">@item.FK_ProductMaster</td>
 
                                         <td style="display:none">@item.Id</td>
@@ -153,7 +155,7 @@
 
     // Add To Cart Update button
     $(".addtocart").click(function () {
-
+        debugger
         document.getElementsByClassName("loader-container")[0].style.display = "block";
         var datatosend;
         var $row = $(this).closest("tr"),
@@ -161,10 +163,10 @@
         var table = $("#wishList tbody");
         $(this).closest('tr').each(function (i) {
             var $tds = $(this).find('td'),
-                cartid = $tds.eq(8).text(),
-                productid = $tds.eq(7).text(),
-                qty = $(this).find("td:eq(3) input[type='number']").val();
-            total = $tds.eq(6).text(),
+                cartid = $tds.eq(10).text(),
+                productid = $tds.eq(9).text(),
+                qty = $(this).find("td:eq(4) input[type='number']").val();
+            total = $tds.eq(7).text(),
 
              datatosend = {
                 Id: cartid,
@@ -176,7 +178,6 @@
 
         });
 
-        console.log(datatosend);
         $.ajax({
             type: "POST",
             url: "/Product/UpdateToCart",

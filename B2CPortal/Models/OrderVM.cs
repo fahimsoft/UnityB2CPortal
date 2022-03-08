@@ -68,6 +68,7 @@ namespace B2CPortal.Models
         public int FK_CityId { get; internal set; }
         public string CityName { get; internal set; }
         public decimal VatTax { get; internal set; }
+        public decimal Tax { get; internal set; }
     }
     public class OrderDetailsViewModel
     {

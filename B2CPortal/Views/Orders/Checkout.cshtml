@@ -153,8 +153,9 @@
                                     foreach (var item in Model.orderVMs)
                                     {
                                         <tr>
-                                            <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount)  </th>
-                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+                                            <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount) <br />
+                                             Tax :% @item.Tax </th>
+                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price  </td>
                                         </tr>
 
                                         @*<tr>

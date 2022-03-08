@@ -38,7 +38,7 @@ namespace B2CPortal.Models
         public decimal ShipingAndHostring { get; internal set; }
         public decimal OrderTotal { get; internal set; }
         public decimal VatTax { get; internal set; }
-        public decimal tax { get; internal set; }
+        public decimal Tax { get; internal set; }
     }
    
 }
