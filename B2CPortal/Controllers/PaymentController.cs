@@ -158,7 +158,7 @@ namespace B2CPortal.Controllers
 
                         model = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, model);
                         model.DiscountAmount = model.OrderDetails.Sum(x => x.DiscountedPrice);
-                        model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price);
+                        model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price) ;
 
                         model.Id = ordermodel.Id;
                         model.Status = OrderStatus.Confirmed.ToString();

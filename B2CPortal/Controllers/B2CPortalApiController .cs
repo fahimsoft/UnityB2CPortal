@@ -60,7 +60,7 @@ namespace B2CPortal.Controllers
                     var productRating = _IProductMaster.GetProductRating(item.Id.ToString());// _dxcontext.Database.SqlQuery<ProductsVM>("exec GetProductRating " + Id + "").ToList<ProductsVM>();
                     var discount = item.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
                     //var packsize = item.ProductPackSize.UOM.ToString();// Select(x => x.).FirstOrDefault();
                     var producVMList = new ProductsVM
                     {
@@ -72,7 +72,7 @@ namespace B2CPortal.Controllers
                         ShortDescription = item.ShortDescription,
                         LongDescription = item.LongDescription,
                         totalProduct = totalProduct,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         DiscountedAmount = discountedprice,
                         UOM = item.ProductPackSize?.UOM,
                         TotalRating = productRating.Select(x => x.TotalRating).FirstOrDefault(),
@@ -237,18 +237,18 @@ namespace B2CPortal.Controllers
                     string MasterImageUrl = productmasetr.MasterImageUrl;
                     var price = productmasetr.ProductPrices.Select(x => x.Price).FirstOrDefault();
                     var discount = productmasetr.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                    var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue), 2);
-                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                    var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue));
+                    var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
+                    var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
                     var detailsobj = new OrderVM
                     {
                         Name = name,
-                        Price = Math.Round(Convert.ToDecimal(price / conversionvalue), 2),
+                        Price = Math.Round(Convert.ToDecimal(price / conversionvalue)),
                         Discount = item.Discount,
-                        SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue), 2) ,
-                        DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue), 2),
+                        SubTotalPrice = actualprice,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue)) ,
+                        DiscountAmount = totalDiscountAmount,//Math.Round(Convert.ToDecimal(((price * item.Quantity) - item.Price) / conversionvalue)),
                         Quantity = item.Quantity,
-                        TotalPrice = discountedprice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue), 2), 
+                        TotalPrice = discountedprice,//Math.Round(Convert.ToDecimal(item.Price / conversionvalue)), 
                         MasterImageUrl = MasterImageUrl,
                         Date = item.CreatedOn.ToString(),
                         FK_ProductMaster = item.FK_ProductMaster

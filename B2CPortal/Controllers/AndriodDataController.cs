@@ -520,7 +520,7 @@ namespace B2CPortal.Controllers
                                 var productobj = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                 var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue, 2);
+                                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
                                 var cart = new Cart();
                                 cart.Quantity = item.ProductQuantity;
                                 cart.Guid = cookieid;
@@ -563,8 +563,8 @@ namespace B2CPortal.Controllers
                                         var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice), 2);
+                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
                                         ActualPrice += ((decimal)(price * item.ProductQuantity) / conversionvalue);
                                         TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
                                         subTotal = (subTotal + ActualPrice);
@@ -606,8 +606,8 @@ namespace B2CPortal.Controllers
                                                 var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue, 2);
-                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice), 2);
+                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
                                                 var ActualPricedetails = (decimal)(price * item.ProductQuantity);
                                                 subTotal = (int)(subTotal + ActualPricedetails);
                                                 tQuantity = (int)(tQuantity + item.ProductQuantity);

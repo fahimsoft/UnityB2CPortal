@@ -243,15 +243,15 @@ namespace B2CPortal.Services
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
                     var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
 
-                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
 
 
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         DiscountedAmount = discountedprice,
                         Discount = discount,
                         MasterImageUrl = item.MasterImageUrl,
@@ -501,19 +501,19 @@ namespace B2CPortal.Services
                     var tax = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Tax).FirstOrDefault();
 
                     // Last Work
-                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
 
                     //,((P.Price / 1.17) - ((P.Price / 1.17) * 0.10) + ((P.Price / 1.17) * 0.17))
 
-                    //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice), 2);
+                    //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
 
 
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name == null ? "" : item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         Discount = discount,
                         DiscountedAmount = discountedprice,
                         MasterImageUrl = item.MasterImageUrl,
@@ -794,17 +794,17 @@ namespace B2CPortal.Services
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
 
                     var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
 
 
-                   // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                   // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
                    
 
                     var producVMList = new AndroidViewModel
                     {
                         Id = item.Id,
                         Name = item.Name == null ? "" : item.Name,
-                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                        Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         Discount = discount,
                         //DiscountedAmount = discountedprice,
                         MasterImageUrl = item.MasterImageUrl,
@@ -911,16 +911,16 @@ namespace B2CPortal.Services
                 }
                 var discount = pdetails.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = pdetails.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue), 2);
+                // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
 
                 var tax = pdetails.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))), 2);
+                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
 
                 producVMList = new AndroidProductDetails
                 {
                     Id = pdetails.Id,
                     Name = pdetails.Name,
-                    Price = Math.Round(Convert.ToDecimal(price) / conversionvalue, 2),
+                    Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                     DiscountedAmount = discountedprice,
                     Discount = discount,
                     MasterImageUrl = pdetails.MasterImageUrl,

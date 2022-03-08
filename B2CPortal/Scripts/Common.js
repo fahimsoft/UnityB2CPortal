@@ -96,7 +96,7 @@ $(document).ready(function () {
         newVal = oldValue == "0" || parseFloat(oldValue) <= 0 || oldValue == "" ? 1 : $button.parent().find("input").val();
         if (parseFloat(newVal) <= 11) {
             var price = parseFloat($('#discoountedprice').text());
-            let totalvalue = (price * newVal);
+            let totalvalue = Math.round((price * newVal));
             $('#labalprice').text(totalvalue.toLocaleString());
             $button.parent().find("input").val(newVal);
         } else {
@@ -153,7 +153,7 @@ $(document).ready(function () {
         }
         if (parseFloat(newVal) <= 10) {
             var price = parseFloat($('#discoountedprice').text());
-            let totalvalue = (price * newVal);
+            let totalvalue = Math.round((price * newVal));
             $('#labalprice').text(totalvalue.toLocaleString());
             $button.parent().find("input").val(newVal);
         } else {
@@ -283,7 +283,6 @@ function autocomplete(inp, arr) {
                     //b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
                     b.addEventListener("click", function (e) {
-                        debugger
                         var id = $(this).find('input[type = hidden]').val();
                         var name = $('.searchnametxt').text();
                         inp.value = $(this).find('.searchnametxt').text();

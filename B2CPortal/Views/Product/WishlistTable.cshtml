@@ -123,7 +123,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> (@Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() )</td>
+                                    <td> @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault()</td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
@@ -131,7 +131,7 @@
                                 </tr>
                                 <tr>
                                     <th>Vat</th>
-                                    <td>   @Model.Select(x => x.VatTax).FirstOrDefault()</td>
+                                    <td>0 </td>
                                 </tr>
                             </tbody>
                             <tfoot>

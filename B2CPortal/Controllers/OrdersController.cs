@@ -324,7 +324,7 @@ namespace B2CPortal.Controllers
                                 //var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
 
                                 var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
+                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.Quantity));
 
                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
                                 var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue);
@@ -381,7 +381,7 @@ namespace B2CPortal.Controllers
                                         // var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
 
                                         var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
+                                        var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.Quantity));
 
 
                                         var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
@@ -396,7 +396,7 @@ namespace B2CPortal.Controllers
                                             FK_ProductMaster = item.FK_ProductMaster,
                                             SubTotalPrice = discountedprice,
                                             DiscountAmount = totalDiscountAmount,
-                                            Price = price,
+                                            Price = ActualPrice,
                                             Discount = discount,
                                             Quantity = item.Quantity,
                                             FK_Customer = customerId,
