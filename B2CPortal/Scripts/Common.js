@@ -283,8 +283,8 @@ function autocomplete(inp, arr) {
                     //b.innerHTML += "| <strong style='color:red'>" + item.Price + " <strong class='pricesymbol'> </strong> </strong>";
                     b.innerHTML += "<input  type='hidden' value='" + item.Id + "'>";
                     b.addEventListener("click", function (e) {
-
-                        var id = $('input[type = hidden]').val();
+                        debugger
+                        var id = $(this).find('input[type = hidden]').val();
                         var name = $('.searchnametxt').text();
                         inp.value = $(this).find('.searchnametxt').text();
                         window.location.href = '/ProductDetails?productId=' + id + ''
