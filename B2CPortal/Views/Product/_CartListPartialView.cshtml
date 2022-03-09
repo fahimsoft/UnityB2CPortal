@@ -35,7 +35,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <b>@item.Tax</b>
+                                    <b>@item.Tax (@item.TaxAmount)</b>
                                 </td>
                                 <td class="pricecol">
                                     @item.Discount
@@ -54,7 +54,7 @@
                                     @item.ActualPrice
                                 </td>
                                 <td class="totalpricecol">
-                                    @item.DiscountAmount
+                                    (@item.DiscountAmount)
 
                                 </td>
                                 <td class="totalpricecol">
@@ -127,19 +127,20 @@
                             <tbody>
                                 <tr>
                                     <th>Cart Subtotal</th>
-                                    <td> @Model.Select(x => x.CartSubTotal).FirstOrDefault()</td>
+                                    <td> @Model.Sum(x => x.CartSubTotal)</td>
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault() </td>
+                                    <td>( @Model.Select(x => x.CartSubTotalDiscount).FirstOrDefault()) </td>
                                 </tr>
                                 <tr>
                                     <th>Shipping and Handing</th>
                                     <td>   @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
-                                    <th>Vat</th>
-                                    <td> 0</td>
+                                    <th>GST </th>
+                                    <td>   @Model.Sum(x => x.TaxAmount) </td>
+                                    
                                 </tr>
                             </tbody>
                             <tfoot>

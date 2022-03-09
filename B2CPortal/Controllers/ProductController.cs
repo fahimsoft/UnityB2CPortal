@@ -180,6 +180,7 @@ namespace B2CPortal.Controllers
             List<CartViewModel> cartViewModels = new List<CartViewModel>();
             int customerid = string.IsNullOrEmpty(userid) ? 0 : Convert.ToInt32(userid);
             string cookie = string.Empty;
+            decimal TaxAmount = 0;
             if (!string.IsNullOrEmpty(HelperFunctions.GetCookie(HelperFunctions.cartguid)) && HelperFunctions.GetCookie(HelperFunctions.cartguid) != "undefined")
             {
                 cookie = HelperFunctions.GetCookie(HelperFunctions.cartguid);
@@ -197,8 +198,11 @@ namespace B2CPortal.Controllers
                 var actualprice = Math.Round(((decimal)(price * item.Quantity) / conversionvalue));
                 //var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
                 var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))  * item.Quantity));
-
                 var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
+
+                 TaxAmount = Math.Round((decimal)(((price * item.Quantity)/ tax) * (tax - 1)));
+
+                var priceExcludingTAX = Math.Round((decimal)((price / tax) * item.Quantity));
 
                 var cartobj = new CartViewModel
                 {
@@ -215,9 +219,11 @@ namespace B2CPortal.Controllers
                     ShipingAndHostring = 0,
                     VatTax = (decimal)tax,
                     Tax = (decimal)(tax - 1) * 100,
+                    TaxAmount = TaxAmount,
+                    CartSubTotal = (decimal)priceExcludingTAX
                 };
                 cartViewModels.Add(cartobj);
-                cartViewModels.Select(c => { c.CartSubTotal += actualprice; return c; }).ToList();
+               // cartViewModels.Select(c => { c.CartSubTotal += actualprice; return c; }).ToList();
                 cartViewModels.Select(c => { c.CartSubTotalDiscount += totalDiscountAmount; return c; }).ToList();
                 cartViewModels.Select(c => { c.OrderTotal += discountedprice; return c; }).ToList();
                 //cartViewModels.Select(c => { c.CartSubTotal += Math.Round((decimal)(price * item.Quantity) / conversionvalue); return c; }).ToList();
@@ -807,6 +813,7 @@ namespace B2CPortal.Controllers
                 }
                 cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
                 City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
+                decimal TaxAmount = 0;
 
                 var customerId = 0;
                 if (!string.IsNullOrEmpty(userid))
@@ -834,8 +841,9 @@ namespace B2CPortal.Controllers
 
                         var tax = productmaster.ProductPrices.Select(x => x.Tax).FirstOrDefault();
                         var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
+                        TaxAmount = Math.Round((decimal)(((price * item.Quantity) / tax) * (tax - 1)));
 
-                        //var DiscountedPrice = price * (1 - (discount / 100));
+                        var priceExcludingTAX = Math.Round((decimal)((price / tax) * item.Quantity));
 
                         var Total = item.TotalPrice;
                         var Quantity = item.TotalQuantity;
@@ -863,9 +871,12 @@ namespace B2CPortal.Controllers
                                 TotalQuantity = Quantity,
                                 VatTax = (decimal)tax,
                                 Tax = (decimal)(tax - 1) * 100,
+                                TaxAmount = TaxAmount,
+                                CartSubTotal = priceExcludingTAX
+
                             };
                             wishlistVMs.Add(wishlistVM);
-                            wishlistVMs.Select(c => { c.CartSubTotal += (decimal)(price * item.Quantity); return c; }).ToList();
+                            //wishlistVMs.Select(c => { c.CartSubTotal += (decimal)(price * item.Quantity); return c; }).ToList();
                             wishlistVMs.Select(c => { c.CartSubTotalDiscount += ((decimal)(price * item.Quantity) - (decimal)item.TotalPrice); return c; }).ToList();
                             wishlistVMs.Select(c => { c.OrderTotal += (decimal)item.TotalPrice; return c; }).ToList();
 
@@ -888,7 +899,8 @@ namespace B2CPortal.Controllers
                                 ShipingAndHostring = 0,
                                 VatTax = (decimal)(tax - 1) * 100,
                                 TotalQuantity = Quantity,
-                                Tax = (decimal)tax
+                                Tax = (decimal)tax,
+                                TaxAmount = TaxAmount
 
                             };
                             wishlistVMs.Add(wishlistVM);

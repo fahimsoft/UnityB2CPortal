@@ -33,6 +33,10 @@ namespace B2CPortal.Services
                     Current.DiscountedPrice = Billing.DiscountAmount;
                     Current.ConversionRate = Billing.ConversionRate;
                     Current.Currency = Billing.Currency;
+                    Current.Tax= Billing.Tax;
+                    Current.TaxAmount= Billing.TaxAmount;
+                    Current.ProductName= Billing.Name;
+
                 }
                 else
                 {

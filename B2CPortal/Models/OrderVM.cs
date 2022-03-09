@@ -69,6 +69,7 @@ namespace B2CPortal.Models
         public string CityName { get; internal set; }
         public decimal VatTax { get; internal set; }
         public decimal Tax { get; internal set; }
+        public decimal TaxAmount { get; internal set; }
     }
     public class OrderDetailsViewModel
     {

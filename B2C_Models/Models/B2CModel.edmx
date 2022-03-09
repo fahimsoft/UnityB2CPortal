@@ -141,6 +141,9 @@ warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.AdminUser' does
           <Property Name="TotalPrice" Type="decimal" Precision="18" Scale="2" />
           <Property Name="Currency" Type="varchar" MaxLength="50" />
           <Property Name="ConversionRate" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="Tax" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="TaxAmount" Type="decimal" Precision="18" Scale="0" />
+          <Property Name="ProductName" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.OrderDetailLogs' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1315,6 +1318,9 @@ warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.OrderMasterLogs
           <Property Name="ConversionRate" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="OrderMaster" Relationship="B2CModel.FK_OrderDetail_OrderMaster" FromRole="OrderDetail" ToRole="OrderMaster" />
           <NavigationProperty Name="ProductMaster" Relationship="B2CModel.FK_OrderDetail_ProductMaster" FromRole="OrderDetail" ToRole="ProductMaster" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="TaxAmount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="ProductName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="OrderMaster">
           <Key>
@@ -1867,6 +1873,9 @@ warning 6002: The table/view 'unityxpress_pk_20220216_134212.dbo.OrderMasterLogs
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="B2CModel.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetail">
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="TaxAmount" ColumnName="TaxAmount" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
                 <ScalarProperty Name="ConversionRate" ColumnName="ConversionRate" />
                 <ScalarProperty Name="Currency" ColumnName="Currency" />
                 <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />

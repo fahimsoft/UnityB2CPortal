@@ -87,7 +87,7 @@ namespace B2CPortal.Services
         {
             return await _dxcontext.OrderMasters.Where(x=>x.IsActive ==true && 
             x.FK_Customer == userid
-            ).OrderByDescending(x =>x.Status.ToLower() == "inprocess").OrderByDescending(x => x.CreatedOn).Include(x=> x.City1).ToListAsync();
+            ).OrderByDescending(x =>x.Status.ToLower() == "inprocess").OrderByDescending(x => x.CreatedOn).Include(x=> x.OrderDetails).Include(x=> x.City1).ToListAsync();
         }
         public async Task<OrderMaster> UpdateOrderMAster(OrderVM ordervm)
         {

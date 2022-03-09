@@ -39,6 +39,7 @@ namespace B2CPortal.Models
         public decimal OrderTotal { get; internal set; }
         public decimal VatTax { get; internal set; }
         public decimal Tax { get; internal set; }
+        public decimal? TaxAmount { get; internal set; }
     }
    
 }

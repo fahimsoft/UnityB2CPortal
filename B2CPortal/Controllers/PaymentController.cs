@@ -20,13 +20,17 @@ namespace B2CPortal.Controllers
         private readonly ICart _cart = null;
         private readonly IOrderTransection _orderTransection = null;
         private readonly PaymentMethodFacade _PaymentMethodFacade = null;
+        private readonly ICity _ICity = null;
 
-        public PaymentController(IOrders order, IProductMaster productMaster, ICart cart, IOrderTransection orderTransection)
+        public PaymentController(IOrders order,
+            ICity city,
+            IProductMaster productMaster, ICart cart, IOrderTransection orderTransection)
         {
             _orders = order;
             _IProductMaster = productMaster;
             _cart = cart;
             _orderTransection = orderTransection;
+            _ICity = city;
             _PaymentMethodFacade = new PaymentMethodFacade();
         }
         public ActionResult Stripe()
@@ -52,8 +56,8 @@ namespace B2CPortal.Controllers
             try
             {
                 ViewBag.error = "";
-               string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
-               string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
+                string OrderTotalAmount = HelperFunctions.SetGetSessionData(HelperFunctions.OrderTotalAmount);
+                string ordermasterId = HelperFunctions.SetGetSessionData(HelperFunctions.ordermasterId);
                 string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                 if (string.IsNullOrEmpty(OrderTotalAmount) || string.IsNullOrEmpty(ordermasterId) || string.IsNullOrEmpty(userid))
@@ -75,15 +79,15 @@ namespace B2CPortal.Controllers
                 };
                 dynamic result = _PaymentMethodFacade.CreateStripePayment(paymentmodel);
                 //ResponseViewModel resmodel  =  HelperFunctions.ResponseHandler(result);
-                Charge chargeobj =  (Charge)result;
+                Charge chargeobj = (Charge)result;
                 if (result != null && chargeobj.Paid == true)
                 {
-     
+
 
                     var ordervm = new OrderVM
                     {
                         Id = Convert.ToInt32(ordermasterId),
-                        Currency =currency,
+                        Currency = currency,
                         ConversionRate = conversionvalue,
                         PaymentMode = PaymentType.Stripe.ToString(),
                         Status = OrderStatus.Confirmed.ToString(),
@@ -129,7 +133,7 @@ namespace B2CPortal.Controllers
                 {
                     TempData["error"] = chargeobj.FailureMessage;
                     return RedirectToAction("Stripe");
-                }   
+                }
             }
             catch (StripeException ex)
             {
@@ -138,18 +142,25 @@ namespace B2CPortal.Controllers
             }
 
         }
-      [HttpGet]
-        public async Task<ActionResult> PaymentStatus(OrderVM model =  null)
+        [HttpGet]
+        public async Task<ActionResult> PaymentStatus(OrderVM model = null)
         {
             try
             {
+                string cookiecity = HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                if (string.IsNullOrEmpty(cookiecity))
+                {
+                    HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity, HelperFunctions.DefaultCity, true);
+                }
+                cookiecity = string.IsNullOrEmpty(cookiecity) ? HelperFunctions.DefaultCity : HelperFunctions.SetGetSessionData(HelperFunctions.LocationCity);
+                City citymodel = await _ICity.GetCityByIdOrName(0, cookiecity);
                 string currency = HelperFunctions.SetGetSessionData(HelperFunctions.pricesymbol);
                 string conrate = HelperFunctions.SetGetSessionData(HelperFunctions.ConversionRate);
                 string userid = HelperFunctions.SetGetSessionData(HelperFunctions.UserId);
 
                 if (!string.IsNullOrEmpty(conrate))
                 {
-                   /// decimal conversionvalue = Convert.ToDecimal(conrate);
+                    /// decimal conversionvalue = Convert.ToDecimal(conrate);
 
                     if (model == null || model.TotalPrice == null)
                     {
@@ -157,8 +168,10 @@ namespace B2CPortal.Controllers
                         OrderMaster ordermodel = await _orders.GetOrderMasterById(Convert.ToInt32(orderid));
 
                         model = (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, model);
+
                         model.DiscountAmount = model.OrderDetails.Sum(x => x.DiscountedPrice);
-                        model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price) ;
+                        model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price);
+                        model.TaxAmount = (decimal)model.OrderDetails.Sum(x => x.TaxAmount);
 
                         model.Id = ordermodel.Id;
                         model.Status = OrderStatus.Confirmed.ToString();
@@ -207,8 +220,8 @@ namespace B2CPortal.Controllers
         [HttpGet]
         public ActionResult DownloadPDFOrder()
         {
-           var  orderVM = (OrderVM)Session["orderdata"];
-            return Json(new { data = orderVM, msg = "", success = true },JsonRequestBehavior.AllowGet);
+            var orderVM = (OrderVM)Session["orderdata"];
+            return Json(new { data = orderVM, msg = "", success = true }, JsonRequestBehavior.AllowGet);
         }
         #region Paypal paymemnt method in PaypalPaymentMethodController
         public ActionResult Paypal()

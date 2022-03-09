@@ -79,7 +79,7 @@
                 <div class="padding60">
                     <div class="log-title">
                         <div class="logo-print-screen">
-                            <div><img width="50px" height="35px" style="width:100px;" src="~/Content/Asset/img/logo-print-screen.PNG" alt="Alternate Text" /></div>
+                            <div><img width="50px" height="35px" style="width:100px;" src="~/Content/Asset/unityxpress_logo.png" alt="Alternate Text" /></div>
                             <div>Printed On: @DateTime.Now.ToString("dd-MMM-yyyy hh:mm tt")</div>
                         </div>
                         <div class="print-line-break">
@@ -105,17 +105,17 @@
 
                             <tbody>
 
-                                @if (Model.orderVMs != null)
-                                {
-                                    foreach (var item in Model.OrderDetails)
-                                    {
-                                        <tr>
-                                            <th>Purchase Items : @item.Price x @item.Quantity (% @item.Discount)  </th>
-                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
-                                        </tr>
-                                    }
-                                }
 
+                                @foreach (var item in Model.OrderDetails)
+                                {
+                                <tr>
+                                    <th>@item.ProductName<br /> @item.Price x @item.Quantity
+                                    Tax : @item.Tax %<br />
+                                    Disc:(@item.Discount %)</th>
+                                    <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+                                </tr>
+
+                                }
                                 <tr>
                                     <th>Payment Mode</th>
                                     <td> @Model.PaymentMode</td>
@@ -134,8 +134,8 @@
                                     <td><strong class="pricesymbol"> </strong>  00.00</td>
                                 </tr>
                                 <tr>
-                                    <th>Vat</th>
-                                    <td> <strong class="pricesymbol"> </strong>  00.00</td>
+                                    <th>GST</th>
+                                    <td> <strong class="pricesymbol"> </strong>  @Model.TaxAmount</td>
                                 </tr>
                             </tbody>
                             <tfoot>

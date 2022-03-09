@@ -475,19 +475,22 @@ function Handleorderdetail(id) {
                 htmlProductPriceDetail += ` <tr data-id="58">
                                         <td class="td-img text-left">
                                             <a href="/ProductDetails?productId=${item.FK_ProductMaster}">
-<img src="${item.MasterImageUrl}" alt="Add Product"/>
-</a>
+                                                <img src="${item.MasterImageUrl}" alt="Add Product"/>
+                                                </a>
                                             <div class="items-dsc">
                                                 <h5>
-                                                         ${item.Name}
-                                                
+                                                  ${item.Name} 
                                                 </h5>
-
                                             </div>
                                         </td>
-                            
                                         <td class="pricecol">
                                            ${item.Discount}
+                                        </td>
+                                          <td>
+                                          ${item.Tax}
+                                        </td>
+                                            <td>
+                                          ${item.TaxAmount}
                                         </td>
                                         <td>
                                           ${item.Price}
@@ -529,6 +532,8 @@ function Handleorderdetail(id) {
                             <tr>
                                 <th>Product Name</th>
                                 <th>Discount %</th>
+                                <th>Tax %</th>
+                                <th>Tax Amount</th>
                                 <th> (<strong class="pricesymbol"> </strong>)Price</th>
                                 <th>Quantity</th>
                                 <th> (<strong class="pricesymbol"></strong>)Sub Total</th>

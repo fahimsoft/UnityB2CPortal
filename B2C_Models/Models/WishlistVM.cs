@@ -44,5 +44,6 @@ public decimal DiscountAmount { get; set; }
         public decimal ActualPrice { get; set; }
         public virtual customer customer { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }
+        public decimal TaxAmount { get; set; }
     }
 }

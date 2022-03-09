@@ -27,9 +27,9 @@
                     <div class="custom-input">
                         <form id="billing">
                             @Html.HiddenFor(m => m.FK_Customer)
-                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar", id= "FirstName" } })
+                            @Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @placeholder = "First Name:", @class = "form-control removespecialchar", id = "FirstName" } })
                             @Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @placeholder = "Last Name:", @class = "form-control removespecialchar", id = "LastName" } })
-                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control removespecialchar",id= "EmailId" } })
+                            @Html.EditorFor(model => model.EmailId, new { htmlAttributes = new { @placeholder = "Email Address:", @class = " form-control removespecialchar", id = "EmailId" } })
                             @Html.EditorFor(model => model.PhoneNo, new { htmlAttributes = new { @placeholder = "Phone #:", @class = "form-control removespecialchar", id = "PhoneNo" } })
 
                             @if (Model.FK_Customer > 0)
@@ -64,7 +64,7 @@
 
                             <div class="custom-select">
                                 <label>Order Description</label>
-                                <textarea  id="OrderDescription" name="OrderDescription" class="form-control" placeholder="Order Description"></textarea>
+                                <textarea id="OrderDescription" name="OrderDescription" class="form-control" placeholder="Order Description"></textarea>
                             </div>
                             <div class="row">
                                 <label class="switch">
@@ -153,9 +153,13 @@
                                     foreach (var item in Model.orderVMs)
                                     {
                                         <tr>
-                                            <th>@item.Name<br /> @item.Price x @item.Quantity (% @item.Discount) <br />
-                                             Tax :% @item.Tax </th>
-                                            <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price  </td>
+                                            <th>
+                                                @item.Name<br /> @item.Price x @item.Quantity <br />
+                                                Tax :@Math.Round(item.Tax) %<br />
+                                                Disc:(@item.Discount %)
+
+                                            </th>
+                                            <td> <strong class="pricesymbol"> </strong> @item.Price   </td>
                                         </tr>
 
                                         @*<tr>
@@ -172,7 +176,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Discount</th>
-                                    <td> @Model.CartSubTotalDiscount </td>
+                                    <td>(@Model.CartSubTotalDiscount)</td>
                                 </tr>
 
                                 <tr>
@@ -180,8 +184,8 @@
                                     <td> 00.00</td>
                                 </tr>
                                 <tr>
-                                    <th>Vat</th>
-                                    <td>  0</td>
+                                    <th>GST</th>
+                                    <td> @Model.TaxAmount</td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -202,40 +206,40 @@
                         <h3><strong>Payment method's</strong></h3>
                     </div>
                     @*<div class="form-check">
-            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "checked") class="form-check-input" value="Stripe" type="radio" name="paymode">
-            <label class="form-check-label">
-                Stripe Payment
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/paypal.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "") class="form-check-input" value="Paypal" type="radio" name="paymode">
-            <label class="form-check-label">
-                Paypal Payment
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="HBL" type="radio" name="paymode">
-            <label class="form-check-label">
-                HBL (Habib Bank Limited)
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="JazzCash" type="radio" name="paymode">
-            <label class="form-check-label">
-                Jazz Cash (Mobilink)
-            </label>
-        </div>
-        <div class="form-check">
-            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
-            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="EasyPaisa" type="radio" name="paymode">
-            <label class="form-check-label">
-                Easypaisa (Telenor)
-            </label>
-        </div>*@
+                            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/stripe.png" />
+                            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "checked") class="form-check-input" value="Stripe" type="radio" name="paymode">
+                            <label class="form-check-label">
+                                Stripe Payment
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <img width="100" height="50" style="text-align: right; padding-right: 15px;" src="~/Content/logos/paypal.png" />
+                            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "") class="form-check-input" value="Paypal" type="radio" name="paymode">
+                            <label class="form-check-label">
+                                Paypal Payment
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/hbl.png" />
+                            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="HBL" type="radio" name="paymode">
+                            <label class="form-check-label">
+                                HBL (Habib Bank Limited)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <img width="100" height="50" style="padding-right: 15px; height: 80px;" src="~/Content/logos/j.png" />
+                            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="JazzCash" type="radio" name="paymode">
+                            <label class="form-check-label">
+                                Jazz Cash (Mobilink)
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <img width="100" height="50" style="padding-right: 15px;" src="~/Content/logos/ey.png" />
+                            <input @(Model.Currency.ToLower() == "pkr" ? "disabled" : "")class="form-check-input" value="EasyPaisa" type="radio" name="paymode">
+                            <label class="form-check-label">
+                                Easypaisa (Telenor)
+                            </label>
+                        </div>*@
                     <hr />
                     <div class="form-check">
                         <img width="100" height="50" style="padding-right: 15px; height: auto;" src="~/Content/logos/ccc.png" />
@@ -260,12 +264,11 @@
                         </div>
                     }
                 </div>
-                    </div>
+            </div>
 
 
         </div>
         <!-- Modal starts -->
-
         <!--<div class="modal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -345,6 +348,9 @@
 
 @section scripts
 {
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     <script src="~/Scripts/jquery.validate.min.js"></script>
@@ -424,80 +430,91 @@
                 }
                 var form = $("#billing");
                 $.validator.unobtrusive.parse(form);
-                        //==============================confirm order===============================
+                //==============================confirm order===============================
                 if ($(form).valid()) {
-                    if (confirm("Are You Sure To Confirm Order !")) {
-                        $(this).attr('disabled', 'disabled');
-                        var paymenttype = $("input[name='paymode']:checked").val();
-                        if (paymenttype == undefined || paymenttype == "") {
-                            toastr.error("Please Select Payment Type.");
-                        } else {
-                            var form = $("#billing");
-                            //work for shipping detils.
-                            var shippingdetails = {};
+                    Swal.fire({
+                        title: 'Order Confirmation',
+                        text: "Are you sure you want to place this order?",
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Confirm!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $(this).attr('disabled', 'disabled');
+                            var paymenttype = $("input[name='paymode']:checked").val();
+                            if (paymenttype == undefined || paymenttype == "") {
+                                toastr.error("Please Select Payment Type.");
+                            } else {
+                                var form = $("#billing");
+                                //work for shipping detils.
+                                var shippingdetails = {};
 
-                            //if ($('.myClass').css('display') != 'none') {
+                                //if ($('.myClass').css('display') != 'none') {
                                 var shippingdata = $("#shipping").serializeArray();
                                 shippingdetails = FormDataToObject(shippingdata);
-                            //}
-                            
-                            var datatosend = {
-                                Billing: {
-                                    /*Id: $('#Id').val(),*/
-                                    PhoneNo: $('#PhoneNo').val(),
-                                    EmailId: $('#EmailId').val(),
-                                    Country: $('#Country').val(),
-                                    OrderDescription: $('#OrderDescription').val(),
-                                    City: $('#City').val(),
-                                    BillingAddress: $('#Address').val(),
-                                    ShippingAddress: $('.SAddress').val(),
-                                    PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
-                                    shippingdetails: shippingdetails
-                                }
-                            }
+                                //}
 
-                            document.getElementsByClassName("loader-container")[0].style.display = "block";
-                            $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
-                            $.validator.unobtrusive.parse($(this));//add the form validation
-                            $.validator.unobtrusive.parse(form);
-                            if ($(form.valid())) {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "/Orders/AddBillingDetails",
-                                    data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
-                                    contentType: 'application/json',
-                                    dataType: 'json',
-                                    success: function (data) {
-                                        if (data.success == true) {
-                                            window.location.href = data.data;// reload();
-                                            toastr.success(data.msg);
-                                        }
-                                        else if (data.success == false) {
-                                            toastr.error(data.msg);
-                                        }
-                                        document.getElementsByClassName("loader-container")[0].style.display = "none";
-                                    },
-                                    failure: function (data) {
-                                        console.log(data);
-                                    },
-                                    err: function (data) {
-                                        console.log(data);
+                                var datatosend = {
+                                    Billing: {
+                                        /*Id: $('#Id').val(),*/
+                                        PhoneNo: $('#PhoneNo').val(),
+                                        EmailId: $('#EmailId').val(),
+                                        Country: $('#Country').val(),
+                                        OrderDescription: $('#OrderDescription').val(),
+                                        City: $('#City').val(),
+                                        BillingAddress: $('#Address').val(),
+                                        ShippingAddress: $('.SAddress').val(),
+                                        PaymentType: paymenttype,// $('input[name="paymode"]:checked').val()
+                                        shippingdetails: shippingdetails
                                     }
-                                })
-                            }
-                            else {
-                                $(this).removeAttr('disabled');
-                                $('.order').removeAttr('disabled');
+                                }
 
-                                return false;
-                            }
+                                document.getElementsByClassName("loader-container")[0].style.display = "block";
+                                $(this).removeData("validator").removeData("unobtrusiveValidation");//remove the form validation
+                                $.validator.unobtrusive.parse($(this));//add the form validation
+                                $.validator.unobtrusive.parse(form);
+                                if ($(form.valid())) {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Orders/AddBillingDetails",
+                                        data: JSON.stringify(datatosend),// JSON.stringify(milestonearray),// $(form).serialize(),
+                                        contentType: 'application/json',
+                                        dataType: 'json',
+                                        success: function (data) {
+                                            if (data.success == true) {
+                                                window.location.href = data.data;// reload();
+                                                toastr.success(data.msg);
+                                            }
+                                            else if (data.success == false) {
+                                                toastr.error(data.msg);
+                                            }
+                                            document.getElementsByClassName("loader-container")[0].style.display = "none";
+                                        },
+                                        failure: function (data) {
+                                            console.log(data);
+                                        },
+                                        err: function (data) {
+                                            console.log(data);
+                                        }
+                                    })
+                                }
+                                else {
+                                    $(this).removeAttr('disabled');
+                                    $('.order').removeAttr('disabled');
 
+                                    return false;
+                                }
+
+                            }
+                            //Swal.fire(
+                            //    'Deleted!',
+                            //    'Your file has been deleted.',
+                            //    'success'
+                            //)
                         }
-
-                    } else {
-                    }
-
-                    //$('.modal').show();
+                    });
                 } else {
                     $("html, body").animate({ scrollTop: 0 }, 600);
                     return false;
@@ -516,7 +533,7 @@
         //    if (paymenttype == undefined || paymenttype == "") {
         //        toastr.error("Please Select Payment Type.");
         //    } else {
-                
+
         //        var form = $("#billing");
         //        //work for shipping detils.
         //        var shippingdetails = {};
@@ -580,9 +597,9 @@
 
         //})
 
-        
+
         $(document).on('change', '#billing #Country', function () {
-            
+
             $('#shipping #Country').val($(this).val());
         });
         $(document).on('change', '#billing #City', function () {
