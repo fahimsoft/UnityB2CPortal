@@ -520,7 +520,13 @@ namespace B2CPortal.Controllers
                                 var productobj = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                 var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                                var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
+                                //var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
+                               // var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
+                                var tax = productobj.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                // var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
+                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
+
+
                                 var cart = new Cart();
                                 cart.Quantity = item.ProductQuantity;
                                 cart.Guid = cookieid;
@@ -563,7 +569,10 @@ namespace B2CPortal.Controllers
                                         var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                       // var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                        var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                        var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.ProductQuantity));
+
                                         RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
                                         ActualPrice += ((decimal)(price * item.ProductQuantity) / conversionvalue);
                                         TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
@@ -606,7 +615,10 @@ namespace B2CPortal.Controllers
                                                 var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                                var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                                //  var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
+                                                var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
+                                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.ProductQuantity));
+
                                                 var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
                                                 var ActualPricedetails = (decimal)(price * item.ProductQuantity);
                                                 subTotal = (int)(subTotal + ActualPricedetails);

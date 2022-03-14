@@ -11,7 +11,7 @@ var UserName = "username";
 var UserEmail = "useremail";
 
 window.onload = function () {
- /*   var divToHide = document.getElementById('quick-view');*/
+    /*   var divToHide = document.getElementById('quick-view');*/
     document.onclick = function (e) {
         $(e.target).find('.modal-content').remove();
         //$('body').addClass('body-pading-right');
@@ -26,7 +26,7 @@ window.onload = function () {
             var html = '';
             data.data.map(function (item, index) {
                 if (item.Name == "Karachi") {
-                    html += `<option ${item.Selected == true ? "Selected": ""} value="${item.Id}">${item.Name}</option>`;
+                    html += `<option ${item.Selected == true ? "Selected" : ""} value="${item.Id}">${item.Name}</option>`;
                 }
             });
             $('#handlecity').html(html);
@@ -115,7 +115,7 @@ $(document).ready(function () {
             var tax = parseFloat($(row).find('td')[8].textContent);
             let actualTotal = (price * newVal);
 
-             price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
+            price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
 
             //price = price * (1 - (Discount / 100));
             let totalvalue = (price * newVal);
@@ -186,7 +186,7 @@ $(document).ready(function () {
 
             price = (price / tax) - ((price / tax) * (Discount / 100)) + ((price / tax) * (tax - 1));
 
-           // price = price * (1 - (Discount / 100));
+            // price = price * (1 - (Discount / 100));
             let totalvalue = (price * newVal);
 
             DiscountAmount = actualTotal - totalvalue;
@@ -239,7 +239,7 @@ $(document).ready(function () {
                 success: function (data) {
                     if (data.success) {
                         toastr.success(data.msg);
-                       $("#subemail").val("");
+                        $("#subemail").val("");
 
                     } else {
                         toastr.error(data.msg);
@@ -396,7 +396,7 @@ function ShowCartProducts() {
             var symbolvalue = GetCookieByName(pricesymbol);
             $('.pricesymbol').text(symbolvalue);
             document.getElementsByClassName("loader-container")[0].style.display = "none";
-            
+
         }
     });
 }
@@ -438,7 +438,7 @@ function RemoveCartProduct(id) {
     });
 }
 function HandleAddtocart(id) {
-    
+
     var proid = $(id).attr("productIdList");
     var quentity = $('#quentityvalue').val();
     $.ajax({
@@ -683,7 +683,7 @@ function loadProductList() {
 </div>
 <span>
 ${item.Discount > 0 ?
-                        `<del style='color:silver'>
+                            `<del style='color:silver'>
                         <span class="numbers">${productPricesValue.Price}</span> <strong class="pricesymbol"> </strong>
                         </del>`: ""}
 
@@ -777,7 +777,7 @@ function LoadQuickViewWithRating(elem) {
             });
 
             for (i = 0; i <= item.length; i++) {
-                
+
                 if (item[0].ImageUrl2[i] != undefined) {
                     if (i == 1) {
                         htmlProductDetail += `<li class="detail-image active"><a data-toggle="tab" href="#sin-${index}"> <img src="${item[0].ImageUrl2[i]}" alt="quick view" /> </a></li>`;
@@ -878,7 +878,7 @@ ${htmlProductSize}
 </div>
 <h5>
 ${Discount > 0 ?
-                `<del>
+                    `<del>
 <strong class="pricesymbol"> </strong> ${productPrice == undefined ? 0 : productPrice}
 </del>`: ""}
 
@@ -993,7 +993,7 @@ ${GetProductRating(item.AvgRating)}
 </div>
 <h5>
 ${item.Discount > 0 ?
-                    `<del>
+                        `<del>
 <strong class="pricesymbol"> </strong> <span class="numbers">${item.Price}</span>
 </del>`: ""}
 
@@ -1030,10 +1030,10 @@ ${item.Discount > 0 ?
 ${GetProductRating(item.AvgRating)}
 </div>
 <span>
-${item.Discount > 0?
-                    `<del style='color:silver'>
+${item.Discount > 0 ?
+                        `<del style='color:silver'>
                         <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
-                    </del>`:""}
+                    </del>`: ""}
  &nbsp </span><strong class="pricesymbol"></strong><span class="numbers">${item.DiscountedAmount} </span>
 </div>
 </div>
@@ -1158,9 +1158,9 @@ ${htmlProductList}
 
                     var limg = $(this).find('img');
                     limg.attr('src', limg.attr('rel'));
-                    });
+                });
 
-                
+
 
             }, 100);
 
@@ -1232,7 +1232,7 @@ function loadFeatureProduct() {
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
 ${item.Discount > 0 ?
-                    `<del>
+                        `<del>
 <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
 </del>`: ""}
 
@@ -1246,8 +1246,8 @@ ${item.Discount > 0 ?
 </li>`;
 
             });
-//<strong class="pricesymbol"></strong>  ${item.Price}
-//</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
+            //<strong class="pricesymbol"></strong>  ${item.Price}
+            //</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
 
             $('#ulLoadFeatureProduct').html(html);
             //$("span .numbers").digits();
@@ -1301,7 +1301,7 @@ function loadnewarrivalproducts() {
 <div class="product-dsc">
 <p><a href="/ProductDetails/Index?productId=${item.Id}" productId="${item.Id}" productName="${item.Name}" productImg="${item.MasterImageUrl}">${item.Name}</a></p>
 ${item.Discount > 0 ?
-                    ` <del>
+                        ` <del>
 <strong class="pricesymbol"></strong><span class="numbers">${item.Price}</span>
 </del>`: ""}
 
@@ -1315,8 +1315,8 @@ ${item.Discount > 0 ?
 </li>`;
 
             });
-//<strong class="pricesymbol"></strong>  ${item.Price}
-//</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
+            //<strong class="pricesymbol"></strong>  ${item.Price}
+            //</del >& nbsp < strong class="pricesymbol" > </strong > ${ item.DiscountedAmount }
 
             $('#ulLoadNewArrivalProducts').html(html);
             //$("span .numbers").digits();
@@ -1466,7 +1466,7 @@ function SetLocalStorageCommentSection(nextPage, prevPage) {
 // Get Product Comment And Rating Default Record 0 to 10
 function GetProductCommentAndRating() {
 
-    
+
 
     let urlstr = location.href;
     let url = new URL(urlstr);
@@ -1682,7 +1682,7 @@ function GetProductCommentWithPaggination(nextPage, prevPage) {
 
 // Set Local Storage (Array) Generalize Fn
 function SetLocalStorageInArray(key, value) {
-    
+
     alert();
     var keyValue = JSON.parse(localStorage.getItem(key)) || [];
     var ParamValue = JSON.parse(localStorage.getItem(value)) || [];
@@ -1846,7 +1846,7 @@ function GetProductByIdWithRating() { //updated 30-Nov-2021
                        </div>
                        <h5>
 ${Discount > 0 ?
-                    `<del>
+                        `<del>
 <strong class="pricesymbol"></strong> ${productPrice}
 </del>`: ""}
 
@@ -2005,7 +2005,7 @@ function GetProductRating(rating) {
 }
 
 function GetfilterListDummy() {
-    
+
     //Updated 9-Dec-
     var slides = document.getElementsByClassName("filter");
     let filterList_Dummy = [];

@@ -22,6 +22,7 @@ namespace B2CPortal.Models
         public int? UnitInNumeric { get; set; }
         public bool IsFeatured { get; internal set; }
         public bool? IsNewArrival { get; internal set; }
+        public decimal? Tax { get; internal set; }
     }
     public class AndroidAuthenticationVM
     {

@@ -55,10 +55,7 @@
 
                                         <td class="totalpricecol">
                                             (@item.DiscountAmount)
-
                                         </td>
-
-
                                         <td><strong> @item.TotalPrice </strong></td>
 
                                         <td style="display:none">@item.VatTax</td>
@@ -130,7 +127,7 @@
                                     <td>   @Model.Select(x => x.ShipingAndHostring).FirstOrDefault() </td>
                                 </tr>
                                 <tr>
-                                    <th>BST</th>
+                                    <th>GST</th>
                                     <td>@Model.Sum(x=>x.TaxAmount) </td>
                                 </tr>
                             </tbody>

@@ -817,7 +817,8 @@ namespace B2CPortal.Services
                         TotalRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).TotalRatingCount,
                         AvgRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).AvgRating,
                         IsFeatured = item.IsFeatured,
-                        IsNewArrival = item.IsNewArrival
+                        IsNewArrival = item.IsNewArrival,
+                        Tax = tax
                     };
                     productsVM.Add(producVMList);
                 }
@@ -932,7 +933,8 @@ namespace B2CPortal.Services
                     AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
                     SlideerImages = pdetails.ProductDetails.Select(x => x.ImageUrl).ToList(),
                     TotalRatingCount = Commentandratingslist.Count(),
-                    Comments = commentlist
+                    Comments = commentlist,
+                    Tax = tax
                 }; return producVMList;
             }
             catch (Exception Ex)

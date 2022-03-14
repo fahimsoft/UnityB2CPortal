@@ -358,7 +358,6 @@ namespace B2CPortal.Controllers
                 return BadResponse(Ex);
             }
         }
-
         [HttpPost]
         public async Task<JsonResult> DeleteCart(long id)
         {
