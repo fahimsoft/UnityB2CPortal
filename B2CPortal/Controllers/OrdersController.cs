@@ -84,7 +84,7 @@ namespace B2CPortal.Controllers
 
                 var detailsobj = new OrderVM
                 {
-                    Name = name,
+                    Name = item.ProductName,
                     Price = item.Price,
                     Discount = item.Discount,
                     SubTotalPrice = item.Price * item.Quantity,//Math.Round(Convert.ToDecimal((price * item.Quantity) / conversionvalue)) ,
@@ -200,7 +200,7 @@ namespace B2CPortal.Controllers
                                 var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
                                 var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.Quantity));
                                 // var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
-                                var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
+                                var ItemDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
 
                                  TaxAmount += Math.Round((decimal)(((price * item.Quantity) / tax) * (tax - 1)));
 
@@ -209,20 +209,29 @@ namespace B2CPortal.Controllers
                                 var ActualPrice = ((decimal)(price * item.Quantity) / conversionvalue) ;
                                 subTotal = (int)(subTotal + ActualPrice);
                                 totalDiscount = (int)(totalDiscount + discount);
+
+                                var ItemTaxAmount = Math.Round((decimal)(((price * item.Quantity) / tax) * (tax - 1)));
+                                
                                 var Order = new OrderVM
                                 {
                                     Name = productData.Name,
-                                    //Price = Math.Round((decimal)(price /conversionvalue),2),
-                                    Price = Math.Round((decimal)(priceExcludingTAX * item.Quantity)),
+                                    Price = Math.Round((decimal)(price / conversionvalue), 2),
+                                    //Price = Math.Round((decimal)priceExcludingTAX),
                                     Quantity = item.Quantity,
                                     Discount = discount,
                                     SubTotalPrice = Math.Round(ActualPrice,2),
                                     Tax = (decimal)((tax - 1) * 100),
-                                    CartSubTotal = ((decimal)(priceExcludingTAX * item.Quantity))
+                                    CartSubTotal = ((decimal)(priceExcludingTAX)),
+                                    //CartSubTotal = ((decimal)(priceExcludingTAX * item.Quantity)),
+                                    //CartSubTotal = ((decimal)(price * item.Quantity)),
+
+                                    ItemTaxAmount = ItemTaxAmount,
+                                    ItemDiscountAmount = ItemDiscountAmount,
+                                    FinalItemPrice = discountedprice
                                 };
                                 orderVMs.Add(Order);
 
-                                orderVM.CartSubTotalDiscount += totalDiscountAmount;//((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
+                                orderVM.CartSubTotalDiscount += ItemDiscountAmount;//((decimal)(price * item.Quantity) - (decimal)(item.TotalPrice == null ? 0 : item.TotalPrice));
                                 OrderTotal += discountedprice;//Convert.ToDecimal(item.TotalPrice == null ? 0: item.TotalPrice);
                                 VatTax =(decimal) ((tax - 1) * 100);
                             }
@@ -230,7 +239,8 @@ namespace B2CPortal.Controllers
                             //orderVM.CartSubTotal = Math.Round(subTotal / conversionvalue);
                             orderVM.CartSubTotal = orderVM.orderVMs.Sum(x => x.CartSubTotal);
                             orderVM.CartSubTotalDiscount = orderVM.CartSubTotalDiscount;
-                            orderVM.OrderTotal = OrderTotal;
+                            //orderVM.OrderTotal = OrderTotal;
+                            orderVM.OrderTotal = orderVM.orderVMs.Sum(x => x.FinalItemPrice);
                             orderVM.Currency = currency;
                             orderVM.Currency = currency;
                             orderVM.VatTax = VatTax;
@@ -376,7 +386,7 @@ namespace B2CPortal.Controllers
                             Billing.FK_ShippingDetails = shippingmodel.Id;
                             Billing.IsShipping = Billing.shippingdetails == null ? false : true;
                             Billing.FK_CityId = citymodel.Id; 
-                            Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "order has been genrated successfully" : Billing.OrderDescription;
+                            Billing.OrderDescription = string.IsNullOrEmpty(Billing.OrderDescription) ? "" : Billing.OrderDescription;
                             var orderresult = Billing.TotalQuantity <= 0 ? null : await _orders.CreateOrder(Billing);
                             // Insert order Master
 
@@ -392,6 +402,7 @@ namespace B2CPortal.Controllers
                                         var productData = await _IProductMaster.GetProductById(item.FK_ProductMaster,citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
+                                        var UOM = productData.ProductPackSize.UOM.ToString();
                                         // var discountedprice = Math.Round(Convert.ToDecimal((price * item.Quantity) * (1 - (discount / 100))) / conversionvalue);
 
                                         decimal tax = (decimal)productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
@@ -420,7 +431,7 @@ namespace B2CPortal.Controllers
                                             Currency = currency,
                                             Tax = tax,
                                             TaxAmount = TaxAmount,
-                                            Name = productData.Name
+                                            Name = productData.Name + " " +UOM
 
                                         };
                                         var response = await _ordersDetail.CreateOrderDetail(Order);

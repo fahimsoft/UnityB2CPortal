@@ -155,11 +155,18 @@
                                         <tr>
                                             <th>
                                                 @item.Name<br /> @item.Price x @item.Quantity <br />
-                                                Tax :@Math.Round(item.Tax) %<br />
-                                                Disc:(@item.Discount %)
+                                                Tax :(@Math.Round(item.Tax) %)<br />
+                                                Disc:@Math.Round(item.Discount.Value) % <br />
+                                                <p style="border-top:1px solid #ccc; font-weight:bold;">Total</p>
 
                                             </th>
-                                            <td> <strong class="pricesymbol"> </strong> @item.Price   </td>
+                                            <td>
+                                                <br />
+                                                <strong class="pricesymbol"> </strong> @item.SubTotalPrice <br />
+                                                (@Math.Round(item.ItemTaxAmount)) <br />
+                                                @Math.Round(item.ItemDiscountAmount) <br />
+                                                                                     <p style="border-top: 1px solid #ccc; font-weight: bold;">@Math.Round(item.FinalItemPrice)</p>
+                                            </td>
                                         </tr>
 
                                         @*<tr>
@@ -168,8 +175,7 @@
                                             </tr>*@
                                     }
                                 }
-
-                                <tr>
+                                <tr style="border-top: 2px solid #ccc;">
                                     <th>Cart Subtotal</th>
                                     <td>  @Model.CartSubTotal</td>
 
@@ -190,7 +196,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>Order total</th>
+                                    <th>Order Total</th>
                                     <td><strong class="pricesymbol"> </strong>  @Model.OrderTotal</td>
                                 </tr>
                             </tfoot>

@@ -16,7 +16,7 @@
                                 <th>quantity</th>
                                 <th>Sub Total</th>
                                 <th>Discount Amount</th>
-                                <th>Total </th>
+                                <th>Total (Incl.Tax)</th>
                                 <th>Remove</th>
                             </tr>
                         </thead>
@@ -179,7 +179,7 @@
                 if (!data.success) {
                     toastr.error(data.msg);
                 } else {
-                toastr.success(data.msg);
+                    toastr.success(data.msg);
                 }
                 $("#CartTable").load('@Url.Action("GetCartList", "Product")');
                 ShowCartProducts();

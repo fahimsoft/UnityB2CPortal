@@ -763,18 +763,8 @@ namespace B2CPortal.Services
                     .AsNoTracking()
                     //.Skip(prevPage).Take(nextPage)
                     .ToListAsync();
-
-
-
-
-
                     totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true);
                 }
-
-
-
-
-
                 List<AndroidViewModel> productsVM = new List<AndroidViewModel>();
                 var ids = obj.Select(x => x.Id).ToArray();
                 var objRating = _dxcontext.CommentAndRatings
@@ -803,7 +793,7 @@ namespace B2CPortal.Services
                     var producVMList = new AndroidViewModel
                     {
                         Id = item.Id,
-                        Name = item.Name == null ? "" : item.Name,
+                        Name = item.Name == null ? "" : item.Name + " " + item.ProductPackSize.UOM,
                         Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         Discount = discount,
                         //DiscountedAmount = discountedprice,
