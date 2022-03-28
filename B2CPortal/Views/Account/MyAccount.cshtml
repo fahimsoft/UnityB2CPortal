@@ -78,7 +78,7 @@
                                                 }
                                                 @*<input type="text" name="email" placeholder="Email Address" />*@
 
-                                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control" ,id= "removespecialchar" } })
+                                                @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @placeholder = "Address:", @class = " form-control removespecialchar"} })
 
                                                 @if (Model.Id > 0)
                                                 {
