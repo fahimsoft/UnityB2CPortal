@@ -33,6 +33,7 @@ namespace B2C_Models.Models
         public Nullable<decimal> Tax { get; set; }
         public Nullable<decimal> TaxAmount { get; set; }
         public string ProductName { get; set; }
+        public Nullable<decimal> DiscountAmount { get; set; }
     
         public virtual OrderMaster OrderMaster { get; set; }
         public virtual ProductMaster ProductMaster { get; set; }

@@ -108,12 +108,32 @@
 
                                 @foreach (var item in Model.OrderDetails)
                                 {
-                                <tr>
-                                    <th>@item.ProductName<br /> @item.Price x @item.Quantity
-                                    Tax : @item.Tax %<br />
-                                    Disc:(@item.Discount %)</th>
-                                    <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
-                                </tr>
+                                    {
+                                        var baseprice = Math.Round((decimal)(item.Price / item.Tax));
+                                    }
+                                    <tr>
+                                        <th>
+                                            <strong> @item.ProductName </strong> <br /> Price Excl. GST @Math.Round((decimal)(item.Price / item.Tax)) x @item.Quantity <br />
+                                            Tax :@item.Tax %<br />
+                                            Disc:(@Math.Round(item.Discount.Value) %)<br />
+                                            <p style="border-top:1px solid #ccc; font-weight:bold;">Total</p>
+                                        </th>
+                                        <td><br />
+                                            <strong class="pricesymbol"> </strong> @(Math.Round((decimal)(item.Price / item.Tax)) * item.Quantity) <br />
+                                            @item.TaxAmount) <br />
+                                            (@item.DiscountAmount) <br />
+                                            <p style="border-top: 1px solid #ccc; font-weight: bold;">@item.TotalPrice</p>
+                                        </td>
+                                    </tr>
+
+                                    @*<tr>
+                <th>
+                    @item.ProductName<br /> @item.Price x @item.Quantity <br />
+                    Tax : @item.Tax %<br />
+                    Disc:(@item.Discount %)
+                </th>
+                <td> <strong class="pricesymbol"> </strong> @{var price = item.Price * item.Quantity; } @price </td>
+            </tr>*@
 
                                 }
                                 <tr>

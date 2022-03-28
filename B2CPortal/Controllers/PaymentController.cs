@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Linq;
 using B2CPortal.Services.EmailTemplates;
+using API_Base.Base;
 
 namespace B2CPortal.Controllers
 {
-    public class PaymentController : Controller
+    public class PaymentController : BaseController
     {
         private readonly IOrders _orders = null;
         //private readonly IOrderDetail _ordersDetail = null;
@@ -172,11 +173,12 @@ namespace B2CPortal.Controllers
                         model.DiscountAmount = model.OrderDetails.Sum(x => x.DiscountedPrice);
                         model.SubTotalPrice = model.OrderDetails.Sum(x => x.Price);
                         model.TaxAmount = (decimal)model.OrderDetails.Sum(x => x.TaxAmount);
+                        model.Tax = (decimal)model.OrderDetails.Sum(x => x.Tax);
 
                         model.Id = ordermodel.Id;
                         model.Status = OrderStatus.Confirmed.ToString();
                         model.TotalPrice = model.TotalPrice;
-                        model.PaymentStatus = true;
+                        model.PaymentStatus = model.paymenttype == PaymentType.COD ? false : true;
 
                         var ordermodelresponse = await _orders.UpdateOrderMAster(model);
                         // orderVM =  (OrderVM)HelperFunctions.CopyPropertiesTo(ordermodel, ordervm);

@@ -50,6 +50,10 @@ namespace B2C_Models.Models
         public virtual DbSet<AdminUser> AdminUsers { get; set; }
         public virtual DbSet<ExceptionHandling> ExceptionHandlings { get; set; }
         public virtual DbSet<EmailSubscription> EmailSubscriptions { get; set; }
+        public virtual DbSet<OrderDeliveryPartner> OrderDeliveryPartners { get; set; }
+        public virtual DbSet<PickRider> PickRiders { get; set; }
+        public virtual DbSet<PickupLocation> PickupLocations { get; set; }
+        public virtual DbSet<sysdiagram> sysdiagrams { get; set; }
     
         public virtual ObjectResult<GetProductRating_Result> GetProductRating(Nullable<decimal> productId)
         {
@@ -161,6 +165,19 @@ namespace B2C_Models.Models
         public virtual int sp_upgraddiagrams()
         {
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("sp_upgraddiagrams");
+        }
+    
+        public virtual ObjectResult<GetRecentOrders_Result> GetRecentOrders(Nullable<System.DateTime> fromdate, Nullable<System.DateTime> todate)
+        {
+            var fromdateParameter = fromdate.HasValue ?
+                new ObjectParameter("fromdate", fromdate) :
+                new ObjectParameter("fromdate", typeof(System.DateTime));
+    
+            var todateParameter = todate.HasValue ?
+                new ObjectParameter("todate", todate) :
+                new ObjectParameter("todate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<GetRecentOrders_Result>("GetRecentOrders", fromdateParameter, todateParameter);
         }
     }
 }

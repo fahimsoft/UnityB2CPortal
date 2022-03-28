@@ -70,9 +70,10 @@ namespace B2CPortal.Models
         public decimal VatTax { get; internal set; }
         public decimal Tax { get; internal set; }
         public decimal TaxAmount { get; internal set; }
-        public decimal ItemDiscountAmount { get; internal set; }
         public decimal ItemTaxAmount { get; internal set; }
+        public decimal ItemDiscountAmount { get; internal set; }
         public decimal FinalItemPrice { get; internal set; }
+        public decimal DiscountedPrice { get; internal set; }
     }
     public class OrderDetailsViewModel
     {

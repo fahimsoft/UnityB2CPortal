@@ -30,7 +30,7 @@ namespace B2CPortal.Controllers
             try
             {
                 var obj = await _user.GetUser();
-                 return SuccessResponse(obj);
+                return SuccessResponse(obj);
             }
             catch (Exception Ex)
             {

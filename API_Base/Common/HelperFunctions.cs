@@ -196,40 +196,48 @@ namespace API_Base.Common
             //    // you can use the PropertyName and Value here
             //}
         }
+      //----------price calculation----------------
+        public static decimal DiscountedPrice(decimal? price, decimal? discount , decimal? tax)
+        {
+            return Math.Round(Convert.ToDecimal((price / tax) + (price - (price / tax)) - (price * (discount / 100))));
+        }
+        public static decimal DiscountAmount(decimal? price, decimal? discount)
+        {
+            return Math.Round(((decimal)(price * (discount / 100))));
+        }
+        public static decimal BasePrice(decimal? price, decimal? tax)
+        {
+            return  Math.Round((decimal)((price / tax)));
+        }
         // Email configuration
         public static bool EmailSend(string SenderEmail, string Subject, string Message, bool IsBodyHtml = false)
         {
             bool status = false;
             try
             {
-                bool IsEmailEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["IsEmailEnabled"]);
-                if (IsEmailEnabled)
+                string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
+                string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
+                string Password = ConfigurationManager.AppSettings["Password"].ToString();
+                int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
+
+                MailMessage mailMessage = new MailMessage();
+
+                mailMessage.From = new MailAddress(FormEmailId);
+                mailMessage.Subject = Subject;
+                mailMessage.Body = Message;
+                mailMessage.IsBodyHtml = IsBodyHtml;
+                mailMessage.To.Add(new MailAddress(SenderEmail));
+
+
+                using (SmtpClient smtp = new SmtpClient(HostAddress, Port))
                 {
-                    string HostAddress = ConfigurationManager.AppSettings["Host"].ToString();
-                    string FormEmailId = ConfigurationManager.AppSettings["MailFrom"].ToString();
-                    string Password = ConfigurationManager.AppSettings["Password"].ToString();
-                    int Port = Convert.ToInt32(ConfigurationManager.AppSettings["Port"].ToString());
-                    bool IsSSL = Convert.ToBoolean(ConfigurationManager.AppSettings["IsSSL"]);
-
-                    MailMessage mailMessage = new MailMessage();
-
-                    mailMessage.From = new MailAddress(FormEmailId);
-                    mailMessage.Subject = Subject;
-                    mailMessage.Body = Message;
-                    mailMessage.IsBodyHtml = IsBodyHtml;
-                    mailMessage.To.Add(new MailAddress(SenderEmail));
-
-
-                    using (SmtpClient smtp = new SmtpClient(HostAddress, Port))
-                    {
-                        smtp.UseDefaultCredentials = false;
-                        smtp.Credentials = new NetworkCredential(FormEmailId, Password);
-                        smtp.EnableSsl = IsSSL;
-                        smtp.Timeout = 20000;
-                        smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        smtp.Send(mailMessage);
-                        status = true;
-                    }
+                    smtp.UseDefaultCredentials = false;
+                    smtp.Credentials = new NetworkCredential(FormEmailId, Password);
+                    smtp.EnableSsl = true;
+                    smtp.Timeout = 20000;
+                    smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtp.Send(mailMessage);
+                    status = true;
                 }
                 return status;
             }

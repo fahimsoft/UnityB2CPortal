@@ -45,13 +45,14 @@ namespace B2CPortal.Services
                 if (Current == null)
                 {
                     New();
+
+                    Current.TotalPrice = Billing.OrderTotal;
                     Current.CreatedOn = DateTime.Now;
                     Current.FK_Customer = Billing.FK_Customer;
                     Current.PhoneNo = Billing.PhoneNo;
                     Current.EmailId = Billing.EmailId;
                     Current.BillingAddress = Billing.BillingAddress;
                     Current.IsActive = true;
-                    Current.TotalPrice = Billing.OrderTotal;
                     Current.TotalQuantity = Billing.TotalQuantity;
                     Current.OrderNo= Billing.OrderNo;
                     Current.Currency = Billing.Currency;

@@ -49,6 +49,10 @@
         <AssociationConnector Association="B2CModel.FK_OrderMaster_City" />
         <EntityTypeShape EntityType="B2CModel.ExceptionHandling" Width="1.5" PointX="13.375" PointY="4.75" />
         <EntityTypeShape EntityType="B2CModel.EmailSubscription" Width="1.5" PointX="13.375" PointY="12.75" />
+        <EntityTypeShape EntityType="B2CModel.OrderDeliveryPartner" Width="1.5" PointX="15.75" PointY="0.75" />
+        <EntityTypeShape EntityType="B2CModel.PickRider" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="B2CModel.PickupLocation" Width="1.5" PointX="13.75" PointY="15.75" />
+        <EntityTypeShape EntityType="B2CModel.sysdiagram" Width="1.5" PointX="15.75" PointY="14.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

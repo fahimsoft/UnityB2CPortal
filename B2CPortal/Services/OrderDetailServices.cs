@@ -25,16 +25,20 @@ namespace B2CPortal.Services
                     Current.FK_OrderMaster = Billing.FK_OrderMaster;
                     Current.FK_ProductMaster = Billing.FK_ProductMaster;
                     Current.FK_Customer = Billing.FK_Customer;
+
+                    Current.DiscountedPrice = Billing.DiscountedPrice;
+                    Current.DiscountAmount = Billing.DiscountAmount;
+                      Current.TaxAmount = Billing.TaxAmount;
                     Current.Price = Billing.Price;
+                    Current.TotalPrice = Billing.TotalPrice;
+
+                    
                     Current.Quantity = Billing.Quantity;
                     Current.Discount = Billing.Discount;
                     Current.IsActive = true;
-                    Current.TotalPrice = Billing.SubTotalPrice;
-                    Current.DiscountedPrice = Billing.DiscountAmount;
                     Current.ConversionRate = Billing.ConversionRate;
                     Current.Currency = Billing.Currency;
                     Current.Tax= Billing.Tax;
-                    Current.TaxAmount= Billing.TaxAmount;
                     Current.ProductName= Billing.Name;
 
                 }

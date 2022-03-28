@@ -523,7 +523,7 @@ namespace B2CPortal.Controllers
             }
 
         }
-        [HttpPost]
+       [HttpPost]
         public async Task<ActionResult> EmailSubscription(string emailid)
         {
             try

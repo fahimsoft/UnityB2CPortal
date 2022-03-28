@@ -66,6 +66,9 @@ namespace B2CPortal.Services
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
                 //Current = await _dxcontext.Carts.FirstOrDefaultAsync(x => x.FK_ProductMaster == cart.FK_ProductMaster && x.Guid == cart.Guid);
                 //Current = await _dxcontext.Carts.Where(x => x.Guid == cart.Guid && x.IsWishlist == true && x.FK_ProductMaster == cart.FK_ProductMaster || x.IsWishlist == true && x.FK_Customer == cart.FK_Customer && x.FK_ProductMaster == cart.FK_ProductMaster).FirstOrDefaultAsync();
+
+
+
                 Current = await _dxcontext.Carts.FirstOrDefaultAsync
                 (
                 x =>
@@ -77,6 +80,10 @@ namespace B2CPortal.Services
                 && x.FK_Customer == cart.FK_Customer
                 && x.FK_ProductMaster == cart.FK_ProductMaster)
                 );
+
+
+
+
                 if (Current == null)
                 {
                     New();
@@ -89,6 +96,7 @@ namespace B2CPortal.Services
                     Current.ModifiedOn = DateTime.Now;
                     Current.IsWishlist = cart.IsWishlist;
                 }
+
                 Current.Guid = cart.Guid;
                 if (cart.FK_Customer > 0)
                 {
@@ -99,8 +107,15 @@ namespace B2CPortal.Services
                 Current.IsActive = cart.IsActive;
                 Current.TotalPrice = cart.TotalPrice;
                 Current.TotalQuantity = cart.TotalQuantity;
+
+
+
                 Save();
                 return Current;
+
+
+
+
 
             }
             catch (Exception ex)

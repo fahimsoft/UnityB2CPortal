@@ -22,7 +22,8 @@ namespace B2CPortal.Models
         public int? UnitInNumeric { get; set; }
         public bool IsFeatured { get; internal set; }
         public bool? IsNewArrival { get; internal set; }
-        public decimal? Tax { get; internal set; }
+        public int FK_ProductCategory { get; internal set; }
+        public int FK_ProductBrand { get; internal set; }
     }
     public class AndroidAuthenticationVM
     {
@@ -45,6 +46,7 @@ namespace B2CPortal.Models
         public decimal ProductPrice { get; set; }
         public decimal ProductDiscount { get; set; }
         public int ProductQuantity { get; set; }
+        public int? ProductQuentity { get; internal set; }
     }
     public class CartDataResponseList
     {

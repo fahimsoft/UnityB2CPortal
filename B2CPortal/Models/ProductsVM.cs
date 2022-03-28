@@ -71,7 +71,6 @@ public class AndroidProductDetails
         public int TotalRatingCount { get; set; }
         public int? UnitInNumeric { get; set; }
         public List<AndroidCommentAndRating> Comments { get; internal set; }
-        public decimal? Tax { get; internal set; }
     }
 
 

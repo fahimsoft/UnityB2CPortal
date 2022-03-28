@@ -51,6 +51,14 @@ namespace B2C_Models.Models
         public bool IsShipping { get; set; }
         public Nullable<int> FK_ShippingDetails { get; set; }
         public Nullable<int> FK_CityId { get; set; }
+        public Nullable<int> LocationId { get; set; }
+        public string LocationName { get; set; }
+        public Nullable<double> Latitude { get; set; }
+        public Nullable<double> Longitude { get; set; }
+        public Nullable<int> RiderId { get; set; }
+        public string RiderName { get; set; }
+        public string Booking_Id { get; set; }
+        public Nullable<int> Batch_Id { get; set; }
     
         public virtual customer customer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

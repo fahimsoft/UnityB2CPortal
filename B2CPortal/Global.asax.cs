@@ -22,23 +22,23 @@ namespace B2CPortal
 
             // Dependency Injection
             UnityConfig.RegisterComponents();
-
-
-
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-
-
             Connection.ConnectionString = ConfigurationManager.ConnectionStrings["d2Bconnection"].ToString();
-
-
-
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
                 Formatting = Newtonsoft.Json.Formatting.Indented,
                 ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             };
+        }
+        protected void Application_BeginRequest(object sender, EventArgs e)
+        {
+            if (!Request.Url.Host.StartsWith("www") && !Request.Url.IsLoopback)
+            {
+                UriBuilder builder = new UriBuilder(Request.Url);
+                builder.Host = "www." + Request.Url.Host;
+                Response.Redirect(builder.ToString(), true);
+            }
         }
         //protected void Application_Start()
         //{

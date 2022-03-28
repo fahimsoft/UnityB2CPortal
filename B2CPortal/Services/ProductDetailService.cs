@@ -206,23 +206,15 @@ namespace B2CPortal.Services
                     o.CustomerId != null && o.CustomerId == Convert.ToInt32(model.userid));
                 }
 
-
-
                 if (Current == null)
                 {
                     New();
-
-
-
                     Current.CreatedOn = DateTime.Now;
                     Current.AnonymousName = model.AnonymousName;
                     Current.FK_ProductMaster = model.productid;
                     Current.EmailId = model.EmailId;
                     Current.Comment = model.Comment;
                     Current.Rate = model.Rate;
-
-
-
                     if (String.IsNullOrEmpty(userid) && String.IsNullOrEmpty(checkGuid))
                     {
                         Current.IsAnonymousUser = true;

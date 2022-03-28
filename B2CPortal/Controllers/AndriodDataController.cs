@@ -520,19 +520,15 @@ namespace B2CPortal.Controllers
                                 var productobj = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                 var discount = productobj.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                                 var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                                //var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
-                               // var price = productobj.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                 var tax = productobj.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                                // var discountedprice = Math.Round(Convert.ToDecimal(price * (1 - (discount / 100))) / conversionvalue);
-                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
-
-
+                                //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                                decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
                                 var cart = new Cart();
                                 cart.Quantity = item.ProductQuantity;
                                 cart.Guid = cookieid;
                                 cart.IsWishlist = false;
                                 cart.IsActive = false;
-                                cart.TotalPrice = discountedprice;
+                                cart.TotalPrice = DiscountedPrice;
                                 cart.TotalQuantity = item.ProductQuantity;
                                 cart.FK_ProductMaster = item.ProductId;
                                 cart.Currency = currency;
@@ -569,13 +565,14 @@ namespace B2CPortal.Controllers
                                         var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                         var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                         var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                       // var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
                                         var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                                        var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.ProductQuantity));
-
-                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
+                                        //(D.Price * (D.Discount / 100)) AS DiscountAmount
+                                        decimal DiscountAmount = HelperFunctions.DiscountAmount(price, discount);
+                                        //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                                        decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
+                                        RemainingDiscountPrice += Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - DiscountedPrice));
                                         ActualPrice += ((decimal)(price * item.ProductQuantity) / conversionvalue);
-                                        TotalPrice = (TotalPrice + Convert.ToDecimal(discountedprice));
+                                        TotalPrice = (TotalPrice + Convert.ToDecimal(DiscountedPrice * item.ProductQuantity));
                                         subTotal = (subTotal + ActualPrice);
                                         tQuantity = (int)(tQuantity + item.ProductQuantity);
                                     }
@@ -615,11 +612,11 @@ namespace B2CPortal.Controllers
                                                 var productData = await _IProductMaster.GetProductById(item.ProductId, citymodel.Id);
                                                 var price = productData.ProductPrices.Select(x => x.Price).FirstOrDefault();
                                                 var discount = productData.ProductPrices.Select(x => x.Discount).FirstOrDefault();
-                                                //  var discountedprice = Math.Round(Convert.ToDecimal((price * item.ProductQuantity) * (1 - (discount / 100))) / conversionvalue);
                                                 var tax = productData.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                                                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1))) * item.ProductQuantity));
+                                                //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                                                decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
 
-                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - discountedprice));
+                                                var totalDiscountAmount = Math.Round(((decimal)(price * item.ProductQuantity / conversionvalue) - (DiscountedPrice * item.ProductQuantity)));
                                                 var ActualPricedetails = (decimal)(price * item.ProductQuantity);
                                                 subTotal = (int)(subTotal + ActualPricedetails);
                                                 tQuantity = (int)(tQuantity + item.ProductQuantity);
@@ -627,7 +624,7 @@ namespace B2CPortal.Controllers
                                                 {
                                                     FK_OrderMaster = ordermasterId,
                                                     FK_ProductMaster = item.ProductId,
-                                                    SubTotalPrice = discountedprice,
+                                                    SubTotalPrice = DiscountedPrice * item.ProductQuantity,
                                                     DiscountAmount = totalDiscountAmount,
                                                     Price = price,
                                                     Discount = discount,

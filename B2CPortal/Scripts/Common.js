@@ -530,9 +530,9 @@ function Handleorderdetail(id) {
                          <table class="wishlist-table text-center" id="myTable">
                         <thead>
                             <tr>
-                                <th>Product Name</th>
+         <th>Product Name</th>
                                 <th>Discount %</th>
-                                <th>Tax %</th>
+                                <th>GST %</th>
                                 <th>Tax Amount</th>
                                 <th> (<strong class="pricesymbol"> </strong>)Price</th>
                                 <th>Quantity</th>

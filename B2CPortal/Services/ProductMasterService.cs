@@ -41,7 +41,7 @@ namespace B2CPortal.Services
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
                 var obj = await _dxcontext.ProductMasters.Where(x => x.IsFeatured && x.IsActive == true)
                     .Include(x => x.ProductPrices)
-                    //.Include(x => x.ProductDetails)
+                    .Include(x => x.ProductPackSize)
                     .AsNoTracking()
                     .OrderByDescending(a => a.Id)
                     .ToListAsync();//  GetAll();
@@ -62,6 +62,7 @@ namespace B2CPortal.Services
                 _dxcontext.Configuration.LazyLoadingEnabled = false;
                 var obj = await _dxcontext.ProductMasters.Where(x => x.IsActive == true && x.IsNewArrival == true)
                     .Include(x => x.ProductPrices)
+                    .Include(x => x.ProductPackSize)
                     .AsNoTracking()
                     .OrderByDescending(a => a.Id)
                     .ToListAsync();
@@ -191,11 +192,18 @@ namespace B2CPortal.Services
                 var obj = from PM in _dxcontext.ProductMasters
                           join PP in _dxcontext.ProductPrices on PM.Id equals PP.FK_ProductMaster
                           join PD in _dxcontext.ProductDetails on PM.Id equals PD.FK_ProductMaster
-                          where PM.Name.Contains(name)
-                          select new { PM.Id, PM.Name, PM.ShortDescription, PM.LongDescription, PM.MasterImageUrl, PP.Price, PD.ImageUrl };
+                          join Pk in _dxcontext.ProductPackSizes on PM.FK_ProductPackSize equals Pk.Id
+                          where PM.Name.Contains(name) &&
+                          PM.IsActive == true &&
+                          PP.IsActive == true &&
+                          PD.IsActive == true &&
+                          Pk.IsActive == true 
+                          select new {
+                              PM.Id, PM.Name, PM.ShortDescription, PM.LongDescription, PM.MasterImageUrl, PP.Price, PD.ImageUrl,
+                              Pk.UOM
+                          };
                 var obj2 = await obj.ToListAsync().ConfigureAwait(false);
                 var dd = await obj.Select(x => new ProductsVM()
-
                 {
 
                     Id = x.Id,
@@ -208,7 +216,8 @@ namespace B2CPortal.Services
 
                     ShortDescription = x.ShortDescription,
 
-                    LongDescription = x.LongDescription
+                    LongDescription = x.LongDescription,
+                    UOM = x.UOM
 
                 }).ToListAsync();
 
@@ -243,16 +252,14 @@ namespace B2CPortal.Services
                     var price = item.ProductPrices.Select(x => x.Price).FirstOrDefault();
                     var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
 
-                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
-
-
+                    //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                    decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
                     var producVMList = new ProductsVM
                     {
                         Id = item.Id,
                         Name = item.Name,
                         Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
-                        DiscountedAmount = discountedprice,
+                        DiscountedAmount = DiscountedPrice,
                         Discount = discount,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
@@ -500,14 +507,8 @@ namespace B2CPortal.Services
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
                     var tax = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Tax).FirstOrDefault();
 
-                    // Last Work
-                    //var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
-
-                    //,((P.Price / 1.17) - ((P.Price / 1.17) * 0.10) + ((P.Price / 1.17) * 0.17))
-
-                    //var totalDiscountAmount = Math.Round(((decimal)(price * item.Quantity / conversionvalue) - discountedprice));
-
+                    //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                    decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
 
                     var producVMList = new ProductsVM
                     {
@@ -515,7 +516,7 @@ namespace B2CPortal.Services
                         Name = item.Name == null ? "" : item.Name,
                         Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         Discount = discount,
-                        DiscountedAmount = discountedprice,
+                        DiscountedAmount = DiscountedPrice,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
                         ShortDescription = item.ShortDescription == null ? "" : item.ShortDescription,
@@ -763,8 +764,18 @@ namespace B2CPortal.Services
                     .AsNoTracking()
                     //.Skip(prevPage).Take(nextPage)
                     .ToListAsync();
+
+
+
+
+
                     totalProduct = _dxcontext.ProductMasters.Count(x => x.IsActive == true);
                 }
+
+
+
+
+
                 List<AndroidViewModel> productsVM = new List<AndroidViewModel>();
                 var ids = obj.Select(x => x.Id).ToArray();
                 var objRating = _dxcontext.CommentAndRatings
@@ -782,21 +793,16 @@ namespace B2CPortal.Services
                 {
                     var discount = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Discount).FirstOrDefault();
                     var price = item.ProductPrices.Where(c => c.FK_City == cityid).Select(x => x.Price).FirstOrDefault();
-
                     var tax = item.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                    var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
 
-
-                   // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
-                   
-
+                    //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                    decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
                     var producVMList = new AndroidViewModel
                     {
                         Id = item.Id,
-                        Name = item.Name == null ? "" : item.Name + " " + item.ProductPackSize.UOM,
+                        Name = item.Name == null ? "" : item.Name,
                         Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
                         Discount = discount,
-                        //DiscountedAmount = discountedprice,
                         MasterImageUrl = item.MasterImageUrl,
                         ImageUrl = item.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
                         ShortDescription = item.ShortDescription == null ? "" : item.ShortDescription,
@@ -808,7 +814,8 @@ namespace B2CPortal.Services
                         AvgRating = objRating.FirstOrDefault(x => x.Id == item.Id) == null ? 0 : objRating.FirstOrDefault(x => x.Id == item.Id).AvgRating,
                         IsFeatured = item.IsFeatured,
                         IsNewArrival = item.IsNewArrival,
-                        Tax = tax
+                        FK_ProductCategory = item.FK_ProductCategory,
+                        FK_ProductBrand = item.FK_ProductBrand
                     };
                     productsVM.Add(producVMList);
                 }
@@ -902,17 +909,15 @@ namespace B2CPortal.Services
                 }
                 var discount = pdetails.ProductPrices.Select(x => x.Discount).FirstOrDefault();
                 var price = pdetails.ProductPrices.Select(x => x.Price).FirstOrDefault();
-                // var discountedprice = Math.Round(Convert.ToDecimal((price * (1 - (discount / 100))) / conversionvalue));
-
                 var tax = pdetails.ProductPrices.Select(x => x.Tax).FirstOrDefault();
-                var discountedprice = Math.Round(Convert.ToDecimal(((price / tax) - ((price / tax) * (discount / 100)) + ((price / tax) * (tax - 1)))));
-
+                //(D.Price / D.Tax) + (D.Price - (D.Price / D.Tax)) + (D.Price * (D.Discount / 100)) AS DiscountedPrice
+                decimal DiscountedPrice = HelperFunctions.DiscountedPrice(price, discount, tax);
                 producVMList = new AndroidProductDetails
                 {
                     Id = pdetails.Id,
                     Name = pdetails.Name,
                     Price = Math.Round(Convert.ToDecimal(price) / conversionvalue),
-                    DiscountedAmount = discountedprice,
+                    DiscountedAmount = DiscountedPrice,
                     Discount = discount,
                     MasterImageUrl = pdetails.MasterImageUrl,
                     ImageUrl = pdetails.ProductDetails.Select(x => x.ImageUrl).FirstOrDefault(),
@@ -923,8 +928,7 @@ namespace B2CPortal.Services
                     AvgRating = productRating.Select(x => x.AvgRating).FirstOrDefault(),
                     SlideerImages = pdetails.ProductDetails.Select(x => x.ImageUrl).ToList(),
                     TotalRatingCount = Commentandratingslist.Count(),
-                    Comments = commentlist,
-                    Tax = tax
+                    Comments = commentlist
                 }; return producVMList;
             }
             catch (Exception Ex)
